@@ -4,6 +4,9 @@ import dj_database_url
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv('SECRET_KEY', '')
+
 ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 
 INSTALLED_APPS = list(INSTALLED_APPS) + [
