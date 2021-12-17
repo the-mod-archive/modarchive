@@ -1,0 +1,39 @@
+{% load static bulma_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}The Mod Archive{% endblock title %}</title>
+        {% block css %}
+            {% font_awesome %}
+            <link rel="stylesheet" href="{% static 'bulma/css/style.min.css' %}">
+            {% block extra_css %}{% endblock extra_css %}
+        {% endblock css %}
+    </head>
+    <body>
+        {% include 'navbar.html' %}
+
+        {% comment %} Main page content {% endcomment %}
+        <section class='section'>
+            <div class='columns'>
+                <div class='column is-8 is-offset-2 has-background-white'>
+                    
+            
+                    <div class='container'>
+                        {% block content %}
+                
+                        {% endblock %}
+                    </div>
+    
+                    <footer class='footer'>
+                        <div class='content is-size-7'>
+                            This is the footer of the page. Disclaimer text goes here.
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

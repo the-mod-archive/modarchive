@@ -1,0 +1,63 @@
+<nav class="navbar has-background-success-light">
+    <div class='navbar-menu'>
+        <div class="navbar-brand">
+            <div class='navbar-item'>
+                The Mod Archive
+            </div>
+        </div>
+        <div class="navbar-start">
+            <div class="navbar-item">
+                Music
+            </div>
+        
+            <div c<div class="navbar-item">
+                Artists
+            </div>
+        
+            <div class="navbar-item">
+                Help
+            </div>
+
+            <div class="navbar-item">
+                News
+            </div>
+
+            <div class="navbar-item">
+                Forums
+            </div>
+        </div>
+        <div class="navbar-end">
+            {% if user.is_authenticated %}
+                <div class="navbar-item">
+                    <div class="dropdown is-hoverable">
+                        <div class="dropdown-trigger">
+                            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu4">
+                                <span>Logged in as: {{ user.username }}</span>
+                                <span class="icon is-small">
+                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item">
+                                    <a href="{% url 'profile' %}">Profile</a>
+                                </div>
+                                <div class="dropdown-item">
+                                    <a href="{% url 'logout' %}">Log out</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-primary"><strong>Sign up</strong></a>
+                        <a class="button is-light" href="{% url 'login' %}?next={{request.path}}">Log in</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>

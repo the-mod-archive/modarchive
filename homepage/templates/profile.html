@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <p>
+        Your username: {{ user.username }}
+    </p>
+
+    <p>
+        Your email address: {{ user.email }}
+    </p>
+    
+    <h1 class='title is-4'>Security</h1>
+    <a href="{% url 'change_password' %}">Change my password</a>
+{% endblock %}    

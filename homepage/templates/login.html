@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class='title'>Log in</h1>
+
+{% if form.non_field_errors %}
+    <article class="message is-danger">
+        <div class="message-body">
+            {{ form.non_field_errors }}
+        </div>
+    </article>
+{% endif %}
+
+<div class='columns'>
+    <div class='column is-6 is-offset-3'>
+        <form class='box is-6' method="post" action="{% url 'login' %}" novalidate>
+            {% csrf_token %}
+            
+            {% include 'form_field.html' with element=form.username errors=form.errors.username %}
+            {% include 'form_field.html' with element=form.password errors=form.errors.password %}        
+            
+
+            <div class='columns'>
+                <div class='column'>
+                    <label class="checkbox">
+                        {{ form.remember_me }}
+                        Keep me logged in for 30 days
+                    </label>
+                </div>
+            </div>
+
+            <input type="submit" value="Log In" class='button is-primary'>
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}    
