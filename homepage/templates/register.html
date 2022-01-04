@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class='title'>Create a new Mod Archive account</h1>
+
+{% if form.non_field_errors %}
+    <article class="message is-danger">
+        <div class="message-body">
+            {{ form.non_field_errors }}
+        </div>
+    </article>
+{% endif %}
+
+<div class='columns'>
+    <div class='column is-6 is-offset-3'>
+        <form class='box is-6' method="post" action="{% url 'register' %}" novalidate>
+            {% csrf_token %}
+            
+            {% include 'form_field.html' with element=form.username errors=form.errors.username %}
+            {% include 'form_field.html' with element=form.email errors=form.errors.email %}
+            {% include 'form_field.html' with element=form.password1 errors=form.errors.password1 %}
+            {% include 'form_field.html' with element=form.password2 errors=form.errors.password2 %}
+
+            <input type="submit" value="Create Account" class='button is-primary'>
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}    

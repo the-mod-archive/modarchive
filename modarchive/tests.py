@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from modarchive.hashers import LegacyModArchivePasswordHasher
 
-class HasherTests(TestCase):
+class LegacyModArchivePasswordHasherTests(TestCase):
     algorithm = 'hmac'
     hash_without_salt = 'e53ae584fb2ac17712785143b7bd1279'
     salt = 'dfa187ec'
