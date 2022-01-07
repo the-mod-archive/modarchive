@@ -27,4 +27,3 @@ class UniqueEmailFieldTests(TestCase):
         # Act
         with self.assertRaisesMessage(ValidationError, UniqueEmailField.blacklisted_email_error_message):
             field.clean(self.illegal_email_address)
-

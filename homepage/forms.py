@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, UsernameField, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm, UsernameField, UserCreationForm
 from django.forms.widgets import EmailInput
 
 from homepage.fields import UniqueEmailField
@@ -26,6 +26,27 @@ class RegisterUserForm(UserCreationForm):
     email = UniqueEmailField(widget=EmailInput(attrs={'class': 'input', 'placeholder': 'Email Address'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'Password'}))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'Repeat Password'}))
+
+    def is_valid(self) -> bool:
+        for item in self.errors.as_data().items():
+            if item[0] in self.fields:
+                self.fields[item[0]].widget.attrs['class'] = 'input is-danger'
+
+        return super().is_valid()
+
+class ForgotPasswordForm(PasswordResetForm):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'autocomplete': 'email', 'class': 'input', 'placeholder': 'Email Address'}))
+
+    def is_valid(self) -> bool:
+        for item in self.errors.as_data().items():
+            if item[0] in self.fields:
+                self.fields[item[0]].widget.attrs['class'] = 'input is-danger'
+
+        return super().is_valid()
+
+class ResetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'New password'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'New password confirmation'}))
 
     def is_valid(self) -> bool:
         for item in self.errors.as_data().items():

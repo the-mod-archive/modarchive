@@ -1,11 +1,18 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetConfirmView, PasswordResetView, PasswordResetCompleteView
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
-from homepage.forms import ChangePasswordForm, LoginForm, RegisterUserForm
+from homepage.forms import ChangePasswordForm, ForgotPasswordForm, LoginForm, RegisterUserForm, ResetPasswordForm
+
+class RedirectAuthenticatedUserMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if (request.user.is_authenticated):
+            return redirect("home")
+        
+        return super().dispatch(request, *args, **kwargs)
 
 def home(request):
     return render(request, 'home_page.html')
@@ -31,6 +38,9 @@ def register(request):
     form = RegisterUserForm
     return render(request, 'register.html', context={'form': form})
 
+def password_reset_done(request):
+    return render(request, 'password_reset_done.html')
+
 class ModArchiveLoginView(LoginView):
     template_name = 'login.html'
     form_class = LoginForm
@@ -51,3 +61,17 @@ class ModArchiveChangePasswordView(LoginRequiredMixin, PasswordChangeView):
     form_class = ChangePasswordForm
     success_url = reverse_lazy('profile')
     login_url='login'
+
+class ForgotPasswordView(RedirectAuthenticatedUserMixin, PasswordResetView):
+    template_name = 'forgot_password.html'
+    form_class = ForgotPasswordForm
+    email_template_name = 'password_reset_email.html'
+    subject_template_name = 'password_reset_email_subject.txt'
+    from_email = 'donotreply@modarchive.org'
+
+class CustomPasswordResetConfirmView(RedirectAuthenticatedUserMixin, PasswordResetConfirmView):
+    template_name = 'reset_password.html'
+    form_class=ResetPasswordForm
+
+class CustomPasswordResetCompleteView(RedirectAuthenticatedUserMixin, PasswordResetCompleteView):
+    template_name='password_reset_complete.html'
