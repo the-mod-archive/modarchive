@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
 from django.urls.base import reverse
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from homepage.tokens import account_activation_token
 
