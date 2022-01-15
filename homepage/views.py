@@ -1,11 +1,18 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetConfirmView, PasswordResetView, PasswordResetCompleteView
-from django.contrib.auth import login
+from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views.generic.base import TemplateView
 
-from homepage.forms import ChangePasswordForm, ForgotPasswordForm, LoginForm, RegisterUserForm, ResetPasswordForm
+from homepage.forms import ChangePasswordForm, EmailAddressInUseError, ForgotPasswordForm, LoginForm, RegisterUserForm, ResetPasswordForm
+from homepage.tokens import account_activation_token
 
 class RedirectAuthenticatedUserMixin:
     def dispatch(self, request, *args, **kwargs):
@@ -29,9 +36,27 @@ def register(request):
     if request.method == 'POST':
         form = RegisterUserForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user) # TODO: remove this before completion (it should not auto-login when complete)
-            return redirect("home")
+            try:
+                user = form.save()
+                subject = "Active your ModArchive account"
+
+                message = render_to_string('account_activation_email.html', {
+                    'user': user,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': account_activation_token.make_token(user),
+                    'domain': get_current_site(request).domain
+                })
+
+                user.email_user(subject, message, 'donotreply@modarchive.org')
+                return redirect("register_done")
+
+            except EmailAddressInUseError:
+                user = User.objects.get(email = form.cleaned_data['email'])
+                subject = "ModArchive security warning"
+                message = "A user attempted to register a ModArchive account with your email address."
+                user.email_user(subject, message, 'donotreply@modarchive.org')
+                return redirect("register_done")
+            
         else:
             return render(request=request, template_name='register.html', context={"form":form})
 
@@ -41,7 +66,7 @@ def register(request):
 def password_reset_done(request):
     return render(request, 'password_reset_done.html')
 
-class ModArchiveLoginView(LoginView):
+class CustomLoginView(LoginView):
     template_name = 'login.html'
     form_class = LoginForm
     redirect_authenticated_user = True
@@ -56,13 +81,13 @@ class ModArchiveLoginView(LoginView):
 
         return super().get_success_url()
 
-class ModArchiveChangePasswordView(LoginRequiredMixin, PasswordChangeView):
+class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'change_password.html'
     form_class = ChangePasswordForm
     success_url = reverse_lazy('profile')
     login_url='login'
 
-class ForgotPasswordView(RedirectAuthenticatedUserMixin, PasswordResetView):
+class CustomPasswordResetview(RedirectAuthenticatedUserMixin, PasswordResetView):
     template_name = 'forgot_password.html'
     form_class = ForgotPasswordForm
     email_template_name = 'password_reset_email.html'
@@ -75,3 +100,27 @@ class CustomPasswordResetConfirmView(RedirectAuthenticatedUserMixin, PasswordRes
 
 class CustomPasswordResetCompleteView(RedirectAuthenticatedUserMixin, PasswordResetCompleteView):
     template_name='password_reset_complete.html'
+
+class AccountActivationCompleteView(RedirectAuthenticatedUserMixin, TemplateView):
+    template_name = 'account_activation_complete.html'
+
+def activate(request, uidb64, token):
+    if (request.user.is_authenticated):
+        return redirect("home")
+
+    User = get_user_model()
+    try:  
+        uid = force_text(urlsafe_base64_decode(uidb64))  
+        user = User.objects.get(pk=uid)  
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    
+    if user is None:
+        return redirect('activation_error')
+    elif user.is_active:
+        # Take no action if user is already active
+        return redirect('home')
+    
+    user.is_active = True
+    user.save()
+    return redirect('account_activation_complete')

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from homepage.forms import ForgotPasswordForm, ResetPasswordForm
+from homepage.forms import EmailAddressInUseError, ForgotPasswordForm, RegisterUserForm, ResetPasswordForm
 from django.contrib.auth.models import User
 
 class ForgotPasswordFormTests(TestCase):
@@ -39,7 +39,7 @@ class ResetPasswordFormTests(TestCase):
     strong_password = "abc123!iz1"
     weak_password = "password"
 
-    def setUp(self) -> None:
+    def setUp(self):
         self.user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
 
     def test_form_with_strong_matching_passwords_is_valid(self):
@@ -95,3 +95,106 @@ class ResetPasswordFormTests(TestCase):
         self.assertFalse(form.is_valid(), 'Form with mismatching password should not have been valid.')
         self.assertEquals(1, len(form.errors), f'Expected 1 error but got {len(form.errors)}')
         self.assertEquals(["The two password fields didn’t match."], form.errors['new_password2'], 'Error message for mismatching passwords was incorrect.')
+
+class RegisterUserFormTests(TestCase):
+    strong_password = "abc123!iz1"
+    weak_password = "password"
+    email_address = 'test@test.com'
+    duplicate_email_address = 'testuser@website.com'
+    existing_username = 'test_user'
+    new_username = 'new_user'
+    additional_username = 'additional_user'
+
+    def get_form_data(self, username = new_username, email = email_address, password1 = strong_password, password2 = strong_password):
+        return {
+            'username': username,
+            'email': email,
+            'password1': password1,
+            'password2': password2
+        }
+
+    def setUp(self):
+        self.user = User.objects.create_user(username=self.existing_username, email=self.duplicate_email_address, password='testpassword')
+
+    def test_raises_error_if_email_address_already_in_use(self):
+        # Arrange
+        form = RegisterUserForm(data = self.get_form_data(email = self.duplicate_email_address))
+
+        # Assert
+        self.assertTrue(form.is_valid(), "Form with duplicate email address should be valid, in spite of what you may think.")
+        with self.assertRaisesMessage(EmailAddressInUseError, "Email address is already in use."):
+            form.save()
+
+    def test_creates_inactive_user(self):
+        # Arrange
+        form = RegisterUserForm(data = self.get_form_data(username=self.additional_username))
+
+        # Act
+        form.save()
+        user = User.objects.get(email = self.email_address)
+
+        # Assert
+        self.assertEquals(self.additional_username, user.username, "Username did not match")
+        self.assertFalse(user.is_active, "New user should not be active before account activation")
+
+    def test_completed_form_is_valid(self):
+        # Arrange
+        form = RegisterUserForm(data=self.get_form_data())
+        
+        # Assert
+        self.assertTrue(form.is_valid(), "Expected completed form to be valid.")
+    
+    def test_form_with_duplicate_username_is_invalid(self):
+        # Arrange
+        form = RegisterUserForm(data=self.get_form_data(username=self.existing_username))
+        
+        # Assert
+        self.assertFalse(form.is_valid(), "Form with already existing username should not be valid.")
+        self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
+        self.assertEquals(["A user with that username already exists."], form.errors['username'], "Error message for duplicate username is incorrect.")
+
+    def test_form_with_weak_password_is_invalid(self):
+        # Arrange
+        form = RegisterUserForm(data=self.get_form_data(password1=self.weak_password, password2=self.weak_password))
+        
+        # Assert
+        self.assertFalse(form.is_valid(), "Form with weak password should not be valid.")
+        self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
+        self.assertEquals(["This password is too common."], form.errors['password2'], "Error message for weak password is incorrect.")
+
+    def test_form_missing_username_is_invalid(self):
+        # Arrange
+        form = RegisterUserForm(data=self.get_form_data(username=None))
+        
+        # Assert
+        self.assertFalse(form.is_valid(), "Form without username should not be valid.")
+        self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
+        self.assertEquals(["This field is required."], form.errors['username'], "Error message for missing username is incorrect.")
+
+    def test_form_missing_email_address_is_invalid(self):
+        # Arrange
+        form = RegisterUserForm(data=self.get_form_data(email=None))
+        
+        # Assert
+        self.assertFalse(form.is_valid(), "Form without email should not be valid.")
+        self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
+        self.assertEquals(["This field is required."], form.errors['email'], "Error message for missing email is incorrect.")
+
+    def test_form_missing_password_is_invalid(self):
+        # Arrange
+        form = RegisterUserForm(data=self.get_form_data(password2=None, password1=None))
+        
+        # Assert
+        self.assertFalse(form.is_valid(), "Form without password should not be valid.")
+        self.assertEquals(2, len(form.errors), f"Expected 2 errors but got {len(form.errors)}")
+        self.assertEquals(["This field is required."], form.errors['password1'], "Error message for missing password is incorrect.")
+        self.assertEquals(["This field is required."], form.errors['password2'], "Error message for missing password is incorrect.")
+
+    def test_form_with_mismatching_passwords_is_invalid(self):
+        # Arrange
+        form = RegisterUserForm(data=self.get_form_data(password1=f"1234{self.strong_password}"))
+        
+        # Assert
+        self.assertFalse(form.is_valid(), "Form with mismatching passwords should not be valid.")
+        self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
+        self.assertEquals(["The two password fields didn’t match."], form.errors['password2'], "Error message for mismatching passwords is incorrect.")

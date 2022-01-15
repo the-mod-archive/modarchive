@@ -1,19 +1,13 @@
 from django.forms.fields import EmailField
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from homepage.models import BlacklistedDomain
 
-class UniqueEmailField(EmailField):
-    duplicate_email_error_message = 'Email address is already in use'
+class BlacklistProtectedEmailField(EmailField):
     blacklisted_email_error_message = 'We do not currently accept account registrations using this email domain. Please use an email address from a different domain.'
 
     def clean(self, value):
         # Run the parent method first to verify that email address is in a valid format
         cleaned_value = super().clean(value)
-
-        # Verify uniqueness
-        if User.objects.filter(email=cleaned_value).exists():
-            raise ValidationError(self.duplicate_email_error_message)
 
         # Verify that email is not from a banned domain
         domain = cleaned_value.split('@')[1]

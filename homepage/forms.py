@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm, UsernameField, UserCreationForm
+from django.contrib.auth.models import User
 from django.forms.widgets import EmailInput
 
-from homepage.fields import UniqueEmailField
+from homepage.fields import BlacklistProtectedEmailField
 
 class LoginForm(AuthenticationForm):
     username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'input', 'placeholder': 'Username'}))
@@ -23,9 +24,22 @@ class ChangePasswordForm(PasswordChangeForm):
 
 class RegisterUserForm(UserCreationForm):
     username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'input', 'placeholder': 'Username'}))
-    email = UniqueEmailField(widget=EmailInput(attrs={'class': 'input', 'placeholder': 'Email Address'}))
+    email = BlacklistProtectedEmailField(widget=EmailInput(attrs={'class': 'input', 'placeholder': 'Email Address'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'Password'}))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'Repeat Password'}))
+
+    def save(self, commit=False):
+        user = super().save(commit=commit)
+
+        # Test to see if a user already exists with that email address. If so, raise an error
+        if User.objects.filter(email=self.cleaned_data['email']).exists():
+            raise EmailAddressInUseError("Email address is already in use.")
+
+        user.is_active = False
+        user.email = self.cleaned_data['email']
+
+        user.save()
+        return user
 
     def is_valid(self) -> bool:
         for item in self.errors.as_data().items():
@@ -54,3 +68,6 @@ class ResetPasswordForm(SetPasswordForm):
                 self.fields[item[0]].widget.attrs['class'] = 'input is-danger'
 
         return super().is_valid()
+
+class EmailAddressInUseError(Exception):
+    pass

@@ -2,8 +2,12 @@ from django.contrib.auth.models import User
 from django.core import mail
 from django.test import TestCase
 from django.urls.base import reverse
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
-class ForgotPasswordViewTests(TestCase):
+from homepage.tokens import account_activation_token
+
+class CustomPasswordResetViewTests(TestCase):
     def setUp(self):
         User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
 
@@ -110,3 +114,112 @@ class CustomPasswordResetCompleteViewTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('home'))
+
+class RegistrationTests(TestCase):
+    def test_redirects_authenticated_user(self):
+        # Arrange
+        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
+        self.client.login(username='test_user', password='testpassword')
+
+        # Act
+        response = self.client.get(reverse('register'))
+
+        # Assert
+        self.assertRedirects(response, reverse('home'))
+    
+    def test_renders_registration_form(self):
+        # Act
+        response = self.client.get(reverse('register'))
+
+        # Assert
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed('templates/register.html')
+
+    def test_renders_registration_form_if_submit_is_invalid(self):
+        # Act
+        response = self.client.post(reverse('register'), {})
+        
+        # Assert
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed('templates/register.html')
+
+    def test_sends_registration_email_with_completed_form(self):
+        # Act
+        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': 'newuser@test.com', 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
+
+        # Assert 
+        self.assertRedirects(response, reverse('register_done'))
+        self.assertEqual(1, len(mail.outbox))
+        self.assertEqual(['newuser@test.com'], mail.outbox[0].to)
+        self.assertEqual('donotreply@modarchive.org', mail.outbox[0].from_email)
+        self.assertEqual("Active your ModArchive account", mail.outbox[0].subject)
+        self.assertTrue("Thank you for registering an account with the Mod Archive. To complete your registration, please follow this link:" in mail.outbox[0].body)
+        self.assertTrue("https://testserver/activate_account" in mail.outbox[0].body)
+
+    def test_notifies_existing_user_if_email_address_already_in_use(self):
+        # Arrange
+        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
+
+        # Act
+        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': 'testuser@test.com', 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
+
+        # Assert
+        self.assertRedirects(response, reverse('register_done'))
+        self.assertEqual(1, len(mail.outbox))
+        self.assertEqual(['testuser@test.com'], mail.outbox[0].to)
+        self.assertEqual('donotreply@modarchive.org', mail.outbox[0].from_email)
+        self.assertEqual("ModArchive security warning", mail.outbox[0].subject)
+        self.assertTrue("A user attempted to register a ModArchive account with your email address." in mail.outbox[0].body)
+
+class ActivationTests(TestCase):
+    kwargs = {'uidb64': 'Mg', 'token': 'asdfasdf'}
+
+    def test_redirects_authenticated_user(self):
+        # Arrange
+        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
+        self.client.login(username='test_user', password='testpassword')
+
+        # Act
+        response = self.client.get(reverse('activate_account', kwargs=self.kwargs))
+
+        # Assert
+        self.assertRedirects(response, reverse('home'))
+
+    def test_activates_user(self):
+        # Arrange
+        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=False)
+        token = account_activation_token.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # Act
+        response = self.client.get(reverse('activate_account', kwargs={'uidb64': uid, 'token': token}))
+
+        # Assert
+        self.assertRedirects(response, reverse('account_activation_complete'))
+        user.refresh_from_db()
+        self.assertTrue(user.is_active, "Expected user to be active")
+
+    def test_redirects_to_home_if_user_already_active(self):
+        # Arrange
+        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
+        token = account_activation_token.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # Act
+        response = self.client.get(reverse('activate_account', kwargs={'uidb64': uid, 'token': token}))
+
+        # Assert
+        self.assertRedirects(response, reverse('home'))
+
+    def test_redirects_to_error_page_if_something_goes_wrong(self):
+        # Arrange
+        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
+        token = account_activation_token.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        user.delete()
+
+        # Act
+        response = self.client.get(reverse('activate_account', kwargs={'uidb64': uid, 'token': token}))
+
+        # Assert
+        self.assertRedirects(response, reverse('activation_error'))
