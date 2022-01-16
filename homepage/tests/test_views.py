@@ -223,3 +223,30 @@ class ActivationTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('activation_error'))
+
+class LegacyRedirectionViewTests(TestCase):
+    def test_redirects_to_home_if_no_match_found(self):
+        response = self.client.get('/login.php/?blarg=blag')
+        self.assertRedirects(response, reverse('home'))
+    
+    def test_mixed_case_query_param_still_redirects(self):
+        response = self.client.get('/login.php/?request=lOg_iN')
+        self.assertRedirects(response, reverse('login'))
+
+    def test_old_login_url_redirects(self):
+        response = self.client.get('/login.php/?request=log_in')
+        self.assertRedirects(response, reverse('login'))
+
+    def test_old_forgot_password_url_redirects(self):
+        response = self.client.get('/assistance.php/?request=forgot_password_page')
+        self.assertRedirects(response, reverse('forgot_password'))
+
+    def test_old_change_password_url_redirects(self):
+        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
+        self.client.login(username='test_user', password='testpassword')
+        response = self.client.get('/interactive.php/?request=change_password_page')
+        self.assertRedirects(response, reverse('change_password'))
+
+    def test_old_register_url_redirects(self):
+        response = self.client.get('/assistance.php/?request=create_account_page')
+        self.assertRedirects(response, reverse('register'))

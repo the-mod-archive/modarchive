@@ -6,10 +6,10 @@ from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordRes
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, RedirectView
 
 from homepage.forms import ChangePasswordForm, EmailAddressInUseError, ForgotPasswordForm, LoginForm, RegisterUserForm, ResetPasswordForm
 from homepage.tokens import account_activation_token
@@ -124,3 +124,25 @@ def activate(request, uidb64, token):
     user.is_active = True
     user.save()
     return redirect('account_activation_complete')
+
+class LegacyUrlRedirectionView(RedirectView):
+    redirection_map = {
+        'login': {
+            'log_in': 'login'
+        },
+        'assistance': {
+            'create_account_page': 'register',
+            'forgot_password_page': 'forgot_password'
+        },
+        'interactive': {
+            'change_password_page': 'change_password'
+        },
+        'default': {
+            'default': 'home'
+        }
+    }
+
+    def get_redirect_url(self, *args, **kwargs):
+        php_reference = kwargs.get('php_file', 'default')
+        param = self.request.GET.get('request', 'default').lower()
+        return reverse(self.redirection_map.get(php_reference).get(param, 'home'))

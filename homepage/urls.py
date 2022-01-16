@@ -1,7 +1,7 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, re_path
 from django.views.generic.base import TemplateView
-from homepage.views import AccountActivationCompleteView, CustomPasswordResetview, CustomPasswordChangeView, CustomPasswordResetConfirmView, CustomPasswordResetCompleteView, activate, home, CustomLoginView, password_reset_done, profile, register
+from homepage.views import AccountActivationCompleteView, CustomPasswordResetview, CustomPasswordChangeView, CustomPasswordResetConfirmView, CustomPasswordResetCompleteView, LegacyUrlRedirectionView, activate, home, CustomLoginView, password_reset_done, profile, register
 
 urlpatterns = [
     # Basic homepage
@@ -24,5 +24,8 @@ urlpatterns = [
     path('forgot_password/', CustomPasswordResetview.as_view(), {}, 'forgot_password'),
     path('password_reset_done/', password_reset_done, {}, 'password_reset_done'),
     path('password_reset/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset'),
-    path('password_reset_complete/', CustomPasswordResetCompleteView.as_view(), name='password_reset_complete')
+    path('password_reset_complete/', CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
+    # Legacy URL redirects
+    re_path('(?P<php_file>[a-zA-Z]+).php/', LegacyUrlRedirectionView.as_view(), name='login_php'),
 ]
