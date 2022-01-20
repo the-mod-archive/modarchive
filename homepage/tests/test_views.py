@@ -27,7 +27,7 @@ class CustomPasswordResetViewTests(TestCase):
 
         # Assert
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed('templates/forgot_password.html')
+        self.assertTemplateUsed('templates/password_reset/forgot_password.html')
 
     def test_post_request_redirects_authenticated_user(self):
         # Arrange
@@ -45,7 +45,7 @@ class CustomPasswordResetViewTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('password_reset_done'))
-        self.assertTemplateUsed('templates/password_reset_done.html')
+        self.assertTemplateUsed('templates/password_reset/password_reset_done.html')
 
     def test_successful_post_sends_email(self):
         # Act
@@ -133,7 +133,7 @@ class RegistrationTests(TestCase):
 
         # Assert
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed('templates/register.html')
+        self.assertTemplateUsed('templates/registration/register.html')
 
     def test_renders_registration_form_if_submit_is_invalid(self):
         # Act
@@ -141,7 +141,7 @@ class RegistrationTests(TestCase):
         
         # Assert
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed('templates/register.html')
+        self.assertTemplateUsed('templates/registration/register.html')
 
     def test_sends_registration_email_with_completed_form(self):
         # Act

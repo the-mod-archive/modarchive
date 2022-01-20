@@ -26,7 +26,7 @@ def home(request):
 
 @login_required
 def profile(request):
-    return render(request, 'profile.html')
+    return render(request, 'account_management/profile.html')
 
 def register(request):
     # Logged-in users should not be able to view the registration page or submit a request.
@@ -40,7 +40,7 @@ def register(request):
                 user = form.save()
                 subject = "Active your ModArchive account"
 
-                message = render_to_string('account_activation_email.html', {
+                message = render_to_string('registration/account_activation_email.html', {
                     'user': user,
                     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                     'token': account_activation_token.make_token(user),
@@ -58,16 +58,16 @@ def register(request):
                 return redirect("register_done")
             
         else:
-            return render(request=request, template_name='register.html', context={"form":form})
+            return render(request=request, template_name='registration/register.html', context={"form":form})
 
     form = RegisterUserForm
-    return render(request, 'register.html', context={'form': form})
+    return render(request, 'registration/register.html', context={'form': form})
 
 def password_reset_done(request):
-    return render(request, 'password_reset_done.html')
+    return render(request, 'password_reset/password_reset_done.html')
 
 class CustomLoginView(LoginView):
-    template_name = 'login.html'
+    template_name = 'account_management/login.html'
     form_class = LoginForm
     redirect_authenticated_user = True
     
@@ -82,27 +82,27 @@ class CustomLoginView(LoginView):
         return super().get_success_url()
 
 class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
-    template_name = 'change_password.html'
+    template_name = 'account_management/change_password.html'
     form_class = ChangePasswordForm
     success_url = reverse_lazy('profile')
     login_url='login'
 
 class CustomPasswordResetview(RedirectAuthenticatedUserMixin, PasswordResetView):
-    template_name = 'forgot_password.html'
+    template_name = 'password_reset/forgot_password.html'
     form_class = ForgotPasswordForm
-    email_template_name = 'password_reset_email.html'
-    subject_template_name = 'password_reset_email_subject.txt'
+    email_template_name = 'password_reset/password_reset_email.html'
+    subject_template_name = 'password_reset/password_reset_email_subject.txt'
     from_email = 'donotreply@modarchive.org'
 
 class CustomPasswordResetConfirmView(RedirectAuthenticatedUserMixin, PasswordResetConfirmView):
-    template_name = 'reset_password.html'
+    template_name = 'password_reset/reset_password.html'
     form_class=ResetPasswordForm
 
 class CustomPasswordResetCompleteView(RedirectAuthenticatedUserMixin, PasswordResetCompleteView):
-    template_name='password_reset_complete.html'
+    template_name='password_reset/password_reset_complete.html'
 
 class AccountActivationCompleteView(RedirectAuthenticatedUserMixin, TemplateView):
-    template_name = 'account_activation_complete.html'
+    template_name = 'registration/account_activation_complete.html'
 
 def activate(request, uidb64, token):
     if (request.user.is_authenticated):

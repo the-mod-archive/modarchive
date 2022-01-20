@@ -15,10 +15,10 @@ urlpatterns = [
     
     # Account registration
     path('register/', register, {}, 'register'),
-    path('register_done/', TemplateView.as_view(template_name='register_done.html'), {}, 'register_done'),
+    path('register_done/', TemplateView.as_view(template_name='registration/register_done.html'), {}, 'register_done'),
     path('activate_account/<uidb64>/<token>', activate, name='activate_account'),
     path('account_activation_complete/', AccountActivationCompleteView.as_view(), {}, 'account_activation_complete'),
-    path('activation_error/', TemplateView.as_view(template_name='account_activation_error.html'), {}, 'activation_error'),
+    path('activation_error/', TemplateView.as_view(template_name='registration/account_activation_error.html'), {}, 'activation_error'),
     
     # Password reset
     path('forgot_password/', CustomPasswordResetview.as_view(), {}, 'forgot_password'),
