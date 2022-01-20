@@ -66,7 +66,7 @@ def register(request):
 def password_reset_done(request):
     return render(request, 'password_reset/password_reset_done.html')
 
-class CustomLoginView(LoginView):
+class LoginView(LoginView):
     template_name = 'account_management/login.html'
     form_class = LoginForm
     redirect_authenticated_user = True
@@ -81,24 +81,24 @@ class CustomLoginView(LoginView):
 
         return super().get_success_url()
 
-class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+class PasswordChangeView(LoginRequiredMixin, PasswordChangeView):
     template_name = 'account_management/change_password.html'
     form_class = ChangePasswordForm
     success_url = reverse_lazy('profile')
     login_url='login'
 
-class CustomPasswordResetview(RedirectAuthenticatedUserMixin, PasswordResetView):
+class PasswordResetView(RedirectAuthenticatedUserMixin, PasswordResetView):
     template_name = 'password_reset/forgot_password.html'
     form_class = ForgotPasswordForm
     email_template_name = 'password_reset/password_reset_email.html'
     subject_template_name = 'password_reset/password_reset_email_subject.txt'
     from_email = 'donotreply@modarchive.org'
 
-class CustomPasswordResetConfirmView(RedirectAuthenticatedUserMixin, PasswordResetConfirmView):
+class PasswordResetConfirmView(RedirectAuthenticatedUserMixin, PasswordResetConfirmView):
     template_name = 'password_reset/reset_password.html'
     form_class=ResetPasswordForm
 
-class CustomPasswordResetCompleteView(RedirectAuthenticatedUserMixin, PasswordResetCompleteView):
+class PasswordResetCompleteView(RedirectAuthenticatedUserMixin, PasswordResetCompleteView):
     template_name='password_reset/password_reset_complete.html'
 
 class AccountActivationCompleteView(RedirectAuthenticatedUserMixin, TemplateView):

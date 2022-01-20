@@ -7,7 +7,7 @@ from django.utils.http import urlsafe_base64_encode
 
 from homepage.tokens import account_activation_token
 
-class CustomPasswordResetViewTests(TestCase):
+class PasswordResetViewTests(TestCase):
     def setUp(self):
         User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
 
@@ -65,7 +65,7 @@ class CustomPasswordResetViewTests(TestCase):
         # Assert
         self.assertEqual(0, len(mail.outbox))
 
-class CustomPasswordResetConfirmViewTests(TestCase):
+class PasswordResetConfirmViewTests(TestCase):
     kwargs = {'uidb64': 'Mg', 'token': 'asdfasdf'}
 
     def setUp(self):
@@ -91,7 +91,7 @@ class CustomPasswordResetConfirmViewTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse('home'))
 
-class CustomPasswordResetCompleteViewTests(TestCase):
+class PasswordResetCompleteViewTests(TestCase):
     def setUp(self):
         User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
 
