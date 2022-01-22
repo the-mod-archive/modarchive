@@ -1,0 +1,630 @@
+[
+    {
+        "model": "songs.song",
+        "pk": 1,
+        "fields": {
+            "legacy_id": 48552,
+            "filename": "m4v-fasc.it",
+            "song_title": "tangerine fascination",
+            "format": "it",
+            "file_size": 709340,
+            "channels": 18,
+            "instrument_text": "",
+            "comment_text": "",
+            "hash": "dfd1ce2cbbc762b2454d8a74c5244067",
+            "pattern_hash": "7a4bed390126a9af",
+            "hits": 7612,
+            "create_date": "1998-12-09 03:20:24+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 2,
+        "fields": {
+            "legacy_id": "34073",
+            "filename": "ascent.s3m",
+            "song_title": "\"Ascent of the Cloud Eagle\"",
+            "format": "s3m",
+            "file_size": 819762,
+            "channels": 9,
+            "instrument_text": "-=-=-=-=-=-=-=-=-=-=-=-=-=-\n Ascent of the Cloud Eagle\n-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\n   Sequenced \/ Tracked\n\n            by\n\n      \u00b7 \u25a0 Necros \u25a0 \u00b7\n\n (FM \/ Legend Design \/ PM)\n\n for the NAID Music Compo\n\n\n         net-mail:\n    asega@ic.sunysb.edu",
+            "comment_text": "",
+            "hash": "3e72d1e6ac8dc36acde62bb2403925c0",
+            "pattern_hash": "81662584cb5545dc",
+            "hits": 30552,
+            "license": "",
+            "create_date": "1997-01-01 03:39:36+00:00",
+            "update_date": "2022-01-22 08:22:21+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 3,
+        "fields": {
+            "legacy_id": "191120",
+            "filename": "arc-indefinite.it",
+            "song_title": "Indefinite Radiant",
+            "format": "it",
+            "file_size": 433947,
+            "channels": 17,
+            "instrument_text": "Siner\nVoice Mantra\nChurch Organ\nAtmospheric Sound\nTom Drum\nBass Drum\nSnare Drum\nTambourine\nCymbal\nBreakbeat\n\nBass\nGuitar Riff\nPalm Mute\nFlange Reverse Cymbal\nFlangenoise\nDistorted Bass 1\nDistorted Bass 2\nDistorted Bass 3\n\nSlapbass\n\n\n\nThis is the only unripped\nsample. Ain't I pathetic?\n\n:)\n\nHit shift and F9 for more\ninfo.",
+            "comment_text": "Indefinite Radiant\nby Arcturus\n\na Shattered Fixtures Release\n\nTime:  3:42\n\nWell, another song by me, and this one I pumped out in a relatively short\namount of time.  I finished about two weeks after I started, when normally\nI spend a month or more without finishing a song!  How odd.  I've been\ntracking with a fury recently.  I guess it may be because I don't know if\nI'll be able to track much in college, so I'd like to get as much done\nhere as possible.  Anywho, enjoy the song.\n\n-Arcturus\n\nContact Info\n\nMy homepage:  http:\/\/members.tripod.com\/~arcmeister\nMy e-mail:  arcmeister@pemail.net\nThe Shattered Fixtures homepage:  http:\/\/www.aspects.net\/~sf\/index2.html",
+            "hash": "ebb99f21e445a40e6a99799abdd4b794",
+            "pattern_hash": "c313e9643fddde3b",
+            "hits": "248",
+            "create_date": "2021-01-23 00:59:32+00:00",
+            "update_date": "2022-01-20 01:06:32+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 4,
+        "fields": {
+            "legacy_id": "801",
+            "filename": "k_univ.it",
+            "song_title": "Universe Electric",
+            "format": "it",
+            "file_size": 998472,
+            "channels": 32,
+            "instrument_text": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nS   A   N   D   M   A   N\n   K   O   S   M   I  C\n_________________________\n\nFor those of you who\nreally want to know why\nI changed my name from\nSiren, press Shift F9.\n\nFor those who don't care,\nlisten and enjoy the\nmusic. :)\n_________________________\n\ncontact me:\n\nalec@citcom.net\n\n_________________________\n\n   \"Universe Electric\"\n\n        3rd place\n\n    Music Contest 4\n_________________________",
+            "comment_text": "Hi there,\n\nFirst there was Chromatic Dragon, then there was Siren of Kosmic, now\nthere's Sandman. Why the change? Chromatic Dragon was a mouthful, and\nSiren wasn't me. It just wasn't. After reading a DC Comics series called\n\"The Sandman\" I realized that I'd rather influence people's dreams than\nlure them into jagged rocks with my alluring song. :)\n\nBelieve me, this is the LAST time the name will change. It is Sandman, and\nin future will probably just be Alex to my friends. I do apologize for the\nchange, but it had to be done. See you in '97! As my pal basehead would\nsay, \"peace\"...\n\n\n                                -Sandman\/KFMF\n                                  (Alexander Brandon)",
+            "hash": "921a7f65a8107252abc1b79880e829be",
+            "pattern_hash": "3409b04ae6f6aae1",
+            "hits": 3620,
+            "create_date": "1998-06-27 19:00:00+00:00",
+            "update_date": "2022-01-22 09:39:10+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 5,
+        "fields": {
+            "legacy_id": "32385",
+            "filename": "ASTRAY.S3M",
+            "song_title": "Astraying Voyages",
+            "format": "s3m",
+            "file_size": 719904,
+            "channels": 25,
+            "instrument_text": "(c)   Purple Motion\n          1994\nAstraying Voyages-compomix\nfor A95 - 1995\n\n\nDon't be swallowed by grey.\nLet your blackness shine.\nLike a distant star -\nAt the edge of the universe\n\nCast your light upon the\nworld.\nSet your mind on the\nvoyage.\nOh, so astraying..\n\n---------------------------\nGreetz must go to skaven +\nlizardking, whose samples\nI've ripped..  approx. 70%\nof the samples sampled by\nme..\n---------------------------\n(from order 32 to 42 some\nvariation...)\n\nFutureCrew\/Plant\/FM",
+            "comment_text": "",
+            "hash": "830afd83a66db263e15d412f9bdae62d",
+            "pattern_hash": "8005f94c16ae922d",
+            "hits": 31894,
+            "create_date": "1997-01-01 03:37:50+00:00",
+            "update_date": "2022-01-21 17:05:51+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 6,
+        "fields": {
+            "legacy_id": "32496",
+            "filename": "a-liab.it",
+            "song_title": "Leaving it All Behind",
+            "format": "it",
+            "file_size": 4781883,
+            "channels": 13,
+            "instrument_text": "Oboe\nOrchestral Harp\nCadenza strings\nSteinway grand\n\n\n\n\n\n\n\n\n\n\n\n\n\nLeaving it All Behind\nby Arcturus\n\nSee comments for more\ninfo",
+            "comment_text": "Leaving it All Behind\n4:36\n\nby Arcturus\n\nI've been home from Argentina for four months now, and this is the first\nsong that I've released.  Since I'm not a very well known trakcer in the\nscene, few people know that I was gone.  Well, I was a missionary in\nArgentina for two years.  I must say that the song turned out quite\nnicely. It gets a little crowded at times, but I'm too lazy to take care\nof it :)\n\nI apologize for the file size, for a mod, this is pretty big, but the\nsound quality more than makes up for it.  For me, it sounds really bad in\nImpulse Tracker, but it sounds great in WinAmp.  Modplug does a good job\nof playing it as well, not quite as good as WinAmp, but very close.\n\nPeople who have heard this have commented that it sounds a lot like the\nopening theme of The Legend of Zelda:  Ocarina of Time.  After comparing the\ntwo, I noticed that there are quite a few similarities, however, when I wrote\nthis, I hadn't played that game in about three years.  Maybe I was subconsciousl\ninfluenced by the music, but I think the parts that sound similar to that aren't\nthe best moments in this tune.\n\nSo, what's the significance of the title?  Not much, really.  When I\nlistened to it, it just reminded me of someone being on a bus, or train,\nor plane, leaving some place behind them, never to return.  Perhaps I\nunconsciously wrote a song about my departure from Argentina, although I\nmay return there some day.\n\nAnyway, I hope you enjoy this.  Here's my contact information.\n\nArcturus (Mark Abersold)\nhttp:\/\/arcturus.rooms.rubberrooms.net\/\nICQ:  6570208\nemail:  mabersold@yahoo.com\n\nCopyright (C) 2001 by Mark Abersold.  All rights reserved.",
+            "hash": "d61adf22920ab2b2808dee0ffbdeee7d",
+            "pattern_hash": "dd21a5e0a0c207ef",
+            "hits": 5265,
+            "create_date": "2002-06-01 15:35:16+00:00",
+            "update_date": "2022-01-21 23:20:45+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 7,
+        "fields": {
+            "legacy_id": "33907",
+            "filename": "arc-solitude.it",
+            "song_title": "Solitude",
+            "format": "it",
+            "file_size": 602820,
+            "channels": 11,
+            "instrument_text": "Fingered Bass (Sub)\nSlap Bass (Sub)\nSiney Thing\nelecgtr\nelecgtr2\nChord 1\nChord 2\nChord 3\nTin Breakbeat\nChord Dark\nChord Light\nLoud Snare\nJDBEAT1.SND\nAcid 1\n     2\n     3\n     4\n     5\n     6\n     7\n     8\n     9\n     0\nDark Choir             Pm\n\nSiney Thing\nRezonatic by me\n\nby Arcturus\nof Shattered Fixtures\n\nSample Credits:\n1 and 2 by Subliminal\n5 by Leviathan\n10 and 11 by Siren\n14-23 I think by Necros\nand 27 by ME!\n\nIf you use my sample, be\nsure to give me proper\ncredit for it! :)\n\nshift and f9\n\nAll the other samples:\nI don't know who the\nauthor is.  But thanks!",
+            "comment_text": "Solitude\nby Arcturus\n\nWhat is it with me and short songs as of late?  This one is just over 3\nminutes.  Ah, who cares?  I guess \"An Arcturus Christmas\" was a pretty\ngood length.  Here is some contact info:\n\nMy web page:  http:\/\/members.tripod.com\/~arcmeister\nShattered Fixtures:  http:\/\/members.aol.com\/Flaschberg\nMy email adress:  arcmeister@pemail.net\n\nGreets go out to:  Me.  And a few other people.  :)\n\n-Arcturus of Shattered Fixtures",
+            "hash": "85968f7fc0fc04c3a71681cac46db4dd",
+            "pattern_hash": "b234cafc758e1543",
+            "hits": 2036,
+            "create_date": "2002-06-09 22:13:54+00:00",
+            "update_date": "2022-01-20 09:36:47+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 8,
+        "fields": {
+            "legacy_id": "34654",
+            "filename": "CTGOBLIN.S3M",
+            "song_title": "Catch that goblin!!",
+            "format": "s3m",
+            "file_size": 481939,
+            "channels": 12,
+            "instrument_text": "HitSello.Lower\nHitStrings.Lower\nBigPizzicato.2.Warm\nHiStrings.HiQual\nXylophone.1\nFlute\nBrass-hi\nMass Orchestra.Brass&Kettle\nKettleDrum.5.Traditional\nKettleDrum 3.Hard\nTriangle\nLowClarinet\nSynth Pizzicato\nSelloEnsemble\nClearCymbal\n\n\n\n\n\n(C) Skaven \/ Future Crew\n\n -- so much for the\n instruments - let's move\n to the sound effects\n department...!\n\n   |\n   v\n\nCuckoo\nBirds.loop\nBirdy.1\nBirdy.2\nRingWhistle\nBelch (C) Mika Tuomi\nCreak\nBoingy Boingy!\nBang (toy gun style)\nKlanng!\nHabada-habada\nShattering glass.small\nSplosh\nScreamin' Wheels.loop\nRinga-Dinga-dinga-etc\nChink!\nGremlins laugh\nScreamin' drama queen\nBell + horn whistle\nSound FX 3...\nSnortt\n\n Composed for the Assembly\n 1995 multichannel compo.\n\n ...so, guys, this MIGHT be\n my last contribution to\n the Assemblies, ever! Make\n sure you enjoy this tune\n thoroughly, otherwise it's\n all gone to waste!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n Voi peikkoset...\n ---Danny Elfman rules!",
+            "comment_text": "",
+            "hash": "d4534b812dbc92848c1e1e7b65375402",
+            "pattern_hash": "8ee94391288263a7",
+            "hits": 75762,
+            "create_date": "1997-01-01 03:47:20+00:00",
+            "update_date": "2022-01-22 15:06:02+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 9,
+        "fields": {
+            "legacy_id": "39954",
+            "filename": "crys_klf.s3m",
+            "song_title": "Crystalline Tears",
+            "format": "s3m",
+            "file_size": 211136,
+            "channels": 11,
+            "instrument_text": "\n\n  Tune composed by Nemesis\nof Renaissance and KLF.\n\n\n\n  Here's my first new tune\nin a while.  I guess I can\nthank Basehead for provid-\ning the inspiration by\nwriting all those piano\ntunes which I love so much,\nand find myself humming\nall the time.  Also thanks\nto C.C.Catch for being a\npal, and to all my friends\non IRC.\n\n\nNemesis -\/- [Ren-94!] [KLF]\n  email: nemesis@crl.com\n\n\n  I think I should have\nprobably extended the mello\npart in patterns 12 and 13,\nbut I was in a hurry to\nget my first KLF tune out.\n\n(c)1994 w00p music",
+            "comment_text": "",
+            "hash": "9e06bd75b89a55833a05956cfc18f7c1",
+            "pattern_hash": "a2398d6749bf7b9d",
+            "hits": 1779,
+            "create_date": "2001-09-26 16:08:48+00:00",
+            "update_date": "2022-01-22 13:37:27+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 10,
+        "fields": {
+            "legacy_id": "42654",
+            "filename": "flowers.it",
+            "song_title": "flowers in the abyss",
+            "format": "it",
+            "file_size": 1226736,
+            "channels": 38,
+            "instrument_text": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n(c) basehead & hunz \/ fm\n\n      mail fm@fm.org",
+            "comment_text": "",
+            "hash": "32b3865bfe407f77ab68c2249444f3a0",
+            "pattern_hash": "8bcd4fad14e90665",
+            "hits": 4661,
+            "create_date": "2000-12-11 14:54:36+00:00",
+            "update_date": "2022-01-21 07:01:01+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 11,
+        "fields": {
+            "legacy_id": "43791",
+            "filename": "glowbug.s3m",
+            "song_title": "glow bug",
+            "format": "s3m",
+            "file_size": 490688,
+            "channels": 16,
+            "instrument_text": "(c) basehead \/ fm 1995\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nsome samples and a few of\nthe patterns this was based\non are by: supernao\/vd-flt\nwerd man -----^\ncontact: bh@axs.net\npeace peace peace peace ...",
+            "comment_text": "",
+            "hash": "d3c704eb8fd81c5db695151c93ac6232",
+            "pattern_hash": "a3ae8bfedbd1dc70",
+            "hits": 8797,
+            "create_date": "1997-01-01 04:11:23+00:00",
+            "update_date": "2022-01-22 16:14:45+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 12,
+        "fields": {
+            "legacy_id": "44366",
+            "filename": "ICEFRONT.S3M",
+            "song_title": "Ice Frontier",
+            "format": "s3m",
+            "file_size": 235521,
+            "channels": 8,
+            "instrument_text": "Titan.Horn\nMetal.Bass 1\nMetal.Bass 3\nMetal.Bass 2\nBigBass.3.loop\nCosmoSynth.Major\nCosmoSynth.Minor\nBellVoice.WTSynth\nJungle-Track.CGC.Looped\nACGuitar.2.simple\nTitan.Horn.Reverse\nBrassSynthLead.korg\nHardTech.HiHat\nHallBaseDrum.MIX.BD12+HD1\nSlamDrum.3.Reverb\nSynthBD.2.Chain\nTambourine.2\nAnother Cymbal\nPowerPercussion.Reverb\n\n  Komposed by Skaven\/FC\n\n  I can't seem to think\n  straight in this heat\n  and moisture... That's\n  why this ended up short.\n\n  Greetings go to:\n\n  - C.C.Catch: Keep up the\n    good work, dude...!\n\n  - Vogue: Ambient Power\n    still makes me shake!\n\n  - Purple Motion: How does\n    it feel to be the best?\n    I still can't beat you!\n    ;-)\n\n          - OK -   (not!)",
+            "comment_text": "",
+            "hash": "e0597bb0db35e9734cf6b6f5d262aa0a",
+            "pattern_hash": "391aff43c17fe1a5",
+            "hits": 17928,
+            "create_date": "2000-07-28 12:56:55+00:00",
+            "update_date": "2022-01-22 05:50:50+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 13,
+        "fields": {
+            "legacy_id": "45655",
+            "filename": "infinity.s3m",
+            "song_title": "'infinity' - necros\/khyron",
+            "format": "s3m",
+            "file_size": 470144,
+            "channels": 9,
+            "instrument_text": "        Composed By\n      Khyron \/ (\u2524CiD\n  Necros \/ Psychic Monks\n\nFor the Assembly '94 Multi-\nChannel Music Competition\n\nBig thanks goes out to\nNemesis \/ Renaissance",
+            "comment_text": "",
+            "hash": "95090e47f5f23096fda59f34f63dcdee",
+            "pattern_hash": "36073b0002f82740",
+            "hits": 13561,
+            "create_date": "2000-07-28 12:56:56+00:00",
+            "update_date": "2022-01-22 07:00:38+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 14,
+        "fields": {
+            "legacy_id": "46469",
+            "filename": "jt_911.xm",
+            "song_title": "Nine One One",
+            "format": "xm",
+            "file_size": 973769,
+            "channels": 28,
+            "instrument_text": "      NINE ONE ONE\n       composed by\n   Jeroen Tel (WAVE)\nManiacs of Noise & FM\n(C) 1997 Jeroen G. Tel\n\n    MUSIC CONTEST 5\n   VETERAN #1 TUNE!\n In 1996 I also ranked\n    #1 in the Veteran\n          section of\n     Music Contest 4\nwith 'Pools of Poison'\n   If I rank #1 in the\nVeteran section of MC6\nFree beer for everyone\n--------------------\n     All rights of the\nproducer and the owner\nof the work reproduced\nreserved. Unauthorized\n      copying, hiring,\n       lending, public\n     performance and\n  broadcasting of this\n XM module prohibited.\n--------------------\n  Contact info:\n  Jeroen Tel (WAVE)\n  Email: mon@xs4all.nl\n  Harmoniestraat 77\n  5702 JD Helmond, NL\n--------------------\n       Big hello's to:\n\"the Music Contest 5\n         organisers.\"\n  Thomas E. Petersen\n    (Laxity of M.o.N.)\n    Thomas Mogensen\n      (Drax of M.o.N.)\nAll you guys at #trax!\n(too many to mention)\nKim Jensen & the rest\nof the Innerloop gang.\nThe dudes at Funcom.\n(you know who you are)\n    HI also to my pals\n of Five Musician (FM)\n  When I'm typing this\n  it's already the 3rd\n     of March 1998...\nI've been postponing\n         writing this\n    sampletext bit for\n       too long... (:P\n--------------------\n    More greetings to:\n          Analogue\n Rick Hoekman (jawel!)\n   My brother Kees (!)\n  (your music RULEZ!)\n    The #c-64 people!\nWitan Entertainment BV\n   and everybody else\n--------------------\n     Maniacs of Noise\n      (Download) Site\n   www.xs4all.nl\/*mon\n    * = the tilde sign\n\n  Five Musicians Site:\n         www.fm.org\n--------------------\n         Scene info:\n   Jeroen Tel (WAVE)\n        is hooked to\nManiacs of Noise (MoN)\n   Five Musicians (FM)\n     Analogue (demos)\n--------------------\n       Let's fill this\n   boring empty space\n      with \"stuff\"....\n\n    My favorite color:\n       (hex) 00FFDC\n     My favorite beer:\n         Bavaria 8.6\n--------------------\nSome things I wrote on\n  \"my walls\" over the\n            years...\n\n \"Some words don't\n   have to be spoken\n   to be true.\" (1996)\n\"People are like black\n  Holes; the more they\n  have, the more they\n  want.\" (1993)\n\"Words are like boats;\n  They arrive at their\n  destination or sink\"\n  (1993)\n\"Who isn't strong,\n  must be smart,\n  but who isn't smart,\n  must be stupid\" (:P\n  (1993)\n\"You can't get wise\n  by decision\" (1995)\n--------------------\nOkay, enough blahblah\n           for now...\n--------------------\n PEACE to the world...\n--------------------\n   WAVE loves SHINE\n--------------------\n (this space \"to let\")\n   before I sign off,\n   I'll leave you with\n   some brainfood:\n  \"Who can PROOVE\n         1+1=2 ?\"\n--------------------\n    Started: 7-7-1997\n  Finished: 15-7-1997\n   ^^^^^^^^^~~^^^~~^^^\n   ^^^   ^^^~~^^^~~^^^\n   ^^^^^^^^^~~^^^~~^^^\n        ^^^^~~^^^~~^^^\n   ^^^^^^^^^~~^^^~~^^^\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n  NL=Netherlands",
+            "comment_text": "",
+            "hash": "38a55733e653064021577a0edf85cc7b",
+            "pattern_hash": "d8c0db028fee0183",
+            "hits": 26145,
+            "create_date": "2000-07-28 11:30:27+00:00",
+            "update_date": "2022-01-21 07:06:54+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 15,
+        "fields": {
+            "legacy_id": "46472",
+            "filename": "jt_breez.xm",
+            "song_title": "Mountain Breeze",
+            "format": "xm",
+            "file_size": 629641,
+            "channels": 24,
+            "instrument_text": "   MOUNTAIN BREEZE\n        composed by\n  JEROEN TEL (WAVE)\n\n           (C) 1996\n     Maniacs of Noise\n\n\n     All rights of the\n    producer and the\n   owner of the work\n reproduced reserved.\n Unauthorised copying,\n      hiring, lending,\npublic performance and\n  broadcasting of this\n         XM module\n         prohibited.\n\n   contact: Jeroen Tel\n   Harmoniestraat 77\n   5702 JD Helmond\n   the Netherlands\n   mon@xs4all.nl\nThis XM module is best\n   heard on the Gravis\nUltrasound soundcards\n\n    Regards INOAA to\n  Thomas E. Petersen\n     Jogeir Liljedahl\n         Kim Jensen\n       Martin Galway\n        Rob Hubbard\n          Tim Follin\n              Drax\n      BASEHEAD????\n      BASEHEAD ! ! ! !\n                 :)\n            Necros\n         Mentalfloss\n             Floss\n          Leviathan\n          Ms Saigon\n  SKIE SKIE SKIE SKIE\n             Diablo\n     #TRAX & SCOOP\n         All others...\n         Thanks to:\n   My family & friends\n\n--------------------\nPEACE TO THE WORLD\n--------------------",
+            "comment_text": "",
+            "hash": "807f5aa5452e9395f7284ae7a17a0d59",
+            "pattern_hash": "cee76c4fde8c1497",
+            "hits": 5587,
+            "create_date": "2000-07-28 11:30:27+00:00",
+            "update_date": "2022-01-21 02:58:02+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 16,
+        "fields": {
+            "legacy_id": "46502",
+            "filename": "jt_pools.xm",
+            "song_title": "Pools of Poison",
+            "format": "xm",
+            "file_size": 700000,
+            "channels": 22,
+            "instrument_text": "   POOLS OF POISON\n        composed by\n  JEROEN TEL (WAVE)\n\n           (C) 1996\n     Maniacs of Noise\n\nMC4 Veteran #1 tune :)\n  Special thanks must\n      go to all those\n       who gave me\n          feedback\n  regarding this tune.\n\n            signed,\n    Jeroen Tel (WAVE)\n     All rights of the\n    producer and the\n   owner of the work\n reproduced reserved.\n Unauthorised copying,\n      hiring, lending,\npublic performance and\n  broadcasting of this\n XM module prohibited.\n\n***** contact *****\n   Jeroen Tel (WAVE)\n   Harmoniestraat 77\n   5702 JD Helmond\n   the Netherlands\n   mon@xs4all.nl\n  Hello's INOAA go to:\n          #TRAX (:P\nWitan Entertainment BV\n      Scoop Designs\n             Focus\n      Dimaga Norway\n Funcom Prod. Norway\n             Dzine\n  Thomas E. Petersen\n   (Laxity \/ Vibrants)\n     Sequencer (NDV)\n              Drax\n      BASEHEAD????\n      BASEHEAD ! ! ! !\n            Necros\n         Mentalfloss\n   Dennisc (da Judge)\n Leviathan !#@$%&!@!*\n             Floss\n             Luvk\n     CD (!!$#%$#!%#!!)\n   Diablo (MEER BIER!)\n             Mondo\n             Lemm\n            GBlues\n               Axl\nk8to P <=here's my hat\n   Skie Skie Skie Skie\n           Godhead\n             Siren\n    GD (General Dodo)\n             Pulse\n            Malakai\n          Ms_Saigon\n             Leece\n           Phoenix\n          Jonathan\n               Ior\n          Subhuman\n            Zapper\n            No-XS\n    Dizzy (Track man!)\nDraggy (AHeHAehAEhe)\n          Daedalus\n             Aahz\n          Charlatan\n             Ryan\n           JTown\n          HeatWave\n      Future Assasin\n            Zodiac\n              Vizz\n           Rcramer\n           Mystical\n        SilverDragon\n            Mikpos\n     MickRip & Astrid\n                DD\n             Youth\n               Ami\n              Pet70\n            Yannis\n             Khyron\n               Zinc\n           B00MER\n            Imager\n            Mithril\n       Vegas & Saxy\n              Eliot\n              God\n            Human\n           Starf0x\n             Ozone\n          DkPrncess\n           BlackFox\n             Youth\n             XFyL\n              Argh\n             Rimbo\n            Pubert\n          Elemental\n             Quing\n          TigerHawk\n       Cruel Creator\n            Cardiac\n              Welti\n             VelluV\n          Aquafresh\n                IV\n           Maelcum\n              Jugi\n            Mikmak\n              Bert\n   (read sampletexts)\n**********************\n(: WAVE loves SHINE :)\n-----------------\n  Tracked for MC4\n    Veteran Compo\n     Won 1th prize\n-----------------\n     The original\n submitted version\n        had to be\nfree from any text\n to keep all judges\n     as neutral as\n         possible.\n-----------------\n ^^^ ^^^   ^ ^^^ ^ ^ ^\n ^_ ^ ^ ^ ^ ^ ^ ^^^ ^\n ^^^ ^ ^ ^^^ ^^^  ^  *\n\n     ^ ^ ^ ^^^ ^ ^ ^^^\n     ^ ^ ^ ^ ^ ^ ^ ^\n     ^ ^ ^ ^^^ ^ ^ ^^\n     ^ ^ ^ ^ ^ ^ ^ ^\n      ^ ^  ^ ^  ^  ^^^\n\n   Copyright 1996\n  Maniacs of Noise\n\n     ALL RIGHTS\n      RESERVED\n  Maniacs of Noise\n   was founded in\n           1987\n and has produced\n      Music & Sfx\n   for hundreds of\n      videogames\n on many platforms\n        worldwide\nMON also produced\n   Music & Sfx for\n      other media\n such as tv & radio\n        programs,\n  cd productions &\n      Commercials\n\n  Music Contest #4\n was organised by\n        Hornet at\n    ftp.cdrom.com\n Special regards to\n   Snowman & GD\n for taking care of\n  the organisation.\n~~~^^^ ^^^ ^ ^ ^ ^  ^\n~~~ ^  ^ ^ ^ ^ ^ ^  ^\n~~~ ^  ^^^ ^^  ^^   ^\n~~~ ^  ^ ^ ^ ^ ^ ^\n~~~ ^  ^ ^ ^ ^ ^ ^  ^\n^~~~~~~~~~~~~~~~^\n\n^~~~~~~~~~~~~~~~^\n\n^~~~~~~~~~~~~~~~^\n~^~~~~~~~~~~~~~^\n\n~^~~~~~~~~~~~~~^\n\n~^~~~~~~~~~~~~~^\n~~^^~~~~~~~~~~^^\n\n~~^^~~~~~~~~~~^^\n\n~~^^~~~~~~~~~~^^\n~~~^^^~~~~~ ~^^^\n\n~~~^^^~~~~~ ~^^^\n\n~~~^^^~~~~ ~~^^^\n~~~~^^^~~~~^^^\n\n~~~~^^^~~~~^^^\n\n~~~~^^^       ^^^\n~~~~~^^^^~^^^^\n\n~~~~~^^^^~^^^^\n\n~~~~~^^^^~^^^^\n~~~~~~^^^^^^^\n\n~~~~~~^^^^^^^\n\n~~~~~~^^^^^^^\n             ^^^\n             ^^^\n             ^^^\n        WARNING!\n             ^^^\n             ^^^\n             ^^^\n             ^^^\n    W A R N I N G !\n             ^^^\n             ^^^\n             ^^^\n             ^^^\nW  A  R  N  I  N  G  !\n             ^^^\n             ^^^\n             ^^^\n             ^^^\n    W A R N I N G !\n             ^^^\n             ^^^\n             ^^^\n             ^^^\n        WARNING!\n             ^^^\n             ^^^\n             ^^^\n             ^^^\n    W A R N I N G !\n             ^^^\n             ^^^\n             ^^^\n             ^^^\nW  A  R  N  I  N  G  !\n             ^^^\n             ^^^\n             ^^^\n             ^^^\n    W A R N I N G !\n             ^^^\n             ^^^\n             ^^^\n             ^^^\n        WARNING!\n             ^^^\n\n   For high Quality\n      Music & Sfx\n   for Multimedia &\n      Videogames\n Contact us today!\n   For high Quality\n      Music & Sfx\n   for Multimedia &\n      Videogames\n Contact us today!\n   For high Quality\n      Music & Sfx\n   for Multimedia &\n      Videogames\n Contact us today!\n   For high Quality\n      Music & Sfx\n   for Multimedia &\n      Videogames\n Contact us today!\n We can bring your\n   products to life.\n  For more info on\n Maniacs of Noise\n        contact:\nJeroen Tel (WAVE)\nmon@worldonline.nl\n*************\n** ^^^^^^ ^^^^ ^^^^ **\n** ^^ ^ ^ ^^ ^ ^^ ^ **\n** ^^ ^ ^ ^^^^ ^^ ^ **\n   For high Quality\n      Music & Sfx\n   for Multimedia &\n      Videogames\n Contact us today!\n We can bring your\n   products to life.\n  For more info on\n Maniacs of Noise\n        contact:\nJeroen Tel (WAVE)\nmon@worldonline.nl\n*************\n** ^^^^^^ ^^^^ ^^^^ **\n** ^^ ^ ^ ^^ ^ ^^ ^ **\n** ^^ ^ ^ ^^^^ ^^ ^ **\n   For high Quality\n      Music & Sfx\n   for Multimedia &\n      Videogames\n Contact us today!\n We can bring your\n   products to life.\n  For more info on\n Maniacs of Noise\n        contact:\nJeroen Tel (WAVE)\n    mon@xs4all.nl\n*************\n** ^^^^^^ ^^^^ ^^^^ **\n** ^^ ^ ^ ^^ ^ ^^ ^ **\n** ^^ ^ ^ ^^^^ ^^ ^ **\n^ ^ ^^^ ^   ^   ^^^  ^\n^ ^ ^   ^   ^   ^ ^  ^\n^^^ ^^  ^   ^   ^ ^  ^\n^ ^ ^   ^   ^   ^ ^\n^ ^ ^^^ ^^^ ^^^ ^^^  ^\n\n^ ^ ^ ^^^ ^^  ^^   ^ ^\n^ ^ ^ ^   ^ ^ ^ ^  ^ ^\n^ ^ ^ ^^  ^^  ^ ^  ^ ^\n^ ^ ^ ^   ^ ^ ^ ^\n ^ ^  ^^^ ^ ^ ^^   ^ ^\n\n      What's a fly\n    without wings?\n          A walk.\nThe greetings-list\n has gotten so big,\n  I decided to use\n these sample-text\n      boxes too...\n       Smeghead\n           Cylus\n           Saxy\n           Beek\n         Trixter\n       Sreamager\n         Chuckb\n           Mako\n         Lagioto\n        Tsakuari\n         Archon\n        Supahfly\n         Prodos\n          Parity\n          Howler\n         HellFire\n        OxideMan\n           Meat\n         Cygnus\n           Berk\n          Balrog\n          Keruoa\n           Stein\n           Jase\n          Stalker\n       Spraggles\n            Toc\n        MrFusion\n         Antichr\n        Acidrain\n          Silvein\n           Ashiq\n          Greebo\n            3NO\n          Rillalyn\n   Insightful_Idiot\n         Uranium\n           Sage\n           Pyro\n        Phoenix\n       Bohemoth\n          Digital\n          Shade\n         Andeeh\n        Cuthalion\n     Rob Hubbard\n    Martin Galway\n        Tim Follin\n      Ben Daglish\n\n           WAVE\n  End of greetlist!\n    If I forgot YOU\n   in this list I just\n   got confuzzled...\n              :)\n        Bazzheed\n       Newcrowz\n     Meentallflozz\n        Dennizzk\n#@&!$&!#@!$!@#!$!*\n Flozz: Music rules!\n   luvk: mr. Brainz\n!@#(*!@#)(!@()!*#!@\n       GOED DAK!\nMondo:ehm... Mooh?\n       Lemm(ing)\n  What kinda noun\n is that? Lemming...\nI lemminged through\n      the streetz...\n         Read the\n    Sample-texts\nfrom Instrument 21\n onwards for more\n        greetings.\n\n  Try to figure out\n what's encrypted\n in the keymapping\nfrom instrument 20!\nMail the answer to:\nmon@worldonline.nl\n  The first correct\n   entries receive\n        one of the\n  Maniacs of Noise\n    CDs of choice.\n       good luck!\nWe can't mail about\n        the result.\nOnly winners will be\n  notified by Email.",
+            "comment_text": "",
+            "hash": "ea293797dc3f04bdd5ba4269909736f3",
+            "pattern_hash": "e2f1a76831946796",
+            "hits": 10463,
+            "create_date": "2000-07-28 11:30:26+00:00",
+            "update_date": "2022-01-22 06:04:36+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 17,
+        "fields": {
+            "legacy_id": "47034",
+            "filename": "K-dust.s3m",
+            "song_title": "Dust to Dust - by Leviathan",
+            "format": "s3m",
+            "file_size": 404628,
+            "channels": 16,
+            "instrument_text": "\n\n        Dust to Dust\n\n            ---\n\n         Leviathan\n\n    Renaissance\/Kosmic\n\n\n Samples by: Necros, Ryan\n   Cramer, myself, and\n   various others\n\n Contact at:\n\n  d2@mcs.com\n\n Completed on 2\/23\/95 after\n   20 hours of work\n\n Info:\n\n   Dust to Dust definately\n is one of my best tunes\n yet. I really think the\n amount of time I put into\n it paid off. Anyways, I\n love how this tune flows,\n and especially like the\n middle transition. I\n hopefully will never be\n forced to return to the\n typical demo-music genre,\n since I really like doing\n tunes of this style.\n   This is my Kosmic Free\n Music Foundation debut\n release! I'm glad to be\n a member.\n\n Greetings to Renaissance,\n Kosmic, Usul, and Guitar.\n\n   If you like the tune, or\n if you have any questions,\n feel free to email me.\n Later!\n\n\n              - Leviathan -",
+            "comment_text": "",
+            "hash": "679b850d4e5f2f53c699ef140ce7d0c7",
+            "pattern_hash": "38c35d4a34e385ec",
+            "hits": 12572,
+            "create_date": "1997-01-01 04:21:01+00:00",
+            "update_date": "2022-01-22 16:18:47+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 18,
+        "fields": {
+            "legacy_id": "47092",
+            "filename": "K_emerld.s3m",
+            "song_title": "Emerald Visions - Leviathan",
+            "format": "s3m",
+            "file_size": 672678,
+            "channels": 14,
+            "instrument_text": "\n\n      Emerald Visions\n\n            by\n\n   Leviathan - Ren\/Kosmic\n\n\n      A Kosmic Release\n\n    completed on 1\/11\/96\n\n\n\nEmail:\n  ac@interaccess.com\n\n  A few samples by Zapper,\nNecros, and Duellist, but\nmost are original. Guitar\nsamples made with a\nWashburn hollow-body and\nvarious effects pedals.\nDrum samples from various\nsample CDs and a K2000.\n\n  \"Emerald Visions\" is my\nfirst release of 1996, and\nit seems I've now started a\ntradition of outdoing all\nmy past work and trying to\nstart over with each new\nyear. I must send a warning\nto those who only enjoy my\nlighter tunes, as I plan to\nexplore a few new styles\nthis year and hopefully put\nout some excellent work. My\nlast few releases were\nprogressing in a bit of a\nbland direction, but I\nthink I really tapped into\nsomething with this track.\n\n  The majority of the song\nwas tracked in about three\ndays, with support and\nguidance from Siren, who\nwas very helpful as I tried\nto piece things together.\nI'd really like to hear\nwhat you think of this\nwork, as I spent a great\ndeal of time working on it.\nI think for once I got some\nmemorable melodies written,\nbut that's for you to\njudge.\n\n  Special thanks to Lemm\nfor helping me out with the\ntitle.\n\n  Enjoy the tune..\n\n\n              - Leviathan -\n\n\n\nCopyright 1996 Andy Carlson",
+            "comment_text": "",
+            "hash": "990d5e8effd939a54292cf4d89e69dfa",
+            "pattern_hash": "d2d81ebc04d6e7cd",
+            "hits": 7429,
+            "create_date": "1997-01-01 04:21:41+00:00",
+            "update_date": "2022-01-22 16:18:35+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 19,
+        "fields": {
+            "legacy_id": "47267",
+            "filename": "k_mercy.s3m",
+            "song_title": "Merciful Lie",
+            "format": "s3m",
+            "file_size": 862908,
+            "channels": 16,
+            "instrument_text": "S      I      R     E     N\n___________________________\nK    O    S     M    I    C\n___________________________\n\n\n_MERCIFUL_\n          _LIE_\n___________________________\n\n...for those of you who\nhave lives that cut like\nan infinite edge, try to\nslip into a smoother world.\n___________________________\n\nPiano riff in patterns 25-\n26 from \"For a friend\" by\nThe Communards.\n___________________________\n\nDedicated to those I love,\nand especially to those I\nhave hurt whom I love.\n___________________________\n\nSaxophone and synths from\nSoundwave and TD\n\nDrums from Basehead, Sirrus\nand Necros\n\nPianos from Zapper and\nNecros\n\nVoice by Siren",
+            "comment_text": "",
+            "hash": "5861121c704c4af28298bd3e627d4a38",
+            "pattern_hash": "980703c3003f10ff",
+            "hits": 5862,
+            "create_date": "1997-01-01 04:22:10+00:00",
+            "update_date": "2022-01-21 15:05:16+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 20,
+        "fields": {
+            "legacy_id": "48952",
+            "filename": "NOFACE.S3M",
+            "song_title": "He Has No Face",
+            "format": "s3m",
+            "file_size": 201643,
+            "channels": 12,
+            "instrument_text": "D50-Heavy.loop\nCleanSynthLead.Decay\nD50-Heavy.dist3\nVoice.mantra\nDesert\nSynthBass.loud.WHUMP\nSetLed.1\nSetLed.2\nSetLed.3\nSetLed.4\n\nDepecheMetal\nMetalTune.loop\nMetalHit.2\n\n\n\nHiHats.clockmaker\nEP2.Mohawk.bassdrum\nEP2.Mohawk.snare\nToughTom.deeper\nHardTech.HiHat\n\nWeeBrass.Minor\nWeeBrass.Major\nWeeBrass.Sus2\n\n\n  Composed by Skaven \/ FC\n           6\/95\n\n\n  Made just for money. They\n got a  kine  of  a  shitty\n attitude but they pay well\n\n  ONE of  the  heads  is  a\n direct copy  from the book\n \"Dynamic Light and  Shade\"\n by Burne Hogarth. The rest\n are  drawn  by hand  after\n intense   study  in  human\n anatomy.  Guess which  one\n of them is the copy!",
+            "comment_text": "",
+            "hash": "aa8175a6cb039128babae8d0883f7cac",
+            "pattern_hash": "9fb1165fa01f4cb6",
+            "hits": 11006,
+            "create_date": "1997-01-01 04:29:44+00:00",
+            "update_date": "2022-01-22 06:22:54+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 21,
+        "fields": {
+            "legacy_id": "49040",
+            "filename": "n-drift.it",
+            "song_title": "drift v1.1",
+            "format": "it",
+            "file_size": 329069,
+            "channels": 11,
+            "instrument_text": "bass piano\nhigh piano\ntechnobass\njunosynth minor\njunosynth major\nsquare wave\nsuttle phlewty\nnot so suttle sinewave\nbassdrum\nclapsnare\nhihat\nhihatopen\ncrash\ncrescendo\ntomtom\nclonk\noverused hit\nminor hit\n\n-  nemesis \/ cataclysm  -\n\nshift-f9 for message\n\ndrift v1.00 of course was\nmy entry into mc3, which\ndid alot better than I\nexpected it to.  Cheezy\ndemo siner music isnt\nusually voted 3rd in a\nfield of 64 songs, you\nknow.  Ah well, long live\nthe mighty demotune!\n\nsamples pilfered from:\npm,bh,rc,nec,nuke,cccatch\nand bigjim ... I know I\nforgot someone, I always\ndo.\n\ncontact me:\nnemesis@crl.com\n+1(415)382-0161\n(ask for andy. :P)",
+            "comment_text": "hmm, I still think the bass is a little too wild in the verse part.  it\nsounds a bit screwy, like I had drank too much caffine or something.\nthere are a few changes in this little update.  the sinebass is a bit\nsofter now, since before it was definetly too loud. :P  also, I added some\nvariation to the drum tracks.  before it was just repeating the same thing\nover and over every pattern, haha. :P  I tried to pan some parts, but\nsomehow it got fucked up... its a good idea just to play it in mono. :)\n\n - Andy",
+            "hash": "ff445aca7c5c12200a04f7afe42a9d67",
+            "pattern_hash": "a0a97d92811d681e",
+            "hits": 1929,
+            "create_date": "2001-08-20 16:28:18+00:00",
+            "update_date": "2022-01-21 15:39:05+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 22,
+        "fields": {
+            "legacy_id": "49136",
+            "filename": "n-twi.it",
+            "song_title": "twilight groove",
+            "format": "it",
+            "file_size": 1000000,
+            "channels": 26,
+            "instrument_text": "rezonating bass\nsinebass\nfatbass\ncelestia\nrhodes bell\nchoral synth\nsquare lead\nguitar lead\nstrings+chorus pad\nphat pad\n\nbass drum\ntechno snare\nprocessed snare\ntight snare\nbell perc\nstrange perc\ntambourine\nclicky\n\nkowbell\nbongo\n\nhihat closed\nhihat medium\nhihat open\nklapz\nthick tomtom\nlow tomtom\ncrescendo cymbal\n\nbugz\nmr. wilder\nmr. rimmer\n\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\n       by nemesis\n   cataclysm.analogue\n       miraculous\n\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\u00dc\n\ntune written in summer97\n    10th place, MC5\n\nsamples pilfered from:\nryan cramer,cccatch,hunz,\ncaptain,zapper,mellow-d,\nwave,rimbo's vocal cords,\nthe kurzweil archive,\ngene wilder's vocal cords\nmy little sisters casio\nsynth, and a roland d50.\n\nno story this time, just\nmusic.\n\n\"writing about music is\nlike dancing about\narchitecture.\"\n  - frank zappa\n\nof course, i write about\nmusic from time to time,\nso i shouldnt really use\nthis quote anywhere, but\nwho cares.  zappa quotes\nrule.",
+            "comment_text": "",
+            "hash": "1e02799dc32c61ae536a3ad4a5d07156",
+            "pattern_hash": "2ac48594f0b4590d",
+            "hits": 1263,
+            "create_date": "2001-08-20 16:04:30+00:00",
+            "update_date": "2022-01-21 04:29:30+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 23,
+        "fields": {
+            "legacy_id": "49619",
+            "filename": "lv-sojrn.it",
+            "song_title": "Sojourn - Leviathan",
+            "format": "it",
+            "file_size": 469894,
+            "channels": 25,
+            "instrument_text": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n        \"Sojourn\"\n\n\n       composed by\n\n        Leviathan\n\n\n   an Analogue release\n\n         1\/18\/98\n\n   3 minutes 33 seconds\n\n\n\n\ncontact:\n  ac@interaccess.com\n\nsamples:\n  necros\n  basehead\n  hunz\n  original\n\nsong message:\n  hit shift-f9\n\n\n\n(c) 1998 Andrew Carlson",
+            "comment_text": "Well, here's your brief song message:\n\n        I'd like to thank everyone who encouraged me to come back into the\ntracking scene, and everyone who listened to all my betas of this tune\nwith helpful comments and suggestions.  It's undeniably better because of\nyou guys.  I'm hoping to track quite a bit in this upcoming year, and look\nforward to many projects with Analogue.\n\n        You can find me on the web at www.cen.uiuc.edu\/~ajcarlso, or via\nemail at ac@interaccess.com.  Feel free to let me know what you think;\nfeedback is greatly appreciated.\n\n        Thanks, and here's to a good 1998.\n\n        Andrew Carlson\n\n        Leviathan \/ Analogue",
+            "hash": "af849a5a107145564ac146dde386ab27",
+            "pattern_hash": "b2d59b6eda041b19",
+            "hits": 3261,
+            "create_date": "1998-12-09 03:11:02+00:00",
+            "update_date": "2022-01-22 16:18:49+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 24,
+        "fields": {
+            "legacy_id": "57604",
+            "filename": "snowdanc.s3m",
+            "song_title": "snow dancing",
+            "format": "s3m",
+            "file_size": 244834,
+            "channels": 8,
+            "instrument_text": "\n    *   composed by:  *\n   ***    basehead   ***\n  *****      of     *****\n *******     fm    *******\n*********         *********\n    *                 *\n       length - 5:32\n\n - -- --- ------- --- -- -\n     Merry Christmas!\n - -- --- ------- --- -- -\n\n this was originally done\n    in december '94 for\n imphobia magazine -- but\n since their music system\ndidn't support s3ms then, i\nhave had it sitting around\nhere.. and decided to give\nit to this disk almost a\nYEAR later (phew!).. but i\nhope you enjoy it anyway...\n\n(strange that i had x-mas\n greets and everything for\n x-mas '94 .. and now it's\n already past x-mas '95..\n ah well)\n\nps-this song was done when\n  i was in imphobia\/cascada\n\n\ncontact: bh@axs.net",
+            "comment_text": "",
+            "hash": "490399d66d5d73308cb1f2e7e86c1cf3",
+            "pattern_hash": "f9761c6ec651596c",
+            "hits": 1356,
+            "create_date": "2002-11-12 17:38:55+00:00",
+            "update_date": "2022-01-22 16:16:22+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 25,
+        "fields": {
+            "legacy_id": "57925",
+            "filename": "space_debris.mod",
+            "song_title": "space_debris",
+            "format": "mod",
+            "file_size": 347582,
+            "channels": 4,
+            "instrument_text": "SuperHyperBass\nBD1\nSD1\nZoh2.Minor\nChord1.Minor\nChord1.Major\nHup\nSoftShake\nChoir\nChord1.Arrested\n\nRezonatix3\nSawSynth.Major\nSawSynth.Minor\nSawSynth.Arrested1\nSawSynth.Arrested2\nSawSynth\nSynBrass",
+            "comment_text": "",
+            "hash": "d0e61283309c5d72a050d14fcb2e6704",
+            "pattern_hash": "4b6fe82b2f2d91d0",
+            "hits": 146505,
+            "create_date": "1997-01-01 04:41:47+00:00",
+            "update_date": "2022-01-22 14:28:28+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 26,
+        "fields": {
+            "legacy_id": "59344",
+            "filename": "stardstm.mod",
+            "song_title": "stardust memories",
+            "format": "mod",
+            "file_size": 153676,
+            "channels": 4,
+            "instrument_text": "composed & sampled by\n<+> jester\/sanity <+>\n^ all samples by me ^\nexcept #10 by ff\/pha.\nfor commercial musics\nwrite to this address\n<+> volker  tripp <+>\nin der ziegelheide 15\n429 bocholt - germany\n or dial this number\n* +49-(0)2871-14692 *\n\n\n\n\n\ntaken from the\nworld of commodore 92\ndemo by sanity.\nripped by\nmnemotron\/spt.\n\n\n\n\n\n\n\n\n\n(c) volker tripp 1992",
+            "comment_text": "",
+            "hash": "3e2716df273cddc097b28d5f1ffceef8",
+            "pattern_hash": "1f58e13c51ea86e9",
+            "hits": 43363,
+            "create_date": "1997-01-01 04:42:05+00:00",
+            "update_date": "2022-01-22 17:14:47+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 27,
+        "fields": {
+            "legacy_id": "59854",
+            "filename": "WHEN.S3M",
+            "song_title": "When the heavens fall",
+            "format": "s3m",
+            "file_size": 846302,
+            "channels": 13,
+            "instrument_text": "(c) Purple Motion \/ 1994\n     Future Crew\n\nthis is my contribution\nsong for the A94 multichnl\ncompo..\n13 channels used - 5.36min\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nUse ST3 to play this song.\n96% of the samples by me\nand Edge (used his Korg 03R\nsynthesizer)",
+            "comment_text": "",
+            "hash": "268feb71a291c15f3079761b5395a193",
+            "pattern_hash": "ec9405790a1c8e32",
+            "hits": 25085,
+            "create_date": "1997-01-01 04:48:47+00:00",
+            "update_date": "2022-01-22 14:57:34+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 28,
+        "fields": {
+            "legacy_id": "60395",
+            "filename": "2ND_PM.S3M",
+            "song_title": "UnreaL ][ \/ PM",
+            "format": "s3m",
+            "file_size": 600860,
+            "channels": 8,
+            "instrument_text": "By Purple Motion of\nFuture Crew 1993\nBig thanx to Skaven \/ FC\n\n\n\nGreeting : ----->\nKwisatzHaderachPurpleBandit\nLouisCrespoGreenJester\/S!P\nNicolasAymeTonedeaf\/Extreme\nLizardking&Vogue\/Triton\nToniVuoristo(CDs\/Samples)\nTimoFlinkDruid\/EMF\nALLMEMBERSOFTHEFUTURECREW\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nblank",
+            "comment_text": "",
+            "hash": "8a19a2cebf0e7ae3dcae38a6633bebb6",
+            "pattern_hash": "dbc7ec43d5ea59a2",
+            "hits": 283654,
+            "create_date": "2000-12-24 02:06:42+00:00",
+            "update_date": "2022-01-22 17:06:12+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 29,
+        "fields": {
+            "legacy_id": "63700",
+            "filename": "zengardn.s3m",
+            "song_title": "the zen garden",
+            "format": "s3m",
+            "file_size": 561394,
+            "channels": 16,
+            "instrument_text": "(c) basehead \/ fm 1996 (c)\n\n composed for tran's demo\n        \"luminati\"\n\n         (09:16)",
+            "comment_text": "",
+            "hash": "eef764b00ed3272af92e1a32d631c873",
+            "pattern_hash": "13d4381b12bc800d",
+            "hits": 11736,
+            "create_date": "1997-01-01 04:51:15+00:00",
+            "update_date": "2022-01-22 17:35:08+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 30,
+        "fields": {
+            "legacy_id": "170384",
+            "filename": "siren_-_incubuss.it",
+            "song_title": "Incubuss",
+            "format": "it",
+            "file_size": 887615,
+            "channels": 35,
+            "instrument_text": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\"the expansion widens\nand floating becomes\na sensation, riding on\nthe red manes of fury's\nsteed, the deep forest\nhues of emerald temples,\nand the fading volumes\nof reality, captured\nin bubbles so frail\nthey might split with\nthe blink of an eye...\"\n\na wandering bewilderment\ncalled a dream can carry\nthe mind beyond every\npossible imagination.\n\n     =-=-Incubus=-=-=-=\n\n Alexander Brandon, 1997\n\n another journey from\n Juni Digital Music\n\n www.junimusic.com\n\n email:\n   alex@annapolis.net\n   rudgep@rpi.edu\n\n   samples from myself,\n   necros, sirrus,\n   basehead, WAVE, and\n   others",
+            "comment_text": "",
+            "hash": "a72026f4210fec5ee9df7a7a9b772d28",
+            "pattern_hash": "9aa012483ec950bc",
+            "hits": 2298,
+            "create_date": "2011-02-21 13:34:24+00:00",
+            "update_date": "2022-01-22 16:57:20+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 31,
+        "fields": {
+            "legacy_id": "190946",
+            "filename": "basehead_and_hunz_-_digital_ritual.it",
+            "song_title": "digital ritual",
+            "format": "it",
+            "file_size": 871637,
+            "channels": 64,
+            "instrument_text": "\n\"Digital Ritual\"\n\n  by\n\nBasehead + Hunz\n(Dan Grandpre +\nHans Van Vliet)\n\n\nA Music Contest 5\nveteran entry.\n5th place!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n     \u2219 PutInst 4.0 \u2219",
+            "comment_text": "",
+            "hash": "def80ccbec8107eaf198746e729b8854",
+            "pattern_hash": "274ab957d27da3b0",
+            "hits": 396,
+            "create_date": "2020-12-29 22:36:34+00:00",
+            "update_date": "2022-01-22 16:13:53+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 32,
+        "fields": {
+            "legacy_id": "191103",
+            "filename": "k_sgroov.it",
+            "song_title": "\"Spacegroove\"-lev&mickrip",
+            "format": "it",
+            "file_size": 828323,
+            "channels": 28,
+            "instrument_text": "      \"Spacegroove\"\n\n       Written by\n Leviathan & Mick Rippon\n\n     a kosmic release\n\n           --\n\nemail mick at\n  rip@hunterlink.net.au\n\nemail lev at\n  ac@interaccess.com",
+            "comment_text": "*tap* *tap*   Hello, is the microphone working, Hello? Hello?",
+            "hash": "5ba76817eb51eb7a1ae6c6c0ef7667ef",
+            "pattern_hash": "0efc49d0e50f3c36",
+            "hits": 485,
+            "create_date": "2021-01-23 00:51:06+00:00",
+            "update_date": "2022-01-22 05:36:28+00:00"
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 33,
+        "fields": {
+            "legacy_id": "188623",
+            "filename": "saga_musix_-_epilogue.it",
+            "song_title": "Epilogue",
+            "format": "it",
+            "file_size": 10869078,
+            "channels": 25,
+            "instrument_text": "PR-C-059-Warmth\nPR-G-086-Stream-Bell\nPR-F-004-Big-Bubbles\nReverb Clap\nWS - Mounth Perc 4\nWS - Mounth Perc 6\nWS - Mounth Perc 7\nWS - Mounth Perc 9\nWS - Mounth Perc 10\nWS - Mounth Perc 11\nKick\nClosed Hat\nOpen Hat\nProphet Bell\nNoise Down\nReverse Snare\nEffect Proof Chase\nBelltree\nBell Tree\nA03 SC-Ripples\nCrash\nBrass 1\nProphet Bell\nKick 2\nChinese Cymbal\nBrass 1\nWarmth 036\nWarmth 048\nWarmth 060\nWarmth 072\nStream-Bell 063\nStream-Bell 068\nStream-Bell 073\nStream-Bell 078\nBig-Bubbles 036\nBig-Bubbles 048\nReverb Clap\nWS - Mounth Perc 4\nWS - Mounth Perc 6\nWS - Mounth Perc 7\nWS - Mounth Perc 9\nWS - Mounth Perc 10\nWS - Mounth Perc 11\nWS - Kick 1\nWS - Pd. hh\nWS - Ohh\nProphet Bell 060\nProphet Bell 066\nProphet Bell 072\nProphet Bell 078\nProphet Bell 084\nJB_Noize_01\nSnaredrum-10\nEffect Proof Chase\nXR-20_703\nBell Tree\nRipples 066\nRipples 072\nRipples 078\nRipples 084\nXR-20_343 + XR-20_345\nBrass 1 066\nBrass 1 072\nBrass 1 078\nAS-TKRB 025 - Edit 1\nchinese cymbal",
+            "comment_text": "  ____________________________________________________________________\n |                                                                    |\n |  Saga Musix presents: Epilogue (4:06)                              |\n |____________________________________________________________________|\n\n\nA sweet dreamy synthpop ballad for these difficult times.\nThis tune started out pretty much exactly two years ago when  listening  to\nTrancerboy's MOONBOOT.XM, an entry from Evoke 2005. The  first  two  chords\nwere quite inspiring but I had a different progression in mind, so  I  took\nthe first two chords and then continued with my own  ideas.   And  here  we\nare, two years later. Revision 2020 was cancelled  due  to  COVID-19,   but\nwhen it was announced that there would be an online  replacement,   it  was\nclear that I had to contribute. Originally I  wanted  to  do  another  coop\nwith Bacter, but this didn't work out time-wise. Still,  he  came  up  with\nthe title for this track, so I guess it's still kind of a coop? :D\n\nIt  was  absolutely  amazing  to  witness  this  year's    tracked    music\ncompetition at Revision. For the first time in 10  years,   there  actually\nhad to be a pre-selection because  otherwise  there  would  have  been  too\nmany tracks. And what a great compo it was!  This  tune  eventually  ranked\n6th, among many worthy competitors.  But  still  let's  hope  that  we  can\ncelebrate Revision 2021 in real life!\n\n -Saga Musix, 13th of April 2020\n\n___________________________________________________________________________\n\nGreeting fly out to all Revision 2020  participants  and  organizers,   and\nall the great people in Sofa World making this  almost  feel  like  a  real\ndemoparty! Extra greets to:\nAlkama, bacter, d0dge, dfox,   dojoe,   Dune,   Eat-Drink-Fuck,   fgenesis,\nGargaj, Gaspode, glxblt, h0ffman, havoc,   Ixion,   jco,   JosSs,   Kabuto,\nkaomau, kb, Kuemmel, leia, LJ, MedO, mo3, Netpoet, Nightmare,  noby,   pro,\nRaven, RbR, rc55, RoccoW,  T$,   TropicalTrevor,   Uctumi,   v3nom,   Velo,\nvirgill, wayfinder, Wurstgetrank, xq and everyone I forgot.\n\n___________________________________________________________________________\n\nThis work is (c) 2020 by Saga Musix and bacter  and  is  licensed  under  a\nCreative Commons Attribution-Noncommercial-Share Alike 3.0 License.\n\nTrack information:\n- Made between 9th of March 2018 and 10th of April 2020\n- Released into the tracked music competition at Revision 2020 (6th place)\n- This is the high-quality (16-bit, original sample rate) version.\n\nPlease use OpenMPT 1.28+ to play this track.\n\n___________________________________________________________________________\n\nYou can contact me via e-mail at info@sagamusix.de.\nIf you want to chat with me...\n- Jabber: sagamusix@s3m.it (preferred)\n- ICQ: 324324485\n- EsperNet: #modarchive, #modplug, #mod_shrine, #modulez\n  (Nick = Saga_Musix or Saga)\n- IRCNet: #deadline, #demozoo, #evoke, #revision, #nordlicht\n  (Nick = Saga_Musix)\n\nFeel free to visit my websites as well:\n- https:\/\/sagamusix.de\/ - Here you can download all my music, free\n  samples and other stuff. (German and English)\n- https:\/\/sagagames.de\/ - Website featuring my (mostly German-only) free\n  games and applications and other stuff.\n- https:\/\/openmpt.org\/ - Home of Open ModPlug Tracker :)\n\n___________________________________________________________________________\n\nSample credits:\n\nThe source of the samples are indicated in the filename of the samples.\n- XV-5080: From my Roland XV-5080\n- kb6: From the kb6 drum samples collection\n- Dexed: From the Dexed VSTi\n- JayB: From JayB's sample collection\n- D-50: From my Roland D-50\n- TG77: From my Yamaha TG77\n- ArcanaSound: From Arcana Sound's Trance Kicks ReBorn\n\nTake care!",
+            "hash": "8ce5b1c3988441145bc8ccfbe73844de",
+            "pattern_hash": "c796b20ad725190a",
+            "hits": 1002,
+            "create_date": "2020-04-14 19:41:26+00:00",
+            "update_date": "2022-01-22 18:10:36+00:00"
+        }
+    }
+  ]

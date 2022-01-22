@@ -1,3 +1,34 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
-# Create your models here.
+class Song(models.Model):
+    class Formats(models.TextChoices):
+        MOD = 'MOD', _('Protracker')
+        S3M = 'S3M', _('Scream Tracker 3')
+        XM = 'XM', _('FastTracker 2')
+        IT = 'IT', _('Impulse Tracker')
+
+    class Licenses(models.TextChoices):
+        PUBLIC_DOMAIN = 'publicdomain', _('Public Domain')
+        NON_COMMERCIAL = 'by-nc', _('Non-commercial')
+        NON_COMMERCIAL_NO_DERIVATIVES = 'by-nc-nd', _('Non-commercial No Derivatives')
+        NON_COMMERCIAL_SHARE_ALIKE = 'by-nc-sa', _('Non-commercial Share Alike')
+        NO_DERIVATIVES = 'by-nd', _('No Derivatives')
+        SHARE_ALIKE = 'by-sa', _('Share Alike')
+        ATTRIBUTION = 'by', _('Attribution')
+        CC0 = 'cc0', _('CC0')
+
+    legacy_id=models.IntegerField(null=True)
+    filename=models.CharField(max_length=120)
+    song_title=models.CharField(max_length=120)
+    format=models.CharField(max_length=6, choices=Formats.choices)
+    file_size=models.PositiveIntegerField()
+    channels=models.PositiveSmallIntegerField()
+    instrument_text=models.TextField(max_length=64000)
+    comment_text=models.TextField(max_length=64000)
+    hash=models.CharField(max_length=33)
+    pattern_hash=models.CharField(max_length=16)
+    license=models.CharField(max_length=16, choices=Licenses.choices)
+    hits=models.PositiveIntegerField()
+    create_date=models.DateTimeField(auto_now_add=True)
+    update_date=models.DateTimeField(auto_now=True)

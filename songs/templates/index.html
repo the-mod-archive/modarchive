@@ -4,8 +4,14 @@
 
 <h1 class='title'>Songs</h1>
 
-<p>
-    This page doesn't have anything yet! But it will soon.
-</p>
+<ul>
+{% for song in object_list %}
+    <li>
+        <a href="{% url 'view_song' song.id %}">{{ song.song_title }}</a>
+    </li>
+{% empty %}
+    <li>No songs yet.</li>
+{% endfor %}
+</ul>
 
 {% endblock %}    

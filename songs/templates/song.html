@@ -2,10 +2,22 @@
 
 {% block content %}
 
-<h1 class='title'>Song: Hard-Coded Song Title</h1>
+<h1 class='title'>{{ song.song_title }}</h1>
 
 <p>
-    This is a song page! But there aren't any songs yet.
+    By a demoscene artist
+    <br/>
+    Added on {{ song.create_date }}
+    <br/>
+    Filename: {{ song.filename }}
+    <br/>
+    Format: {{ song.format }}
+    <br/>
+    File size: {{ song.file_size }} bytes
+    <br/>
+    Channels: {{ song.channels }}
+    <br/>
+    Total downloads: {{ song.hits }}
 </p>
 
 {% endblock %}    
