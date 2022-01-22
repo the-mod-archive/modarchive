@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls.conf import include, re_path
+from django.urls import path
 
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
-    re_path(r'^', include('homepage.urls'))
+    re_path(r'^', include('homepage.urls')),
+    path('songs/', include('songs.urls'))
 ]

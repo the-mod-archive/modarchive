@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bulma',
-    'homepage'
+    'homepage',
+    'songs'
 ]
 
 MIDDLEWARE = [
