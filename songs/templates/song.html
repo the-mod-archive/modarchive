@@ -5,9 +5,12 @@
 <h1 class='title'>{{ song.song_title }}</h1>
 
 <p>
-    By a demoscene artist
+    By {% for artist in song.artist_set.all %}
+        {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
+        <a href="{% url 'view_artist' artist.key %}">{{ artist.name }}</a>
+    {% endfor %}
     <br/>
-    Added on {{ song.create_date }}
+    Added on {{ song.create_date|date:"M d, Y" }}
     <br/>
     Filename: {{ song.filename }}
     <br/>
@@ -18,6 +21,10 @@
     Channels: {{ song.channels }}
     <br/>
     Total downloads: {{ song.hits }}
+</p>
+<p>
+    <br />
+    <a href="{% url 'songs' %}">Back to songs index</a>
 </p>
 
 {% endblock %}    

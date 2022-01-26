@@ -1,0 +1,180 @@
+[
+    {
+        "model": "artists.artist",
+        "pk": 1,
+        "fields": {
+            "legacy_id": "69117",
+            "key": "Arcturus",
+            "name": "Arcturus",
+            "songs": [3, 6, 7],
+            "create_date": "2002-01-09 15:47:04+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 2,
+        "fields": {
+            "legacy_id": "69512",
+            "key": "SagaMusix",
+            "name": "Saga Musix",
+            "songs": [33],
+            "create_date": "2002-01-09 15:47:46+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 3,
+        "fields": {
+            "legacy_id": "69271",
+            "key": "Necros",
+            "name": "Necros",
+            "songs": [1, 2, 13],
+            "create_date": "2002-03-07 21:52:30+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 4,
+        "fields": {
+            "legacy_id": "69643",
+            "key": "Siren",
+            "name": "Siren",
+            "songs": [4, 19, 30],
+            "create_date": "2002-01-09 16:03:00+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 5,
+        "fields": {
+            "legacy_id": "69185",
+            "key": "PurpleMotion",
+            "name": "Purple Motion",
+            "songs": [5, 27, 28],
+            "create_date": "2002-01-09 16:00:45+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 6,
+        "fields": {
+            "legacy_id": "69572",
+            "key": "Skaven",
+            "name": "Skaven",
+            "songs": [8, 12, 20],
+            "create_date": "2002-01-09 16:03:03+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 7,
+        "fields": {
+            "legacy_id": "69143",
+            "key": "Nemesis",
+            "name": "Nemesis",
+            "songs": [9, 21, 22],
+            "create_date": "2002-01-09 15:59:15+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 8,
+        "fields": {
+            "legacy_id": "69552",
+            "key": "Basehead",
+            "name": "Basehead",
+            "songs": [10, 11, 24, 29, 31],
+            "create_date": "2002-01-09 15:47:46+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 9,
+        "fields": {
+            "key": "Khyron",
+            "name": "Khyron",
+            "songs": [13],
+            "create_date": "2002-01-09 15:47:46+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 10,
+        "fields": {
+            "legacy_id": "83766",
+            "key": "JeroenTel",
+            "name": "Jeroen Tel",
+            "songs": [14, 15, 16],
+            "create_date": "2011-01-04 06:05:52+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 11,
+        "fields": {
+            "legacy_id": "69621",
+            "key": "Leviathan",
+            "name": "Leviathan",
+            "songs": [17, 18, 23, 32],
+            "create_date": "2002-01-09 15:47:46+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 12,
+        "fields": {
+            "key": "Captain",
+            "name": "Captain",
+            "songs": [25],
+            "create_date": "2002-01-09 15:47:46+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 13,
+        "fields": {
+            "legacy_id": "69138",
+            "key": "Jester",
+            "name": "Jester",
+            "songs": [26],
+            "create_date": "2002-01-09 15:47:46+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 14,
+        "fields": {
+            "legacy_id": "69631",
+            "key": "MickRippon",
+            "name": "Mick Rippon",
+            "songs": [32],
+            "create_date": "2002-01-09 15:47:46+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "artists.artist",
+        "pk": 15,
+        "fields": {
+            "legacy_id": "69694",
+            "key": "Hunz",
+            "name": "Hunz",
+            "songs": [10, 31],
+            "create_date": "2002-01-09 15:47:46+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    }
+  ]

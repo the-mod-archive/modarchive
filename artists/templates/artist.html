@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class='title'>{{ artist.name }}</h1>
+
+<p>
+    Member since {{ artist.create_date|date:"M d, Y" }}
+</p>
+
+<p>
+    <br/>
+    <strong>Songs:</strong>
+<p>
+<ul>
+    {% for song in artist.songs.all %}
+    <li>
+        <a href="{% url 'view_song' song.id %}">{{ song.song_title }}</a>
+    </li>
+    {% empty %}<li>No songs yet.</li>{% endfor %}
+</ul>
+
+<p>
+    <br/>
+    <a href="{% url 'artists' %}">Back to artists index</a>
+</p>
+
+{% endblock %}    
