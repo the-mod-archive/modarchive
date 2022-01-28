@@ -7,7 +7,7 @@
 <ul>
 {% for song in object_list %}
     <li>
-        <a href="{% url 'view_song' song.id %}">{{ song.song_title }}</a>
+        <a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a>
     </li>
 {% empty %}
     <li>No songs yet.</li>

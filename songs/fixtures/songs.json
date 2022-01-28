@@ -5,7 +5,8 @@
         "fields": {
             "legacy_id": 48552,
             "filename": "m4v-fasc.it",
-            "song_title": "tangerine fascination",
+            "title": "tangerine fascination",
+            "clean_title": "Tangerine Fascination",
             "format": "it",
             "file_size": 709340,
             "channels": 18,
@@ -24,7 +25,8 @@
         "fields": {
             "legacy_id": "34073",
             "filename": "ascent.s3m",
-            "song_title": "\"Ascent of the Cloud Eagle\"",
+            "title": "\"Ascent of the Cloud Eagle\"",
+            "clean_title": "Ascent of the Cloud Eagle",
             "format": "s3m",
             "file_size": 819762,
             "channels": 9,
@@ -44,7 +46,8 @@
         "fields": {
             "legacy_id": "191120",
             "filename": "arc-indefinite.it",
-            "song_title": "Indefinite Radiant",
+            "title": "Indefinite Radiant",
+            "clean_title": "Indefinite Radiant",
             "format": "it",
             "file_size": 433947,
             "channels": 17,
@@ -63,7 +66,8 @@
         "fields": {
             "legacy_id": "801",
             "filename": "k_univ.it",
-            "song_title": "Universe Electric",
+            "title": "Universe Electric",
+            "clean_title": "Universe Electric",
             "format": "it",
             "file_size": 998472,
             "channels": 32,
@@ -82,7 +86,8 @@
         "fields": {
             "legacy_id": "32385",
             "filename": "ASTRAY.S3M",
-            "song_title": "Astraying Voyages",
+            "title": "Astraying Voyages",
+            "clean_title": "Astraying Voyages",
             "format": "s3m",
             "file_size": 719904,
             "channels": 25,
@@ -101,7 +106,8 @@
         "fields": {
             "legacy_id": "32496",
             "filename": "a-liab.it",
-            "song_title": "Leaving it All Behind",
+            "title": "Leaving it All Behind",
+            "clean_title": "Leaving it All Behind",
             "format": "it",
             "file_size": 4781883,
             "channels": 13,
@@ -120,7 +126,8 @@
         "fields": {
             "legacy_id": "33907",
             "filename": "arc-solitude.it",
-            "song_title": "Solitude",
+            "title": "Solitude",
+            "clean_title": "Solitude",
             "format": "it",
             "file_size": 602820,
             "channels": 11,
@@ -139,7 +146,8 @@
         "fields": {
             "legacy_id": "34654",
             "filename": "CTGOBLIN.S3M",
-            "song_title": "Catch that goblin!!",
+            "title": "Catch that goblin!!",
+            "clean_title": "Catch That Goblin!",
             "format": "s3m",
             "file_size": 481939,
             "channels": 12,
@@ -158,7 +166,8 @@
         "fields": {
             "legacy_id": "39954",
             "filename": "crys_klf.s3m",
-            "song_title": "Crystalline Tears",
+            "title": "Crystalline Tears",
+            "clean_title": "Crystalline Tears",
             "format": "s3m",
             "file_size": 211136,
             "channels": 11,
@@ -177,7 +186,8 @@
         "fields": {
             "legacy_id": "42654",
             "filename": "flowers.it",
-            "song_title": "flowers in the abyss",
+            "title": "flowers in the abyss",
+            "clean_title": "Flowers in the Abyss",
             "format": "it",
             "file_size": 1226736,
             "channels": 38,
@@ -196,7 +206,8 @@
         "fields": {
             "legacy_id": "43791",
             "filename": "glowbug.s3m",
-            "song_title": "glow bug",
+            "title": "glow bug",
+            "clean_title": "Glow Bug",
             "format": "s3m",
             "file_size": 490688,
             "channels": 16,
@@ -215,7 +226,8 @@
         "fields": {
             "legacy_id": "44366",
             "filename": "ICEFRONT.S3M",
-            "song_title": "Ice Frontier",
+            "title": "Ice Frontier",
+            "clean_title": "",
             "format": "s3m",
             "file_size": 235521,
             "channels": 8,
@@ -234,7 +246,8 @@
         "fields": {
             "legacy_id": "45655",
             "filename": "infinity.s3m",
-            "song_title": "'infinity' - necros\/khyron",
+            "title": "'infinity' - necros\/khyron",
+            "clean_title": "Infinity",
             "format": "s3m",
             "file_size": 470144,
             "channels": 9,
@@ -253,7 +266,8 @@
         "fields": {
             "legacy_id": "46469",
             "filename": "jt_911.xm",
-            "song_title": "Nine One One",
+            "title": "Nine One One",
+            "clean_title": "",
             "format": "xm",
             "file_size": 973769,
             "channels": 28,
@@ -272,7 +286,8 @@
         "fields": {
             "legacy_id": "46472",
             "filename": "jt_breez.xm",
-            "song_title": "Mountain Breeze",
+            "title": "Mountain Breeze",
+            "clean_title": "",
             "format": "xm",
             "file_size": 629641,
             "channels": 24,
@@ -291,7 +306,8 @@
         "fields": {
             "legacy_id": "46502",
             "filename": "jt_pools.xm",
-            "song_title": "Pools of Poison",
+            "title": "Pools of Poison",
+            "clean_title": "",
             "format": "xm",
             "file_size": 700000,
             "channels": 22,
@@ -310,7 +326,8 @@
         "fields": {
             "legacy_id": "47034",
             "filename": "K-dust.s3m",
-            "song_title": "Dust to Dust - by Leviathan",
+            "title": "Dust to Dust - by Leviathan",
+            "clean_title": "Dust to Dust",
             "format": "s3m",
             "file_size": 404628,
             "channels": 16,
@@ -329,7 +346,8 @@
         "fields": {
             "legacy_id": "47092",
             "filename": "K_emerld.s3m",
-            "song_title": "Emerald Visions - Leviathan",
+            "title": "Emerald Visions - Leviathan",
+            "clean_title": "Emerald Visions",
             "format": "s3m",
             "file_size": 672678,
             "channels": 14,
@@ -348,7 +366,8 @@
         "fields": {
             "legacy_id": "47267",
             "filename": "k_mercy.s3m",
-            "song_title": "Merciful Lie",
+            "title": "Merciful Lie",
+            "clean_title": "",
             "format": "s3m",
             "file_size": 862908,
             "channels": 16,
@@ -367,7 +386,8 @@
         "fields": {
             "legacy_id": "48952",
             "filename": "NOFACE.S3M",
-            "song_title": "He Has No Face",
+            "title": "He Has No Face",
+            "clean_title": "",
             "format": "s3m",
             "file_size": 201643,
             "channels": 12,
@@ -386,7 +406,8 @@
         "fields": {
             "legacy_id": "49040",
             "filename": "n-drift.it",
-            "song_title": "drift v1.1",
+            "title": "drift v1.1",
+            "clean_title": "Drift v1.1",
             "format": "it",
             "file_size": 329069,
             "channels": 11,
@@ -405,7 +426,8 @@
         "fields": {
             "legacy_id": "49136",
             "filename": "n-twi.it",
-            "song_title": "twilight groove",
+            "title": "twilight groove",
+            "clean_title": "Twilight Groove",
             "format": "it",
             "file_size": 1000000,
             "channels": 26,
@@ -424,7 +446,8 @@
         "fields": {
             "legacy_id": "49619",
             "filename": "lv-sojrn.it",
-            "song_title": "Sojourn - Leviathan",
+            "title": "Sojourn - Leviathan",
+            "clean_title": "Sojourn",
             "format": "it",
             "file_size": 469894,
             "channels": 25,
@@ -443,7 +466,8 @@
         "fields": {
             "legacy_id": "57604",
             "filename": "snowdanc.s3m",
-            "song_title": "snow dancing",
+            "title": "snow dancing",
+            "clean_title": "Snow Dancing",
             "format": "s3m",
             "file_size": 244834,
             "channels": 8,
@@ -462,7 +486,8 @@
         "fields": {
             "legacy_id": "57925",
             "filename": "space_debris.mod",
-            "song_title": "space_debris",
+            "title": "space_debris",
+            "clean_title": "Space Debris",
             "format": "mod",
             "file_size": 347582,
             "channels": 4,
@@ -481,7 +506,8 @@
         "fields": {
             "legacy_id": "59344",
             "filename": "stardstm.mod",
-            "song_title": "stardust memories",
+            "title": "stardust memories",
+            "clean_title": "Stardust Memories",
             "format": "mod",
             "file_size": 153676,
             "channels": 4,
@@ -500,7 +526,8 @@
         "fields": {
             "legacy_id": "59854",
             "filename": "WHEN.S3M",
-            "song_title": "When the heavens fall",
+            "title": "When the heavens fall",
+            "clean_title": "When the Heavens Fall",
             "format": "s3m",
             "file_size": 846302,
             "channels": 13,
@@ -519,7 +546,8 @@
         "fields": {
             "legacy_id": "60395",
             "filename": "2ND_PM.S3M",
-            "song_title": "UnreaL ][ \/ PM",
+            "title": "UnreaL ][ \/ PM",
+            "clean_title": "Unreal II: 2nd Reality",
             "format": "s3m",
             "file_size": 600860,
             "channels": 8,
@@ -538,7 +566,8 @@
         "fields": {
             "legacy_id": "63700",
             "filename": "zengardn.s3m",
-            "song_title": "the zen garden",
+            "title": "the zen garden",
+            "clean_title": "The Zen Garden",
             "format": "s3m",
             "file_size": 561394,
             "channels": 16,
@@ -557,7 +586,8 @@
         "fields": {
             "legacy_id": "170384",
             "filename": "siren_-_incubuss.it",
-            "song_title": "Incubuss",
+            "title": "Incubuss",
+            "clean_title": "",
             "format": "it",
             "file_size": 887615,
             "channels": 35,
@@ -576,7 +606,8 @@
         "fields": {
             "legacy_id": "190946",
             "filename": "basehead_and_hunz_-_digital_ritual.it",
-            "song_title": "digital ritual",
+            "title": "digital ritual",
+            "clean_title": "Digital Ritual",
             "format": "it",
             "file_size": 871637,
             "channels": 64,
@@ -595,7 +626,8 @@
         "fields": {
             "legacy_id": "191103",
             "filename": "k_sgroov.it",
-            "song_title": "\"Spacegroove\"-lev&mickrip",
+            "title": "\"Spacegroove\"-lev&mickrip",
+            "clean_title": "Spacegroove",
             "format": "it",
             "file_size": 828323,
             "channels": 28,
@@ -614,7 +646,8 @@
         "fields": {
             "legacy_id": "188623",
             "filename": "saga_musix_-_epilogue.it",
-            "song_title": "Epilogue",
+            "title": "Epilogue",
+            "clean_title": "",
             "format": "it",
             "file_size": 10869078,
             "channels": 25,

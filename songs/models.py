@@ -20,7 +20,8 @@ class Song(models.Model):
 
     legacy_id=models.IntegerField(null=True)
     filename=models.CharField(max_length=120)
-    song_title=models.CharField(max_length=120)
+    title=models.CharField(max_length=120)
+    clean_title=models.CharField(max_length=120, null=True)
     format=models.CharField(max_length=6, choices=Formats.choices)
     file_size=models.PositiveIntegerField()
     channels=models.PositiveSmallIntegerField()
@@ -32,3 +33,8 @@ class Song(models.Model):
     hits=models.PositiveIntegerField()
     create_date=models.DateTimeField(auto_now_add=True)
     update_date=models.DateTimeField(auto_now=True)
+
+    def get_title(self):
+        if (self.clean_title):
+            return self.clean_title
+        return self.title
