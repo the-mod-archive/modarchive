@@ -25,6 +25,13 @@
             <div class="navbar-item">
                 Forums
             </div>
+
+            <div class="navbar-item">
+                <form action="{% url 'search' %}" method="GET" value={{request.GET.q}}>
+                    <input name='q' class='input' placeholder="Search" />
+                </form>
+            </div>
+
         </div>
         <div class="navbar-end">
             {% if user.is_authenticated %}

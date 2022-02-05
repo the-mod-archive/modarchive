@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1 class='title'>Search Results</h1>
+
+<ul>
+{% for song in search_results %}
+    <li>
+        <a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a> by {% for artist in song.artist_set.all %}
+            {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
+        <a href="{% url 'view_artist' artist.key %}">{{ artist.name }}</a>
+    {% endfor %}
+    </li>
+{% empty %}
+    <li>No search results.</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

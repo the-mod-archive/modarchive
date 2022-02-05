@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'bulma',
     'homepage',
     'artists',
+    'search',
     'songs'
 ]
 
