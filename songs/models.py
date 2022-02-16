@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
 
 class Song(models.Model):
     class Formats(models.TextChoices):
@@ -31,6 +33,7 @@ class Song(models.Model):
     pattern_hash=models.CharField(max_length=16)
     license=models.CharField(max_length=16, choices=Licenses.choices)
     hits=models.PositiveIntegerField()
+    search_document=SearchVectorField(null=True)
     create_date=models.DateTimeField(auto_now_add=True)
     update_date=models.DateTimeField(auto_now=True)
 
@@ -38,3 +41,15 @@ class Song(models.Model):
         if (self.clean_title):
             return self.clean_title
         return self.title
+
+    class Meta:
+        indexes = [
+            GinIndex(fields=['search_document'])
+        ]
+
+    def index_components(self):
+        return {
+            'A': self.title,
+            'B': self.filename,
+            'C': self.comment_text + ' ' + self.instrument_text
+        }
