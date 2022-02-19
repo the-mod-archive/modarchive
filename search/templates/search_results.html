@@ -5,15 +5,17 @@
 <h1 class='title'>Search Results</h1>
 
 <ul>
-{% for song in search_results %}
-    <li>
-        <a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a> by {% for artist in song.artist_set.all %}
-            {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
-        <a href="{% url 'view_artist' artist.key %}">{{ artist.name }}</a>
-    {% endfor %}
-    </li>
-{% empty %}
-    <li>No search results.</li>
+{% for result in search_results %}
+    {% if result.type == 'song' %}
+        <li>
+            <a href="{% url 'view_song' result.item.id %}">{{ result.item.get_title }}</a> by {% for artist in result.item.artist_set.all %}
+                {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
+            <a href="{% url 'view_artist' artist.key %}">{{ artist.name }}</a>
+            {% endfor %}
+        </li>
+    {% elif result.type == 'artist' %}
+        <li><a href="{% url 'view_artist' result.item.key %}">{{ result.item.name }}</a></li>
+    {% endif %}
 {% endfor %}
 </ul>
 
