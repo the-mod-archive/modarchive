@@ -7,28 +7,47 @@ from songs.models import Song
 
 def search(request):
     query = request.GET.get('q')
+    type = request.GET.get('type')
+    
+    def should_get_results_for_type(type_requested_in_query, type):
+        if (type_requested_in_query is None or type == type_requested_in_query):
+            return True
+        return False
+
     if query:
         rank_annotation = SearchRank(F('search_document'), query)
-        songs_query_set = Song.objects.annotate(
-            type=Value('song', output_field=CharField()),
+        
+        query_set = Song.objects.annotate(
+            type=Value('empty', output_field=CharField()),
             rank=rank_annotation
-        ).filter(
-            search_document=query
-        ).values('pk', 'type', 'rank')
+        ).values('pk', 'type', 'rank').none()
 
-        artists_query_set = Artist.objects.annotate(
-            type=Value('artist', output_field=CharField()),
-            rank=rank_annotation
-        ).filter(
-            search_document=query
-        ).values('pk', 'type', 'rank')
+        if (should_get_results_for_type(type, 'song')):
+            query_set = query_set.union(
+                Song.objects.annotate(
+                    type=Value('song', output_field=CharField()),
+                    rank=rank_annotation
+                ).filter(
+                    search_document=query
+                ).values('pk', 'type', 'rank')
+            )
 
-        merged_query_set = songs_query_set.union(artists_query_set).order_by('-rank')
+        if (should_get_results_for_type(type, 'artist')):
+            query_set = query_set.union(
+                Artist.objects.annotate(
+                    type=Value('artist', output_field=CharField()),
+                    rank=rank_annotation
+                ).filter(
+                    search_document=query
+                ).values('pk', 'type', 'rank')
+            )
+
+        sorted_query_set = query_set.order_by('-rank')
 
         to_fetch = {}
         fetched = {}
         
-        for d in merged_query_set:
+        for d in sorted_query_set:
             to_fetch.setdefault(d['type'], set()).add(d['pk'])
 
         for key, model in (('song', Song), ('artist', Artist)):
@@ -38,7 +57,7 @@ def search(request):
                 fetched[(key, obj.pk)] = obj
 
         final_results = []
-        for d in merged_query_set:
+        for d in sorted_query_set:
             item = fetched.get((d['type'], d['pk'])) or None
             if item:
                 item.original_dict = d
