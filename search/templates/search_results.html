@@ -9,10 +9,7 @@
     {% if result.type == 'song' %}
         <li>
             <span class="is-size-7 has-text-gray">Song</span>
-            <a href="{% url 'view_song' result.item.id %}">{{ result.item.get_title }}</a> by {% for artist in result.item.artist_set.all %}
-                {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
-            <a href="{% url 'view_artist' artist.key %}">{{ artist.name }}</a>
-            {% endfor %}
+            <a href="{% url 'view_song' result.item.id %}">{{ result.item.get_title }}</a> by {% include 'song_artists.html' with song=result.item %}
         </li>
     {% elif result.type == 'artist' %}
         <li>

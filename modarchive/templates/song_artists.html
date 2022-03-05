@@ -1,0 +1,4 @@
+{% for artist in song.artist_set.all %}
+    {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
+    <a href="{% url 'view_artist' artist.key %}">{{ artist.name }}</a>
+{% endfor %}
