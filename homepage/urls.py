@@ -29,3 +29,5 @@ urlpatterns = [
     # Legacy URL redirects
     re_path('(?P<php_file>[a-zA-Z]+).php/', LegacyUrlRedirectionView.as_view(), name='login_php'),
 ]
+
+handler404 = 'homepage.views.page_not_found_view'

@@ -24,6 +24,9 @@ class RedirectAuthenticatedUserMixin:
 def home(request):
     return render(request, 'home_page.html')
 
+def page_not_found_view(request, exception):
+    return render(request, '404.html')
+
 @login_required
 def profile(request):
     return render(request, 'account_management/profile.html')
