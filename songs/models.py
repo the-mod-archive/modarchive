@@ -53,3 +53,6 @@ class Song(models.Model):
             'B': self.filename,
             'C': self.comment_text + ' ' + self.instrument_text
         }
+
+    def __str__(self) -> str:
+        return self.get_title()
