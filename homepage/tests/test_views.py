@@ -225,6 +225,8 @@ class ActivationTests(TestCase):
         self.assertRedirects(response, reverse('activation_error'))
 
 class LegacyRedirectionViewTests(TestCase):
+    fixtures = ["songs.json"]
+
     def test_redirects_to_home_if_no_match_found(self):
         response = self.client.get('/login.php/?blarg=blag')
         self.assertRedirects(response, reverse('home'))
@@ -250,3 +252,11 @@ class LegacyRedirectionViewTests(TestCase):
     def test_old_register_url_redirects(self):
         response = self.client.get('/assistance.php/?request=create_account_page')
         self.assertRedirects(response, reverse('register'))
+
+    def test_old_module_url_redirects(self):
+        response = self.client.get('/index.php/?request=view_by_moduleid&query=48552')
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': 1}))
+
+    def test_old_module_url_redirects_to_home_for_invalid_id(self):
+        response = self.client.get('/index.php/?request=view_by_moduleid&query=99999')
+        self.assertRedirects(response, reverse('home'))

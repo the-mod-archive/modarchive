@@ -13,6 +13,7 @@ from django.views.generic.base import TemplateView, RedirectView
 
 from homepage.forms import ChangePasswordForm, EmailAddressInUseError, ForgotPasswordForm, LoginForm, RegisterUserForm, ResetPasswordForm
 from homepage.tokens import account_activation_token
+from songs.models import Song
 
 class RedirectAuthenticatedUserMixin:
     def dispatch(self, request, *args, **kwargs):
@@ -140,6 +141,9 @@ class LegacyUrlRedirectionView(RedirectView):
         'interactive': {
             'change_password_page': 'change_password'
         },
+        'index': {
+            'view_by_moduleid': 'view_song'
+        },
         'default': {
             'default': 'home'
         }
@@ -148,4 +152,18 @@ class LegacyUrlRedirectionView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         php_reference = kwargs.get('php_file', 'default')
         param = self.request.GET.get('request', 'default').lower()
-        return reverse(self.redirection_map.get(php_reference).get(param, 'home'))
+
+        redirect_target = self.redirection_map.get(php_reference).get(param, 'home')
+
+        kwargs = {}
+        if (redirect_target == 'view_song'):
+            legacy_module_id = self.request.GET.get('query')
+            
+            try:
+                song = Song.objects.get(legacy_id = legacy_module_id)
+                if song:
+                    kwargs['pk'] = song.id
+            except:
+                redirect_target = 'home'
+
+        return reverse(redirect_target, kwargs=kwargs)
