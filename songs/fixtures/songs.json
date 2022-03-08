@@ -7,16 +7,26 @@
             "filename": "m4v-fasc.it",
             "title": "tangerine fascination",
             "clean_title": "Tangerine Fascination",
-            "format": "it",
+            "format": "IT",
             "file_size": 709340,
             "channels": 18,
             "instrument_text": "",
             "comment_text": "",
             "hash": "dfd1ce2cbbc762b2454d8a74c5244067",
             "pattern_hash": "7a4bed390126a9af",
-            "hits": 7612,
             "create_date": "1998-12-09 03:20:24+00:00",
             "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 1,
+        "fields": {
+            "downloads": 7612,
+            "total_comments": 1,
+            "average_comment_score": 8.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -34,10 +44,20 @@
             "comment_text": "",
             "hash": "3e72d1e6ac8dc36acde62bb2403925c0",
             "pattern_hash": "81662584cb5545dc",
-            "hits": 30552,
             "license": "",
             "create_date": "1997-01-01 03:39:36+00:00",
             "update_date": "2022-01-22 08:22:21+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 2,
+        "fields": {
+            "downloads": 30729,
+            "total_comments": 9,
+            "average_comment_score": 9.6,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -55,9 +75,19 @@
             "comment_text": "Indefinite Radiant\nby Arcturus\n\na Shattered Fixtures Release\n\nTime:  3:42\n\nWell, another song by me, and this one I pumped out in a relatively short\namount of time.  I finished about two weeks after I started, when normally\nI spend a month or more without finishing a song!  How odd.  I've been\ntracking with a fury recently.  I guess it may be because I don't know if\nI'll be able to track much in college, so I'd like to get as much done\nhere as possible.  Anywho, enjoy the song.\n\n-Arcturus\n\nContact Info\n\nMy homepage:  http:\/\/members.tripod.com\/~arcmeister\nMy e-mail:  arcmeister@pemail.net\nThe Shattered Fixtures homepage:  http:\/\/www.aspects.net\/~sf\/index2.html",
             "hash": "ebb99f21e445a40e6a99799abdd4b794",
             "pattern_hash": "c313e9643fddde3b",
-            "hits": "248",
             "create_date": "2021-01-23 00:59:32+00:00",
             "update_date": "2022-01-20 01:06:32+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 3,
+        "fields": {
+            "downloads": 265,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -75,9 +105,19 @@
             "comment_text": "Hi there,\n\nFirst there was Chromatic Dragon, then there was Siren of Kosmic, now\nthere's Sandman. Why the change? Chromatic Dragon was a mouthful, and\nSiren wasn't me. It just wasn't. After reading a DC Comics series called\n\"The Sandman\" I realized that I'd rather influence people's dreams than\nlure them into jagged rocks with my alluring song. :)\n\nBelieve me, this is the LAST time the name will change. It is Sandman, and\nin future will probably just be Alex to my friends. I do apologize for the\nchange, but it had to be done. See you in '97! As my pal basehead would\nsay, \"peace\"...\n\n\n                                -Sandman\/KFMF\n                                  (Alexander Brandon)",
             "hash": "921a7f65a8107252abc1b79880e829be",
             "pattern_hash": "3409b04ae6f6aae1",
-            "hits": 3620,
             "create_date": "1998-06-27 19:00:00+00:00",
             "update_date": "2022-01-22 09:39:10+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 4,
+        "fields": {
+            "downloads": 3634,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -95,9 +135,19 @@
             "comment_text": "",
             "hash": "830afd83a66db263e15d412f9bdae62d",
             "pattern_hash": "8005f94c16ae922d",
-            "hits": 31894,
             "create_date": "1997-01-01 03:37:50+00:00",
             "update_date": "2022-01-21 17:05:51+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 5,
+        "fields": {
+            "downloads": 31988,
+            "total_comments": 3,
+            "average_comment_score": 9.3,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -115,9 +165,19 @@
             "comment_text": "Leaving it All Behind\n4:36\n\nby Arcturus\n\nI've been home from Argentina for four months now, and this is the first\nsong that I've released.  Since I'm not a very well known trakcer in the\nscene, few people know that I was gone.  Well, I was a missionary in\nArgentina for two years.  I must say that the song turned out quite\nnicely. It gets a little crowded at times, but I'm too lazy to take care\nof it :)\n\nI apologize for the file size, for a mod, this is pretty big, but the\nsound quality more than makes up for it.  For me, it sounds really bad in\nImpulse Tracker, but it sounds great in WinAmp.  Modplug does a good job\nof playing it as well, not quite as good as WinAmp, but very close.\n\nPeople who have heard this have commented that it sounds a lot like the\nopening theme of The Legend of Zelda:  Ocarina of Time.  After comparing the\ntwo, I noticed that there are quite a few similarities, however, when I wrote\nthis, I hadn't played that game in about three years.  Maybe I was subconsciousl\ninfluenced by the music, but I think the parts that sound similar to that aren't\nthe best moments in this tune.\n\nSo, what's the significance of the title?  Not much, really.  When I\nlistened to it, it just reminded me of someone being on a bus, or train,\nor plane, leaving some place behind them, never to return.  Perhaps I\nunconsciously wrote a song about my departure from Argentina, although I\nmay return there some day.\n\nAnyway, I hope you enjoy this.  Here's my contact information.\n\nArcturus (Mark Abersold)\nhttp:\/\/arcturus.rooms.rubberrooms.net\/\nICQ:  6570208\nemail:  mabersold@yahoo.com\n\nCopyright (C) 2001 by Mark Abersold.  All rights reserved.",
             "hash": "d61adf22920ab2b2808dee0ffbdeee7d",
             "pattern_hash": "dd21a5e0a0c207ef",
-            "hits": 5265,
             "create_date": "2002-06-01 15:35:16+00:00",
             "update_date": "2022-01-21 23:20:45+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 6,
+        "fields": {
+            "downloads": 5293,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -135,9 +195,19 @@
             "comment_text": "Solitude\nby Arcturus\n\nWhat is it with me and short songs as of late?  This one is just over 3\nminutes.  Ah, who cares?  I guess \"An Arcturus Christmas\" was a pretty\ngood length.  Here is some contact info:\n\nMy web page:  http:\/\/members.tripod.com\/~arcmeister\nShattered Fixtures:  http:\/\/members.aol.com\/Flaschberg\nMy email adress:  arcmeister@pemail.net\n\nGreets go out to:  Me.  And a few other people.  :)\n\n-Arcturus of Shattered Fixtures",
             "hash": "85968f7fc0fc04c3a71681cac46db4dd",
             "pattern_hash": "b234cafc758e1543",
-            "hits": 2036,
             "create_date": "2002-06-09 22:13:54+00:00",
             "update_date": "2022-01-20 09:36:47+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 7,
+        "fields": {
+            "downloads": 2050,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -155,9 +225,19 @@
             "comment_text": "",
             "hash": "d4534b812dbc92848c1e1e7b65375402",
             "pattern_hash": "8ee94391288263a7",
-            "hits": 75762,
             "create_date": "1997-01-01 03:47:20+00:00",
             "update_date": "2022-01-22 15:06:02+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 8,
+        "fields": {
+            "downloads": 76049,
+            "total_comments": 15,
+            "average_comment_score": 9.2,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -175,9 +255,19 @@
             "comment_text": "",
             "hash": "9e06bd75b89a55833a05956cfc18f7c1",
             "pattern_hash": "a2398d6749bf7b9d",
-            "hits": 1779,
             "create_date": "2001-09-26 16:08:48+00:00",
             "update_date": "2022-01-22 13:37:27+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 9,
+        "fields": {
+            "downloads": 1813,
+            "total_comments": 1,
+            "average_comment_score": 8.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -195,9 +285,19 @@
             "comment_text": "",
             "hash": "32b3865bfe407f77ab68c2249444f3a0",
             "pattern_hash": "8bcd4fad14e90665",
-            "hits": 4661,
             "create_date": "2000-12-11 14:54:36+00:00",
             "update_date": "2022-01-21 07:01:01+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 10,
+        "fields": {
+            "downloads": 4684,
+            "total_comments": 1,
+            "average_comment_score": 9.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -215,9 +315,19 @@
             "comment_text": "",
             "hash": "d3c704eb8fd81c5db695151c93ac6232",
             "pattern_hash": "a3ae8bfedbd1dc70",
-            "hits": 8797,
             "create_date": "1997-01-01 04:11:23+00:00",
             "update_date": "2022-01-22 16:14:45+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 11,
+        "fields": {
+            "downloads": 8839,
+            "total_comments": 2,
+            "average_comment_score": 9.5,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -235,9 +345,19 @@
             "comment_text": "",
             "hash": "e0597bb0db35e9734cf6b6f5d262aa0a",
             "pattern_hash": "391aff43c17fe1a5",
-            "hits": 17928,
             "create_date": "2000-07-28 12:56:55+00:00",
             "update_date": "2022-01-22 05:50:50+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 12,
+        "fields": {
+            "downloads": 18022,
+            "total_comments": 8,
+            "average_comment_score": 8.8,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -255,9 +375,19 @@
             "comment_text": "",
             "hash": "95090e47f5f23096fda59f34f63dcdee",
             "pattern_hash": "36073b0002f82740",
-            "hits": 13561,
             "create_date": "2000-07-28 12:56:56+00:00",
             "update_date": "2022-01-22 07:00:38+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 13,
+        "fields": {
+            "downloads": 13606,
+            "total_comments": 1,
+            "average_comment_score": 8.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -275,9 +405,19 @@
             "comment_text": "",
             "hash": "38a55733e653064021577a0edf85cc7b",
             "pattern_hash": "d8c0db028fee0183",
-            "hits": 26145,
             "create_date": "2000-07-28 11:30:27+00:00",
             "update_date": "2022-01-21 07:06:54+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 14,
+        "fields": {
+            "downloads": 26304,
+            "total_comments": 9,
+            "average_comment_score": 9.8,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -295,9 +435,19 @@
             "comment_text": "",
             "hash": "807f5aa5452e9395f7284ae7a17a0d59",
             "pattern_hash": "cee76c4fde8c1497",
-            "hits": 5587,
             "create_date": "2000-07-28 11:30:27+00:00",
             "update_date": "2022-01-21 02:58:02+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 15,
+        "fields": {
+            "downloads": 5648,
+            "total_comments": 3,
+            "average_comment_score": 9.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -315,9 +465,19 @@
             "comment_text": "",
             "hash": "ea293797dc3f04bdd5ba4269909736f3",
             "pattern_hash": "e2f1a76831946796",
-            "hits": 10463,
             "create_date": "2000-07-28 11:30:26+00:00",
             "update_date": "2022-01-22 06:04:36+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 16,
+        "fields": {
+            "downloads": 10545,
+            "total_comments": 5,
+            "average_comment_score": 10.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -335,9 +495,19 @@
             "comment_text": "",
             "hash": "679b850d4e5f2f53c699ef140ce7d0c7",
             "pattern_hash": "38c35d4a34e385ec",
-            "hits": 12572,
             "create_date": "1997-01-01 04:21:01+00:00",
             "update_date": "2022-01-22 16:18:47+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 17,
+        "fields": {
+            "downloads": 12616,
+            "total_comments": 2,
+            "average_comment_score": 8.5,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -355,9 +525,19 @@
             "comment_text": "",
             "hash": "990d5e8effd939a54292cf4d89e69dfa",
             "pattern_hash": "d2d81ebc04d6e7cd",
-            "hits": 7429,
             "create_date": "1997-01-01 04:21:41+00:00",
             "update_date": "2022-01-22 16:18:35+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 18,
+        "fields": {
+            "downloads": 7457,
+            "total_comments": 2,
+            "average_comment_score": 8.5,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -375,9 +555,19 @@
             "comment_text": "",
             "hash": "5861121c704c4af28298bd3e627d4a38",
             "pattern_hash": "980703c3003f10ff",
-            "hits": 5862,
             "create_date": "1997-01-01 04:22:10+00:00",
             "update_date": "2022-01-21 15:05:16+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 19,
+        "fields": {
+            "downloads": 5892,
+            "total_comments": 1,
+            "average_comment_score": 8.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -395,9 +585,19 @@
             "comment_text": "",
             "hash": "aa8175a6cb039128babae8d0883f7cac",
             "pattern_hash": "9fb1165fa01f4cb6",
-            "hits": 11006,
             "create_date": "1997-01-01 04:29:44+00:00",
             "update_date": "2022-01-22 06:22:54+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 20,
+        "fields": {
+            "downloads": 11053,
+            "total_comments": 5,
+            "average_comment_score": 8.4,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -415,9 +615,19 @@
             "comment_text": "hmm, I still think the bass is a little too wild in the verse part.  it\nsounds a bit screwy, like I had drank too much caffine or something.\nthere are a few changes in this little update.  the sinebass is a bit\nsofter now, since before it was definetly too loud. :P  also, I added some\nvariation to the drum tracks.  before it was just repeating the same thing\nover and over every pattern, haha. :P  I tried to pan some parts, but\nsomehow it got fucked up... its a good idea just to play it in mono. :)\n\n - Andy",
             "hash": "ff445aca7c5c12200a04f7afe42a9d67",
             "pattern_hash": "a0a97d92811d681e",
-            "hits": 1929,
             "create_date": "2001-08-20 16:28:18+00:00",
             "update_date": "2022-01-21 15:39:05+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 21,
+        "fields": {
+            "downloads": 1946,
+            "total_comments": 1,
+            "average_comment_score": 7.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -435,9 +645,19 @@
             "comment_text": "",
             "hash": "1e02799dc32c61ae536a3ad4a5d07156",
             "pattern_hash": "2ac48594f0b4590d",
-            "hits": 1263,
             "create_date": "2001-08-20 16:04:30+00:00",
             "update_date": "2022-01-21 04:29:30+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 22,
+        "fields": {
+            "downloads": 1273,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -455,9 +675,19 @@
             "comment_text": "Well, here's your brief song message:\n\n        I'd like to thank everyone who encouraged me to come back into the\ntracking scene, and everyone who listened to all my betas of this tune\nwith helpful comments and suggestions.  It's undeniably better because of\nyou guys.  I'm hoping to track quite a bit in this upcoming year, and look\nforward to many projects with Analogue.\n\n        You can find me on the web at www.cen.uiuc.edu\/~ajcarlso, or via\nemail at ac@interaccess.com.  Feel free to let me know what you think;\nfeedback is greatly appreciated.\n\n        Thanks, and here's to a good 1998.\n\n        Andrew Carlson\n\n        Leviathan \/ Analogue",
             "hash": "af849a5a107145564ac146dde386ab27",
             "pattern_hash": "b2d59b6eda041b19",
-            "hits": 3261,
             "create_date": "1998-12-09 03:11:02+00:00",
             "update_date": "2022-01-22 16:18:49+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 23,
+        "fields": {
+            "downloads": 3285,
+            "total_comments": 1,
+            "average_comment_score": 9.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -475,9 +705,19 @@
             "comment_text": "",
             "hash": "490399d66d5d73308cb1f2e7e86c1cf3",
             "pattern_hash": "f9761c6ec651596c",
-            "hits": 1356,
             "create_date": "2002-11-12 17:38:55+00:00",
             "update_date": "2022-01-22 16:16:22+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 24,
+        "fields": {
+            "downloads": 1373,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -495,9 +735,19 @@
             "comment_text": "",
             "hash": "d0e61283309c5d72a050d14fcb2e6704",
             "pattern_hash": "4b6fe82b2f2d91d0",
-            "hits": 146505,
             "create_date": "1997-01-01 04:41:47+00:00",
             "update_date": "2022-01-22 14:28:28+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 25,
+        "fields": {
+            "downloads": 147478,
+            "total_comments": 45,
+            "average_comment_score": 9.4,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -515,9 +765,19 @@
             "comment_text": "",
             "hash": "3e2716df273cddc097b28d5f1ffceef8",
             "pattern_hash": "1f58e13c51ea86e9",
-            "hits": 43363,
             "create_date": "1997-01-01 04:42:05+00:00",
             "update_date": "2022-01-22 17:14:47+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 26,
+        "fields": {
+            "downloads": 43788,
+            "total_comments": 13,
+            "average_comment_score": 9.6,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -535,9 +795,19 @@
             "comment_text": "",
             "hash": "268feb71a291c15f3079761b5395a193",
             "pattern_hash": "ec9405790a1c8e32",
-            "hits": 25085,
             "create_date": "1997-01-01 04:48:47+00:00",
             "update_date": "2022-01-22 14:57:34+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 27,
+        "fields": {
+            "downloads": 25214,
+            "total_comments": 7,
+            "average_comment_score": 8.9,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -555,9 +825,19 @@
             "comment_text": "",
             "hash": "8a19a2cebf0e7ae3dcae38a6633bebb6",
             "pattern_hash": "dbc7ec43d5ea59a2",
-            "hits": 283654,
             "create_date": "2000-12-24 02:06:42+00:00",
             "update_date": "2022-01-22 17:06:12+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 28,
+        "fields": {
+            "downloads": 285312,
+            "total_comments": 47,
+            "average_comment_score": 9.7,
+            "total_reviews": 1,
+            "average_review_score": 8.0
         }
     },
     {
@@ -575,9 +855,19 @@
             "comment_text": "",
             "hash": "eef764b00ed3272af92e1a32d631c873",
             "pattern_hash": "13d4381b12bc800d",
-            "hits": 11736,
             "create_date": "1997-01-01 04:51:15+00:00",
             "update_date": "2022-01-22 17:35:08+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 29,
+        "fields": {
+            "downloads": 11778,
+            "total_comments": 4,
+            "average_comment_score": 8.8,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -595,9 +885,19 @@
             "comment_text": "",
             "hash": "a72026f4210fec5ee9df7a7a9b772d28",
             "pattern_hash": "9aa012483ec950bc",
-            "hits": 2298,
             "create_date": "2011-02-21 13:34:24+00:00",
             "update_date": "2022-01-22 16:57:20+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 30,
+        "fields": {
+            "downloads": 2342,
+            "total_comments": 1,
+            "average_comment_score": 9.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -615,9 +915,19 @@
             "comment_text": "",
             "hash": "def80ccbec8107eaf198746e729b8854",
             "pattern_hash": "274ab957d27da3b0",
-            "hits": 396,
             "create_date": "2020-12-29 22:36:34+00:00",
             "update_date": "2022-01-22 16:13:53+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 31,
+        "fields": {
+            "downloads": 421,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -635,9 +945,19 @@
             "comment_text": "*tap* *tap*   Hello, is the microphone working, Hello? Hello?",
             "hash": "5ba76817eb51eb7a1ae6c6c0ef7667ef",
             "pattern_hash": "0efc49d0e50f3c36",
-            "hits": 485,
             "create_date": "2021-01-23 00:51:06+00:00",
             "update_date": "2022-01-22 05:36:28+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 32,
+        "fields": {
+            "downloads": 509,
+            "total_comments": 1,
+            "average_comment_score": 10.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     },
     {
@@ -655,9 +975,19 @@
             "comment_text": "  ____________________________________________________________________\n |                                                                    |\n |  Saga Musix presents: Epilogue (4:06)                              |\n |____________________________________________________________________|\n\n\nA sweet dreamy synthpop ballad for these difficult times.\nThis tune started out pretty much exactly two years ago when  listening  to\nTrancerboy's MOONBOOT.XM, an entry from Evoke 2005. The  first  two  chords\nwere quite inspiring but I had a different progression in mind, so  I  took\nthe first two chords and then continued with my own  ideas.   And  here  we\nare, two years later. Revision 2020 was cancelled  due  to  COVID-19,   but\nwhen it was announced that there would be an online  replacement,   it  was\nclear that I had to contribute. Originally I  wanted  to  do  another  coop\nwith Bacter, but this didn't work out time-wise. Still,  he  came  up  with\nthe title for this track, so I guess it's still kind of a coop? :D\n\nIt  was  absolutely  amazing  to  witness  this  year's    tracked    music\ncompetition at Revision. For the first time in 10  years,   there  actually\nhad to be a pre-selection because  otherwise  there  would  have  been  too\nmany tracks. And what a great compo it was!  This  tune  eventually  ranked\n6th, among many worthy competitors.  But  still  let's  hope  that  we  can\ncelebrate Revision 2021 in real life!\n\n -Saga Musix, 13th of April 2020\n\n___________________________________________________________________________\n\nGreeting fly out to all Revision 2020  participants  and  organizers,   and\nall the great people in Sofa World making this  almost  feel  like  a  real\ndemoparty! Extra greets to:\nAlkama, bacter, d0dge, dfox,   dojoe,   Dune,   Eat-Drink-Fuck,   fgenesis,\nGargaj, Gaspode, glxblt, h0ffman, havoc,   Ixion,   jco,   JosSs,   Kabuto,\nkaomau, kb, Kuemmel, leia, LJ, MedO, mo3, Netpoet, Nightmare,  noby,   pro,\nRaven, RbR, rc55, RoccoW,  T$,   TropicalTrevor,   Uctumi,   v3nom,   Velo,\nvirgill, wayfinder, Wurstgetrank, xq and everyone I forgot.\n\n___________________________________________________________________________\n\nThis work is (c) 2020 by Saga Musix and bacter  and  is  licensed  under  a\nCreative Commons Attribution-Noncommercial-Share Alike 3.0 License.\n\nTrack information:\n- Made between 9th of March 2018 and 10th of April 2020\n- Released into the tracked music competition at Revision 2020 (6th place)\n- This is the high-quality (16-bit, original sample rate) version.\n\nPlease use OpenMPT 1.28+ to play this track.\n\n___________________________________________________________________________\n\nYou can contact me via e-mail at info@sagamusix.de.\nIf you want to chat with me...\n- Jabber: sagamusix@s3m.it (preferred)\n- ICQ: 324324485\n- EsperNet: #modarchive, #modplug, #mod_shrine, #modulez\n  (Nick = Saga_Musix or Saga)\n- IRCNet: #deadline, #demozoo, #evoke, #revision, #nordlicht\n  (Nick = Saga_Musix)\n\nFeel free to visit my websites as well:\n- https:\/\/sagamusix.de\/ - Here you can download all my music, free\n  samples and other stuff. (German and English)\n- https:\/\/sagagames.de\/ - Website featuring my (mostly German-only) free\n  games and applications and other stuff.\n- https:\/\/openmpt.org\/ - Home of Open ModPlug Tracker :)\n\n___________________________________________________________________________\n\nSample credits:\n\nThe source of the samples are indicated in the filename of the samples.\n- XV-5080: From my Roland XV-5080\n- kb6: From the kb6 drum samples collection\n- Dexed: From the Dexed VSTi\n- JayB: From JayB's sample collection\n- D-50: From my Roland D-50\n- TG77: From my Yamaha TG77\n- ArcanaSound: From Arcana Sound's Trance Kicks ReBorn\n\nTake care!",
             "hash": "8ce5b1c3988441145bc8ccfbe73844de",
             "pattern_hash": "c796b20ad725190a",
-            "hits": 1002,
             "create_date": "2020-04-14 19:41:26+00:00",
             "update_date": "2022-01-22 18:10:36+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 33,
+        "fields": {
+            "downloads": 1055,
+            "total_comments": 1,
+            "average_comment_score": 10.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
         }
     }
   ]

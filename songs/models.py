@@ -32,7 +32,6 @@ class Song(models.Model):
     hash=models.CharField(max_length=33)
     pattern_hash=models.CharField(max_length=16)
     license=models.CharField(max_length=16, choices=Licenses.choices)
-    hits=models.PositiveIntegerField()
     search_document=SearchVectorField(null=True)
     create_date=models.DateTimeField(auto_now_add=True)
     update_date=models.DateTimeField(auto_now=True)
@@ -56,3 +55,15 @@ class Song(models.Model):
 
     def __str__(self) -> str:
         return self.get_title()
+
+class SongStats(models.Model):
+    song = models.OneToOneField(
+        Song,
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
+    downloads=models.PositiveIntegerField(default=0)
+    total_comments=models.PositiveSmallIntegerField(default=0)
+    average_comment_score=models.DecimalField(default=0.0, decimal_places=1, max_digits=3)
+    total_reviews=models.PositiveSmallIntegerField(default=0)
+    average_review_score=models.DecimalField(default=0.0, decimal_places=1, max_digits=3)

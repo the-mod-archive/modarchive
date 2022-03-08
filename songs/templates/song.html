@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1 class='title'>{{ song.get_title }}</h1>
+<div class='title'>{{ song.get_title }}</div>
 
 <p>
     By {% include 'song_artists.html' with song=song %}
@@ -16,9 +16,22 @@
     File size: {{ song.file_size }} bytes
     <br/>
     Channels: {{ song.channels }}
-    <br/>
-    Total downloads: {{ song.hits }}
 </p>
+
+<div class='title is-size-4'>Stats</div>
+
+<p>
+    Total downloads: {{ song.songstats.downloads }}
+    <br/>
+    Total comments: {{ song.songstats.total_comments }}
+    <br/>
+    Average comment score: {{ song.songstats.average_comment_score }}
+    <br/>
+    Total reviews: {{ song.songstats.total_reviews }}
+    <br/>
+    Average review score: {{ song.songstats.average_review_score }}
+</p>
+
 <p>
     <br />
     <a href="{% url 'songs' %}">Back to songs index</a>
