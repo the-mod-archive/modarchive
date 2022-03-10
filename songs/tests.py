@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls.base import reverse
 
-from songs.models import Song
+from songs.models import Song, SongStats
 
 class SongTests(TestCase):
     def test_gets_clean_title_when_available(self):
@@ -40,3 +40,35 @@ class SongViewTests(TestCase):
         song = response.context['song']
         self.assertEquals('Tangerine Fascination', song.get_title())
         self.assertEquals(48552, song.legacy_id)
+
+class DownloadTests(TestCase):
+    fixtures = ["songs.json"]
+
+    def test_download_redirects_to_external_url(self):
+        # Arrange
+        song = Song.objects.get(pk = 1)
+
+        # Act
+        response = self.client.get(f"/songs/{song.id}/download")
+
+        # Assert
+        self.assertRedirects(response, f"https://api.modarchive.org/downloads.php?moduleid={song.legacy_id}#{song.filename}", fetch_redirect_response=False)
+
+    def test_download_increases_download_count(self):
+        # Arrange
+        song = Song.objects.get(pk = 1)
+        expected_download_count = song.songstats.downloads + 1
+
+        # Act
+        self.client.get(f"/songs/{song.id}/download")
+        song.refresh_from_db()
+
+        # Assert
+        self.assertEquals(expected_download_count, song.songstats.downloads)
+
+    def test_returns_404_if_song_id_is_missing(self):
+        # Act
+        response = self.client.get("/songs/1000/download")
+        
+        # Assert
+        self.assertEqual(response.status_code, 404)
