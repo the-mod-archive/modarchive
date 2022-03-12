@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,6 +13,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic.base import TemplateView, RedirectView
 
 from homepage.forms import ChangePasswordForm, EmailAddressInUseError, ForgotPasswordForm, LoginForm, RegisterUserForm, ResetPasswordForm
+from homepage.functions import is_recaptcha_success
 from homepage.tokens import account_activation_token
 from songs.models import Song
 
@@ -40,6 +42,9 @@ def register(request):
     if request.method == 'POST':
         form = RegisterUserForm(request.POST)
         if form.is_valid():
+            if not is_recaptcha_success(request.POST.get('g-recaptcha-response')):
+                return redirect("register_fail")
+
             try:
                 user = form.save()
                 subject = "Active your ModArchive account"
@@ -65,7 +70,7 @@ def register(request):
             return render(request=request, template_name='registration/register.html', context={"form":form})
 
     form = RegisterUserForm
-    return render(request, 'registration/register.html', context={'form': form})
+    return render(request, 'registration/register.html', context={'form': form, 'recaptcha_site_key': settings.GOOGLE_RECAPTCHA_SITE_KEY})
 
 def password_reset_done(request):
     return render(request, 'password_reset/password_reset_done.html')

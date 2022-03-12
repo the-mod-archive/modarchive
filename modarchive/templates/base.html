@@ -11,6 +11,9 @@
             <link rel="stylesheet" href="{% static 'bulma/css/style.min.css' %}">
             {% block extra_css %}{% endblock extra_css %}
         {% endblock css %}
+
+        {% block script %}
+        {% endblock script %}
     </head>
     <body>
         {% include 'navbar.html' %}

@@ -4,3 +4,5 @@ from modarchive.settings.base import *
 DEBUG = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+IS_RECAPTCHA_ENABLED = False

@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.urls.base import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from unittest.mock import patch
 
 from homepage.tokens import account_activation_token
 
@@ -143,8 +144,10 @@ class RegistrationTests(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed('templates/registration/register.html')
 
-    def test_sends_registration_email_with_completed_form(self):
+    @patch("homepage.views.is_recaptcha_success")
+    def test_sends_registration_email_with_completed_form(self, mock_recaptcha):
         # Act
+        mock_recaptcha.return_value = True
         response = self.client.post(reverse('register'), {'username': 'new_user', 'email': 'newuser@test.com', 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
 
         # Assert 
@@ -156,8 +159,10 @@ class RegistrationTests(TestCase):
         self.assertTrue("Thank you for registering an account with the Mod Archive. To complete your registration, please follow this link:" in mail.outbox[0].body)
         self.assertTrue("https://testserver/activate_account" in mail.outbox[0].body)
 
-    def test_notifies_existing_user_if_email_address_already_in_use(self):
+    @patch("homepage.views.is_recaptcha_success")
+    def test_notifies_existing_user_if_email_address_already_in_use(self, mock_recaptcha):
         # Arrange
+        mock_recaptcha.return_value = True
         User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
 
         # Act
@@ -170,6 +175,17 @@ class RegistrationTests(TestCase):
         self.assertEqual('donotreply@modarchive.org', mail.outbox[0].from_email)
         self.assertEqual("ModArchive security warning", mail.outbox[0].subject)
         self.assertTrue("A user attempted to register a ModArchive account with your email address." in mail.outbox[0].body)
+
+    @patch("homepage.views.is_recaptcha_success")
+    def test_redirects_to_register_fail_if_recaptcha_fails(self, mock_recaptcha):
+        # Arrange
+        mock_recaptcha.return_value = False
+        
+        # Act
+        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': 'newuser@test.com', 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
+
+        # Assert 
+        self.assertRedirects(response, reverse('register_fail'))
 
 class ActivationTests(TestCase):
     kwargs = {'uidb64': 'Mg', 'token': 'asdfasdf'}
