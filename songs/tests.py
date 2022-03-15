@@ -1,5 +1,8 @@
 from django.test import TestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls.base import reverse
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 
 from songs.models import Song, SongStats
 
@@ -72,3 +75,29 @@ class DownloadTests(TestCase):
         
         # Assert
         self.assertEqual(response.status_code, 404)
+
+class SongTemplateTests(StaticLiveServerTestCase):
+    fixtures = ["songs.json"]
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        options = webdriver.chrome.options.Options()
+        options.headless = True
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+
+        cls.selenium = driver
+        cls.selenium.implicitly_wait(10)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def test_renders_song_index_page(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/songs/'))
+
+        song_links = self.selenium.find_element_by_id('songs-list').find_elements_by_name("song-link")
+
+        self.assertEquals(33, len(song_links))

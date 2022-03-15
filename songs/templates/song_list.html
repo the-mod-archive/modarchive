@@ -4,10 +4,10 @@
 
 <h1 class='title'>Songs</h1>
 
-<ul>
+<ul id='songs-list'>
 {% for song in object_list %}
     <li>
-        <a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a> by {% include 'song_artists.html' with song=song %}
+        <a href="{% url 'view_song' song.id %}" name="song-link">{{ song.get_title }}</a> by {% include 'song_artists.html' with song=song %}
     </li>
 {% empty %}
     <li>No songs yet.</li>
