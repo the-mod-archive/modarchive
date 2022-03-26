@@ -6,5 +6,5 @@ from artists.views import artist
 
 urlpatterns = [
     path('', ListView.as_view(template_name='artist_list.html', model=Artist), {}, 'artists'),
-    path('<str:key>/', artist, {}, 'view_artist')
+    path('<int:pk>/', artist, {}, 'view_artist')
 ]

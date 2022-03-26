@@ -14,7 +14,7 @@
     {% elif result.type == 'artist' %}
         <li>
             <span class="is-size-7 has-text-gray">Artist</span>
-            <a href="{% url 'view_artist' result.item.key %}">{{ result.item.name }}</a>
+            <a href="{% url 'view_artist' result.item.id %}">{{ result.item.name }}</a>
         </li>
     {% endif %}
 {% endfor %}

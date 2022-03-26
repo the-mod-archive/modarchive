@@ -20,7 +20,7 @@ class ArtistViewTests(TestCase):
 
     def test_artist_view_contains_specific_artist(self):
         # Act
-        response = self.client.get(reverse('view_artist', kwargs = {'key': 'Arcturus'}))
+        response = self.client.get(reverse('view_artist', kwargs = {'pk': 1}))
 
         # Assert
         self.assertTemplateUsed(response, 'artist.html')
