@@ -8,6 +8,7 @@ class Profile(models.Model):
         primary_key=False,
         null=True
     )
+    legacy_id=models.IntegerField(null=True)
     display_name = models.CharField(max_length=255)
     blurb = models.TextField(max_length=24000, null=True)
     create_date=models.DateTimeField(auto_now_add=True)

@@ -71,3 +71,6 @@ class ResetPasswordForm(SetPasswordForm):
 
 class EmailAddressInUseError(Exception):
     pass
+
+class CsvUploadForm(forms.Form):
+    csv_file = forms.FileField()
