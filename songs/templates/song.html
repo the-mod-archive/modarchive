@@ -5,8 +5,10 @@
 <div class='title'>{{ song.get_title }}</div>
 
 <p>
-    By {% include 'song_artists.html' with song=song %}
-    <br/>
+    {% if song.artist_set.all %}
+        {% include 'song_artists.html' with song=song %}
+        <br/>
+    {% endif %}
     Added on {{ song.create_date|date:"M d, Y" }}
     <br/>
     Filename: {{ song.filename }}

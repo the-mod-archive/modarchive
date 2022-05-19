@@ -9,7 +9,7 @@
     {% if result.type == 'song' %}
         <li>
             <span class="is-size-7 has-text-gray">Song</span>
-            <a href="{% url 'view_song' result.item.id %}">{{ result.item.get_title }}</a> by {% include 'song_artists.html' with song=result.item %}
+            <a href="{% url 'view_song' result.item.id %}">{{ result.item.get_title }}</a> {% include 'song_artists.html' with song=result.item %}
         </li>
     {% elif result.type == 'artist' %}
         <li>
