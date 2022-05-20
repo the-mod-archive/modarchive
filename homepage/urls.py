@@ -1,12 +1,12 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
 from django.views.generic.base import TemplateView
-from homepage.views import AccountActivationCompleteView, BulkUploadView, PasswordResetView, PasswordChangeView, PasswordResetConfirmView, PasswordResetCompleteView, LegacyUrlRedirectionView, activate, home, LoginView, password_reset_done, profile, register  
+from homepage.views import AccountActivationCompleteView, BulkUploadView, PasswordResetView, PasswordChangeView, PasswordResetConfirmView, PasswordResetCompleteView, LegacyUrlRedirectionView, activate, home, LoginView, password_reset_done, account_settings, register
 
 urlpatterns = [
     # Basic homepage
     path('', home, {}, 'home'),
-    path('profile/', profile, {}, 'profile'),
+    path('account_settings/', account_settings, {}, 'account_settings'),
 
     # Basic auth functionality
     path('login/', LoginView.as_view(), name='login', kwargs={'next': '/'}),

@@ -37,8 +37,8 @@ def page_not_found_view(request, exception):
     return render(request, '404.html')
 
 @login_required
-def profile(request):
-    return render(request, 'account_management/profile.html')
+def account_settings(request):
+    return render(request, 'account_management/account_settings.html')
 
 def register(request):
     # Logged-in users should not be able to view the registration page or submit a request.
@@ -206,7 +206,7 @@ class BulkUploadView(View):
         # Generate profile
         profile = Profile.objects.create(
             user = user, 
-            display_name = username, 
+            display_name = item['profile_fullname'], 
             blurb = item['profile_blurb'], 
             create_date = date_joined, 
             update_date = item['lastlogin'], 
@@ -218,7 +218,7 @@ class BulkUploadView(View):
             artist = Artist.objects.create(
                 user = user,
                 legacy_id = item['userid'],
-                name = username,
+                name = item['profile_fullname'],
                 create_date = date_joined,
                 update_date = item['lastlogin']
             )
