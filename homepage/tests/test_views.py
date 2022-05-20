@@ -187,6 +187,17 @@ class RegistrationTests(TestCase):
         # Assert 
         self.assertRedirects(response, reverse('register_fail'))
 
+    @patch("homepage.views.is_recaptcha_success")
+    def test_registration_creates_user_but_not_profile(self, mock_recaptcha):
+        # Act
+        mock_recaptcha.return_value = True
+        self.client.post(reverse('register'), {'username': 'new_user', 'email': 'newuser@test.com', 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
+
+        # Assert
+        user = User.objects.get(username = 'new_user')
+        self.assertIsNotNone(user)
+        self.assertFalse(hasattr(user, 'profile'))
+
 class ActivationTests(TestCase):
     kwargs = {'uidb64': 'Mg', 'token': 'asdfasdf'}
 
@@ -214,6 +225,22 @@ class ActivationTests(TestCase):
         self.assertRedirects(response, reverse('account_activation_complete'))
         user.refresh_from_db()
         self.assertTrue(user.is_active, "Expected user to be active")
+
+    def test_creates_profile_on_user_activation(self):
+        # Arrange
+        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=False)
+        token = account_activation_token.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        # Act
+        self.client.get(reverse('activate_account', kwargs={'uidb64': uid, 'token': token}))
+
+        # Assert
+        user.refresh_from_db()
+        self.assertTrue(hasattr(user, 'profile'))
+        profile = user.profile
+        self.assertIsNotNone(profile, "Expected profile to exist for user")
+        self.assertEqual(user.username, profile.display_name, "Profile display name did not match username")
 
     def test_redirects_to_home_if_user_already_active(self):
         # Arrange

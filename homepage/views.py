@@ -1,4 +1,3 @@
-from unicodedata import name
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -6,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetConfirmView, PasswordResetView, PasswordResetCompleteView
 from django.contrib.sites.shortcuts import get_current_site
+from django.db import transaction
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
@@ -33,7 +33,7 @@ class RedirectAuthenticatedUserMixin:
 def home(request):
     return render(request, 'home_page.html')
 
-def page_not_found_view(request, exception):
+def page_not_found_view(request):
     return render(request, '404.html')
 
 @login_required
@@ -119,6 +119,7 @@ class PasswordResetCompleteView(RedirectAuthenticatedUserMixin, PasswordResetCom
 class AccountActivationCompleteView(RedirectAuthenticatedUserMixin, TemplateView):
     template_name = 'registration/account_activation_complete.html'
 
+@transaction.atomic
 def activate(request, uidb64, token):
     if (request.user.is_authenticated):
         return redirect("home")
@@ -138,6 +139,7 @@ def activate(request, uidb64, token):
     
     user.is_active = True
     user.save()
+    Profile.objects.create(user = user, display_name = user.username)
     return redirect('account_activation_complete')
 
 class LegacyUrlRedirectionView(RedirectView):
