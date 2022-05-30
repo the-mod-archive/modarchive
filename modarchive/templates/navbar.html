@@ -38,6 +38,11 @@
                                 <div class="dropdown-item">
                                     <a href="{% url 'account_settings' %}">Account Settings</a>
                                 </div>
+                                {% if user.profile %}
+                                    <div class="dropdown-item">
+                                        <a href="{% url 'view_profile' user.profile.id %}">Profile</a>
+                                    </div>
+                                {% endif %}
                                 <div class="dropdown-item">
                                     <a href="{% url 'logout' %}">Log out</a>
                                 </div>

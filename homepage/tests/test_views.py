@@ -6,6 +6,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from unittest.mock import patch
 
+from homepage.models import Profile
 from homepage.tokens import account_activation_token
 
 class PasswordResetViewTests(TestCase):
@@ -303,3 +304,94 @@ class LegacyRedirectionViewTests(TestCase):
     def test_old_module_url_redirects_to_home_for_invalid_id(self):
         response = self.client.get('/index.php/?request=view_by_moduleid&query=99999')
         self.assertRedirects(response, reverse('home'))
+
+class ProfileViewTests(TestCase):
+    def test_profile_page_contains_requested_profile(self):
+        # Arrange
+        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
+        profile = Profile.objects.create(id = 1, user = user, display_name = 'Arcturus')
+        
+        # Act
+        response = self.client.get(reverse('view_profile', kwargs = {'pk': 1}))
+
+        # Assert
+        self.assertTemplateUsed(response, 'profile.html')
+        self.assertTrue('profile' in response.context)
+
+        profile = response.context['profile']
+        self.assertEquals('Arcturus', profile.display_name)
+
+    def test_profile_page_responds_with_404_when_profile_does_not_exist(self):
+        # Act
+        response = self.client.get(reverse('view_profile', kwargs = {'pk': 42}))
+
+        # Assert
+        self.assertEqual(response.status_code, 404)
+
+class UpdateProfileViewTests(TestCase):
+    fixtures = ["users.json"]
+
+    def test_get_update_profile_redirects_unauthenticated_user(self):
+        # Arrange
+        update_profile_url = reverse('update_profile')
+        
+        # Act
+        response = self.client.get(reverse('update_profile'))
+
+        # Assert
+        self.assertRedirects(response, f'/login/?next={update_profile_url}')
+
+    def test_get_update_profile_handles_error_when_user_has_no_profile(self):
+        # Arrange
+        self.client.force_login(User.objects.get_or_create(username='test_no_profile')[0])
+
+        # Act
+        response = self.client.get(reverse('update_profile'))
+
+        # Assert
+        self.assertEqual(404, response.status_code)
+
+    def test_get_update_profile_includes_correct_profile(self):
+        # Arrange
+        self.client.force_login(User.objects.get_or_create(username='test_user')[0])
+        profile = Profile.objects.get(id = 1)
+
+        # Act
+        response = self.client.get(reverse('update_profile'))
+
+        # Assert
+        self.assertTemplateUsed(response, 'update_profile.html')
+        self.assertTrue('profile' in response.context)
+        self.assertEquals(profile.display_name, response.context['profile'].display_name)
+
+    def test_post_update_profile_redirects_unauthenticated_user(self):  
+        # Arrange
+        update_profile_url = reverse('update_profile')
+        
+        # Act
+        response = self.client.post(reverse('update_profile'))
+
+        # Assert
+        self.assertRedirects(response, f'/login/?next={update_profile_url}')
+
+    def test_post_update_profile_handles_error_when_user_has_no_profile(self):
+        # Arrange
+        self.client.force_login(User.objects.get_or_create(username='test_no_profile')[0])
+
+        # Act
+        response = self.client.post(reverse('update_profile'), {'blurb': 'new blurb'})
+
+        # Assert
+        self.assertEqual(404, response.status_code)
+
+    def test_post_update_profile_successfully_updates_profile(self):
+        # Arrange
+        self.client.force_login(User.objects.get_or_create(username='test_user')[0])
+        profile = Profile.objects.get(id = 1)
+
+        # Act
+        self.client.post(reverse('update_profile'), {'blurb': 'new blurb'})
+
+        # Assert
+        profile.refresh_from_db()
+        self.assertEqual('new blurb', profile.blurb)

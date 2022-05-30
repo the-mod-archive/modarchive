@@ -1,8 +1,10 @@
+from cProfile import Profile
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm, UsernameField, UserCreationForm
 from django.contrib.auth.models import User
 from django.forms.widgets import EmailInput
 
+from homepage.models import Profile
 from homepage.fields import BlacklistProtectedEmailField
 
 class LoginForm(AuthenticationForm):
@@ -74,3 +76,12 @@ class EmailAddressInUseError(Exception):
 
 class CsvUploadForm(forms.Form):
     csv_file = forms.FileField()
+
+class UpdateProfileForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['blurb'].widget.attrs.update({'class': 'textarea'})
+
+    class Meta:
+        model = Profile
+        fields = ("blurb",)

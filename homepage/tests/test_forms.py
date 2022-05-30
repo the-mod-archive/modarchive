@@ -1,5 +1,5 @@
 from django.test import TestCase
-from homepage.forms import EmailAddressInUseError, ForgotPasswordForm, RegisterUserForm, ResetPasswordForm
+from homepage.forms import EmailAddressInUseError, ForgotPasswordForm, RegisterUserForm, ResetPasswordForm, UpdateProfileForm
 from django.contrib.auth.models import User
 
 class ForgotPasswordFormTests(TestCase):
@@ -198,3 +198,18 @@ class RegisterUserFormTests(TestCase):
         self.assertFalse(form.is_valid(), "Form with mismatching passwords should not be valid.")
         self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
         self.assertEquals(["The two password fields didn’t match."], form.errors['password2'], "Error message for mismatching passwords is incorrect.")
+
+class UpdateProfileFormTests(TestCase):
+    def test_form_with_empty_blurb_is_valid(self):
+        form = UpdateProfileForm(data={'blurb': ''})
+        self.assertTrue(form.is_valid())
+
+    def test_form_with_no_blurb_is_valid(self):
+        form = UpdateProfileForm(data={})
+        self.assertTrue(form.is_valid())
+
+    def test_form_with_excessive_blurb_is_invalid(self):
+        extra_long_blurb = "long blurb" * 2401
+        form = UpdateProfileForm(data={'blurb': extra_long_blurb})
+
+        self.assertFalse(form.is_valid())

@@ -2,6 +2,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
 from django.views.generic.base import TemplateView
 from homepage.views import AccountActivationCompleteView, BulkUploadView, PasswordResetView, PasswordChangeView, PasswordResetConfirmView, PasswordResetCompleteView, LegacyUrlRedirectionView, activate, home, LoginView, password_reset_done, account_settings, register
+from homepage.view.profile_view import ProfileView, UpdateProfileView
 
 urlpatterns = [
     # Basic homepage
@@ -31,7 +32,11 @@ urlpatterns = [
     re_path('(?P<php_file>[a-zA-Z]+).php/', LegacyUrlRedirectionView.as_view(), name='login_php'),
 
     # Bulk uploader tool
-    path('bulk_upload/', BulkUploadView.as_view(), {}, 'bulk_upload')
+    path('bulk_upload/', BulkUploadView.as_view(), {}, 'bulk_upload'),
+
+    # Profiles
+    path('profiles/<int:pk>/', ProfileView.as_view(), {}, 'view_profile'),
+    path('profiles/update/', UpdateProfileView.as_view(), {}, 'update_profile')
 ]
 
 handler404 = 'homepage.views.page_not_found_view'

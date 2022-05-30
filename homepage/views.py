@@ -205,11 +205,11 @@ class BulkUploadView(View):
 
         # Generate profile
         profile = Profile.objects.create(
-            user = user, 
-            display_name = item['profile_fullname'], 
-            blurb = item['profile_blurb'], 
-            create_date = date_joined, 
-            update_date = item['lastlogin'], 
+            user = user,
+            display_name = item['profile_fullname'],
+            blurb = item['profile_blurb'],
+            create_date = date_joined,
+            update_date = item['lastlogin'],
             legacy_id = item['userid']
         )
 
@@ -217,6 +217,7 @@ class BulkUploadView(View):
         if item['cred_artist']:
             artist = Artist.objects.create(
                 user = user,
+                profile = profile,
                 legacy_id = item['userid'],
                 name = item['profile_fullname'],
                 create_date = date_joined,

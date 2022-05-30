@@ -1,0 +1,29 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "username": "test_user",
+            "password": "testpassword"
+        }
+    },
+    {
+        "model": "homepage.profile",
+        "pk": 1,
+        "fields": {
+            "display_name": "Test User",
+            "blurb": "This is my blurb",
+            "user_id": 1,
+            "create_date": "2022-01-21 20:33:00+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "username": "test_no_profile",
+            "password": "testpassword"
+        }
+    }
+]

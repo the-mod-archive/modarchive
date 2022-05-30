@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if user.profile and user.profile.id == profile.id %}
+        <a href="{% url 'update_profile' %}">Update your profile</a>
+        <br/><br/>
+    {% endif %}
+
+    Profile: {{ profile.display_name }}
+    <br/><br/>
+    {% if profile.artist %}
+        <p>
+        <a href="{% url 'view_artist' profile.artist.id %}">See artist page for {{ profile.display_name }}</a>
+        </p>
+    {% endif %}
+
+    {% if profile.blurb %}
+    <p>
+        Blurb: {{ profile.blurb }}
+    </p>
+    {% endif %}
+{% endblock %}

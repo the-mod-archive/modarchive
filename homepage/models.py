@@ -10,7 +10,7 @@ class Profile(models.Model):
     )
     legacy_id=models.IntegerField(null=True)
     display_name = models.CharField(max_length=255)
-    blurb = models.TextField(max_length=24000, null=True)
+    blurb = models.TextField(max_length=24000, null=True, blank=True)
     create_date=models.DateTimeField(auto_now_add=True)
     update_date=models.DateTimeField(auto_now=True)
 
