@@ -145,7 +145,7 @@ class RegistrationTests(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed('templates/registration/register.html')
 
-    @patch("homepage.views.is_recaptcha_success")
+    @patch("homepage.view.registration_views.is_recaptcha_success")
     def test_sends_registration_email_with_completed_form(self, mock_recaptcha):
         # Act
         mock_recaptcha.return_value = True
@@ -160,7 +160,7 @@ class RegistrationTests(TestCase):
         self.assertTrue("Thank you for registering an account with the Mod Archive. To complete your registration, please follow this link:" in mail.outbox[0].body)
         self.assertTrue("https://testserver/activate_account" in mail.outbox[0].body)
 
-    @patch("homepage.views.is_recaptcha_success")
+    @patch("homepage.view.registration_views.is_recaptcha_success")
     def test_notifies_existing_user_if_email_address_already_in_use(self, mock_recaptcha):
         # Arrange
         mock_recaptcha.return_value = True
@@ -177,7 +177,7 @@ class RegistrationTests(TestCase):
         self.assertEqual("ModArchive security warning", mail.outbox[0].subject)
         self.assertTrue("A user attempted to register a ModArchive account with your email address." in mail.outbox[0].body)
 
-    @patch("homepage.views.is_recaptcha_success")
+    @patch("homepage.view.registration_views.is_recaptcha_success")
     def test_redirects_to_register_fail_if_recaptcha_fails(self, mock_recaptcha):
         # Arrange
         mock_recaptcha.return_value = False
@@ -188,7 +188,7 @@ class RegistrationTests(TestCase):
         # Assert 
         self.assertRedirects(response, reverse('register_fail'))
 
-    @patch("homepage.views.is_recaptcha_success")
+    @patch("homepage.view.registration_views.is_recaptcha_success")
     def test_registration_creates_user_but_not_profile(self, mock_recaptcha):
         # Act
         mock_recaptcha.return_value = True

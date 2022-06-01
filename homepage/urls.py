@@ -1,7 +1,11 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path, re_path
 from django.views.generic.base import TemplateView
-from homepage.views import AccountActivationCompleteView, BulkUploadView, PasswordResetView, PasswordChangeView, PasswordResetConfirmView, PasswordResetCompleteView, LegacyUrlRedirectionView, activate, home, LoginView, password_reset_done, account_settings, register
+
+from homepage.view import password_views, registration_views
+from homepage.view.bulk_upload_view import BulkUploadView
+from homepage.view.homepage_views import home, account_settings, LoginView
+from homepage.view.legacy_redirect_view import LegacyUrlRedirectionView
 from homepage.view.profile_view import ProfileView, UpdateProfileView
 
 urlpatterns = [
@@ -12,21 +16,21 @@ urlpatterns = [
     # Basic auth functionality
     path('login/', LoginView.as_view(), name='login', kwargs={'next': '/'}),
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
-    path('change_password/', PasswordChangeView.as_view(), name='change_password'),
+    path('change_password/', password_views.PasswordChangeView.as_view(), name='change_password'),
     
     # Account registration
-    path('register/', register, {}, 'register'),
+    path('register/', registration_views.register, {}, 'register'),
     path('register_done/', TemplateView.as_view(template_name='registration/register_done.html'), {}, 'register_done'),
     path('register_fail/', TemplateView.as_view(template_name='registration/register_fail.html'), {}, 'register_fail'),
-    path('activate_account/<uidb64>/<token>', activate, name='activate_account'),
-    path('account_activation_complete/', AccountActivationCompleteView.as_view(), {}, 'account_activation_complete'),
+    path('activate_account/<uidb64>/<token>', registration_views.activate, name='activate_account'),
+    path('account_activation_complete/', registration_views.AccountActivationCompleteView.as_view(), {}, 'account_activation_complete'),
     path('activation_error/', TemplateView.as_view(template_name='registration/account_activation_error.html'), {}, 'activation_error'),
     
     # Password reset
-    path('forgot_password/', PasswordResetView.as_view(), {}, 'forgot_password'),
-    path('password_reset_done/', password_reset_done, {}, 'password_reset_done'),
-    path('password_reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset'),
-    path('password_reset_complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('forgot_password/', password_views.PasswordResetView.as_view(), {}, 'forgot_password'),
+    path('password_reset_done/', password_views.password_reset_done, {}, 'password_reset_done'),
+    path('password_reset/<uidb64>/<token>/', password_views.PasswordResetConfirmView.as_view(), name='password_reset'),
+    path('password_reset_complete/', password_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     # Legacy URL redirects
     re_path('(?P<php_file>[a-zA-Z]+).php/', LegacyUrlRedirectionView.as_view(), name='login_php'),
@@ -39,4 +43,4 @@ urlpatterns = [
     path('profiles/update/', UpdateProfileView.as_view(), {}, 'update_profile')
 ]
 
-handler404 = 'homepage.views.page_not_found_view'
+handler404 = 'homepage.view.homepage_views.page_not_found_view'
