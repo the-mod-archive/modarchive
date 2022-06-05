@@ -4,6 +4,17 @@
 
 <h1 class='title'>Artists</h1>
 
+{% if perms.artists.add_artist %}
+    <article class="message is-warning">
+        <div class="message-header">
+            <p>Admin Actions</p>
+        </div>
+        <div class="message-body">
+            <a href="{% url 'add_artist' %}">Add an artist</a>
+        </div>
+    </article>
+{% endif %}
+
 <ul>
 {% for artist in object_list %}
     <li>

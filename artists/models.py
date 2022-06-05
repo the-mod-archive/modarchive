@@ -1,6 +1,7 @@
 from django.db import models
 from homepage.models import Profile
 from songs.models import Song
+from django.contrib.postgres.fields import CICharField
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.auth.models import User
@@ -20,7 +21,7 @@ class Artist(models.Model):
     )
     legacy_id=models.IntegerField(null=True)
     key=models.CharField(max_length=32, db_index=True)
-    name=models.CharField(max_length=64)
+    name=CICharField(max_length=64, unique=True)
     songs=models.ManyToManyField(Song)
     search_document=SearchVectorField(null=True)
     create_date=models.DateTimeField(auto_now_add=True)
