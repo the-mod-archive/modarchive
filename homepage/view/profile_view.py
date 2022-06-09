@@ -29,6 +29,6 @@ class UpdateProfileView(LoginRequiredMixin, View):
             profile = request.user.profile
             form = UpdateProfileForm(request.POST, instance=profile)
             form.save()
-            return redirect(reverse('view_profile', kwargs = {'pk': 1}))
+            return redirect(reverse('view_profile', kwargs = {'pk': profile.id}))
         except Profile.DoesNotExist:
             raise Http404("Profile does not exist")
