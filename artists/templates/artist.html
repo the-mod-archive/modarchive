@@ -2,6 +2,17 @@
 
 {% block content %}
 
+{% if user.is_staff and perms.artists.change_artist %}
+    <article class="message is-warning">
+        <div class="message-header">
+            <p>Admin Actions</p>
+        </div>
+        <div class="message-body">
+            <a href="{% url 'admin:artists_artist_change' artist.id %}">Change this artist</a>
+        </div>
+    </article>
+{% endif %}
+
 <h1 class='title'>{{ artist.name }}</h1>
 
 <p>

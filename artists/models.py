@@ -11,18 +11,20 @@ class Artist(models.Model):
         User,
         on_delete=models.SET_NULL,
         primary_key=False,
-        null=True
+        null=True,
+        blank=True
     )
     profile = models.OneToOneField(
         Profile,
         on_delete=models.SET_NULL,
         primary_key=False,
-        null=True
+        null=True,
+        blank=True
     )
-    legacy_id=models.IntegerField(null=True)
-    key=models.CharField(max_length=32, db_index=True)
+    legacy_id=models.IntegerField(null=True, blank=True, help_text="User ID from the legacy Mod Archive site")
+    key=models.CharField(max_length=32, db_index=True, blank=True)
     name=CICharField(max_length=64, unique=True)
-    songs=models.ManyToManyField(Song)
+    songs=models.ManyToManyField(Song, blank=True)
     search_document=SearchVectorField(null=True)
     create_date=models.DateTimeField(auto_now_add=True)
     update_date=models.DateTimeField(auto_now=True)
@@ -36,3 +38,6 @@ class Artist(models.Model):
         return {
             'A': self.name
         }
+
+    def __str__(self):
+        return self.name

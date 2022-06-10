@@ -4,13 +4,13 @@
 
 <h1 class='title'>Artists</h1>
 
-{% if perms.artists.add_artist %}
+{% if user.is_staff and perms.artists.add_artist %}
     <article class="message is-warning">
         <div class="message-header">
             <p>Admin Actions</p>
         </div>
         <div class="message-body">
-            <a href="{% url 'add_artist' %}">Add an artist</a>
+            <a href="{% url 'admin:artists_artist_add' %}">Add an artist</a>
         </div>
     </article>
 {% endif %}
