@@ -2,6 +2,17 @@
 
 {% block content %}
 
+{% if user.is_staff and perms.songs.change_song %}
+    <article class="message is-warning">
+        <div class="message-header">
+            <p>Admin Actions</p>
+        </div>
+        <div class="message-body">
+            <a href="{% url 'admin:songs_song_change' song.id %}">Change this song</a>
+        </div>
+    </article>
+{% endif %}
+
 <div class='title'>{{ song.get_title }}</div>
 
 <p>
