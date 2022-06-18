@@ -13,39 +13,73 @@
     </article>
 {% endif %}
 
-<div class='title'>{{ song.get_title }}</div>
 
-<p>
-    {% if song.artist_set.all %}
+<div class="block">
+    <div class='title'>{{ song.get_title }}</div>
+
+    <div class="content is-medium">
+        {% if song.artist_set.all %}
         {% include 'song_artists.html' with song=song %}
         <br/>
-    {% endif %}
-    Added on {{ song.create_date|date:"M d, Y" }}
-    <br/>
-    Filename: {{ song.filename }}
-    <br/>
-    Format: {{ song.format }}
-    <br/>
-    File size: {{ song.file_size }} bytes
-    <br/>
-    Channels: {{ song.channels }}
-</p>
+        {% endif %}
+        <p><a href="{% url 'download_song' song.id %}">Download</a></p>
+    </div>
+</div>
 
-<p><a href="{% url 'download_song' song.id %}">Download</a></p>
+<div class="columns">
+    <div class="column">
+        <div class="content is-medium">
+            Song Info
+        </div>
+        <div class="box has-background-light">
+            Added on {{ song.create_date|date:"M d, Y" }}
+            <br/>
+            Filename: {{ song.filename }}
+            <br/>
+            Format: {{ song.format }}
+            <br/>
+            File size: {{ song.file_size }} bytes
+            <br/>
+            Channels: {{ song.channels }}    
+        </div>
+    </div>
+    <div class="column">
+        <div class="content is-medium">
+            Stats
+        </div>
+        <div class="box has-background-light">
+            Total downloads: {{ song.songstats.downloads }}
+            <br/>
+            Total comments: {{ song.songstats.total_comments }}
+            <br/>
+            Average comment score: {{ song.songstats.average_comment_score }}
+            <br/>
+            Total reviews: {{ song.songstats.total_reviews }}
+            <br/>
+            Average review score: {{ song.songstats.average_review_score }}    
+        </div>
+    </div>
+</div>
 
-<div class='title is-size-4'>Stats</div>
+{% if song.comment_text %}
+    <div class="content is-medium">
+        Internal Comments
+    </div>
+    
+    <div class="box is-family-monospace has-background-dark has-text-warning">    
+        {{ song.comment_text|linebreaks }}
+    </div>
+{% endif %}
 
-<p>
-    Total downloads: {{ song.songstats.downloads }}
-    <br/>
-    Total comments: {{ song.songstats.total_comments }}
-    <br/>
-    Average comment score: {{ song.songstats.average_comment_score }}
-    <br/>
-    Total reviews: {{ song.songstats.total_reviews }}
-    <br/>
-    Average review score: {{ song.songstats.average_review_score }}
-</p>
+{% if song.instrument_text %}
+    <div class="content is-medium">
+        Instrument Text
+    </div>    
+
+    <div class="box is-family-monospace has-background-dark has-text-warning">
+        {{ song.instrument_text|linebreaks }}
+    </div>
+{% endif %}
 
 <p>
     <br />
