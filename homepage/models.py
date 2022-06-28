@@ -14,6 +14,9 @@ class Profile(models.Model):
     create_date=models.DateTimeField(auto_now_add=True)
     update_date=models.DateTimeField(auto_now=True)
 
+    def __str__(self) -> str:
+        return self.display_name
+
 class BlacklistedDomain(models.Model):
     domain=models.CharField(max_length=255, unique=True)
     hits=models.IntegerField(default=0)

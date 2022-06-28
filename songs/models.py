@@ -3,6 +3,8 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
 
+from homepage.models import Profile
+
 class Song(models.Model):
     class Formats(models.TextChoices):
         MOD = 'MOD', _('Protracker')
@@ -67,3 +69,10 @@ class SongStats(models.Model):
     average_comment_score=models.DecimalField(default=0.0, decimal_places=1, max_digits=3)
     total_reviews=models.PositiveSmallIntegerField(default=0)
     average_review_score=models.DecimalField(default=0.0, decimal_places=1, max_digits=3)
+
+class Comment(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    text = models.TextField(max_length=5000)
+    rating = models.PositiveSmallIntegerField()
+    create_date=models.DateTimeField(auto_now_add=True)
