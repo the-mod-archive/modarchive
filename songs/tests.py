@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls.base import reverse
 from django.contrib.auth.models import User
 
-from songs.models import Song
+from songs.models import Song, Comment
 
 class SongModelTests(TestCase):
     def test_gets_clean_title_when_available(self):
@@ -12,6 +12,33 @@ class SongModelTests(TestCase):
     def test_gets_original_title_when_no_clean_title_available(self):
         song = Song(title="song title")
         self.assertEqual("song title", song.get_title())
+
+class CommentModelTests(TestCase):
+    fixtures = ["songs_2.json"]
+
+    def test_song_stats_updated_correctly_after_removing_comment(self):
+        song = Song.objects.get(id=4)
+        new_comment = Comment(profile=None, song=song, text="comment text", rating=10)
+        new_comment.save()
+
+        song.refresh_from_db()
+        self.assertEquals(2, song.songstats.total_comments)
+        self.assertEquals(7.5, song.songstats.average_comment_score)
+
+        new_comment.delete()
+        song.refresh_from_db()
+        self.assertEquals(1, song.songstats.total_comments)
+        self.assertEquals(5.0, song.songstats.average_comment_score)
+
+    def test_song_stats_updated_correctly_after_removing_final_comment(self):
+        song = Song.objects.get(id=4)
+
+        comment_to_delete = song.comment_set.all()[0]
+        comment_to_delete.delete()
+
+        song.refresh_from_db()
+        self.assertEquals(0, song.songstats.total_comments)
+        self.assertEquals(0.0, song.songstats.average_comment_score)
 
 class SongListTests(TestCase):
     fixtures = ["songs.json"]
@@ -161,6 +188,32 @@ class AddCommentTests(TestCase):
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': 1}))
         song = Song.objects.get(id=1)
         self.assertEquals(1, len(song.comment_set.all()))
+
+    def test_post_add_comment_calculates_stats_correctly(self):
+        # Arrange
+        self.client.force_login(User.objects.get_or_create(username='test_user')[0])
+
+        # Act
+        self.client.post(reverse('add_comment', kwargs={'pk': 1}), {'rating': 10, 'text': "This is my review"})
+
+        # Assert
+        song = Song.objects.get(id=1)
+        self.assertEquals(1, len(song.comment_set.all()))
+        self.assertEquals(1, song.songstats.total_comments)
+        self.assertEquals(10.0, song.songstats.average_comment_score)
+
+    def test_post_add_comment_calculates_stats_correctly_with_existing_comments(self):
+        # Arrange
+        self.client.force_login(User.objects.get_or_create(username='test_user')[0])
+
+        # Act
+        self.client.post(reverse('add_comment', kwargs={'pk': 4}), {'rating': 10, 'text': "This is my review"})
+
+        # Assert
+        song = Song.objects.get(id=4)
+        self.assertEquals(2, len(song.comment_set.all()))
+        self.assertEquals(2, song.songstats.total_comments)
+        self.assertEquals(7.5, song.songstats.average_comment_score)
 
     def test_get_user_redirected_for_own_song(self):
         # Arrange

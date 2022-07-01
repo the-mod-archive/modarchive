@@ -92,6 +92,37 @@
         }
     },
     {
+        "model": "songs.song",
+        "pk": 4,
+        "fields": {
+            "filename": "file4.s3m",
+            "title": "Song with an existing comment",
+            "clean_title": "Song with an existing comment",
+            "format": "s3m",
+            "file_size": 819762,
+            "channels": 9,
+            "instrument_text": "",
+            "comment_text": "",
+            "hash": "3e72d1e6ac8dc36acde62bb2403925c0",
+            "pattern_hash": "81662584cb5545dc",
+            "license": "",
+            "create_date": "1997-01-01 03:39:36+00:00",
+            "update_date": "2022-01-22 08:22:21+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 4,
+        "fields": {
+            "downloads": 30729,
+            "total_comments": 1,
+            "average_comment_score": 5.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0,
+            "song_id": 4
+        }
+    },
+    {
         "model": "auth.user",
         "pk": 1,
         "fields": {
@@ -152,6 +183,16 @@
             "songs": [1, 2],
             "create_date": "2002-01-09 15:47:04+00:00",
             "update_date": "2022-01-21 20:33:00+00:00"
+        }
+    },
+    {
+        "model": "songs.Comment",
+        "pk": 3,
+        "fields": {
+            "song_id": 4,
+            "text": "This was average.",
+            "rating": 5,
+            "create_date": "2022-01-21 20:33:00+00:00"
         }
     }
 ]
