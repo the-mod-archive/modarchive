@@ -110,7 +110,7 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DATABASE_NAME', 'mod_archive'),
         'USER': os.getenv('POSTGRES_USERNAME', 'postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-        'PORT': os.getenv('POSTGRES_PORT', '5432') 
+        'PORT': os.getenv('POSTGRES_PORT', '5432')
     }
 }
 
