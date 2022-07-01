@@ -71,8 +71,20 @@ class SongStats(models.Model):
     average_review_score=models.DecimalField(default=0.0, decimal_places=1, max_digits=3)
 
 class Comment(models.Model):
+    class Ratings(models.IntegerChoices):
+        _1 = 1, _("1: Very poor")
+        _2 = 2, _("2: Poor")
+        _3 = 3, _("3: Listenable")
+        _4 = 4, _("4: Good attempt")
+        _5 = 5, _("5: Average")
+        _6 = 6, _("6: Above average")
+        _7 = 7, _("7: Enjoyable")
+        _8 = 8, _("8: Very good")
+        _9 = 9, _("9: Excellent")
+        _10 = 10, _("10: Awesome")
+
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     text = models.TextField(max_length=5000)
-    rating = models.PositiveSmallIntegerField()
+    rating = models.PositiveSmallIntegerField(choices=Ratings.choices)
     create_date=models.DateTimeField(auto_now_add=True)

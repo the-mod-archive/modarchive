@@ -61,6 +61,16 @@
     </div>
 </div>
 
+{% if user.is_authenticated and not has_commented and not is_own_song %}
+    <div class="content box has-background-primary-light">
+        {% if song.songstats.total_comments == 0 %}
+            <a href="{% url 'add_comment' song.id %}">Be the first to rate this song!</a>
+        {% else %}
+            <a href="{% url 'add_comment' song.id %}">Add a rating to this song!</a>
+        {% endif %}
+    </div>
+{% endif %}
+
 {% if song.comment_set.all %}
     <div class="block">
         <div class="content is-medium">Comments</div>
