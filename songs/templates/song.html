@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load filters %}
 
 {% block content %}
 
@@ -86,7 +87,7 @@
                     Rating: {{comment.rating}}/10
                 </div>
                 <br>
-                {{comment.text|escape|linebreaks}}
+                {{comment.text|linebreaks|spaces|escape}}
             </div>
         {% endfor %}
     </div>
@@ -98,7 +99,7 @@
     </div>
     
     <div class="box is-family-monospace has-background-dark has-text-warning">    
-        {{ song.comment_text|escape|linebreaks }}
+        {{ song.comment_text|linebreaks|spaces|escape }}
     </div>
 {% endif %}
 
@@ -108,7 +109,7 @@
     </div>    
 
     <div class="box is-family-monospace has-background-dark has-text-warning">
-        {{ song.instrument_text|escape|linebreaks }}
+        {{ song.instrument_text|linebreaks|spaces|escape }}
     </div>
 {% endif %}
 
