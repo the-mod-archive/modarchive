@@ -61,7 +61,7 @@
     </div>
 </div>
 
-{% if user.is_authenticated and not has_commented and not is_own_song %}
+{% if user.is_authenticated and can_comment %}
     <div class="content box has-background-primary-light">
         {% if song.songstats.total_comments == 0 %}
             <a href="{% url 'add_comment' song.id %}">Be the first to rate this song!</a>
@@ -86,7 +86,7 @@
                     Rating: {{comment.rating}}/10
                 </div>
                 <br>
-                {{comment.text|linebreaks}}
+                {{comment.text|escape|linebreaks}}
             </div>
         {% endfor %}
     </div>
@@ -98,7 +98,7 @@
     </div>
     
     <div class="box is-family-monospace has-background-dark has-text-warning">    
-        {{ song.comment_text|linebreaks }}
+        {{ song.comment_text|escape|linebreaks }}
     </div>
 {% endif %}
 
@@ -108,7 +108,7 @@
     </div>    
 
     <div class="box is-family-monospace has-background-dark has-text-warning">
-        {{ song.instrument_text|linebreaks }}
+        {{ song.instrument_text|escape|linebreaks }}
     </div>
 {% endif %}
 

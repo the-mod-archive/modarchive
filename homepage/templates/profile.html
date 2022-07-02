@@ -16,7 +16,7 @@
 
     {% if profile.blurb %}
     <p>
-        Blurb: {{ profile.blurb }}
+        Blurb: {{ profile.blurb|linebreaks|escape }}
     </p>
     {% endif %}
 {% endblock %}

@@ -2,6 +2,7 @@ from django.shortcuts import redirect
 from django.http import Http404
 from django.views.generic import DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 
 from songs.forms import AddCommentForm
 from songs.models import Song
@@ -29,10 +30,7 @@ class SongView(DetailView):
         context = super().get_context_data(**kwargs)
         
         if (self.request.user.is_authenticated):
-            song = context['song']
-            profile_id = self.request.user.profile.id
-            context['has_commented'] = song.comment_set.all().filter(profile_id=profile_id).exists()
-            context['is_own_song'] = song.artist_set.all().filter(profile_id=profile_id).exists()
+            context['can_comment'] = context['song'].can_user_leave_comment(self.request.user.profile.id)
 
         return context
 
@@ -44,18 +42,11 @@ class AddCommentView(LoginRequiredMixin, CreateView):
         if not request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
 
-        song_id = kwargs['pk']
-        song = Song.objects.get(id=song_id)
-        profile_id = request.user.profile.id
-        is_own_song = song.artist_set.all().filter(profile_id=profile_id).exists()
-        has_commented = song.comment_set.all().filter(profile_id=profile_id).exists()
+        song = Song.objects.get(id=kwargs['pk'])
+        if (not song.can_user_leave_comment(request.user.profile.id)):
+            return redirect('view_song', kwargs['pk'])
 
-        # Storing the song into extra_context to save a database request
         self.extra_context={'song': song}
-
-        if (is_own_song or has_commented):
-            return redirect('comment_rejected')
-
         return super().dispatch(request, *args, **kwargs)
 
     # Add profile and song ID to the comment in order to save it
@@ -65,9 +56,8 @@ class AddCommentView(LoginRequiredMixin, CreateView):
         comment_instance.song_id = self.kwargs['pk']
         comment_instance.save()
 
-        return redirect('view_song', self.kwargs['pk'])
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['song'] = self.extra_context['song'] if self.extra_context['song'] else Song.objects.get(self.kwargs['pk'])
-        return context
+        return super().form_valid(form)
+ 
+    def post(self, request, *args, **kwargs):
+        self.success_url = reverse('view_song', kwargs = {'pk': kwargs['pk']})
+        return super().post(request, *args, **kwargs)

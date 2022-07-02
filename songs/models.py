@@ -77,6 +77,11 @@ class Song(models.Model):
             return self.clean_title
         return self.title
 
+    def can_user_leave_comment(self, profile_id):
+        is_own_song = self.artist_set.all().filter(profile_id=profile_id).exists()
+        has_commented = self.comment_set.all().filter(profile_id=profile_id).exists()
+        return not is_own_song and not has_commented
+
     class Meta:
         indexes = [
             GinIndex(fields=['search_document'])

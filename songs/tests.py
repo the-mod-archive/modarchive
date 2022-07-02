@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from songs.models import Song, Comment
 
 class SongModelTests(TestCase):
+    fixtures = ["songs_2.json"]
+    
     def test_gets_clean_title_when_available(self):
         song = Song(title="song title", clean_title="Song Title")
         self.assertEqual("Song Title", song.get_title())
@@ -12,6 +14,18 @@ class SongModelTests(TestCase):
     def test_gets_original_title_when_no_clean_title_available(self):
         song = Song(title="song title")
         self.assertEqual("song title", song.get_title())
+
+    def test_can_leave_comment_if_not_own_song_and_not_already_commented(self):
+        song = Song(id=1, title="song title")
+        self.assertTrue(song.can_user_leave_comment(1))
+
+    def test_cannot_leave_comment_if_own_song(self):
+        song = Song.objects.get(id=3)
+        self.assertFalse(song.can_user_leave_comment(1))
+
+    def test_cannot_leave_comment_if_already_commented(self):
+        song = Song.objects.get(id=2)
+        self.assertFalse(song.can_user_leave_comment(1))
 
 class CommentModelTests(TestCase):
     fixtures = ["songs_2.json"]
@@ -74,21 +88,14 @@ class ViewSongTests(TestCase):
         self.assertEquals(5, song.comment_set.all()[1].rating)
 
 
-    def test_context_does_not_contain_has_commented_for_unauthenticated_user(self):
+    def test_unauthenticated_user_cannot_comment(self):
         # Act
         response = self.client.get(reverse('view_song', kwargs = {'pk': 1}))
 
         # Assert
-        self.assertFalse('has_commented' in response.context)
+        self.assertFalse('can_comment' in response.context)
 
-    def test_context_does_not_contain_is_own_song_for_unauthenticated_user(self):
-        # Act
-        response = self.client.get(reverse('view_song', kwargs = {'pk': 1}))
-
-        # Assert
-        self.assertFalse('is_own_song' in response.context)
-
-    def test_context_has_commented_is_false_if_user_has_not_commented(self):
+    def test_user_can_comment_if_has_not_commented(self):
         # Arrange
         self.client.force_login(User.objects.get_or_create(username='test_user')[0])
         
@@ -96,9 +103,9 @@ class ViewSongTests(TestCase):
         response = self.client.get(reverse('view_song', kwargs = {'pk': 1}))
 
         # Assert
-        self.assertFalse(response.context['has_commented'])
+        self.assertTrue(response.context['can_comment'])
 
-    def test_context_has_commented_is_true_if_user_has_commented(self):
+    def test_user_cannot_comment_if_has_already_commented(self):
         # Arrange
         self.client.force_login(User.objects.get_or_create(username='test_user')[0])
 
@@ -106,10 +113,10 @@ class ViewSongTests(TestCase):
         response = self.client.get(reverse('view_song', kwargs = {'pk': 2}))
 
         # Assert
-        self.assertTrue(response.context['has_commented'])
+        self.assertFalse(response.context['can_comment'])
         
 
-    def test_context_is_own_song_is_false_if_user_did_not_compose_song(self):
+    def test_user_can_comment_when_not_the_song_composer(self):
         # Arrange
         self.client.force_login(User.objects.get_or_create(username='test_user')[0])
 
@@ -117,9 +124,9 @@ class ViewSongTests(TestCase):
         response = self.client.get(reverse('view_song', kwargs = {'pk': 1}))
 
         # Assert
-        self.assertFalse(response.context['is_own_song'])
+        self.assertTrue(response.context['can_comment'])
 
-    def test_context_is_own_song_is_true_if_user_composed_song(self):
+    def test_user_cannot_comment_if_is_song_composer(self):
         # Arrange
         self.client.force_login(User.objects.get_or_create(username='test_user')[0])
 
@@ -127,7 +134,7 @@ class ViewSongTests(TestCase):
         response = self.client.get(reverse('view_song', kwargs = {'pk': 3}))
 
         # Assert
-        self.assertTrue(response.context['is_own_song'])
+        self.assertFalse(response.context['can_comment'])
 
 class DownloadTests(TestCase):
     fixtures = ["songs.json"]
@@ -223,7 +230,7 @@ class AddCommentTests(TestCase):
         response = self.client.get(reverse('add_comment', kwargs={'pk': 3}))
 
         # Assert
-        self.assertRedirects(response, reverse('comment_rejected'))
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': 3}))
 
     def test_post_user_redirected_for_own_song(self):
         # Arrange
@@ -233,7 +240,8 @@ class AddCommentTests(TestCase):
         response = self.client.post(reverse('add_comment', kwargs={'pk': 3}), {'rating': 10, 'text': "This is my review"})
 
         # Assert
-        self.assertRedirects(response, reverse('comment_rejected'))
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': 3}))
+        self.assertEquals(0, Song.objects.get(id=3).comment_set.all().count())
 
     def test_get_user_redirected_when_already_commented(self):
         # Arrange
@@ -243,7 +251,7 @@ class AddCommentTests(TestCase):
         response = self.client.get(reverse('add_comment', kwargs={'pk': 2}))
 
         # Assert
-        self.assertRedirects(response, reverse('comment_rejected'))
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': 2}))
 
     def test_post_user_redirected_when_already_commented(self):
         # Arrange
@@ -253,7 +261,8 @@ class AddCommentTests(TestCase):
         response = self.client.post(reverse('add_comment', kwargs={'pk': 2}), {'rating': 10, 'text': "This is my review"})
 
         # Assert
-        self.assertRedirects(response, reverse('comment_rejected'))
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': 2}))
+        self.assertEquals(2, Song.objects.get(id=2).comment_set.all().count())
 
     def test_get_redirect_unauthenticated_user(self):
         # Arrange
