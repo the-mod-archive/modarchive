@@ -1,17 +1,18 @@
 from django.contrib import admin
-from songs.models import Song, Comment
+from songs import models, forms
 from artists.models import Artist
 
 class ArtistInline(admin.TabularInline):
     model = Artist.songs.through
 
-@admin.register(Song)
+@admin.register(models.Song)
 class SongAdmin(admin.ModelAdmin):
     list_display = ("pk", "title", "clean_title", "filename")
     search_fields = ("title__startswith", )
     exclude = ("search_document",)
+    form = forms.AdminSongForm
     inlines = [ArtistInline]
 
-@admin.register(Comment)
+@admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ("pk", "text", "rating")

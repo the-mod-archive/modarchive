@@ -1,6 +1,16 @@
 from django.forms import ModelForm
 
-from songs.models import Comment
+from songs import models
+
+class AdminSongForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AdminSongForm, self).__init__(*args, **kwargs)
+        self.fields['comment_text'].strip = False
+        self.fields['instrument_text'].strip = False
+
+    class Meta:
+        model = models.Song
+        fields = "__all__"
 
 class AddCommentForm(ModelForm):
     def is_valid(self) -> bool:
@@ -16,5 +26,5 @@ class AddCommentForm(ModelForm):
         self.fields['text'].widget.attrs.update({'class': 'textarea'})
 
     class Meta:
-        model = Comment
+        model = models.Comment
         fields = ("rating", "text")
