@@ -1,21 +1,15 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views import View
+from django.views.generic.edit import CreateView
 
 from artists.forms import CreateArtistForm
+from artists.models import Artist
 
-class AddArtistView(PermissionRequiredMixin, View):
+class AddArtistView(PermissionRequiredMixin, CreateView):
+    model = Artist
     permission_required = 'artists.add_artist'
+    form_class = CreateArtistForm
+    template_name = "add_artist.html"
 
-    def get(self, request):
-        form = CreateArtistForm()
-        return render(request, "add_artist.html", {'form': form})
-
-    def post(self, request):
-        form = CreateArtistForm(request.POST)
-        if (form.is_valid()):
-            new_artist = form.save()
-            return redirect(reverse('view_artist', kwargs = {'pk': new_artist.id}))
-
-        return render(request, "add_artist.html", {'form': form})
+    def get_success_url(self):
+        return reverse('view_artist', kwargs={'pk': self.object.pk})
