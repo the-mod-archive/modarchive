@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    {{ block.super }}: Comment on {{song.get_title}}
+{% endblock %}
+
 {% block content %}
     <h1 class="title">Add comment to {{song.get_title}}</h1>
 

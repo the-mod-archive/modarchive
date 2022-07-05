@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    {{ block.super }}: {{profile.display_name}} profile
+{% endblock %}
+
 {% block content %}
     {% if user.profile and user.profile.id == profile.id %}
         <a href="{% url 'update_profile' %}">Update your profile</a>

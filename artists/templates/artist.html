@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    {{ block.super }}: {{ artist.name }} artist profile
+{% endblock %}
+
 {% block content %}
 
 {% if user.is_staff and perms.artists.change_artist %}

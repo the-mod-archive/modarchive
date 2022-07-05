@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% load filters %}
 
+{% block title %}
+    {{ block.super }}: {{ song.get_title }} {% if song.artist_set.all %}
+    by {% for artist in song.artist_set.all %}
+        {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
+        {{ artist.name }}
+    {% endfor %}
+{% endif %}
+{% endblock %}
+
 {% block content %}
 
 {% if user.is_staff and perms.songs.change_song %}
