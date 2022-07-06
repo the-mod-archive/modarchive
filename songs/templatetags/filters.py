@@ -9,10 +9,17 @@ register = template.Library()
 @register.filter
 @stringfilter
 def spaces(value, autoescape=None):
-    # return value.replace(' ', '&nbsp')
     if autoescape:
         esc = conditional_escape
     else:
         esc = lambda x: x
     return mark_safe(re.sub('\s', '&'+'nbsp;', esc(value)))
 spaces.needs_autoescape = True
+
+@register.filter
+@stringfilter
+def hide_email_address(value):
+    def modify_email_address(address):
+        return address.replace("@", "_")
+
+    return re.sub(r'([a-zA-Z0-9+._-]+)@([a-zA-Z0-9._-]+)\.([a-zA-Z0-9_-]+)', lambda x: modify_email_address(x.group()), value)

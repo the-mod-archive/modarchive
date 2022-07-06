@@ -3,6 +3,7 @@ from django.urls.base import reverse
 from django.contrib.auth.models import User
 
 from songs.models import Song, Comment
+from songs.templatetags import filters
 
 class SongModelTests(TestCase):
     fixtures = ["songs_2.json"]
@@ -285,3 +286,19 @@ class AddCommentTests(TestCase):
         
         # Assert
         self.assertRedirects(response, f"{login_url}?next={add_comment_url}")
+
+class FilterTests(TestCase):
+    def test_email_address_filter_masks_single_email_address(self):
+        comment = "You are listening to a mod by testguy@test.com which was written in 1996"
+        filtered_comment = filters.hide_email_address(comment)
+        self.assertEquals("You are listening to a mod by testguy_test.com which was written in 1996", filtered_comment)
+
+    def test_email_address_filter_masks_multiple_email_addresses(self):
+        comment = "You are listening to a mod by testguy@test.com and testguy2@test.com which was written in 1996"
+        filtered_comment = filters.hide_email_address(comment)
+        self.assertEquals("You are listening to a mod by testguy_test.com and testguy2_test.com which was written in 1996", filtered_comment)
+
+    def test_email_address_filter_does_not_change_input_without_email_addresses(self):
+        comment = "You are listening to a mod by testguy which was written in 1996"
+        filtered_comment = filters.hide_email_address(comment)
+        self.assertEquals(comment, filtered_comment)

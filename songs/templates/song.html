@@ -108,7 +108,7 @@
     </div>
     
     <div class="box is-family-monospace has-background-dark has-text-warning">    
-        {{ song.comment_text|linebreaks|spaces|escape }}
+        {{ song.comment_text|hide_email_address|linebreaks|spaces|escape }}
     </div>
 {% endif %}
 
@@ -118,7 +118,7 @@
     </div>    
 
     <div class="box is-family-monospace has-background-dark has-text-warning">
-        {{ song.instrument_text|linebreaks|spaces|escape }}
+        {{ song.instrument_text|hide_email_address|linebreaks|spaces|escape }}
     </div>
 {% endif %}
 
