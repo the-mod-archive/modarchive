@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 
 from artists.forms import CreateArtistForm
 from artists.models import Artist
+from homepage.models import Profile
+from songs.models import Comment
 
 class ArtistViewTests(TestCase):
     fixtures = ["artists.json", "songs.json"]
@@ -30,10 +32,27 @@ class ArtistViewTests(TestCase):
         # Assert
         self.assertTemplateUsed(response, 'artist.html')
         self.assertTrue('artist' in response.context)
+        self.assertFalse('has_comments' in response.context)
 
         artist = response.context['artist']
         self.assertEquals('Arcturus', artist.name)
         self.assertEquals(69117, artist.legacy_id)
+
+    def test_artist_view_contains_comments(self):
+        # Arrange
+        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
+        artist = Artist.objects.get(id = 1)
+        profile = Profile.objects.create(user = user, display_name = 'Test User')
+        artist.profile = profile
+        artist.save()
+        Comment.objects.create(profile = profile, song_id = 1, text = 'this is my comment', rating = 8)
+        
+        # Act
+        response = self.client.get(reverse('view_artist', kwargs = {'pk': 1}))
+
+        # Assert
+        self.assertTrue('has_comments' in response.context)
+        self.assertTrue(response.context['has_comments'])
 
 class AddArtistViewTests(TestCase):
     fixtures = ["users.json"]

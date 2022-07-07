@@ -2,18 +2,29 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
+from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from homepage.forms import UpdateProfileForm
 
 from homepage.models import Profile
 
-class ProfileView(View):
-    def get(self, request, pk):
-        try:
-            profile = Profile.objects.get(pk = pk)
-        except Profile.DoesNotExist:
-            raise Http404("Profile does not exist")
-        return render(request, 'profile.html', {'profile': profile})
+class ProfileView(DetailView):
+    model = Profile
+    template_name = 'profile.html'
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        if (hasattr(self.object, 'artist')):
+            return redirect('view_artist', self.object.artist.id)
+
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if (context['profile'].comment_set.all().count() > 0):
+            context['has_comments'] = True
+
+        return context
 
 class UpdateProfileView(LoginRequiredMixin, View):
     def get(self, request):

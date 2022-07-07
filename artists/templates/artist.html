@@ -1,5 +1,36 @@
 {% extends 'base.html' %}
 
+{% block script %}
+<script>
+    function activate(element) {
+        deactivateAll();
+        deactivateContent();
+        activateTabAndContent(element.id)
+    }
+
+    function deactivateAll() {
+        let tabs = document.querySelectorAll('.tabs li');
+        tabs.forEach(function(tab) {
+            tab.classList.remove('is-active');
+        });
+    }
+
+    function deactivateContent() {
+        let contents = document.querySelectorAll('.tab-content')
+        contents.forEach(function(content) {
+            content.classList.add('is-hidden')
+        });
+    }
+
+    function activateTabAndContent(id) {
+        let tab = document.querySelector(`li#${id}-tab`);
+        let section = document.querySelector(`section#${id}-section`);
+        tab.classList.add('is-active');
+        section.classList.remove('is-hidden');
+    }
+</script>
+{% endblock %}
+
 {% block title %}
     {{ block.super }}: {{ artist.name }} artist profile
 {% endblock %}
@@ -19,9 +50,36 @@
 
 <h1 class='title'>{{ artist.name }}</h1>
 
+{% if artist.profile %}
 <p>
-    Member since {{ artist.create_date|date:"M d, Y" }}
+    Member since {{ artist.profile.create_date|date:"M d, Y" }}
 </p>
+{% endif %}
+
+{% if artist.profile %}
+<div class="tabs">
+    <ul>
+      <li id='overview-tab' class="is-active"><a id='overview' onClick="activate(this)">Overview</a></li>
+      <li id='songs-tab'><a id='songs' onClick="activate(this)">Songs</a></li>
+      <li id='comments-tab'><a id='comments' onClick="activate(this)">Comments</a></li>
+      <li id='favorites-tab'><a id='favorites' onClick="activate(this)">Favorites</a></li>
+    </ul>
+</div>
+{% endif %}
+
+<section id='overview-section' class='content tab-content'>
+    {% if artist.profile.blurb %}
+        <div class='block'>
+            {{ artist.profile.blurb|linebreaks|escape }}
+        </div>
+    {% endif %}
+</section>
+
+{% if artist.profile %}
+<section id='songs-section' class='content tab-content is-hidden'>
+{% else %}
+<section id='songs-section' class='content tab-content'>
+{% endif %}
 
 <p>
     <br/>
@@ -34,10 +92,39 @@
     </li>
     {% empty %}<li>No songs yet.</li>{% endfor %}
 </ul>
+</section>
+
+{% if artist.profile %}
+<section id='comments-section' class="content tab-content is-hidden">
+    {% if has_comments %}
+        <div class='block'>
+            {% for comment in artist.profile.comment_set.all %}
+                <div class='box'>
+                    <span class='has-text-weight-bold'>Song:</span> <a href="{% url 'view_song' comment.song.id %}">{{comment.song.get_title}}</a> ({{comment.song.filename}}) {% include 'song_artists.html' with song=comment.song %}
+                    <br>
+                    <span class='has-text-weight-bold'>Posted on:</span> {{comment.create_date|date:"F j, o"}}
+                    <br>
+                    <span class='has-text-weight-bold'>Rating:</span> {{comment.rating}}/10
+                    <br/><br/>
+                    {{comment.text|linebreaks|escape}}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        No comments
+    {% endif %}
+</section>
+{% endif %}
+
+{% if artist.profile %}
+<section id='favorites-section' class="content tab-content is-hidden">
+    Not implemented yet
+</section>
+{% endif %}
 
 <p>
     <br/>
     <a href="{% url 'artists' %}">Back to artists index</a>
 </p>
 
-{% endblock %}    
+{% endblock %}

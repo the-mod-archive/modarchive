@@ -6,8 +6,10 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from unittest.mock import patch
 
+from artists.models import Artist
 from homepage.models import Profile
 from homepage.tokens import account_activation_token
+from songs.models import Comment, Song
 
 class PasswordResetViewTests(TestCase):
     def setUp(self):
@@ -317,9 +319,24 @@ class ProfileViewTests(TestCase):
         # Assert
         self.assertTemplateUsed(response, 'profile.html')
         self.assertTrue('profile' in response.context)
+        self.assertFalse('has_comments' in response.context)
 
         profile = response.context['profile']
         self.assertEquals('Arcturus', profile.display_name)
+
+    def test_profile_page_has_comments(self):
+        # Arrange
+        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
+        profile = Profile.objects.create(id = 1, user = user, display_name = 'Arcturus')
+        song = Song.objects.create(filename = 'a.s3m', title = 'a', file_size = 1000, channels = 16, format = Song.Formats.S3M, comment_text = '', instrument_text = '')
+        Comment.objects.create(profile = profile, song = song, text = "some text", rating = 8)
+        
+        # Act
+        response = self.client.get(reverse('view_profile', kwargs = {'pk': 1}))
+
+        # Assert
+        self.assertTrue('has_comments' in response.context)
+        self.assertTrue(response.context['has_comments'])
 
     def test_profile_page_responds_with_404_when_profile_does_not_exist(self):
         # Act
@@ -327,6 +344,18 @@ class ProfileViewTests(TestCase):
 
         # Assert
         self.assertEqual(response.status_code, 404)
+
+    def test_redirect_to_artist_page_if_exists_for_profile(self):
+        # Arrange
+        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
+        profile = Profile.objects.create(id = 1, user = user, display_name = 'Arcturus')
+        Artist.objects.create(id = 2, profile = profile, name = 'Arcturus')
+
+        # Act
+        response = self.client.get(reverse('view_profile', kwargs = {'pk': 1}))
+
+        # Assert
+        self.assertRedirects(response, reverse('view_artist', kwargs = {'pk': 2}))
 
 class UpdateProfileViewTests(TestCase):
     fixtures = ["users.json"]

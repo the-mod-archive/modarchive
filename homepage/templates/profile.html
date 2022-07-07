@@ -1,4 +1,36 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block script %}
+    <script>
+        function activate(element) {
+            deactivateAll();
+            deactivateContent();
+            activateTabAndContent(element.id)
+        }
+
+        function deactivateAll() {
+            let tabs = document.querySelectorAll('.tabs li');
+            tabs.forEach(function(tab) {
+                tab.classList.remove('is-active');
+            });
+        }
+
+        function deactivateContent() {
+            let contents = document.querySelectorAll('.tab-content')
+            contents.forEach(function(content) {
+                content.classList.add('is-hidden')
+            });
+        }
+
+        function activateTabAndContent(id) {
+            let tab = document.querySelector(`li#${id}-tab`);
+            let section = document.querySelector(`section#${id}-section`);
+            tab.classList.add('is-active');
+            section.classList.remove('is-hidden');
+        }
+    </script>
+{% endblock %}
 
 {% block title %}
     {{ block.super }}: {{profile.display_name}} profile
@@ -10,17 +42,48 @@
         <br/><br/>
     {% endif %}
 
-    Profile: {{ profile.display_name }}
-    <br/><br/>
-    {% if profile.artist %}
-        <p>
-        <a href="{% url 'view_artist' profile.artist.id %}">See artist page for {{ profile.display_name }}</a>
-        </p>
-    {% endif %}
+    <div class="is-size-3">
+        Profile: {{ profile.display_name }}
+    </div>
 
-    {% if profile.blurb %}
-    <p>
-        Blurb: {{ profile.blurb|linebreaks|escape }}
-    </p>
+    <div class="tabs">
+        <ul>
+            <li id='overview-tab' class="is-active"><a id='overview' onClick="activate(this)">Overview</a></li>
+            <li id='comments-tab'><a id='comments' onClick="activate(this)">Comments</a></li>
+            <li id='favorites-tab'><a id='favorites' onClick="activate(this)">Favorites</a></li>
+        </ul>
+    </div>
+
+    <section id='overview-section' class="content tab-content">
+        Member since {{ profile.create_date|date:"M d, Y" }}
+        {% if profile.blurb %}
+        <div class='block'>
+            {{ profile.blurb|linebreaks|escape }}
+        </div>
+        {% endif %}
+    </section>
+
+    <section id='comments-section' class="content tab-content is-hidden">
+    {% if has_comments %}
+        <div class='block'>
+            {% for comment in profile.comment_set.all %}
+                <div class='box'>
+                    <span class='has-text-weight-bold'>Song:</span> <a href="{% url 'view_song' comment.song.id %}">{{comment.song.get_title}}</a> ({{comment.song.filename}}) {% include 'song_artists.html' with song=comment.song %}
+                    <br>
+                    <span class='has-text-weight-bold'>Posted on:</span> {{comment.create_date|date:"F j, o"}}
+                    <br>
+                    <span class='has-text-weight-bold'>Rating:</span> {{comment.rating}}/10
+                    <br/><br/>
+                    {{comment.text|linebreaks|escape}}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        No comments
     {% endif %}
+    </section>
+
+    <section id='favorites-section' class="content tab-content is-hidden">
+        Not implemented yet
+    </section>
 {% endblock %}

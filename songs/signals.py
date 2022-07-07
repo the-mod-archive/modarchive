@@ -14,9 +14,10 @@ def update_song_stats_after_delete(sender, instance, **kwargs):
 def update_song_stats(song):
     total_comments = song.comment_set.all().count()
 
-    song.songstats.total_comments = total_comments
-    song.songstats.average_comment_score = get_average_rating(song, total_comments)
-    song.songstats.save()
+    if (hasattr(song, 'songstats')):
+        song.songstats.total_comments = total_comments
+        song.songstats.average_comment_score = get_average_rating(song, total_comments)
+        song.songstats.save()
 
 def get_average_rating(song, total_comments):
     if (total_comments == 0):
