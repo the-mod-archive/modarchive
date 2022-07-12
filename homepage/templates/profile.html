@@ -64,7 +64,7 @@
     </section>
 
     <section id='comments-section' class="content tab-content is-hidden">
-    {% if has_comments %}
+    {% if profile.has_comments %}
         <div class='block'>
             {% for comment in profile.comment_set.all %}
                 <div class='box'>

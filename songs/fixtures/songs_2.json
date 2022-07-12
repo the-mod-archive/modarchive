@@ -194,5 +194,23 @@
             "rating": 5,
             "create_date": "2022-01-21 20:33:00+00:00"
         }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "username": "test_user_no_comments",
+            "password": "testpassword"
+        }
+    },
+    {
+        "model": "homepage.profile",
+        "pk": 2,
+        "fields": {
+            "display_name": "Test User No Comments",
+            "user_id": 2,
+            "create_date": "2022-01-21 20:33:00+00:00",
+            "update_date": "2022-01-21 20:33:00+00:00"
+        }
     }
 ]

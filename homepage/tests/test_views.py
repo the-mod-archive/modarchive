@@ -319,24 +319,9 @@ class ProfileViewTests(TestCase):
         # Assert
         self.assertTemplateUsed(response, 'profile.html')
         self.assertTrue('profile' in response.context)
-        self.assertFalse('has_comments' in response.context)
 
         profile = response.context['profile']
         self.assertEquals('Arcturus', profile.display_name)
-
-    def test_profile_page_has_comments(self):
-        # Arrange
-        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
-        profile = Profile.objects.create(id = 1, user = user, display_name = 'Arcturus')
-        song = Song.objects.create(filename = 'a.s3m', title = 'a', file_size = 1000, channels = 16, format = Song.Formats.S3M, comment_text = '', instrument_text = '')
-        Comment.objects.create(profile = profile, song = song, text = "some text", rating = 8)
-        
-        # Act
-        response = self.client.get(reverse('view_profile', kwargs = {'pk': 1}))
-
-        # Assert
-        self.assertTrue('has_comments' in response.context)
-        self.assertTrue(response.context['has_comments'])
 
     def test_profile_page_responds_with_404_when_profile_does_not_exist(self):
         # Act

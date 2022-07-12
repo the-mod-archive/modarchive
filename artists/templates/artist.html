@@ -96,7 +96,7 @@
 
 {% if artist.profile %}
 <section id='comments-section' class="content tab-content is-hidden">
-    {% if has_comments %}
+    {% if artist.profile.has_comments %}
         <div class='block'>
             {% for comment in artist.profile.comment_set.all %}
                 <div class='box'>

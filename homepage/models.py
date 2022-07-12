@@ -17,6 +17,9 @@ class Profile(models.Model):
     def __str__(self) -> str:
         return self.display_name
 
+    def has_comments(self):
+        return self.comment_set.all().count() > 0
+
 class BlacklistedDomain(models.Model):
     domain=models.CharField(max_length=255, unique=True)
     hits=models.IntegerField(default=0)
