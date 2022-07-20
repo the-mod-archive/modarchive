@@ -76,5 +76,4 @@ def activate(request, uidb64, token):
     
     user.is_active = True
     user.save()
-    Profile.objects.create(user = user, display_name = user.username)
     return redirect('account_activation_complete')

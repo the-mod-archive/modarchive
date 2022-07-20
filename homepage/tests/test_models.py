@@ -1,14 +1,11 @@
 from django.test import TestCase
+from homepage.tests import factories
 
-from homepage import models
-
-class ProfileTests(TestCase):
-    fixtures = ["songs_2.json"]
-    
+class ProfileTests(TestCase):    
     def test_has_comments_is_true_when_profile_has_comments(self):
-        profile = models.Profile.objects.get(id=1)
-        self.assertTrue(profile.has_comments())
+        profile_1 = factories.UserFactory().profile
+        profile_2 = factories.UserFactory().profile
+        factories.CommentFactory(profile=profile_1)
 
-    def test_has_comments_is_false_when_profile_has_no_comments(self):
-        profile = models.Profile.objects.get(id=2)
-        self.assertFalse(profile.has_comments())
+        self.assertTrue(profile_1.has_comments())
+        self.assertFalse(profile_2.has_comments())

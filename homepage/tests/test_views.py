@@ -7,9 +7,8 @@ from django.utils.http import urlsafe_base64_encode
 from unittest.mock import patch
 
 from artists.models import Artist
-from homepage.models import Profile
 from homepage.tokens import account_activation_token
-from songs.models import Comment, Song
+from homepage.tests import factories
 
 class PasswordResetViewTests(TestCase):
     def setUp(self):
@@ -311,10 +310,11 @@ class ProfileViewTests(TestCase):
     def test_profile_page_contains_requested_profile(self):
         # Arrange
         user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
-        profile = Profile.objects.create(id = 1, user = user, display_name = 'Arcturus')
+        user.profile.display_name = 'Arcturus'
+        user.profile.save()
         
         # Act
-        response = self.client.get(reverse('view_profile', kwargs = {'pk': 1}))
+        response = self.client.get(reverse('view_profile', kwargs = {'pk': user.profile.id}))
 
         # Assert
         self.assertTemplateUsed(response, 'profile.html')
@@ -332,19 +332,16 @@ class ProfileViewTests(TestCase):
 
     def test_redirect_to_artist_page_if_exists_for_profile(self):
         # Arrange
-        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
-        profile = Profile.objects.create(id = 1, user = user, display_name = 'Arcturus')
-        Artist.objects.create(id = 2, profile = profile, name = 'Arcturus')
+        user = User.objects.create_user(username='Arcturus', email='testuser@test.com', password='testpassword', is_active=True)
+        Artist.objects.create(id = 2, profile = user.profile, name = 'Arcturus')
 
         # Act
-        response = self.client.get(reverse('view_profile', kwargs = {'pk': 1}))
+        response = self.client.get(reverse('view_profile', kwargs = {'pk': user.profile.id}))
 
         # Assert
-        self.assertRedirects(response, reverse('view_artist', kwargs = {'pk': 2}))
+        self.assertRedirects(response, reverse('view_artist', kwargs = {'pk': user.profile.artist.id}))
 
 class UpdateProfileViewTests(TestCase):
-    fixtures = ["users.json"]
-
     def test_get_update_profile_redirects_unauthenticated_user(self):
         # Arrange
         update_profile_url = reverse('update_profile')
@@ -355,20 +352,10 @@ class UpdateProfileViewTests(TestCase):
         # Assert
         self.assertRedirects(response, f'/login/?next={update_profile_url}')
 
-    def test_get_update_profile_handles_error_when_user_has_no_profile(self):
-        # Arrange
-        self.client.force_login(User.objects.get_or_create(username='test_no_profile')[0])
-
-        # Act
-        response = self.client.get(reverse('update_profile'))
-
-        # Assert
-        self.assertEqual(404, response.status_code)
-
     def test_get_update_profile_includes_correct_profile(self):
         # Arrange
-        self.client.force_login(User.objects.get_or_create(username='test_user')[0])
-        profile = Profile.objects.get(id = 1)
+        user = factories.UserFactory()
+        self.client.force_login(user)
 
         # Act
         response = self.client.get(reverse('update_profile'))
@@ -376,7 +363,7 @@ class UpdateProfileViewTests(TestCase):
         # Assert
         self.assertTemplateUsed(response, 'update_profile.html')
         self.assertTrue('profile' in response.context)
-        self.assertEquals(profile.display_name, response.context['profile'].display_name)
+        self.assertEquals(user.profile.display_name, response.context['profile'].display_name)
 
     def test_post_update_profile_redirects_unauthenticated_user(self):  
         # Arrange
@@ -388,24 +375,14 @@ class UpdateProfileViewTests(TestCase):
         # Assert
         self.assertRedirects(response, f'/login/?next={update_profile_url}')
 
-    def test_post_update_profile_handles_error_when_user_has_no_profile(self):
-        # Arrange
-        self.client.force_login(User.objects.get_or_create(username='test_no_profile')[0])
-
-        # Act
-        response = self.client.post(reverse('update_profile'), {'blurb': 'new blurb'})
-
-        # Assert
-        self.assertEqual(404, response.status_code)
-
     def test_post_update_profile_successfully_updates_profile(self):
         # Arrange
-        self.client.force_login(User.objects.get_or_create(username='test_user')[0])
-        profile = Profile.objects.get(id = 1)
+        user = factories.UserFactory()
+        self.client.force_login(user)
 
         # Act
         self.client.post(reverse('update_profile'), {'blurb': 'new blurb'})
 
         # Assert
-        profile.refresh_from_db()
-        self.assertEqual('new blurb', profile.blurb)
+        user.profile.refresh_from_db()
+        self.assertEqual('new blurb', user.profile.blurb)
