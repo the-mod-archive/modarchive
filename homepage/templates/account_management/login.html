@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load sceneid_tags %}
+
 {% block title %}
     {{ block.super }}: Log in
 {% endblock %}
@@ -22,8 +24,7 @@
             {% csrf_token %}
             
             {% include 'form_field.html' with element=form.username errors=form.errors.username %}
-            {% include 'form_field.html' with element=form.password errors=form.errors.password %}        
-            
+            {% include 'form_field.html' with element=form.password errors=form.errors.password %}
 
             <div class='columns'>
                 <div class='column'>
@@ -34,7 +35,11 @@
                 </div>
             </div>
 
-            <input type="submit" value="Log In" class='button is-primary'>
+            <div class="buttons">
+                <input type="submit" value="Log In" class='button is-primary'>
+                {% sceneid_login_button_large %}
+            </div>
+
             {% if next %}
                 <input type="hidden" name="next" value="{{ next }}">
             {% endif %}

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load sceneid_tags %}
 {% block title %}
     {{ block.super }}: Create a new Mod Archive account
 {% endblock %}
@@ -40,7 +40,12 @@
             {% include 'form_field.html' with element=form.password2 errors=form.errors.password2 %}
 
             <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
-            <input type="submit" value="Create Account" class='button is-primary'>
+            
+            <div class="buttons">
+                <input type="submit" value="Create Account" class='button is-primary'>
+                {% sceneid_login_button_large %}
+            </div>
+            
             {% if next %}
                 <input type="hidden" name="next" value="{{ next }}">
             {% endif %}

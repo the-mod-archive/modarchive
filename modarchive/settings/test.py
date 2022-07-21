@@ -31,3 +31,5 @@ EMAIL_PORT = os.getenv('MAILGUN_SMTP_PORT', '')
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('MAILGUN_SMTP_LOGIN', '')
 EMAIL_HOST_PASSWORD = os.getenv('MAILGUN_SMTP_PASSWORD', '')
+
+BASE_URL = "https://modarchive-test.herokuapp.com"

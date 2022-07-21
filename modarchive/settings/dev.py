@@ -6,3 +6,5 @@ DEBUG = True
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 IS_RECAPTCHA_ENABLED = False
+
+BASE_URL = 'http://localhost:8000'

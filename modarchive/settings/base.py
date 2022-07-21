@@ -36,10 +36,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bulma',
-    'homepage',
+    'homepage.apps.HomepageConfig',
     'artists',
     'search',
-    'songs'
+    'songs',
+    'homepage.apps.DemositeSceneIDConfig'
 ]
 
 MIDDLEWARE = [
@@ -146,3 +147,7 @@ GOOGLE_RECAPTCHA_SITE_KEY = os.getenv("GOOGLE_RECAPTCHA_SITE_KEY", "")
 GOOGLE_RECAPTCHA_SECRET_KEY = os.getenv("GOOGLE_RECAPTCHA_SECRET_KEY", "")
 
 IS_RECAPTCHA_ENABLED = True
+
+SCENEID_CLIENT_ID='modarchive'
+SCENEID_CLIENT_SECRET=os.getenv("SCENEID_CLIENT_SECRET", "")
+LOGIN_REDIRECT_URL = '/'
