@@ -1,11 +1,12 @@
 from django.test import TestCase
-from homepage.forms import EmailAddressInUseError, ForgotPasswordForm, RegisterUserForm, ResetPasswordForm, UpdateProfileForm
+from homepage import forms
+from homepage.tests import factories
 from django.contrib.auth.models import User
 
 class ForgotPasswordFormTests(TestCase):
     def test_form_without_email_address_is_invalid(self):
         # Arrange
-        form = ForgotPasswordForm(data={})
+        form = forms.ForgotPasswordForm(data={})
 
         # Act
         is_valid = form.is_valid()
@@ -16,7 +17,7 @@ class ForgotPasswordFormTests(TestCase):
 
     def test_form_with_malformed_email_address_is_invalid(self):
         # Arrange
-        form = ForgotPasswordForm(data={'email': 'asdfv@@asdf'})
+        form = forms.ForgotPasswordForm(data={'email': 'asdfv@@asdf'})
 
         # Act
         is_valid = form.is_valid()
@@ -27,7 +28,7 @@ class ForgotPasswordFormTests(TestCase):
 
     def test_form_with_valid_email_address_is_valid(self):
         # Arrange
-        form = ForgotPasswordForm(data={'email': 'testuser@test.com'})
+        form = forms.ForgotPasswordForm(data={'email': 'testuser@test.com'})
 
         # Act
         is_valid = form.is_valid()
@@ -40,11 +41,11 @@ class ResetPasswordFormTests(TestCase):
     weak_password = "password"
 
     def setUp(self):
-        self.user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
+        self.user = factories.UserFactory(password='testpassword') 
 
     def test_form_with_strong_matching_passwords_is_valid(self):
         # Arrange
-        form = ResetPasswordForm(data={'new_password1': self.strong_password, 'new_password2': self.strong_password}, user=self.user)
+        form = forms.ResetPasswordForm(data={'new_password1': self.strong_password, 'new_password2': self.strong_password}, user=self.user)
 
         # Assert
         self.assertTrue(form.is_valid, 'Form with strong matching passwords should have been valid.')
@@ -52,7 +53,7 @@ class ResetPasswordFormTests(TestCase):
 
     def test_form_with_weak_matching_passwords_is_invalid(self):
         # Arrange
-        form = ResetPasswordForm(data={'new_password1': self.weak_password, 'new_password2': self.weak_password}, user=self.user)
+        form = forms.ResetPasswordForm(data={'new_password1': self.weak_password, 'new_password2': self.weak_password}, user=self.user)
 
         # Assert
         self.assertFalse(form.is_valid(), 'Form with weak matching passwords should not have been valid.')
@@ -61,7 +62,7 @@ class ResetPasswordFormTests(TestCase):
 
     def test_form_missing_first_password_is_invalid(self):
         # Arrange
-        form = ResetPasswordForm(data={'new_password2': self.strong_password}, user=self.user)
+        form = forms.ResetPasswordForm(data={'new_password2': self.strong_password}, user=self.user)
 
         # Assert
         self.assertFalse(form.is_valid(), 'Form with missing first password should not have been valid.')
@@ -70,7 +71,7 @@ class ResetPasswordFormTests(TestCase):
 
     def test_form_missing_second_password_is_invalid(self):
         # Arrange
-        form = ResetPasswordForm(data={'new_password1': self.strong_password}, user=self.user)
+        form = forms.ResetPasswordForm(data={'new_password1': self.strong_password}, user=self.user)
 
         # Assert
         self.assertFalse(form.is_valid(), 'Form with missing second password should not have been valid.')
@@ -79,7 +80,7 @@ class ResetPasswordFormTests(TestCase):
 
     def test_form_missing_both_passwords_is_invalid(self):
         # Arrange
-        form = ResetPasswordForm(data={}, user=self.user)
+        form = forms.ResetPasswordForm(data={}, user=self.user)
 
         # Assert
         self.assertFalse(form.is_valid(), 'Form with both passwords missing should not have been valid.')
@@ -89,7 +90,7 @@ class ResetPasswordFormTests(TestCase):
 
     def test_form_with_mismatching_passwords_is_invalid(self):
         # Arrange 
-        form = ResetPasswordForm(data={'new_password1': self.strong_password, 'new_password2': f'{self.strong_password}azdazd'}, user=self.user)
+        form = forms.ResetPasswordForm(data={'new_password1': self.strong_password, 'new_password2': f'{self.strong_password}azdazd'}, user=self.user)
 
         # Assert
         self.assertFalse(form.is_valid(), 'Form with mismatching password should not have been valid.')
@@ -114,20 +115,20 @@ class RegisterUserFormTests(TestCase):
         }
 
     def setUp(self):
-        self.user = User.objects.create_user(username=self.existing_username, email=self.duplicate_email_address, password='testpassword')
+        self.user = factories.UserFactory(username=self.existing_username, email=self.duplicate_email_address, password='testpassword')
 
     def test_raises_error_if_email_address_already_in_use(self):
         # Arrange
-        form = RegisterUserForm(data = self.get_form_data(email = self.duplicate_email_address))
+        form = forms.RegisterUserForm(data = self.get_form_data(email = self.duplicate_email_address))
 
         # Assert
         self.assertTrue(form.is_valid(), "Form with duplicate email address should be valid, in spite of what you may think.")
-        with self.assertRaisesMessage(EmailAddressInUseError, "Email address is already in use."):
+        with self.assertRaisesMessage(forms.EmailAddressInUseError, "Email address is already in use."):
             form.save()
 
     def test_creates_inactive_user(self):
         # Arrange
-        form = RegisterUserForm(data = self.get_form_data(username=self.additional_username))
+        form = forms.RegisterUserForm(data = self.get_form_data(username=self.additional_username))
 
         # Act
         form.save()
@@ -139,14 +140,14 @@ class RegisterUserFormTests(TestCase):
 
     def test_completed_form_is_valid(self):
         # Arrange
-        form = RegisterUserForm(data=self.get_form_data())
+        form = forms.RegisterUserForm(data=self.get_form_data())
         
         # Assert
         self.assertTrue(form.is_valid(), "Expected completed form to be valid.")
     
     def test_form_with_duplicate_username_is_invalid(self):
         # Arrange
-        form = RegisterUserForm(data=self.get_form_data(username=self.existing_username))
+        form = forms.RegisterUserForm(data=self.get_form_data(username=self.existing_username))
         
         # Assert
         self.assertFalse(form.is_valid(), "Form with already existing username should not be valid.")
@@ -155,7 +156,7 @@ class RegisterUserFormTests(TestCase):
 
     def test_form_with_weak_password_is_invalid(self):
         # Arrange
-        form = RegisterUserForm(data=self.get_form_data(password1=self.weak_password, password2=self.weak_password))
+        form = forms.RegisterUserForm(data=self.get_form_data(password1=self.weak_password, password2=self.weak_password))
         
         # Assert
         self.assertFalse(form.is_valid(), "Form with weak password should not be valid.")
@@ -164,7 +165,7 @@ class RegisterUserFormTests(TestCase):
 
     def test_form_missing_username_is_invalid(self):
         # Arrange
-        form = RegisterUserForm(data=self.get_form_data(username=None))
+        form = forms.RegisterUserForm(data=self.get_form_data(username=None))
         
         # Assert
         self.assertFalse(form.is_valid(), "Form without username should not be valid.")
@@ -173,7 +174,7 @@ class RegisterUserFormTests(TestCase):
 
     def test_form_missing_email_address_is_invalid(self):
         # Arrange
-        form = RegisterUserForm(data=self.get_form_data(email=None))
+        form = forms.RegisterUserForm(data=self.get_form_data(email=None))
         
         # Assert
         self.assertFalse(form.is_valid(), "Form without email should not be valid.")
@@ -182,7 +183,7 @@ class RegisterUserFormTests(TestCase):
 
     def test_form_missing_password_is_invalid(self):
         # Arrange
-        form = RegisterUserForm(data=self.get_form_data(password2=None, password1=None))
+        form = forms.RegisterUserForm(data=self.get_form_data(password2=None, password1=None))
         
         # Assert
         self.assertFalse(form.is_valid(), "Form without password should not be valid.")
@@ -192,7 +193,7 @@ class RegisterUserFormTests(TestCase):
 
     def test_form_with_mismatching_passwords_is_invalid(self):
         # Arrange
-        form = RegisterUserForm(data=self.get_form_data(password1=f"1234{self.strong_password}"))
+        form = forms.RegisterUserForm(data=self.get_form_data(password1=f"1234{self.strong_password}"))
         
         # Assert
         self.assertFalse(form.is_valid(), "Form with mismatching passwords should not be valid.")
@@ -201,15 +202,15 @@ class RegisterUserFormTests(TestCase):
 
 class UpdateProfileFormTests(TestCase):
     def test_form_with_empty_blurb_is_valid(self):
-        form = UpdateProfileForm(data={'blurb': ''})
+        form = forms.UpdateProfileForm(data={'blurb': ''})
         self.assertTrue(form.is_valid())
 
     def test_form_with_no_blurb_is_valid(self):
-        form = UpdateProfileForm(data={})
+        form = forms.UpdateProfileForm(data={})
         self.assertTrue(form.is_valid())
 
     def test_form_with_excessive_blurb_is_invalid(self):
         extra_long_blurb = "long blurb" * 2401
-        form = UpdateProfileForm(data={'blurb': extra_long_blurb})
+        form = forms.UpdateProfileForm(data={'blurb': extra_long_blurb})
 
         self.assertFalse(form.is_valid())

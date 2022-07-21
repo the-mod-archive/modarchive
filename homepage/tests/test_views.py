@@ -6,17 +6,20 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from unittest.mock import patch
 
-from artists.models import Artist
 from homepage.tokens import account_activation_token
 from homepage.tests import factories
 
 class PasswordResetViewTests(TestCase):
+    username = 'test_user'
+    email = 'testuser@test.com'
+    password='testpassword'
+
     def setUp(self):
-        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
+        self.user = factories.UserFactory(username=self.username, email=self.email, password=self.password)
 
     def test_get_request_redirects_authenticated_user(self):
         # Arrange
-        self.client.login(username='test_user', password='testpassword')
+        self.client.force_login(self.user)
 
         # Act
         response = self.client.get(reverse('forgot_password'))
@@ -34,17 +37,17 @@ class PasswordResetViewTests(TestCase):
 
     def test_post_request_redirects_authenticated_user(self):
         # Arrange
-        self.client.login(username='test_user', password='testpassword')
+        self.client.force_login(self.user)
 
         # Act
-        response = self.client.post(reverse('forgot_password'), {'email': 'testuser@test.com'})
+        response = self.client.post(reverse('forgot_password'), {'email': self.email})
 
         # Assert
         self.assertRedirects(response, reverse('home'))
 
     def test_post_request_redirects_to_password_reset_done_when_not_authenticated(self):
         # Act
-        response = self.client.post(reverse('forgot_password'), {'email': 'testuser@test.com'})
+        response = self.client.post(reverse('forgot_password'), {'email': self.email})
 
         # Assert
         self.assertRedirects(response, reverse('password_reset_done'))
@@ -52,11 +55,11 @@ class PasswordResetViewTests(TestCase):
 
     def test_successful_post_sends_email(self):
         # Act
-        self.client.post(reverse('forgot_password'), {'email': 'testuser@test.com'})
+        self.client.post(reverse('forgot_password'), {'email': self.email})
 
         # Assert
         self.assertEqual(1, len(mail.outbox))
-        self.assertEqual(['testuser@test.com'], mail.outbox[0].to)
+        self.assertEqual([self.email], mail.outbox[0].to)
         self.assertEqual('donotreply@modarchive.org', mail.outbox[0].from_email)
         self.assertEqual('Your ModArchive password has been reset', mail.outbox[0].subject)
         self.assertTrue('You have requested a password reset for your ModArchive account. To reset your password, please follow the link below.' in mail.outbox[0].body)
@@ -72,11 +75,11 @@ class PasswordResetConfirmViewTests(TestCase):
     kwargs = {'uidb64': 'Mg', 'token': 'asdfasdf'}
 
     def setUp(self):
-        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
+        self.user = factories.UserFactory()
 
     def test_get_request_redirects_authenticated_user(self):
         # Arrange
-        self.client.login(username='test_user', password='testpassword')
+        self.client.force_login(self.user)
 
         # Act
         response = self.client.get(reverse('password_reset', kwargs=self.kwargs))
@@ -86,7 +89,7 @@ class PasswordResetConfirmViewTests(TestCase):
 
     def test_post_request_redirects_authenticated_user(self):
         # Arrange
-        self.client.login(username='test_user', password='testpassword')
+        self.client.force_login(self.user)
 
         # Act
         response = self.client.post(reverse('password_reset', kwargs=self.kwargs))
@@ -96,11 +99,11 @@ class PasswordResetConfirmViewTests(TestCase):
 
 class PasswordResetCompleteViewTests(TestCase):
     def setUp(self):
-        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
+        self.user = factories.UserFactory()
 
     def test_get_request_redirects_authenticated_user(self):
         # Arrange
-        self.client.login(username='test_user', password='testpassword')
+        self.client.force_login(self.user)
 
         # Act
         response = self.client.get(reverse('password_reset_complete'))
@@ -110,7 +113,7 @@ class PasswordResetCompleteViewTests(TestCase):
 
     def test_post_request_redirects_authenticated_user(self):
         # Arrange
-        self.client.login(username='test_user', password='testpassword')
+        self.client.force_login(self.user)
 
         # Act
         response = self.client.post(reverse('password_reset_complete'))
@@ -121,8 +124,7 @@ class PasswordResetCompleteViewTests(TestCase):
 class RegistrationTests(TestCase):
     def test_redirects_authenticated_user(self):
         # Arrange
-        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
-        self.client.login(username='test_user', password='testpassword')
+        self.client.force_login(factories.UserFactory())
 
         # Act
         response = self.client.get(reverse('register'))
@@ -165,15 +167,15 @@ class RegistrationTests(TestCase):
     def test_notifies_existing_user_if_email_address_already_in_use(self, mock_recaptcha):
         # Arrange
         mock_recaptcha.return_value = True
-        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
+        user = factories.UserFactory(email='testuser@test.com')
 
         # Act
-        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': 'testuser@test.com', 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
+        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': user.email, 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
 
         # Assert
         self.assertRedirects(response, reverse('register_done'))
         self.assertEqual(1, len(mail.outbox))
-        self.assertEqual(['testuser@test.com'], mail.outbox[0].to)
+        self.assertEqual([user.email], mail.outbox[0].to)
         self.assertEqual('donotreply@modarchive.org', mail.outbox[0].from_email)
         self.assertEqual("ModArchive security warning", mail.outbox[0].subject)
         self.assertTrue("A user attempted to register a ModArchive account with your email address." in mail.outbox[0].body)
@@ -205,8 +207,7 @@ class ActivationTests(TestCase):
 
     def test_redirects_authenticated_user(self):
         # Arrange
-        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
-        self.client.login(username='test_user', password='testpassword')
+        self.client.force_login(factories.UserFactory())
 
         # Act
         response = self.client.get(reverse('activate_account', kwargs=self.kwargs))
@@ -216,7 +217,7 @@ class ActivationTests(TestCase):
 
     def test_activates_user(self):
         # Arrange
-        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=False)
+        user = factories.UserFactory(is_active=False)
         token = account_activation_token.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
@@ -230,7 +231,7 @@ class ActivationTests(TestCase):
 
     def test_creates_profile_on_user_activation(self):
         # Arrange
-        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=False)
+        user = factories.UserFactory(is_active=False)
         token = account_activation_token.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
@@ -246,7 +247,7 @@ class ActivationTests(TestCase):
 
     def test_redirects_to_home_if_user_already_active(self):
         # Arrange
-        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
+        user = factories.UserFactory(is_active=True)
         token = account_activation_token.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
@@ -258,7 +259,7 @@ class ActivationTests(TestCase):
 
     def test_redirects_to_error_page_if_something_goes_wrong(self):
         # Arrange
-        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
+        user = factories.UserFactory(is_active=True)
         token = account_activation_token.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         user.delete()
@@ -270,8 +271,6 @@ class ActivationTests(TestCase):
         self.assertRedirects(response, reverse('activation_error'))
 
 class LegacyRedirectionViewTests(TestCase):
-    fixtures = ["songs.json"]
-
     def test_redirects_to_home_if_no_match_found(self):
         response = self.client.get('/login.php/?blarg=blag')
         self.assertRedirects(response, reverse('home'))
@@ -289,8 +288,7 @@ class LegacyRedirectionViewTests(TestCase):
         self.assertRedirects(response, reverse('forgot_password'))
 
     def test_old_change_password_url_redirects(self):
-        User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword')
-        self.client.login(username='test_user', password='testpassword')
+        self.client.force_login(factories.UserFactory())
         response = self.client.get('/interactive.php/?request=change_password_page')
         self.assertRedirects(response, reverse('change_password'))
 
@@ -299,8 +297,9 @@ class LegacyRedirectionViewTests(TestCase):
         self.assertRedirects(response, reverse('register'))
 
     def test_old_module_url_redirects(self):
+        song = factories.SongFactory(legacy_id=48552)
         response = self.client.get('/index.php/?request=view_by_moduleid&query=48552')
-        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': 1}))
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
 
     def test_old_module_url_redirects_to_home_for_invalid_id(self):
         response = self.client.get('/index.php/?request=view_by_moduleid&query=99999')
@@ -309,7 +308,7 @@ class LegacyRedirectionViewTests(TestCase):
 class ProfileViewTests(TestCase):
     def test_profile_page_contains_requested_profile(self):
         # Arrange
-        user = User.objects.create_user(username='test_user', email='testuser@test.com', password='testpassword', is_active=True)
+        user = factories.UserFactory()
         user.profile.display_name = 'Arcturus'
         user.profile.save()
         
@@ -332,8 +331,8 @@ class ProfileViewTests(TestCase):
 
     def test_redirect_to_artist_page_if_exists_for_profile(self):
         # Arrange
-        user = User.objects.create_user(username='Arcturus', email='testuser@test.com', password='testpassword', is_active=True)
-        Artist.objects.create(id = 2, profile = user.profile, name = 'Arcturus')
+        user = factories.UserFactory()
+        factories.ArtistFactory(profile = user.profile, name = 'Arcturus')
 
         # Act
         response = self.client.get(reverse('view_profile', kwargs = {'pk': user.profile.id}))

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 
 from artists.models import Artist
+from homepage.models import BlacklistedDomain
 from songs.models import Song, SongStats, Comment
 import factory
 
@@ -51,4 +52,8 @@ class ArtistFactory(factory.django.DjangoModelFactory):
             for song in extracted:
                 self.songs.add(song)
 
-    name = factory.Sequence(lambda n: 'Artist %d' % n)    
+    name = factory.Sequence(lambda n: 'Artist %d' % n)
+
+class BlacklistedDomainFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = BlacklistedDomain
