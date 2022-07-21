@@ -58,11 +58,11 @@ class CommentModelTests(TestCase):
         self.assertEquals(0.0, song.songstats.average_comment_score)
 
 class SongListTests(TestCase):
-    fixtures = ["songs.json"]
-
     def test_song_list_view_contains_all_songs(self):
         # Arrange
-        expected_length = 33
+        expected_length = 10
+        for n in range(expected_length):
+            factories.SongFactory()
         
         # Act
         response = self.client.get(reverse('songs'))
@@ -154,11 +154,10 @@ class ViewSongTests(TestCase):
         self.assertFalse(response.context['can_comment'])
 
 class DownloadTests(TestCase):
-    fixtures = ["songs.json"]
-
     def test_download_redirects_to_external_url(self):
         # Arrange
-        song = Song.objects.get(pk = 1)
+        song = factories.SongFactory(legacy_id=12345)
+        factories.SongStatsFactory(song=song)
 
         # Act
         response = self.client.get(f"/songs/{song.id}/download")
@@ -168,15 +167,15 @@ class DownloadTests(TestCase):
 
     def test_download_increases_download_count(self):
         # Arrange
-        song = Song.objects.get(pk = 1)
-        expected_download_count = song.songstats.downloads + 1
+        song = factories.SongFactory(legacy_id=12345)
+        stats = factories.SongStatsFactory(song=song, downloads=100)
 
         # Act
         self.client.get(f"/songs/{song.id}/download")
         song.refresh_from_db()
 
         # Assert
-        self.assertEquals(expected_download_count, song.songstats.downloads)
+        self.assertEquals(stats.downloads + 1, song.songstats.downloads)
 
     def test_returns_404_if_song_id_is_missing(self):
         # Act
