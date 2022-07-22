@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 
 from artists.models import Artist
 from homepage.models import BlacklistedDomain
-from songs.models import Song, SongStats, Comment
+from songs.models import Favorite, Song, SongStats, Comment
 import factory
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -57,3 +57,7 @@ class ArtistFactory(factory.django.DjangoModelFactory):
 class BlacklistedDomainFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = BlacklistedDomain
+
+class FavoriteFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Favorite

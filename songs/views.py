@@ -1,11 +1,11 @@
 from django.shortcuts import redirect
 from django.http import Http404
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView, CreateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 
-from songs.forms import AddCommentForm
-from songs.models import Song
+from songs import forms
+from songs.models import Song, Favorite
 
 def download(request, pk):
     if request.method == 'GET':
@@ -30,12 +30,13 @@ class SongView(DetailView):
         context = super().get_context_data(**kwargs)
         
         if (self.request.user.is_authenticated):
-            context['can_comment'] = context['song'].can_user_leave_comment(self.request.user.profile.id)
+            context['can_comment'] = context['song'].can_user_leave_comment(self.request.user.profile.id)            
+            context['is_favorite'] = self.request.user.profile.favorite_set.filter(song_id=context['song'].id).count() > 0
 
         return context
 
 class AddCommentView(LoginRequiredMixin, CreateView):
-    form_class = AddCommentForm
+    form_class = forms.AddCommentForm
     template_name = "add_comment.html"
 
     def dispatch(self, request, *args, **kwargs):
@@ -54,10 +55,21 @@ class AddCommentView(LoginRequiredMixin, CreateView):
         comment_instance = form.save(commit=False)
         comment_instance.profile = self.request.user.profile
         comment_instance.song_id = self.kwargs['pk']
-        comment_instance.save()
 
         return super().form_valid(form)
  
     def post(self, request, *args, **kwargs):
         self.success_url = reverse('view_song', kwargs = {'pk': kwargs['pk']})
         return super().post(request, *args, **kwargs)
+
+class AddFavoriteView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        if (Favorite.objects.filter(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).count() == 0):
+            Favorite(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).save()
+        return redirect('view_song', kwargs['pk'])
+
+class RemoveFavoriteView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        if (Favorite.objects.filter(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).count() > 0):
+            Favorite.objects.get(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).delete()
+        return redirect('view_song', kwargs['pk'])

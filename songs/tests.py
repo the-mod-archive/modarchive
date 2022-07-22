@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls.base import reverse
 
 from homepage.tests import factories
-from songs.models import Song
+from songs.models import Favorite, Song
 from songs.templatetags import filters
 
 class SongModelTests(TestCase):
@@ -152,6 +152,41 @@ class ViewSongTests(TestCase):
 
         # Assert
         self.assertFalse(response.context['can_comment'])
+
+    def test_is_favorite_is_not_present_when_not_authenticated(self):
+        # Arrange
+        song = factories.SongFactory()
+
+        # Act
+        response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertFalse(hasattr(response.context, 'is_favorite'))
+
+    def test_is_favorite_is_false_when_not_favorited(self):
+        # Arrange
+        song = factories.SongFactory()
+        user = factories.UserFactory()
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertFalse(response.context['is_favorite'])
+
+    def test_is_favorite_is_true_when_favorited(self):
+        # Arrange
+        song = factories.SongFactory()
+        user = factories.UserFactory()
+        self.client.force_login(user)
+        factories.FavoriteFactory(profile=user.profile, song=song)
+
+        # Act
+        response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertTrue(response.context['is_favorite'])
 
 class DownloadTests(TestCase):
     def test_download_redirects_to_external_url(self):
@@ -337,3 +372,87 @@ class FilterTests(TestCase):
         comment = "You are listening to a mod by testguy which was written in 1996"
         filtered_comment = filters.hide_email_address(comment)
         self.assertEquals(comment, filtered_comment)
+
+class AddFavoriteTests(TestCase):
+    def test_adds_favorite(self):
+        song = factories.SongFactory()
+        user = factories.UserFactory()
+        self.client.force_login(user)
+        
+        # Act
+        response = self.client.get(reverse('add_favorite', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+        self.assertEquals(1, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
+        
+
+    def test_does_not_add_favorite_when_already_favorited(self):
+        # Arrange
+        song = factories.SongFactory()
+        user = factories.UserFactory()
+        self.client.force_login(user)
+        factories.FavoriteFactory(profile=user.profile, song=song)
+        
+        # Act
+        response = self.client.get(reverse('add_favorite', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+        self.assertEquals(1, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
+
+    def test_does_not_add_favorite_when_not_authenticated(self):
+        # Arrange
+        song = factories.SongFactory()
+        login_url = reverse('login')
+        add_favorite_url = reverse('add_favorite', kwargs = {'pk': song.id})
+
+        # Act
+        response = self.client.get(add_favorite_url)
+        
+        # Assert
+        self.assertRedirects(response, f"{login_url}?next={add_favorite_url}")
+        self.assertEquals(0, Favorite.objects.filter(song_id=song.id).count())
+
+class RemoveFavoriteTests(TestCase):
+    def test_removes_favorite(self):
+        # Arrange
+        song = factories.SongFactory()
+        user = factories.UserFactory()
+        self.client.force_login(user)
+        factories.FavoriteFactory(profile=user.profile, song=song)
+        
+        # Act
+        response = self.client.get(reverse('remove_favorite', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+        self.assertEquals(0, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
+
+    def test_does_not_remove_favorite_when_not_favorited(self):
+        # Arrange
+        song = factories.SongFactory()
+        user = factories.UserFactory()
+        self.client.force_login(user)
+        
+        # Act
+        response = self.client.get(reverse('remove_favorite', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+        self.assertEquals(0, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
+
+    def test_does_not_remove_favorite_when_not_authenticated(self):
+        # Arrange
+        song = factories.SongFactory()
+        user = factories.UserFactory()
+        login_url = reverse('login')
+        remove_favorite_url = reverse('remove_favorite', kwargs = {'pk': song.id})
+        factories.FavoriteFactory(profile=user.profile, song=song)
+
+        # Act
+        response = self.client.get(remove_favorite_url)
+        
+        # Assert
+        self.assertRedirects(response, f"{login_url}?next={remove_favorite_url}")
+        self.assertEquals(1, Favorite.objects.filter(song_id=song.id).count())
