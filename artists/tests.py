@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls.base import reverse
 
-from homepage.tests import factories
+from artists import factories
 
 class ArtistViewTests(TestCase):
     def test_artist_list_view_contains_all_artists(self):

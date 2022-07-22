@@ -1,9 +1,11 @@
 from django.test import TestCase
 from django.urls.base import reverse
 
+from artists import factories as artist_factories
 from homepage.tests import factories
 from songs.models import Favorite, Song
 from songs.templatetags import filters
+from songs import factories as song_factories
 
 class SongModelTests(TestCase):
     def test_gets_clean_title_when_available(self):
@@ -20,24 +22,24 @@ class SongModelTests(TestCase):
 
     def test_cannot_leave_comment_if_own_song(self):
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        factories.ArtistFactory(songs=(song,), user=user, profile=user.profile)
+        song = song_factories.SongFactory()
+        artist_factories.ArtistFactory(songs=(song,), user=user, profile=user.profile)
 
         self.assertFalse(song.can_user_leave_comment(user.profile.id))
 
     def test_cannot_leave_comment_if_already_commented(self):
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        factories.CommentFactory(song=song, profile=user.profile)
+        song = song_factories.SongFactory()
+        song_factories.CommentFactory(song=song, profile=user.profile)
         
         self.assertFalse(song.can_user_leave_comment(user.profile.id))
 
 class CommentModelTests(TestCase):
     def test_song_stats_updated_correctly_after_removing_comment(self):
-        song = factories.SongFactory()
-        factories.SongStatsFactory(song=song)
-        comment_1 = factories.CommentFactory(song=song, rating=10)
-        comment_2 = factories.CommentFactory(song=song, rating=5)
+        song = song_factories.SongFactory()
+        song_factories.SongStatsFactory(song=song)
+        comment_1 = song_factories.CommentFactory(song=song, rating=10)
+        comment_2 = song_factories.CommentFactory(song=song, rating=5)
 
         self.assertEquals(2, song.songstats.total_comments)
         self.assertEquals(7.5, song.songstats.average_comment_score)
@@ -48,9 +50,9 @@ class CommentModelTests(TestCase):
         self.assertEquals(5.0, song.songstats.average_comment_score)
 
     def test_song_stats_updated_correctly_after_removing_final_comment(self):
-        song = factories.SongFactory()
-        factories.SongStatsFactory(song=song)
-        comment_1 = factories.CommentFactory(song=song, rating=10)
+        song = song_factories.SongFactory()
+        song_factories.SongStatsFactory(song=song)
+        comment_1 = song_factories.CommentFactory(song=song, rating=10)
 
         comment_1.delete()
 
@@ -62,7 +64,7 @@ class SongListTests(TestCase):
         # Arrange
         expected_length = 10
         for n in range(expected_length):
-            factories.SongFactory()
+            song_factories.SongFactory()
         
         # Act
         response = self.client.get(reverse('songs'))
@@ -76,10 +78,11 @@ class SongListTests(TestCase):
 
 class ViewSongTests(TestCase):
     def test_context_contains_song_and_comments(self):
-        song = factories.SongFactory(filename="file2.s3m", title="File 2", songstats=factories.SongStatsFactory())
+        song = song_factories.SongFactory(filename="file2.s3m", title="File 2")
+        song_factories.SongStatsFactory(song=song)
         response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
-        factories.CommentFactory(song=song, rating=10, text="This was definitely a song!")
-        factories.CommentFactory(song=song, rating=5, text="I disagree, this was not a song.")
+        song_factories.CommentFactory(song=song, rating=10, text="This was definitely a song!")
+        song_factories.CommentFactory(song=song, rating=5, text="I disagree, this was not a song.")
 
         self.assertTrue('song' in response.context)
         song = response.context['song']
@@ -93,7 +96,7 @@ class ViewSongTests(TestCase):
 
     def test_unauthenticated_user_cannot_comment(self):
         # Arrange
-        song = factories.SongFactory(filename="file2.s3m", title="File 2", songstats=factories.SongStatsFactory())
+        song = song_factories.SongFactory(filename="file2.s3m", title="File 2", songstats=song_factories.SongStatsFactory())
         
         # Act
         response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
@@ -104,7 +107,7 @@ class ViewSongTests(TestCase):
     def test_user_can_comment_if_has_not_commented(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         self.client.force_login(user)
         
         # Act
@@ -116,8 +119,8 @@ class ViewSongTests(TestCase):
     def test_user_cannot_comment_if_has_already_commented(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        factories.CommentFactory(song=song, profile=user.profile, rating=10, text="This was definitely a song!")
+        song = song_factories.SongFactory()
+        song_factories.CommentFactory(song=song, profile=user.profile, rating=10, text="This was definitely a song!")
         self.client.force_login(user)
 
         # Act
@@ -130,8 +133,8 @@ class ViewSongTests(TestCase):
     def test_user_can_comment_when_not_the_song_composer(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        artist = factories.ArtistFactory(songs=(song,))
+        song = song_factories.SongFactory()
+        artist_factories.ArtistFactory(songs=(song,))
         self.client.force_login(user)
 
         # Act
@@ -143,8 +146,8 @@ class ViewSongTests(TestCase):
     def test_user_cannot_comment_if_is_song_composer(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        artist = factories.ArtistFactory(songs=(song,), profile=user.profile)
+        song = song_factories.SongFactory()
+        artist_factories.ArtistFactory(songs=(song,), profile=user.profile)
         self.client.force_login(user)
 
         # Act
@@ -155,7 +158,7 @@ class ViewSongTests(TestCase):
 
     def test_is_favorite_is_not_present_when_not_authenticated(self):
         # Arrange
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
 
         # Act
         response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
@@ -165,7 +168,7 @@ class ViewSongTests(TestCase):
 
     def test_is_favorite_is_false_when_not_favorited(self):
         # Arrange
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         user = factories.UserFactory()
         self.client.force_login(user)
 
@@ -177,10 +180,10 @@ class ViewSongTests(TestCase):
 
     def test_is_favorite_is_true_when_favorited(self):
         # Arrange
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         user = factories.UserFactory()
         self.client.force_login(user)
-        factories.FavoriteFactory(profile=user.profile, song=song)
+        song_factories.FavoriteFactory(profile=user.profile, song=song)
 
         # Act
         response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
@@ -191,8 +194,8 @@ class ViewSongTests(TestCase):
 class DownloadTests(TestCase):
     def test_download_redirects_to_external_url(self):
         # Arrange
-        song = factories.SongFactory(legacy_id=12345)
-        factories.SongStatsFactory(song=song)
+        song = song_factories.SongFactory(legacy_id=12345)
+        song_factories.SongStatsFactory(song=song)
 
         # Act
         response = self.client.get(f"/songs/{song.id}/download")
@@ -202,8 +205,8 @@ class DownloadTests(TestCase):
 
     def test_download_increases_download_count(self):
         # Arrange
-        song = factories.SongFactory(legacy_id=12345)
-        stats = factories.SongStatsFactory(song=song, downloads=100)
+        song = song_factories.SongFactory(legacy_id=12345)
+        stats = song_factories.SongStatsFactory(song=song, downloads=100)
 
         # Act
         self.client.get(f"/songs/{song.id}/download")
@@ -223,7 +226,7 @@ class AddCommentTests(TestCase):
     def test_get_add_comment_page_happy_path(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         self.client.force_login(user)
 
         # Act
@@ -238,7 +241,7 @@ class AddCommentTests(TestCase):
     def test_post_add_comment_happy_path(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         self.client.force_login(user)
 
         # Act
@@ -251,8 +254,8 @@ class AddCommentTests(TestCase):
     def test_post_add_comment_calculates_stats_correctly(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        factories.SongStatsFactory(song=song)
+        song = song_factories.SongFactory()
+        song_factories.SongStatsFactory(song=song)
         self.client.force_login(user)
         
         # Act
@@ -267,9 +270,9 @@ class AddCommentTests(TestCase):
     def test_post_add_comment_calculates_stats_correctly_with_existing_comments(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        factories.SongStatsFactory(song=song)
-        factories.CommentFactory(song=song, rating=5, text='some review')
+        song = song_factories.SongFactory()
+        song_factories.SongStatsFactory(song=song)
+        song_factories.CommentFactory(song=song, rating=5, text='some review')
         self.client.force_login(user)
 
         # Act
@@ -284,8 +287,8 @@ class AddCommentTests(TestCase):
     def test_get_user_redirected_for_own_song(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        artist = factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
+        song = song_factories.SongFactory()
+        artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         self.client.force_login(user)
 
         # Act
@@ -297,8 +300,8 @@ class AddCommentTests(TestCase):
     def test_post_user_redirected_for_own_song(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        artist = factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
+        song = song_factories.SongFactory()
+        artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         self.client.force_login(user)
 
         # Act
@@ -311,8 +314,8 @@ class AddCommentTests(TestCase):
     def test_get_user_redirected_when_already_commented(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        comment = factories.CommentFactory(profile=user.profile, song=song)
+        song = song_factories.SongFactory()
+        song_factories.CommentFactory(profile=user.profile, song=song)
         self.client.force_login(user)
 
         # Act
@@ -324,8 +327,8 @@ class AddCommentTests(TestCase):
     def test_post_user_redirected_when_already_commented(self):
         # Arrange
         user = factories.UserFactory()
-        song = factories.SongFactory()
-        comment = factories.CommentFactory(profile=user.profile, song=song)
+        song = song_factories.SongFactory()
+        song_factories.CommentFactory(profile=user.profile, song=song)
         self.client.force_login(user)
 
         # Act
@@ -375,7 +378,7 @@ class FilterTests(TestCase):
 
 class AddFavoriteTests(TestCase):
     def test_adds_favorite(self):
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         user = factories.UserFactory()
         self.client.force_login(user)
         
@@ -389,10 +392,10 @@ class AddFavoriteTests(TestCase):
 
     def test_does_not_add_favorite_when_already_favorited(self):
         # Arrange
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         user = factories.UserFactory()
         self.client.force_login(user)
-        factories.FavoriteFactory(profile=user.profile, song=song)
+        song_factories.FavoriteFactory(profile=user.profile, song=song)
         
         # Act
         response = self.client.get(reverse('add_favorite', kwargs = {'pk': song.id}))
@@ -403,7 +406,7 @@ class AddFavoriteTests(TestCase):
 
     def test_does_not_add_favorite_when_not_authenticated(self):
         # Arrange
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         login_url = reverse('login')
         add_favorite_url = reverse('add_favorite', kwargs = {'pk': song.id})
 
@@ -417,10 +420,10 @@ class AddFavoriteTests(TestCase):
 class RemoveFavoriteTests(TestCase):
     def test_removes_favorite(self):
         # Arrange
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         user = factories.UserFactory()
         self.client.force_login(user)
-        factories.FavoriteFactory(profile=user.profile, song=song)
+        song_factories.FavoriteFactory(profile=user.profile, song=song)
         
         # Act
         response = self.client.get(reverse('remove_favorite', kwargs = {'pk': song.id}))
@@ -431,7 +434,7 @@ class RemoveFavoriteTests(TestCase):
 
     def test_does_not_remove_favorite_when_not_favorited(self):
         # Arrange
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         user = factories.UserFactory()
         self.client.force_login(user)
         
@@ -444,11 +447,11 @@ class RemoveFavoriteTests(TestCase):
 
     def test_does_not_remove_favorite_when_not_authenticated(self):
         # Arrange
-        song = factories.SongFactory()
+        song = song_factories.SongFactory()
         user = factories.UserFactory()
         login_url = reverse('login')
         remove_favorite_url = reverse('remove_favorite', kwargs = {'pk': song.id})
-        factories.FavoriteFactory(profile=user.profile, song=song)
+        song_factories.FavoriteFactory(profile=user.profile, song=song)
 
         # Act
         response = self.client.get(remove_favorite_url)

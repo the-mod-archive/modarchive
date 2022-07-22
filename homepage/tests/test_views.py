@@ -8,6 +8,8 @@ from unittest.mock import patch
 
 from homepage.tokens import account_activation_token
 from homepage.tests import factories
+from artists import factories as artist_factories
+from songs import factories as song_factories
 
 class PasswordResetViewTests(TestCase):
     username = 'test_user'
@@ -297,7 +299,7 @@ class LegacyRedirectionViewTests(TestCase):
         self.assertRedirects(response, reverse('register'))
 
     def test_old_module_url_redirects(self):
-        song = factories.SongFactory(legacy_id=48552)
+        song = song_factories.SongFactory(legacy_id=48552)
         response = self.client.get('/index.php/?request=view_by_moduleid&query=48552')
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
 
@@ -332,7 +334,7 @@ class ProfileViewTests(TestCase):
     def test_redirect_to_artist_page_if_exists_for_profile(self):
         # Arrange
         user = factories.UserFactory()
-        factories.ArtistFactory(profile = user.profile, name = 'Arcturus')
+        artist_factories.ArtistFactory(profile = user.profile, name = 'Arcturus')
 
         # Act
         response = self.client.get(reverse('view_profile', kwargs = {'pk': user.profile.id}))
