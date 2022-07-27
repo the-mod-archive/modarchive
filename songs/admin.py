@@ -16,3 +16,7 @@ class SongAdmin(admin.ModelAdmin):
 @admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ("pk", "text", "rating")
+
+@admin.register(models.Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ("song", "profile")

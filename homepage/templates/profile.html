@@ -84,6 +84,10 @@
     </section>
 
     <section id='favorites-section' class="content tab-content is-hidden">
-        Not implemented yet
+        {% for favorite in profile.favorite_set.all %}
+            <li><a href="{% url 'view_song' favorite.song_id %}">{{ favorite.song.get_title }}</a></li>
+        {% empty %}
+            No favorites added
+        {% endfor %}
     </section>
 {% endblock %}

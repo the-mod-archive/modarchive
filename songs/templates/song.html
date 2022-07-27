@@ -67,25 +67,39 @@
             Total reviews: {{ song.songstats.total_reviews }}
             <br/>
             Average review score: {{ song.songstats.average_review_score }}
-            {% if user.is_authenticated %}
-                <br />
-                <br />
-                {% if is_favorite %}
-                    <a href="{% url 'remove_favorite' song.id %}">Remove song from favorites</a>
-                {% else %}
-                    <a href="{% url 'add_favorite' song.id %}">Add song to favorites</a>
-                {% endif %}
-            {% endif %}
         </div>
+    </div>
+</div>
+
+<div class="content is-medium">
+    People who like this tune
+</div>
+
+<div class="content box has-background-light">
+    {% if user.is_authenticated %}
+        <p>
+        {% if is_favorite %}
+            <a href="{% url 'remove_favorite' song.id %}">Remove song from favorites</a>
+        {% else %}
+            <a href="{% url 'add_favorite' song.id %}">Add song to favorites</a>
+        {% endif %}
+        </p>
+    {% endif %}
+    <div class="faves">
+        {% for favorite in song.favorite_set.all %}
+            <a href="{% url 'view_profile' favorite.profile_id %}">{{ favorite.profile.display_name }}</a>
+        {% empty %}
+            None yet
+        {% endfor %}
     </div>
 </div>
 
 {% if user.is_authenticated and can_comment %}
     <div class="content box has-background-primary-light">
         {% if song.songstats.total_comments == 0 %}
-            <a href="{% url 'add_comment' song.id %}">Be the first to rate this song!</a>
+            <a href="{% url 'add_comment' song.id %}">Be the first to add a comment to this song!</a>
         {% else %}
-            <a href="{% url 'add_comment' song.id %}">Add a rating to this song!</a>
+            <a href="{% url 'add_comment' song.id %}">Add a comment to this song!</a>
         {% endif %}
     </div>
 {% endif %}
