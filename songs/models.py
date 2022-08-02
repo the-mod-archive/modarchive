@@ -129,6 +129,9 @@ class Comment(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)
 
 class Favorite(models.Model):
+    class Meta:
+        unique_together = (('profile', 'song'))
+
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     create_date = models.DateTimeField(auto_now_add=True)
