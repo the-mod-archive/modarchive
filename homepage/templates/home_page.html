@@ -32,6 +32,12 @@
             <div class="block">
                 {{ news.content|markdownify|linebreaks }}
             </div>
+
+            {% if user.is_staff and perms.homepage.change_news %}
+            <div class="block is-size-7">
+                <a href="{% url 'admin:homepage_news_change' news.id %}">Edit</a>
+            </div>
+            {% endif %}
         </div>
     {% endfor %}
 {% endblock %}    
