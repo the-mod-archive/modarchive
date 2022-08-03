@@ -387,3 +387,18 @@ class UpdateProfileViewTests(TestCase):
         # Assert
         user.profile.refresh_from_db()
         self.assertEqual('new blurb', user.profile.blurb)
+
+class FrontPageViewTests(TestCase):
+    def test_front_page_has_five_most_recent_news_items(self):
+        # Arrange
+        user = factories.UserFactory()
+        for n in range(6):
+            factories.NewsFactory(profile=user.profile, headline=f"This is headline {n + 1}")
+
+        # Act
+        response = self.client.get(reverse('home'))
+
+        # Assert
+        self.assertEquals(5, len(response.context['latest_news']))
+        self.assertEquals("This is headline 6", response.context['latest_news'][0].headline)
+        self.assertEquals("This is headline 2", response.context['latest_news'][4].headline)

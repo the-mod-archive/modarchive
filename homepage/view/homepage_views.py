@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
+from django.views.generic.base import TemplateView
 
 from homepage.forms import LoginForm
+from homepage.models import News
 
 class RedirectAuthenticatedUserMixin:
     def dispatch(self, request, *args, **kwargs):
@@ -11,8 +13,13 @@ class RedirectAuthenticatedUserMixin:
         
         return super().dispatch(request, *args, **kwargs)
 
-def home(request):
-    return render(request, 'home_page.html')
+class HomePageView(TemplateView):
+    template_name='home_page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['latest_news'] = News.objects.order_by('-id')[:5]
+        return context
 
 def page_not_found_view(request, exception):
     return render(request, '404.html')

@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'artists',
     'search',
     'songs',
-    'homepage.apps.DemositeSceneIDConfig'
+    'homepage.apps.DemositeSceneIDConfig',
+    'markdownify.apps.MarkdownifyConfig'
 ]
 
 MIDDLEWARE = [

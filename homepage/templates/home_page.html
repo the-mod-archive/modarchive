@@ -1,13 +1,37 @@
 {% extends 'base.html' %}
+{% load markdownify %}
 
 {% block title %}
     {{ block.super }}: Serving the Demoscene since 1996
 {% endblock %}
 
 {% block content %}
-    This is a test version of the Mod Archive. It is still in development. This is a placeholder home page that will eventually be replaced with something more useful.
-    <br/><br/>
-    <a href="{% url 'songs' %}">Songs</a>
-    <br/><br/>
-    <a href="{% url 'artists' %}">Artists</a>
+    {% if user.is_staff and perms.homepage.add_news %}
+    <article class="message is-warning">
+        <div class="message-header">
+            <p>Admin Actions</p>
+        </div>
+        <div class="message-body">
+            <a href="{% url 'admin:homepage_news_add' %}">Add a news item</a>
+        </div>
+    </article>
+    {% endif %}
+
+    {% for news in latest_news %}
+        <div class="content has-background-light px-2">
+            <div class="block">
+                <span class="is-size-4">
+                    {{ news.headline }}
+                </span>
+                <br/>
+                <span class="is-size-7">
+                    posted by {{ news.profile.display_name }} on {{ news.create_date|date:"F j, o" }}
+                </span>
+            </div>
+            
+            <div class="block">
+                {{ news.content|markdownify|linebreaks }}
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}    

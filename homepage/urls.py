@@ -4,13 +4,13 @@ from django.views.generic.base import TemplateView
 
 from homepage.view import password_views, registration_views
 from homepage.view.bulk_upload_view import BulkUploadView
-from homepage.view.homepage_views import home, account_settings, LoginView
+from homepage.view.homepage_views import account_settings, LoginView, HomePageView
 from homepage.view.legacy_redirect_view import LegacyUrlRedirectionView
 from homepage.view.profile_view import ProfileView, UpdateProfileView
 
 urlpatterns = [
     # Basic homepage
-    path('', home, {}, 'home'),
+    path('', HomePageView.as_view(), {}, 'home'),
     path('account_settings/', account_settings, {}, 'account_settings'),
 
     # Basic auth functionality

@@ -2,7 +2,7 @@ import factory
 
 from django.contrib.auth.models import User
 
-from homepage.models import BlacklistedDomain
+from homepage import models
 
 class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -13,4 +13,11 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 class BlacklistedDomainFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = BlacklistedDomain
+        model = models.BlacklistedDomain
+
+class NewsFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.News
+
+    headline = factory.Sequence(lambda n: 'Headline %d' % n)
+    content = factory.Sequence(lambda n: 'This is news content')
