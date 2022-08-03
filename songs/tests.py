@@ -34,6 +34,15 @@ class SongModelTests(TestCase):
         
         self.assertFalse(song.can_user_leave_comment(user.profile.id))
 
+    def test_is_own_song(self):
+        user = factories.UserFactory()
+        song = song_factories.SongFactory()
+        song_2 = song_factories.SongFactory()
+        artist_factories.ArtistFactory(songs=(song,), user=user, profile=user.profile)
+
+        self.assertTrue(song.is_own_song(user.profile.id))
+        self.assertFalse(song_2.is_own_song(user.profile.id))
+
 class CommentModelTests(TestCase):
     def test_song_stats_updated_correctly_after_removing_comment(self):
         song = song_factories.SongFactory()
@@ -415,6 +424,19 @@ class AddFavoriteTests(TestCase):
         
         # Assert
         self.assertRedirects(response, f"{login_url}?next={add_favorite_url}")
+        self.assertEquals(0, Favorite.objects.filter(song_id=song.id).count())
+
+    def test_does_not_add_artists_own_song_as_favorite(self):
+        # Arrange
+        user = factories.UserFactory()
+        song = song_factories.SongFactory()
+        artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
+        self.client.force_login(user)
+
+        # Act
+        self.client.get(reverse('add_favorite', kwargs = {'pk': song.id}))
+
+        # Assert
         self.assertEquals(0, Favorite.objects.filter(song_id=song.id).count())
 
 class RemoveFavoriteTests(TestCase):

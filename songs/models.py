@@ -77,10 +77,14 @@ class Song(models.Model):
             return self.clean_title
         return self.title
 
+    def is_own_song(self, profile_id):
+        return self.artist_set.all().filter(profile_id=profile_id).exists()
+
+    def has_commented(self, profile_id):
+        return self.comment_set.all().filter(profile_id=profile_id).exists()
+
     def can_user_leave_comment(self, profile_id):
-        is_own_song = self.artist_set.all().filter(profile_id=profile_id).exists()
-        has_commented = self.comment_set.all().filter(profile_id=profile_id).exists()
-        return not is_own_song and not has_commented
+        return not self.is_own_song(profile_id) and not self.has_commented(profile_id)
 
     class Meta:
         indexes = [

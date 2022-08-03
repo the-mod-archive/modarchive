@@ -2,7 +2,7 @@ from django.test import TestCase
 from homepage.tests import factories
 from songs import factories as song_factories
 
-class ProfileTests(TestCase):    
+class ProfileTests(TestCase):
     def test_has_comments_is_true_when_profile_has_comments(self):
         profile_1 = factories.UserFactory().profile
         profile_2 = factories.UserFactory().profile

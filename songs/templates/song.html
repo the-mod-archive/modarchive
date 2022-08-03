@@ -80,7 +80,7 @@
         <p>
         {% if is_favorite %}
             <a href="{% url 'remove_favorite' song.id %}">Remove song from favorites</a>
-        {% else %}
+        {% elif not is_own_song %}
             <a href="{% url 'add_favorite' song.id %}">Add song to favorites</a>
         {% endif %}
         </p>

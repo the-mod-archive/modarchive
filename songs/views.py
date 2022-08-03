@@ -30,6 +30,7 @@ class SongView(DetailView):
         context = super().get_context_data(**kwargs)
         
         if (self.request.user.is_authenticated):
+            context['is_own_song'] = context['song'].is_own_song(self.request.user.profile.id)
             context['can_comment'] = context['song'].can_user_leave_comment(self.request.user.profile.id)            
             context['is_favorite'] = self.request.user.profile.favorite_set.filter(song_id=context['song'].id).count() > 0
 
@@ -63,8 +64,14 @@ class AddCommentView(LoginRequiredMixin, CreateView):
         return super().post(request, *args, **kwargs)
 
 class AddFavoriteView(LoginRequiredMixin, View):
+    def is_own_song(self, profile, song_id):
+        return hasattr(profile, 'artist') and profile.artist.songs.filter(id=song_id).count() > 0
+
+    def is_already_favorite(self, profile, song_id):
+        return Favorite.objects.filter(profile=profile, song_id=song_id).count() > 0
+
     def get(self, request, *args, **kwargs):
-        if (Favorite.objects.filter(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).count() == 0):
+        if (not self.is_own_song(self.request.user.profile, kwargs['pk']) and not self.is_already_favorite(self.request.user.profile, kwargs['pk'])):
             Favorite(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).save()
         return redirect('view_song', kwargs['pk'])
 
