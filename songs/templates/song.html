@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load filters %}
+{% load markdownify %}
 
 {% block title %}
     {{ block.super }}: {{ song.get_title }} {% if song.artist_set.all %}
@@ -119,7 +120,7 @@
                     Rating: {{comment.rating}}/10
                 </div>
                 <br>
-                {{comment.text|linebreaks|spaces|escape}}
+                {{comment.text|markdownify:"comment"|linebreaks}}
             </div>
         {% endfor %}
     </div>

@@ -152,3 +152,17 @@ IS_RECAPTCHA_ENABLED = True
 SCENEID_CLIENT_ID='modarchive'
 SCENEID_CLIENT_SECRET=os.getenv("SCENEID_CLIENT_SECRET", "")
 LOGIN_REDIRECT_URL = '/'
+
+MARKDOWNIFY = {
+    "comment": {
+        "WHITELIST_TAGS": [
+            'em',
+            'strong',
+            'p',
+            'del'
+        ],
+        "MARKDOWN_EXTENSIONS": [
+            "pymdownx.tilde"
+        ]
+    }
+}
