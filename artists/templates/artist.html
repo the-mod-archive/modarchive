@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load markdownify %}
 
 {% block script %}
 <script>
@@ -53,6 +54,10 @@
 {% if artist.profile %}
 <p>
     Member since {{ artist.profile.create_date|date:"M d, Y" }}
+
+    {% if user.profile and user.profile.id == artist.profile.id %}
+        - <a href="{% url 'update_profile' %}">Update your profile</a>
+    {% endif %}
 </p>
 {% endif %}
 
@@ -70,7 +75,7 @@
 <section id='overview-section' class='content tab-content'>
     {% if artist.profile.blurb %}
         <div class='block'>
-            {{ artist.profile.blurb|linebreaks|escape }}
+            {{ artist.profile.blurb|markdownify:"profile" }}
         </div>
     {% endif %}
 </section>

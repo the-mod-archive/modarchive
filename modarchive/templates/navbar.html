@@ -41,7 +41,10 @@
                                 </div>
                                 {% if user.profile %}
                                     <div class="dropdown-item">
-                                        <a href="{% url 'view_profile' user.profile.id %}">Profile</a>
+                                        <a href="{% url 'view_profile' user.profile.id %}">View your profile</a>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <a href="{% url 'update_profile' %}">Update your profile</a>
                                     </div>
                                 {% endif %}
                                 <div class="dropdown-item">

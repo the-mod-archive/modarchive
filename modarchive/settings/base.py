@@ -164,5 +164,17 @@ MARKDOWNIFY = {
         "MARKDOWN_EXTENSIONS": [
             "pymdownx.tilde"
         ]
+    },
+    "profile": {
+        "WHITELIST_TAGS": [
+            'em',
+            'strong',
+            'p',
+            'del',
+            'hr'
+        ],
+        "MARKDOWN_EXTENSIONS": [
+            "pymdownx.tilde"
+        ]
     }
 }
