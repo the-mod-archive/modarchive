@@ -83,6 +83,9 @@ class Song(models.Model):
     def has_commented(self, profile_id):
         return self.comment_set.all().filter(profile_id=profile_id).exists()
 
+    def has_artist_commented(self, profile_id):
+        return self.artistcomment_set.all().filter(profile_id=profile_id).exists()
+
     def can_user_leave_comment(self, profile_id):
         return not self.is_own_song(profile_id) and not self.has_commented(profile_id)
 
@@ -131,6 +134,18 @@ class Comment(models.Model):
     text = models.TextField(max_length=5000)
     rating = models.PositiveSmallIntegerField(choices=Ratings.choices)
     create_date = models.DateTimeField(auto_now_add=True)
+
+class ArtistComment(models.Model):
+    class Meta:
+        unique_together = (('profile', 'song'))
+        verbose_name_plural = 'artist comments'
+        db_table = 'songs_artist_comments'
+
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    text = models.TextField(max_length=5000)
+    create_date = models.DateTimeField(auto_now_add=True)
+    update_date=models.DateTimeField(auto_now=True)
 
 class Favorite(models.Model):
     class Meta:

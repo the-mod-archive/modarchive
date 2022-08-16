@@ -95,6 +95,32 @@
     </div>
 </div>
 
+{% if user.is_authenticated and artist_can_comment %}
+    <div class="content box has-background-primary-light">
+        Artists can add a comment to their own songs. <a href="{% url 'add_artist_comment' song.id %}">Add one now!</a>
+    </div>
+{% endif %}
+
+{% if song.artistcomment_set.all %}
+    <div class="block">
+        <div class="content is-medium">Artist Comments</div>
+        {% for comment in song.artistcomment_set.all %}
+            <div class="box has-background-light">
+                <div class="has-text-weight-bold">
+                    Posted by <a href="{% url 'view_profile' comment.profile.id %}">{{comment.profile.display_name}}</a> on {{comment.create_date|date:"F j, o"}}
+                    <br>
+                </div>
+                <br>
+                {{comment.text|markdownify:"comment"|linebreaks}}
+                {% if user.is_authenticated and is_own_song and comment.profile_id == user.profile.id %}
+                    
+                    <span class="is-size-7"><a href="{% url 'update_artist_comment' comment.id %}">Update your comment</a></span>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% if user.is_authenticated and can_comment %}
     <div class="content box has-background-primary-light">
         {% if song.songstats.total_comments == 0 %}

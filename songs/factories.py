@@ -32,3 +32,7 @@ class CommentFactory(factory.django.DjangoModelFactory):
 class FavoriteFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Favorite
+
+class ArtistCommentFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.ArtistComment

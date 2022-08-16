@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ block.super }}: Artist comment on {{object.song.get_title}}
+{% endblock %}
+
+{% block content %}
+    <div class="block">
+        <h1 class="title">Add artist comment to {{object.song.get_title}}</h1>
+
+        <form action="{% url 'update_artist_comment' object.id %}" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" class='button is-primary' value="Update Comment">
+        </form>
+    </div>
+
+    <div class="block is-size-7">
+        Markdown syntax:
+        <br/>
+        *italic*
+        <br/>
+        **bold**
+        <br/>
+        ~~strikethrough~~
+    </div>
+{% endblock %}

@@ -20,3 +20,7 @@ class CommentAdmin(admin.ModelAdmin):
 @admin.register(models.Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ("song", "profile")
+
+@admin.register(models.ArtistComment)
+class ArtistCommentAdmin(admin.ModelAdmin):
+    list_display = ["song", "profile"]

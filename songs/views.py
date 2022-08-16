@@ -1,11 +1,11 @@
 from django.shortcuts import redirect
 from django.http import Http404
-from django.views.generic import DetailView, CreateView, View
+from django.views.generic import DetailView, CreateView, View, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 
 from songs import forms
-from songs.models import Song, Favorite
+from songs.models import ArtistComment, Song, Favorite
 
 def download(request, pk):
     if request.method == 'GET':
@@ -33,6 +33,7 @@ class SongView(DetailView):
             context['is_own_song'] = context['song'].is_own_song(self.request.user.profile.id)
             context['can_comment'] = context['song'].can_user_leave_comment(self.request.user.profile.id)            
             context['is_favorite'] = self.request.user.profile.favorite_set.filter(song_id=context['song'].id).count() > 0
+            context['artist_can_comment'] = context['is_own_song'] and not context['song'].has_artist_commented(self.request.user.profile.id)
 
         return context
 
@@ -80,3 +81,47 @@ class RemoveFavoriteView(LoginRequiredMixin, View):
         if (Favorite.objects.filter(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).count() > 0):
             Favorite.objects.get(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).delete()
         return redirect('view_song', kwargs['pk'])
+
+class AddArtistCommentView(LoginRequiredMixin, CreateView):
+    template_name="add_artist_comment.html"
+    form_class=forms.AddArtistCommentForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+
+        song = Song.objects.get(id=kwargs['pk'])
+
+        if (not song.is_own_song(request.user.profile.id) or song.has_artist_commented(request.user.profile.id)):
+            return redirect('view_song', kwargs['pk'])
+
+        self.extra_context={'song': song}
+        return super().dispatch(request, *args, **kwargs)
+
+    # Add profile and song ID to the comment in order to save it
+    def form_valid(self, form):
+        comment_instance = form.save(commit=False)
+        comment_instance.profile = self.request.user.profile
+        comment_instance.song_id = self.kwargs['pk']
+
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        self.success_url = reverse('view_song', kwargs = {'pk': kwargs['pk']})
+        return super().post(request, *args, **kwargs)
+
+class UpdateArtistCommentView(LoginRequiredMixin, UpdateView):
+    form_class=forms.AddArtistCommentForm
+    model=ArtistComment
+    template_name='update_artist_comment.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if (request.user.is_authenticated and obj.profile != self.request.user.profile):
+            return redirect('view_song', obj.song_id)
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        self.success_url = reverse('view_song', kwargs={'pk': instance.song.id})
+        return super().form_valid(form)
