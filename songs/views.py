@@ -3,6 +3,7 @@ from django.http import Http404
 from django.views.generic import DetailView, CreateView, View, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
+from random import choice
 
 from songs import forms
 from songs.models import ArtistComment, Song, Favorite
@@ -125,3 +126,9 @@ class UpdateArtistCommentView(LoginRequiredMixin, UpdateView):
         instance = form.save(commit=False)
         self.success_url = reverse('view_song', kwargs={'pk': instance.song.id})
         return super().form_valid(form)
+
+class RandomSongView(View):
+    def get(self, request, *args, **kwargs):
+        pks = Song.objects.values_list('pk', flat=True)
+        random_pk = choice(pks)
+        return redirect('view_song', random_pk)

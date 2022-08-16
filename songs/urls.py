@@ -12,5 +12,6 @@ urlpatterns = [
     path('<int:pk>/add_favorite', views.AddFavoriteView.as_view(), {}, 'add_favorite'),
     path('<int:pk>/remove_favorite', views.RemoveFavoriteView.as_view(), {}, 'remove_favorite'),
     path('<int:pk>/artist_comment', views.AddArtistCommentView.as_view(), {}, 'add_artist_comment'),
-    path('update_artist_comment/<int:pk>', views.UpdateArtistCommentView.as_view(), {}, 'update_artist_comment')
+    path('update_artist_comment/<int:pk>', views.UpdateArtistCommentView.as_view(), {}, 'update_artist_comment'),
+    path('random/', views.RandomSongView.as_view(), {}, 'random_song')
 ]

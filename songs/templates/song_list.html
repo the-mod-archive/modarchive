@@ -8,6 +8,8 @@
 
 <h1 class='title'>Songs</h1>
 
+<div class="content"><a href="{% url 'random_song' %}">Go to a random song</a></div>
+
 <ul>
 {% for song in object_list %}
     <li>
