@@ -1,0 +1,27 @@
+{% load static bulma_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block player_title %}Mod Archive Player: {% endblock player_title %}</title>
+        {% block css %}
+            {% font_awesome %}
+            <link rel="stylesheet" href="{% static 'bulma/css/style.min.css' %}">
+            {% block extra_css %}{% endblock extra_css %}
+        {% endblock css %}
+
+        {% block script %}
+        {% endblock script %}
+    </head>
+    <body>
+        <section class="section">
+            <button class="button is-medium">
+                <span class="icon is-small">
+                    <i class="fas fa-solid fa-play"></i>
+                </span>
+            </button>
+        </section>
+    </body>
+</html>

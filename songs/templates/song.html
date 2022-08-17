@@ -33,7 +33,13 @@
         {% include 'song_artists.html' with song=song %}
         <br/>
         {% endif %}
-        <p><a href="{% url 'download_song' song.id %}">Download</a></p>
+        <p>
+            <a href="{% url 'download_song' song.id %}">Download</a>
+            {% if perms.songs.view_song %}
+                <br/>
+                <a href="{% url 'player' %}?song_id={{song.id}}" target="_blank" rel="noopener noreferrer">Listen now</a>
+            {% endif %}
+        </p>
     </div>
 </div>
 
