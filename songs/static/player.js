@@ -23,18 +23,39 @@ function initialize(legacy_id, filename) {
         }
 
         function afterLoad(buffer) {
-            player.play(buffer);
+            document.getElementById('seekbar-section').classList.remove('is-hidden');
             document.getElementById('loading-message').classList.add('is-hidden');
             document.getElementById('play-button-icon').classList.remove('fa-play');
             document.getElementById('play-button-icon').classList.add('fa-pause');
             document.querySelector("#play-button").removeEventListener("click", play);
             document.querySelector("#play-button").addEventListener("click", togglePause);
+
+            document.getElementById('seekbar').addEventListener("change", seek, false);
+
+            player.play(buffer);
+            updateDuration();
         }
 
         function progress(e) {
             if (e.lengthComputable) {
                 document.getElementById("loading-message").innerHTML = "Loading... " + Math.floor((e.loaded / e.total) * 100) + "%";
             }
+        }
+
+        function updateDuration() {
+            const sec_num = player.duration();
+            const minutes = Math.floor(sec_num / 60);
+            const seconds = Math.floor(sec_num % 60);
+            if (seconds < 10) { seconds = '0' + seconds; }
+            if (document.getElementById('song-data').classList.contains('is-hidden')) {
+                document.getElementById('song-data').classList.remove('is-hidden');
+            }
+            document.getElementById('song-duration').innerHTML = minutes + ':' + seconds;
+            document.getElementById('seekbar').max = sec_num;
+        }
+
+        function seek(event) {
+            player.seek(event.currentTarget.value);
         }
     };
 }

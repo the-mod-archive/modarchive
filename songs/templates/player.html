@@ -24,6 +24,9 @@
             <div class="title" id="song-title">
                 {{song.get_title}}
             </div>
+            <div id="song-data" class="content is-hidden">
+                Duration: <span id="song-duration"></span>
+            </div>
             <div class="block is-hidden" id="loading-message">
                 Loading...
             </div>
@@ -32,6 +35,9 @@
                     <i id="play-button-icon" class="fas fa-solid fa-play"></i>
                 </span>
             </button>
+            <div id="seekbar-section" class="is-hidden">
+                <input id="seekbar" type="range" min="0" max="100" value="0">
+            </div>
         </section>
     </body>
 </html>
