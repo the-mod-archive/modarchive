@@ -6,7 +6,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Mod Archive Player: {{song.title}}</title>
+        <title>Mod Archive Player: {{song.get_title}}</title>
         {% block css %}
             {% font_awesome %}
             <link rel="stylesheet" href="{% static 'bulma/css/style.min.css' %}">
@@ -20,10 +20,13 @@
         {% endblock script %}
     </head>
     <body>
-        <div class="title" id="song-title">
-            {{song.title}}
-        </div>
         <section class="section">
+            <div class="title" id="song-title">
+                {{song.get_title}}
+            </div>
+            <div class="block is-hidden" id="loading-message">
+                Loading...
+            </div>
             <button id="play-button" class="button is-medium">
                 <span class="icon is-small">
                     <i id="play-button-icon" class="fas fa-solid fa-play"></i>

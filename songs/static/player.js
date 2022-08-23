@@ -7,7 +7,8 @@ function initialize(legacy_id, filename) {
         const path = `https://api.modarchive.org/downloads.php?moduleid=${legacy_id}#${filename}`;
 
         function play() {
-            player.load(path, afterLoad.bind(this, path));
+            document.getElementById('loading-message').classList.remove('is-hidden');
+            player.load(path, afterLoad.bind(this), progress);
         }
 
         function togglePause() {
@@ -21,12 +22,19 @@ function initialize(legacy_id, filename) {
             }
         }
 
-        function afterLoad(path, buffer) {
+        function afterLoad(buffer) {
             player.play(buffer);
+            document.getElementById('loading-message').classList.add('is-hidden');
             document.getElementById('play-button-icon').classList.remove('fa-play');
             document.getElementById('play-button-icon').classList.add('fa-pause');
             document.querySelector("#play-button").removeEventListener("click", play);
             document.querySelector("#play-button").addEventListener("click", togglePause);
+        }
+
+        function progress(e) {
+            if (e.lengthComputable) {
+                document.getElementById("loading-message").innerHTML = "Loading... " + Math.floor((e.loaded / e.total) * 100) + "%";
+            }
         }
     };
 }

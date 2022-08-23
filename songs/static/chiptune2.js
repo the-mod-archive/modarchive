@@ -99,7 +99,7 @@ ChiptuneJsPlayer.prototype.unlock = function() {
   this.touchLocked = false;
 }
 
-ChiptuneJsPlayer.prototype.load = function(input, callback) {
+ChiptuneJsPlayer.prototype.load = function(input, callback, onProgressCallback) {
 
   if (this.touchLocked) {
     this.unlock();
@@ -117,6 +117,7 @@ ChiptuneJsPlayer.prototype.load = function(input, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', input, true);
     xhr.responseType = 'arraybuffer';
+    xhr.onprogress = onProgressCallback;
     xhr.onload = function(e) {
       if (xhr.status === 200) {
         return callback(xhr.response); // no error
