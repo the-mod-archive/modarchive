@@ -1,5 +1,5 @@
 from django.urls import path
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, DetailView
 
 from songs.models import Song
 from songs import views
@@ -14,5 +14,5 @@ urlpatterns = [
     path('<int:pk>/artist_comment', views.AddArtistCommentView.as_view(), {}, 'add_artist_comment'),
     path('update_artist_comment/<int:pk>', views.UpdateArtistCommentView.as_view(), {}, 'update_artist_comment'),
     path('random/', views.RandomSongView.as_view(), {}, 'random_song'),
-    path('player/', TemplateView.as_view(template_name='player.html'), {}, 'player')
+    path('player/', views.PlayerView.as_view(), {}, 'player')
 ]

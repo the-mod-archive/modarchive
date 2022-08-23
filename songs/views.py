@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
 from django.http import Http404
-from django.views.generic import DetailView, CreateView, View, UpdateView
+from django.views.generic import DetailView, CreateView, View, UpdateView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from random import choice
@@ -36,6 +36,16 @@ class SongView(DetailView):
             context['is_favorite'] = self.request.user.profile.favorite_set.filter(song_id=context['song'].id).count() > 0
             context['artist_can_comment'] = context['is_own_song'] and not context['song'].has_artist_commented(self.request.user.profile.id)
 
+        return context
+
+class PlayerView(TemplateView):
+    template_name='player.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        song_id = self.request.GET.get("song_id")
+        song = Song.objects.get(pk = song_id)
+        context['song'] = song
         return context
 
 class AddCommentView(LoginRequiredMixin, CreateView):

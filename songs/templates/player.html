@@ -6,7 +6,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block player_title %}Mod Archive Player: {% endblock player_title %}</title>
+        <title>Mod Archive Player: {{song.title}}</title>
         {% block css %}
             {% font_awesome %}
             <link rel="stylesheet" href="{% static 'bulma/css/style.min.css' %}">
@@ -14,14 +14,19 @@
         {% endblock css %}
 
         {% block script %}
-            <script type="text/javascript" src="{% static 'chiptune2.js' %}"></script>
+            <script type="text/javascript" src="{% static 'player.js' %}"></script>
+            <script type="text/javascript" src="{% static 'libopenmpt.js' %}" onload="initialize({{song.legacy_id}}, '{{song.filename}}')"></script>
+            <script type="text/javascript" src="{% static 'chiptune2.js' %}"></script>   
         {% endblock script %}
     </head>
     <body>
+        <div class="title" id="song-title">
+            {{song.title}}
+        </div>
         <section class="section">
-            <button class="button is-medium">
+            <button id="play-button" class="button is-medium">
                 <span class="icon is-small">
-                    <i class="fas fa-solid fa-play"></i>
+                    <i id="play-button-icon" class="fas fa-solid fa-play"></i>
                 </span>
             </button>
         </section>
