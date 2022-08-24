@@ -72,6 +72,10 @@ ChiptuneJsPlayer.prototype.seek = function(position) {
   libopenmpt._openmpt_module_set_position_seconds(this.currentPlayingNode.modulePtr, position);
 }
 
+ChiptuneJsPlayer.prototype.getPosition = function() {
+  return libopenmpt._openmpt_module_get_position_seconds(this.currentPlayingNode.modulePtr);
+}
+
 ChiptuneJsPlayer.prototype.metadata = function() {
   var data = {};
   var keys = UTF8ToString(libopenmpt._openmpt_module_get_metadata_keys(this.currentPlayingNode.modulePtr)).split(';');

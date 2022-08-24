@@ -8,7 +8,7 @@ function initialize(legacy_id, filename) {
 
         function play() {
             document.getElementById('loading-message').classList.remove('is-hidden');
-            player.load(path, afterLoad.bind(this), progress);
+            player.load(path, afterLoad.bind(this), loadProgress);
         }
 
         function togglePause() {
@@ -34,9 +34,10 @@ function initialize(legacy_id, filename) {
 
             player.play(buffer);
             updateDuration();
+            setInterval(songProgress, 500);
         }
 
-        function progress(e) {
+        function loadProgress(e) {
             if (e.lengthComputable) {
                 document.getElementById("loading-message").innerHTML = "Loading... " + Math.floor((e.loaded / e.total) * 100) + "%";
             }
@@ -56,6 +57,10 @@ function initialize(legacy_id, filename) {
 
         function seek(event) {
             player.seek(event.currentTarget.value);
+        }
+
+        function songProgress() {
+            document.getElementById('seekbar').value = player.getPosition();
         }
     };
 }
