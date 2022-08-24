@@ -107,6 +107,27 @@ ChiptuneJsPlayer.prototype.unlock = function() {
   this.touchLocked = false;
 }
 
+ChiptuneJsPlayer.prototype.subsongs = function() {
+  const module = this.currentPlayingNode.modulePtr;
+  const subsongs = libopenmpt._openmpt_module_get_num_subsongs(module);
+  const names = []
+  for (var i = 0; i < subsongs; i++) {
+    const namePtr = libopenmpt._openmpt_module_get_subsong_name(module, i);
+    const name = UTF8ToString(namePtr);
+    if (name !== "") {
+      names.push(name)
+    } else {
+      names.push("Subsong " + (i + 1));
+    }
+    libopenmpt._openmpt_free_string(namePtr);
+  }
+  return names;
+}
+
+ChiptuneJsPlayer.prototype.selectSubsong = function(subsong) {
+	libopenmpt._openmpt_module_select_subsong(this.currentPlayingNode.modulePtr, subsong);
+}
+
 ChiptuneJsPlayer.prototype.load = function(input, callback, onProgressCallback) {
 
   if (this.touchLocked) {

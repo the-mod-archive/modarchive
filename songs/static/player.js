@@ -33,8 +33,31 @@ function initialize(legacy_id, filename) {
             document.getElementById('seekbar').addEventListener("change", seek, false);
 
             player.play(buffer);
-            updateDuration();
             setInterval(songProgress, 500);
+
+            const subsongs = player.subsongs();
+            if (subsongs.length > 1) {
+                document.getElementById('subsong-section').classList.remove('is-hidden');
+                const selector = document.getElementById('subsong-selector');
+
+                const elt = document.createElement('option');
+                elt.textContent = 'Play all subsongs';
+                elt.value = -1;
+                selector.appendChild(elt);
+
+                for (let i = 0; i < subsongs.length; i++) {
+                    const newOption = document.createElement('option');
+                    newOption.textContent = subsongs[i];
+                    newOption.value = i
+                    selector.appendChild(newOption);
+                }
+
+                selector.selectedIndex = 0;
+                player.selectSubsong(-1);
+                selector.addEventListener("change", selectSubsong, false);
+            }
+
+            updateDuration();
         }
 
         function loadProgress(e) {
@@ -61,6 +84,11 @@ function initialize(legacy_id, filename) {
 
         function songProgress() {
             document.getElementById('seekbar').value = player.getPosition();
+        }
+
+        function selectSubsong(event) {
+            player.selectSubsong(event.currentTarget.value);
+            updateDuration();
         }
     };
 }
