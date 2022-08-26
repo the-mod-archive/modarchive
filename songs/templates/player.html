@@ -20,27 +20,33 @@
         {% endblock script %}
     </head>
     <body>
-        <section class="section">
-            <div class="title" id="song-title">
-                {{song.get_title}}
-            </div>
-            <div id="song-data" class="content is-hidden">
-                Duration: <span id="song-duration"></span>
-            </div>
-            <div class="block is-hidden" id="loading-message">
-                Loading...
-            </div>
-            <button id="play-button" class="button is-medium">
-                <span class="icon is-small">
-                    <i id="play-button-icon" class="fas fa-solid fa-play"></i>
-                </span>
-            </button>
-            <div id="seekbar-section" class="is-hidden">
-                <input id="seekbar" type="range" min="0" max="100" value="0">
-            </div>
-            <div id="subsong-section" class="select is-hidden">
-                <select id="subsong-selector">
-                </select>
+        <section>
+            <div class="columns m-2">
+                <div class="column is-one-quarter">
+                    <div class="content has-background-light p-2">
+                        <div class="is-size-4" id="song-title">
+                            {{song.get_title}} ({{song.filename}})
+                        </div>
+                        <div id="song-data" class="content is-hidden">
+                            Duration: <span id="song-duration"></span>
+                        </div>
+                        <div class="block is-hidden" id="loading-message">
+                            Loading...
+                        </div>
+                        <button id="play-button" class="button is-medium">
+                            <span class="icon is-small">
+                                <i id="play-button-icon" class="fas fa-solid fa-play"></i>
+                            </span>
+                        </button>
+                        <div id="seekbar-section" class="is-hidden">
+                            <input id="seekbar" type="range" min="0" max="100" value="0">
+                        </div>
+                        <div id="subsong-section" class="select is-hidden">
+                            <select id="subsong-selector">
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </body>
