@@ -5,8 +5,17 @@ function initialize(legacy_id, filename) {
         const player = new ChiptuneJsPlayer(new ChiptuneJsConfig(-1));
         const path = `https://api.modarchive.org/downloads.php?moduleid=${legacy_id}#${filename}`;
 
-        document.getElementById('loading-message').classList.remove('is-hidden');
-        player.load(path, afterLoad.bind(this), loadProgress);        
+        if (player.isAudioContextSuspended()) {
+            document.querySelector("#play-button").addEventListener("click", downloadAndPlay);
+        } else {
+            downloadAndPlay();
+        }
+
+        function downloadAndPlay() {
+            document.getElementById('loading-message').classList.remove('is-hidden');
+            document.querySelector("#play-button").removeEventListener("click", downloadAndPlay);
+            player.load(path, afterLoad.bind(this), loadProgress);
+        }
 
         function togglePause() {
             player.togglePause();
