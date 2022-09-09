@@ -1,0 +1,20 @@
+{% load markdownify %}
+
+{% if song.artistcomment_set.all %}
+    <div>
+        <div class="fs-5">Artist Comments</div>
+        {% for comment in song.artistcomment_set.all %}
+            <div class="bg-success bg-opacity-25 border border-dark rounded p-1">
+                <div class="fw-bold">
+                    Posted by <a href="{% url 'view_profile' comment.profile.id %}">{{comment.profile.display_name}}</a> on {{comment.create_date|date:"F j, o"}}
+                    <br>
+                </div>
+                <br>
+                {{comment.text|markdownify:"comment"}}
+                {% if user.is_authenticated and is_own_song and comment.profile_id == user.profile.id %}
+                    <span class="fs-6"><a href="{% url 'update_artist_comment' comment.id %}">Update your comment</a></span>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

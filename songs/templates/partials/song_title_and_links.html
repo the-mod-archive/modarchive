@@ -1,0 +1,32 @@
+{% load bootstrap_icons %}
+
+<div class="">
+    <div class="fs-2">
+        {{ song.get_title }} 
+        <a class="btn btn-success" href="{% url 'download_song' song.id %}">{% bs_icon 'download' %} Download</button></a>
+        <a class="btn btn-success" href="#" onclick="window.open('{% url 'player' %}?song_id={{song.id}}', 'keep');">{% bs_icon 'headphones' %} Listen</button></a>
+    </div>
+    {% if song.artist_set.all %}
+        <div class="fs-5 mb-2 pl-5">
+            {% include 'song_artists.html' with song=song %}
+        </div>
+    {% endif %}
+    
+    {% if user.is_authenticated %}
+        <div class="btn-group mb-1" role="group">
+            {% if artist_can_comment %}
+                <a class="btn btn-outline-primary" href="{% url 'add_artist_comment' song.id %}">{% bs_icon 'chat-left-text' %} Add artist comment</a>
+            {% elif can_comment%}
+                <a class="btn btn-outline-primary" href="{% url 'add_comment' song.id %}">{% bs_icon 'chat-left-text' %} Add comment</a>
+            {% endif %}
+
+            {% if not is_own_song %}
+                {% if is_favorite %}
+                    <a class="btn btn-outline-primary" href="{% url 'remove_favorite' song.id %}">{% bs_icon 'star-fill' %} Remove song from favorites</a>
+                {% else %}
+                    <a class="btn btn-outline-primary" href="{% url 'add_favorite' song.id %}">{% bs_icon 'star' %} Add song to favorites</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endif %}
+</div>

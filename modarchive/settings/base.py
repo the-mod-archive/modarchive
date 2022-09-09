@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'search',
     'songs',
     'homepage.apps.DemositeSceneIDConfig',
-    'markdownify.apps.MarkdownifyConfig'
+    'markdownify.apps.MarkdownifyConfig',
+    'django_bootstrap_icons'
 ]
 
 MIDDLEWARE = [

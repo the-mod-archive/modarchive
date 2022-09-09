@@ -1,0 +1,30 @@
+<div class="row my-1">
+    <div class="col-sm">
+        <span class="fs-5">Song Info</span>
+        <div class="bg-success bg-opacity-25 border border-dark rounded p-1">
+            Added on {{ song.create_date|date:"M d, Y" }}
+            <br>
+            Filename: {{ song.filename }}
+            <br>
+            Format: {{ song.format }}
+            <br/>
+            File size: {{ song.file_size }} bytes
+            <br/>
+            Channels: {{ song.channels }}
+        </div>
+    </div>
+    <div class="col-sm">
+        <span class="fs-5">Song Stats</span>
+        <div class="bg-success bg-opacity-25 border border-dark rounded p-1">
+            Total downloads: {{ song.songstats.downloads }}
+            <br/>
+            Total comments: {{ song.songstats.total_comments }}
+            <br/>
+            Average comment score: {{ song.songstats.average_comment_score }}
+            <br/>
+            Total reviews: {{ song.songstats.total_reviews }}
+            <br/>
+            Average review score: {{ song.songstats.average_review_score }}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="my-1">
+    <div class="fs-5">People who like this tune</div>
+    <div class="bg-success bg-opacity-25 border border-dark rounded p-1">
+        {% for favorite in song.favorite_set.all %}
+            <a href="{% url 'view_profile' favorite.profile_id %}">{{ favorite.profile.display_name }}</a>
+        {% empty %}
+            None yet
+        {% endfor %}
+    </div>
+</div>

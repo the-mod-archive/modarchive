@@ -1,0 +1,53 @@
+{% load sceneid_tags %}
+<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">The Mod Archive</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'songs' %}">Songs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'artists' %}">Artists</a>
+                </li>
+                <li class="nav-item">
+                    <form action="{% url 'search' %}" method="GET" value={{request.GET.q}}>
+                        <input name='q' class='form-control' placeholder="Search" />
+                    </form>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Logged in as: {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'account_settings' %}">Account Settings</a></li>
+                            {% if user.profile %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'view_profile' user.profile.id %}">View your profile</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'update_profile' %}">Update your profile</a>
+                                </li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Log out</a></li>
+                        </ul>
+                    </li>
+                {% else  %}
+                    <li class="nav-item">
+                        <a class="btn btn-primary" href="{% url 'register' %}"><strong>Sign up</strong></a>
+                        <a class="btn btn-light" href="{% url 'login' %}?next={{request.path}}">Log in</a>
+                        {% sceneid_login_button_small %}
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

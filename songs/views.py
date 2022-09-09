@@ -24,7 +24,7 @@ def download(request, pk):
         return redirect(download_path)
 
 class SongView(DetailView):
-    template_name='song.html'
+    template_name='song_bootstrap.html'
     model=Song
 
     def get_context_data(self, **kwargs):

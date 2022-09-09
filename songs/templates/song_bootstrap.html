@@ -1,0 +1,37 @@
+{% extends 'base_page/base.html' %}
+
+{% block title %}
+    {{ block.super }}: {{ song.get_title }} {% if song.artist_set.all %}
+    by {% for artist in song.artist_set.all %}
+        {% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
+        {{ artist.name }}
+    {% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if user.is_staff and perms.songs.change_song %}
+        <div class="alert alert-warning" role="alert">
+            <h4 class="alert-heading">Admin Actions</h4>
+            <p><a href="{% url 'admin:songs_song_change' song.id %}">Change this song</a></p>
+        </div>
+    {% endif %}
+
+    <!-- Song title and links -->
+    {% include "partials/song_title_and_links.html" %}
+    
+    <!-- Song info and stats -->
+    {% include "partials/song_info_and_stats.html" %}
+
+    <!-- Faves -->
+    {% include "partials/song_favorites.html" %}
+
+    <!-- Artist comment -->
+    {% include "partials/song_artist_comments.html" %}
+
+    <!-- Internal text -->
+    {% include "partials/song_internal_text.html" %}
+
+    <!-- Other comments -->
+    {% include "partials/song_comments.html" %}
+{% endblock %}
