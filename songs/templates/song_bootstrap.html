@@ -13,7 +13,7 @@
     {% if user.is_staff and perms.songs.change_song %}
         <div class="alert alert-warning" role="alert">
             <h4 class="alert-heading">Admin Actions</h4>
-            <p><a href="{% url 'admin:songs_song_change' song.id %}">Change this song</a></p>
+            <a href="{% url 'admin:songs_song_change' song.id %}">Change this song</a>
         </div>
     {% endif %}
 
