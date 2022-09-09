@@ -15,10 +15,17 @@
     <body>
         {% include 'base_page/navbar.html' %}
 
-        <!--Main content-->
-        <div class="container-md pt-2">
+        <!-- Main content -->
+        <div class="container-sm pt-2 bg-light rounded-bottom">
             {% block content %}
             {% endblock %}
+        
+            <!-- Footer -->
+            <div class="mt-4 mb-2 pb-2 disclaimer">
+                <em>This is a test page for the Mod Archive redesign, which is still under construction. Please be advised that not all functionality may be in place yet.</em>
+            </div>
         </div>
+
+         
     </body>
 </html>
