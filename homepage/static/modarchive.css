@@ -5,6 +5,7 @@ a {
 
 body {
     background: url(bg.png) top repeat-x #000000;
+    background-attachment: fixed;
 }
 
 .disclaimer {
