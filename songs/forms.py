@@ -22,8 +22,8 @@ class AddCommentForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['rating'].widget.attrs.update({'class': 'input'})
-        self.fields['text'].widget.attrs.update({'class': 'textarea'})
+        self.fields['rating'].widget.attrs.update({'class': 'form-select'})
+        self.fields['text'].widget.attrs.update({'class': 'form-control'})
 
     class Meta:
         model = models.Comment
@@ -39,7 +39,7 @@ class AddArtistCommentForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['text'].widget.attrs.update({'class': 'textarea'})
+        self.fields['text'].widget.attrs.update({'class': 'form-control'})
 
     class Meta:
         model = models.ArtistComment
