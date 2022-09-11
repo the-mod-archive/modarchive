@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_page/base.html' %}
 
 {% block title %}
     {{ block.super }}: Artists list
@@ -6,27 +6,21 @@
 
 {% block content %}
 
-<h1 class='title'>Artists</h1>
+<h2>Artists</h2>
 
-{% if user.is_staff and perms.artists.add_artist %}
-    <article class="message is-warning">
-        <div class="message-header">
-            <p>Admin Actions</p>
-        </div>
-        <div class="message-body">
-            <a href="{% url 'admin:artists_artist_add' %}">Add an artist</a>
-        </div>
-    </article>
+{% if user.is_staff and perms.songs.change_song %}
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">Admin Actions</h4>
+        <a href="{% url 'admin:artists_artist_add' %}">Add an artist</a>
+    </div>
 {% endif %}
 
-<ul>
 {% for artist in object_list %}
-    <li>
+    <div>
         <a href="{% url 'view_artist' artist.id %}">{{ artist.name }}</a>
-    </li>
+    </div>
 {% empty %}
-    <li>No artists yet.</li>
+    <div>No artists yet.</div>
 {% endfor %}
-</ul>
 
 {% endblock %}

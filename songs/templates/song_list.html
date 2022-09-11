@@ -10,7 +10,6 @@
 
 <p><a href="{% url 'random_song' %}">Go to a random song</a></p>
 
-
 {% for song in object_list %}
     <div>
         <a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a> {% include 'song_artists.html' with song=song %}

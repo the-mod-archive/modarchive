@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_page/base.html' %}
 
 {% block title %}
     {{ block.super }}: Search Results
@@ -6,22 +6,21 @@
 
 {% block content %}
 
-<h1 class='title'>Search Results</h1>
+<div class='fs-2'>Search Results</div>
 
-<ul>
+
 {% for result in search_results %}
     {% if result.type == 'song' %}
-        <li>
-            <span class="is-size-7 has-text-gray">Song</span>
+        <div>
+            <span class="badge text-bg-success">Song</span>
             <a href="{% url 'view_song' result.item.id %}">{{ result.item.get_title }}</a> {% include 'song_artists.html' with song=result.item %}
-        </li>
+        </div>
     {% elif result.type == 'artist' %}
-        <li>
-            <span class="is-size-7 has-text-gray">Artist</span>
+        <div>
+            <span class="badge text-bg-primary">Artist</span>
             <a href="{% url 'view_artist' result.item.id %}">{{ result.item.name }}</a>
-        </li>
+        </div>
     {% endif %}
 {% endfor %}
-</ul>
 
 {% endblock %}

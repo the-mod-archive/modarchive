@@ -8,8 +8,8 @@ from homepage.models import Profile
 from homepage.fields import BlacklistProtectedEmailField
 
 class LoginForm(AuthenticationForm):
-    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'input', 'placeholder': 'Username'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'class': 'input', 'placeholder': 'Password'}))
+    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'placeholder': 'Username'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'class': 'form-control', 'placeholder': 'Password'}))
     remember_me = forms.BooleanField(required=False, widget=forms.CheckboxInput())
 
     def is_valid(self) -> bool:
@@ -20,15 +20,15 @@ class LoginForm(AuthenticationForm):
         return super().is_valid()
 
 class ChangePasswordForm(PasswordChangeForm):
-    old_password = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'class': 'input', 'placeholder': 'Current Password'}))
-    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'New Password'}))
-    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'Repeat New Password'}))
+    old_password = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'class': 'form-control', 'placeholder': 'Current Password'}))
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control', 'placeholder': 'New Password'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control', 'placeholder': 'Repeat New Password'}))
 
 class RegisterUserForm(UserCreationForm):
-    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'input', 'placeholder': 'Username'}))
-    email = BlacklistProtectedEmailField(widget=EmailInput(attrs={'class': 'input', 'placeholder': 'Email Address'}))
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'Password'}))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'Repeat Password'}))
+    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'placeholder': 'Username'}))
+    email = BlacklistProtectedEmailField(widget=EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control', 'placeholder': 'Password'}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control', 'placeholder': 'Repeat Password'}))
 
     def save(self, commit=False):
         user = super().save(commit=commit)
@@ -51,18 +51,11 @@ class RegisterUserForm(UserCreationForm):
         return super().is_valid()
 
 class ForgotPasswordForm(PasswordResetForm):
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'autocomplete': 'email', 'class': 'input', 'placeholder': 'Email Address'}))
-
-    def is_valid(self) -> bool:
-        for item in self.errors.as_data().items():
-            if item[0] in self.fields:
-                self.fields[item[0]].widget.attrs['class'] = 'input is-danger'
-
-        return super().is_valid()
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'autocomplete': 'email', 'class': 'form-control', 'placeholder': 'Email Address'}))
 
 class ResetPasswordForm(SetPasswordForm):
-    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'New password'}))
-    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'input', 'placeholder': 'New password confirmation'}))
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control', 'placeholder': 'New password'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control', 'placeholder': 'New password confirmation'}))
 
     def is_valid(self) -> bool:
         for item in self.errors.as_data().items():
@@ -80,15 +73,15 @@ class CsvUploadForm(forms.Form):
 class UpdateProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['blurb'].widget.attrs.update({'class': 'textarea'})
+        self.fields['blurb'].widget.attrs.update({'class': 'form-control'})
 
     class Meta:
         model = Profile
         fields = ("blurb",)
 
 class SceneIDUserCreationForm(BaseUserCreationForm):
-    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'input', 'placeholder': 'Username'}))
+    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'placeholder': 'Username'}))
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update({'class': 'input'})
+        self.fields['username'].widget.attrs.update({'class': 'form-control'})

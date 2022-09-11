@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_page/base.html' %}
 
 {% load sceneid_tags %}
 
@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<h1 class='title'>Log in</h1>
+<div class='fs-2'>Log in</div>
 
 {% if form.non_field_errors %}
     <article class="message is-danger">
@@ -18,34 +18,22 @@
     </article>
 {% endif %}
 
-<div class='columns'>
-    <div class='column is-6 is-offset-3'>
-        <form class='box is-6' method="post" action="{% url 'login' %}" novalidate>
-            {% csrf_token %}
-            
-            {% include 'form_field.html' with element=form.username errors=form.errors.username %}
-            {% include 'form_field.html' with element=form.password errors=form.errors.password %}
+<div>
+    <form method="post" action="{% url 'login' %}" novalidate>
+        {% csrf_token %}
+        
+        {{ form }}
 
-            <div class='columns'>
-                <div class='column'>
-                    <label class="checkbox">
-                        {{ form.remember_me }}
-                        Keep me logged in for 30 days
-                    </label>
-                </div>
-            </div>
+        <div class="align-middle">
+            <input type="submit" value="Log In" class='btn btn-primary mt-2'>
+            {% sceneid_login_button_large %}
+        </div>
 
-            <div class="buttons">
-                <input type="submit" value="Log In" class='button is-primary'>
-                {% sceneid_login_button_large %}
-            </div>
-
-            {% if next %}
-                <input type="hidden" name="next" value="{{ next }}">
-            {% endif %}
-            <div class="is-size-7 is-italic"><a href="{% url 'forgot_password' %}">Forgot your password?</a></div>
-        </form>
-    </div>
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+        <div class="is-size-7 is-italic"><a href="{% url 'forgot_password' %}">Forgot your password?</a></div>
+    </form>
 </div>
 
 {% endblock %}    
