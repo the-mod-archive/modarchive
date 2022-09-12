@@ -36,17 +36,15 @@
     <!-- Comments tab -->
     <div class="tab-pane fade mx-3 mt-2" id="comments-tab-pane" role="tabpanel" aria-labelledby="comments-tab" tabindex="0">
         {% if artist.profile.has_comments %}
-            <div class='mx-5'>
-                {% for comment in artist.profile.comment_set.all %}
-                    <div class="bg-success bg-opacity-25 border border-dark rounded p-1 mx-4 my-2">
-                        <div><strong>Song:</strong> <a href="{% url 'view_song' comment.song.id %}">{{comment.song.get_title}}</a> ({{comment.song.filename}}) {% include 'song_artists.html' with song=comment.song %}</div>
-                        <div><strong>Posted on:</strong> {{comment.create_date|date:"F j, o"}}</div>
-                        <div><strong>Rating:</strong> {{comment.rating}}/10</div>                        
-                        <br>
-                        {{comment.text|markdownify:"comment"}}
-                    </div>
-                {% endfor %}
-            </div>
+            {% for comment in artist.profile.comment_set.all %}
+                <div class="bg-success bg-opacity-25 border border-dark rounded p-1 mx-4 my-2">
+                    <div><strong>Song:</strong> <a href="{% url 'view_song' comment.song.id %}">{{comment.song.get_title}}</a> ({{comment.song.filename}}) {% include 'song_artists.html' with song=comment.song %}</div>
+                    <div><strong>Posted on:</strong> {{comment.create_date|date:"F j, o"}}</div>
+                    <div><strong>Rating:</strong> {{comment.rating}}/10</div>                        
+                    <br>
+                    {{comment.text|markdownify:"comment"}}
+                </div>
+            {% endfor %}
         {% else %}
             No comments
         {% endif %}

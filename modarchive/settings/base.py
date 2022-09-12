@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'songs',
     'homepage.apps.DemositeSceneIDConfig',
     'markdownify.apps.MarkdownifyConfig',
-    'django_bootstrap_icons'
+    'django_bootstrap_icons',
+    "crispy_forms",
+    "crispy_bootstrap5",
 ]
 
 MIDDLEWARE = [
@@ -179,3 +181,6 @@ MARKDOWNIFY = {
         ]
     }
 }
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

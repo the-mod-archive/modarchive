@@ -1,4 +1,5 @@
 {% extends 'base_page/base.html' %}
+{% load crispy_forms_tags %}
 
 {% load sceneid_tags %}
 
@@ -10,19 +11,11 @@
 
 <div class='fs-2'>Log in</div>
 
-{% if form.non_field_errors %}
-    <article class="message is-danger">
-        <div class="message-body">
-            {{ form.non_field_errors }}
-        </div>
-    </article>
-{% endif %}
-
 <div>
     <form method="post" action="{% url 'login' %}" novalidate>
         {% csrf_token %}
         
-        {{ form }}
+        {{ form|crispy }}
 
         <div class="align-middle">
             <input type="submit" value="Log In" class='btn btn-primary mt-2'>
@@ -32,8 +25,9 @@
         {% if next %}
             <input type="hidden" name="next" value="{{ next }}">
         {% endif %}
-        <div class="is-size-7 is-italic"><a href="{% url 'forgot_password' %}">Forgot your password?</a></div>
     </form>
+    
+    <div class="is-size-7 is-italic"><a href="{% url 'forgot_password' %}">Forgot your password?</a></div>
 </div>
 
 {% endblock %}    

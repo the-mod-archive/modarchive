@@ -1,5 +1,7 @@
 {% extends 'base_page/base.html' %}
+{% load crispy_forms_tags %}
 {% load sceneid_tags %}
+
 {% block title %}
     {{ block.super }}: Create a new Mod Archive account
 {% endblock %}
@@ -30,7 +32,7 @@
 <form class='box is-6' method="post" action="{% url 'register' %}" novalidate>
     {% csrf_token %}
     
-    {{ form }}
+    {{ form|crispy }}
 
     <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
     
