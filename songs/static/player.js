@@ -12,7 +12,7 @@ function initialize(legacy_id, filename) {
         }
 
         function downloadAndPlay() {
-            document.getElementById('loading-message').classList.remove('is-hidden');
+            document.getElementById('loading-message').classList.remove('visually-hidden');
             document.querySelector("#play-button").removeEventListener("click", downloadAndPlay);
             player.load(path, afterLoad.bind(this), loadProgress);
         }
@@ -29,8 +29,8 @@ function initialize(legacy_id, filename) {
         }
 
         function afterLoad(buffer) {
-            document.getElementById('seekbar-section').classList.remove('is-hidden');
-            document.getElementById('loading-message').classList.add('is-hidden');
+            document.getElementById('seekbar-section').classList.remove('visually-hidden');
+            document.getElementById('loading-message').classList.add('visually-hidden');
             document.getElementById('play-button-icon').classList.remove('fa-play');
             document.getElementById('play-button-icon').classList.add('fa-pause');
             document.querySelector("#play-button").addEventListener("click", togglePause);
@@ -42,7 +42,7 @@ function initialize(legacy_id, filename) {
 
             const subsongs = player.subsongs();
             if (subsongs.length > 1) {
-                document.getElementById('subsong-section').classList.remove('is-hidden');
+                document.getElementById('subsong-section').classList.remove('visually-hidden');
                 const selector = document.getElementById('subsong-selector');
 
                 const elt = document.createElement('option');
@@ -76,8 +76,8 @@ function initialize(legacy_id, filename) {
             const minutes = Math.floor(sec_num / 60);
             let seconds = Math.floor(sec_num % 60);
             if (seconds < 10) { seconds = '0' + seconds; }
-            if (document.getElementById('song-data').classList.contains('is-hidden')) {
-                document.getElementById('song-data').classList.remove('is-hidden');
+            if (document.getElementById('song-data').classList.contains('visually-hidden')) {
+                document.getElementById('song-data').classList.remove('visually-hidden');
             }
             document.getElementById('song-duration').innerHTML = minutes + ':' + seconds;
             document.getElementById('seekbar').max = sec_num;

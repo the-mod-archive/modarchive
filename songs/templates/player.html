@@ -1,4 +1,5 @@
 {% load static %}
+{% load bootstrap_icons %}
 {% load static bulma_tags %}
 
 <!DOCTYPE html>
@@ -7,47 +8,45 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Mod Archive Player: {{song.get_title}}</title>
-        {% block css %}
-            {% font_awesome %}
-            <link rel="stylesheet" href="{% static 'bulma/css/style.min.css' %}">
-            {% block extra_css %}{% endblock extra_css %}
-        {% endblock css %}
+        
+        {% font_awesome %}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="{% static 'modarchive.css' %}">
 
         {% block script %}
             <script type="text/javascript" src="{% static 'player.js' %}"></script>
             <script type="text/javascript" src="{% static 'libopenmpt.js' %}" onload="initialize({{song.legacy_id}}, '{{song.filename}}')"></script>
-            <script type="text/javascript" src="{% static 'chiptune2.js' %}"></script>   
+            <script type="text/javascript" src="{% static 'chiptune2.js' %}"></script>
         {% endblock script %}
     </head>
     <body>
-        <section>
-            <div class="columns m-2">
-                <div class="column is-one-quarter">
-                    <div class="content has-background-light p-2">
-                        <div class="is-size-4" id="song-title">
-                            {{song.get_title}} ({{song.filename}})
-                        </div>
-                        <div id="song-data" class="content is-hidden">
-                            Duration: <span id="song-duration"></span>
-                        </div>
-                        <div class="block is-hidden" id="loading-message">
-                            Loading...
-                        </div>
-                        <button id="play-button" class="button is-medium">
-                            <span class="icon is-small">
-                                <i id="play-button-icon" class="fas fa-solid fa-play"></i>
-                            </span>
-                        </button>
-                        <div id="seekbar-section" class="is-hidden">
-                            <input id="seekbar" type="range" min="0" max="100" value="0">
-                        </div>
-                        <div id="subsong-section" class="select is-hidden">
-                            <select id="subsong-selector">
-                            </select>
-                        </div>
-                    </div>
-                </div>
+        <div class="container-sm my-2 mx-1 py-2 bg-light rounded">
+            <div class="fs-5">ModArchive Player</div>
+            <h2>{{song.get_title}} ({{song.filename}})</h2>
+
+            <div id="song-data" class="visually-hidden">
+                Duration: <span id="song-duration"></span>
             </div>
-        </section>
+
+            <div id="loading-message" class="visually-hidden">
+                Loading...
+            </div>
+
+            <div id="play-button">
+                <button id="play-button" class="btn btn-success btn-lg">
+                    <i id="play-button-icon" class="fas fa-solid fa-play"></i>
+                </button>
+            </div>
+
+            <div id="seekbar-section" class="visually-hidden">
+                <input class="form-range" id="seekbar" type="range" min="0" max="100" value="0">
+            </div>
+
+            <div id="subsong-section" class="visually-hidden">
+                <select class="form-select" id="subsong-selector">
+                </select>
+            </div>
+        </div>
     </body>
 </html>
