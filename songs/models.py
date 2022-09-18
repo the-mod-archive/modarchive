@@ -69,6 +69,7 @@ class Song(models.Model):
     pattern_hash=models.CharField(max_length=16)
     license=models.CharField(max_length=16, choices=Licenses.choices, null=True, blank=True)
     search_document=SearchVectorField(null=True, blank=True)
+    genre=models.ForeignKey('Genre', on_delete=models.SET_NULL, null=True, blank=True)
     create_date=models.DateTimeField(auto_now_add=True)
     update_date=models.DateTimeField(auto_now=True)
 
@@ -88,6 +89,14 @@ class Song(models.Model):
 
     def can_user_leave_comment(self, profile_id):
         return not self.is_own_song(profile_id) and not self.has_commented(profile_id)
+
+    def display_file_size(self):
+        if self.file_size >= 1000000:
+            return f'{"{:.2f}".format(self.file_size / 1000000)} MB'
+        elif self.file_size >= 10000:
+            return f'{"{:.2f}".format(self.file_size / 1000)} KB'
+        
+        return f'{self.file_size} bytes'
 
     class Meta:
         indexes = [
@@ -154,3 +163,21 @@ class Favorite(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     create_date = models.DateTimeField(auto_now_add=True)
+
+class Genre(models.Model):
+    class Groups(models.TextChoices):
+        ELECTRONICA = 'Electronica', _('Electronica')
+        DEMO = 'Demo', _('Demo, Tracking Scene')
+        ALTERNATIVE = 'Alternative', _('Alternative')
+        JAZZ = 'Jazz', _('Jazz, Blues')
+        OTHER = 'Other', _('Other')
+        SEASONAL = 'Seasonal', _('Seasonal')
+        POP = 'Pop', _('Pop, Rock')
+        HIP_HOP = 'Hip-Hop', _('Urban, Hip-Hop')
+
+    name = models.CharField(max_length=80)
+    group = models.CharField(max_length=80, choices=Groups.choices)
+    count = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name

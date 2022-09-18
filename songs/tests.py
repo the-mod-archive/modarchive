@@ -56,6 +56,14 @@ class SongModelTests(TestCase):
         self.assertFalse(song_2.has_artist_commented(user.profile.id))
         self.assertFalse(song_3.has_artist_commented(user.profile.id))
 
+    def test_display_file_size(self):
+        song = song_factories.SongFactory(file_size = 5000)
+        song_2 = song_factories.SongFactory(file_size = 259871)
+        song_3 = song_factories.SongFactory(file_size = 2716816)
+        self.assertEquals("5000 bytes", song.display_file_size())
+        self.assertEquals("259.87 KB", song_2.display_file_size())
+        self.assertEquals("2.72 MB", song_3.display_file_size())
+
 class CommentModelTests(TestCase):
     def test_song_stats_updated_correctly_after_removing_comment(self):
         song = song_factories.SongFactory()

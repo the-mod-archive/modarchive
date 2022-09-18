@@ -3,10 +3,14 @@
 import os
 import sys
 
+# Username: test_admin
+# Password: Z*******1
 
+# Username: superuser
+# Password: Z*******1
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'modarchive.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'modarchive.settings.dev')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

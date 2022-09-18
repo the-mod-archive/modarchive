@@ -1,30 +1,14 @@
-<div class="row my-1">
-    <div class="col-sm">
-        <span class="fs-5">Song Info</span>
-        <div class="bg-success bg-opacity-25 border border-dark rounded p-1">
-            Added on {{ song.create_date|date:"M d, Y" }}
-            <br>
-            Filename: {{ song.filename }}
-            <br>
-            Format: {{ song.format }}
-            <br/>
-            File size: {{ song.file_size }} bytes
-            <br/>
-            Channels: {{ song.channels }}
-        </div>
-    </div>
-    <div class="col-sm">
-        <span class="fs-5">Song Stats</span>
-        <div class="bg-success bg-opacity-25 border border-dark rounded p-1">
-            Total downloads: {{ song.songstats.downloads }}
-            <br/>
-            Total comments: {{ song.songstats.total_comments }}
-            <br/>
-            Average comment score: {{ song.songstats.average_comment_score }}
-            <br/>
-            Total reviews: {{ song.songstats.total_reviews }}
-            <br/>
-            Average review score: {{ song.songstats.average_review_score }}
-        </div>
-    </div>
+{% load bootstrap_icons %}
+<div class="d-flex flex-wrap">
+    <div class="badge text-bg-secondary me-1 mb-1">{% bs_icon 'code-square' size='1.0em' %}{{song.format}}</div>
+    <div class="badge text-bg-secondary me-1 mb-1">{% bs_icon 'box2' size='1.0em' %}{{song.display_file_size}}</div>
+    <div class="badge text-bg-secondary me-1 mb-1">{% bs_icon 'layout-three-columns' size='1.0em' %}{{song.channels}} channels</div>
+    {% if song.genre %}
+        <div class="badge text-bg-primary bg-opacity-75 me-1 mb-1">{% bs_icon 'music-note-beamed' size='1.0em' %} {{ song.genre }}</div>
+    {% endif %}
+    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'download' size='1.0em' %}{{ song.songstats.downloads }} downloads</div>
+    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'chat-left-text' size='1.0em' %}{{ song.songstats.total_comments }} comments</div>
+    {% if song.songstats.average_comment_score > 0.0 %}
+        <div class="badge text-bg-success bg-opacity-75 mb-1">{% bs_icon 'star' size='1.0em' %}{{ song.songstats.average_comment_score }} average rating</div>
+    {% endif %}
 </div>

@@ -1,3 +1,5 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django.forms import ModelForm
 
 from songs import models
@@ -24,6 +26,12 @@ class AddCommentForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['rating'].widget.attrs.update({'class': 'form-select'})
         self.fields['text'].widget.attrs.update({'class': 'form-control'})
+
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-add-comment-form'
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Submit'))
 
     class Meta:
         model = models.Comment
