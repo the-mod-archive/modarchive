@@ -76,9 +76,8 @@ class AddCommentView(LoginRequiredMixin, CreateView):
 
         return super().form_valid(form)
  
-    def post(self, request, *args, **kwargs):
-        self.success_url = reverse('view_song', kwargs = {'pk': kwargs['pk']})
-        return super().post(request, *args, **kwargs)
+    def get_success_url(self):
+        return reverse('view_song', kwargs={'pk': self.object.song_id})
 
 class AddFavoriteView(LoginRequiredMixin, View):
     def is_own_song(self, profile, song_id):
@@ -122,9 +121,8 @@ class AddArtistCommentView(LoginRequiredMixin, CreateView):
 
         return super().form_valid(form)
 
-    def post(self, request, *args, **kwargs):
-        self.success_url = reverse('view_song', kwargs = {'pk': kwargs['pk']})
-        return super().post(request, *args, **kwargs)
+    def get_success_url(self):
+        return reverse('view_song', kwargs={'pk': self.object.song_id})
 
 class UpdateArtistCommentView(LoginRequiredMixin, UpdateView):
     form_class=forms.AddArtistCommentForm
@@ -137,10 +135,8 @@ class UpdateArtistCommentView(LoginRequiredMixin, UpdateView):
             return redirect('view_song', obj.song_id)
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        self.success_url = reverse('view_song', kwargs={'pk': instance.song.id})
-        return super().form_valid(form)
+    def get_success_url(self):
+        return reverse('view_song', kwargs={'pk': self.object.song_id})
 
 class RandomSongView(View):
     def get(self, request, *args, **kwargs):

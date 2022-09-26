@@ -554,58 +554,37 @@ class RemoveFavoriteTests(TestCase):
         self.assertEquals(1, Favorite.objects.filter(song_id=song.id).count())
 
 class AddArtistCommentTests(TestCase):
-    def test_get_add_artist_comment_page_happy_path(self):
+    def test_add_artist_comment_page_happy_path(self):
         # Arrange
         user = factories.UserFactory()
         song = song_factories.SongFactory()
         artist = artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         self.client.force_login(user)
 
-        # Act
+        # GET test
         response = self.client.get(reverse('add_artist_comment', kwargs={'pk': song.id}))
-
-        # Assert
         self.assertEquals(200, response.status_code)
         self.assertTemplateUsed(response, "add_artist_comment.html")
         self.assertEquals(song.id, response.context['song'].id)
         self.assertEquals(song.title, response.context['song'].get_title())
 
-    def test_post_add_artist_comment_page_happy_path(self):
-        # Arrange
-        user = factories.UserFactory()
-        song = song_factories.SongFactory()
-        artist = artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
-        self.client.force_login(user)
-
-        # Act
+        # POST test
         response = self.client.post(reverse('add_artist_comment', kwargs={'pk': song.id}), {'text': "This is my comment on own song"})
-
-        # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         self.assertEquals(1, len(song.artistcomment_set.all()))
 
-    def test_get_redirects_user_if_not_their_own_song(self):
+    def test_redirects_user_if_not_their_own_song(self):
         # Arrange
         user = factories.UserFactory()
         song = song_factories.SongFactory()
         self.client.force_login(user)
 
-        # Act
+        # GET test
         response = self.client.get(reverse('add_artist_comment', kwargs={'pk': song.id}))
-
-        # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
 
-    def test_post_redirects_user_if_not_their_own_song(self):
-        # Arrange
-        user = factories.UserFactory()
-        song = song_factories.SongFactory()
-        self.client.force_login(user)
-
-        # Act
+        # POST test
         response = self.client.post(reverse('add_artist_comment', kwargs={'pk': song.id}), {'text': "This is my comment on own song"})
-
-        # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         self.assertEquals(0, len(song.artistcomment_set.all()))
 
@@ -624,32 +603,22 @@ class AddArtistCommentTests(TestCase):
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         self.assertEquals(1, len(song.artistcomment_set.all()))
 
-    def test_get_redirects_unauthenticated_user(self):
+    def test_redirects_unauthenticated_user(self):
         # Arrange
         song = song_factories.SongFactory()
         add_artist_comment_url = reverse('add_artist_comment', kwargs={'pk': song.id})
         login_url = reverse('login')
 
-        # Act
+        # GET test
         response = self.client.get(add_artist_comment_url)
-        
-        # Assert
         self.assertRedirects(response, f"{login_url}?next={add_artist_comment_url}")
 
-    def test_post_redirects_unauthenticated_user(self):
-        # Arrange
-        song = song_factories.SongFactory()
-        add_artist_comment_url = reverse('add_artist_comment', kwargs={'pk': song.id})
-        login_url = reverse('login')
-
-        # Act
+        # POST test
         response = self.client.post(add_artist_comment_url, {'text': "This is my comment on own song"})
-        
-        # Assert
         self.assertRedirects(response, f"{login_url}?next={add_artist_comment_url}")
 
 class UpdateArtistCommentTests(TestCase):
-    def test_get_redirects_unauthenticated_user(self):
+    def test_redirects_unauthenticated_user(self):
         # Arrange
         user = factories.UserFactory()
         song = song_factories.SongFactory()
@@ -659,29 +628,15 @@ class UpdateArtistCommentTests(TestCase):
         update_artist_comment_url = reverse('update_artist_comment', kwargs={'pk': comment.id})
         login_url = reverse('login')
 
-        # Act
+        # GET test
         response = self.client.get(update_artist_comment_url)
-
-        # Assert
         self.assertRedirects(response, f"{login_url}?next={update_artist_comment_url}")
 
-    def test_post_redirects_unauthenticated_user(self):
-        # Arrange
-        user = factories.UserFactory()
-        song = song_factories.SongFactory()
-        artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
-        comment = song_factories.ArtistCommentFactory(profile=user.profile, song=song, text="Some text")
-
-        update_artist_comment_url = reverse('update_artist_comment', kwargs={'pk': comment.id})
-        login_url = reverse('login')
-
-        # Act
+        # POST test
         response = self.client.post(update_artist_comment_url, {'text': "This is my comment on my own song"})
-
-        # Assert
         self.assertRedirects(response, f"{login_url}?next={update_artist_comment_url}")
 
-    def test_get_redirects_user_if_not_their_own_comment(self):
+    def test_redirects_user_if_not_their_own_comment(self):
         # Arrange
         user = factories.UserFactory()
         user_2 = factories.UserFactory()
@@ -690,32 +645,18 @@ class UpdateArtistCommentTests(TestCase):
         artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
         comment = song_factories.ArtistCommentFactory(profile=user_2.profile, song=song, text="Some text")
         self.client.force_login(user)
-        
-        # Act
-        response = self.client.get(reverse('update_artist_comment', kwargs={'pk': comment.id}))
 
-        # Assert
+        # GET test
+        response = self.client.get(reverse('update_artist_comment', kwargs={'pk': comment.id}))
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
 
-    def test_post_redirects_user_if_not_their_own_comment(self):
-        # Arrange
-        user = factories.UserFactory()
-        user_2 = factories.UserFactory()
-        song = song_factories.SongFactory()
-        artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
-        artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
-        comment = song_factories.ArtistCommentFactory(profile=user_2.profile, song=song, text="Some text")
-        self.client.force_login(user)
-        
-        # Act
+        # POST test
         response = self.client.post(reverse('update_artist_comment', kwargs={'pk': comment.id}), {'text': 'Updated text'})
-
-        # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         comment.refresh_from_db()
         self.assertEquals("Some text", comment.text)
 
-    def test_get_update_artist_comment_happy_path(self):
+    def test_update_artist_comment_happy_path(self):
         # Arrange
         user = factories.UserFactory()
         song = song_factories.SongFactory()
@@ -723,26 +664,14 @@ class UpdateArtistCommentTests(TestCase):
         comment = song_factories.ArtistCommentFactory(profile=user.profile, song=song, text="Some text")
         self.client.force_login(user)
 
-        # Act
+        # GET test
         response = self.client.get(reverse('update_artist_comment', kwargs={'pk': comment.id}))
-
-        # Assert
         self.assertTemplateUsed(response, 'update_artist_comment.html')
         self.assertEquals(comment.id, response.context['object'].id)
         self.assertEquals(comment.text, response.context['object'].text)
 
-    def test_post_update_artist_comment_happy_path(self):
-        # Arrange
-        user = factories.UserFactory()
-        song = song_factories.SongFactory()
-        artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
-        comment = song_factories.ArtistCommentFactory(profile=user.profile, song=song, text="Some text")
-        self.client.force_login(user)
-
-        # Act
+        # POST test
         response = self.client.post(reverse('update_artist_comment', kwargs={'pk': comment.id}), {'text': 'Updated text'})
-
-        # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         comment.refresh_from_db()
         self.assertEquals('Updated text', comment.text)
@@ -817,8 +746,8 @@ class UpdateSongDetailsTests(TestCase):
         self.assertEquals(song.id, response.context['object'].id)
 
         # POST test
-        response=self.client.post(reverse('update_song_details', kwargs={'pk': song.id}), {'genre_id': genre.id, 'clean_title': 'Clean Title'})
+        response=self.client.post(reverse('update_song_details', kwargs={'pk': song.id}), {'genre': genre.id, 'clean_title': 'Clean Title'})
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         song.refresh_from_db()
-        # self.assertEquals(genre, song.genre)
+        self.assertEquals(genre, song.genre)
         self.assertEquals('Clean Title', song.clean_title)
