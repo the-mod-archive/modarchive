@@ -1,6 +1,8 @@
+from collections import OrderedDict
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from django.forms import ModelForm
+from django.core.exceptions import ObjectDoesNotExist
+from django.forms import ModelForm, ModelChoiceField
 
 from songs import models
 
@@ -52,3 +54,27 @@ class AddArtistCommentForm(ModelForm):
     class Meta:
         model = models.ArtistComment
         fields = ("text",)
+
+class SongDetailsForm(ModelForm):
+    class Meta:
+        model = models.Song
+        fields = ("clean_title", "genre")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        genre_choices_dict = OrderedDict()
+
+        for genre in self.fields['genre'].queryset.order_by('group', 'name'):
+            genre_tuple = (genre.id, genre.name)
+            try:
+                group = genre.group
+            except (AttributeError, ObjectDoesNotExist):
+                group = False
+            
+            try:
+                genre_choices_dict[group].append(genre_tuple)
+            except KeyError:
+                genre_choices_dict[group] = [genre_tuple]
+
+        self.fields['genre'].choices = genre_choices_dict.items()

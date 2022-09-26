@@ -147,3 +147,17 @@ class RandomSongView(View):
         pks = Song.objects.values_list('pk', flat=True)
         random_pk = choice(pks)
         return redirect('view_song', random_pk)
+
+class UpdateSongDetailsView(LoginRequiredMixin, UpdateView):
+    form_class=forms.SongDetailsForm
+    model=Song
+    template_name='update_song_details.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        song = self.get_object()
+        if (request.user.is_authenticated and not song.is_own_song(self.request.user.profile.id)):
+            return redirect('view_song', song.id)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('view_song', kwargs={'pk': self.object.id})

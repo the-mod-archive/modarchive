@@ -4,6 +4,9 @@
     <div class="row justify-content-between">
         <div class="col-sm-6">
             <span class="fs-4">{{ song.get_title }}</span> <span class="text-secondary fs-6">({{song.filename}})</span>
+            {% if is_own_song %}
+                <a href="{% url 'update_song_details' song.id %}">{% bs_icon 'pencil' %}</a>
+            {% endif %}
         </div>
         {% if song.artist_set.all %}
         <div class="col-sm-4 text-sm-end fs-5">

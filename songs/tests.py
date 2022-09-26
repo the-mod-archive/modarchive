@@ -762,3 +762,63 @@ class RandomSongTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song1.id}))
+
+class UpdateSongDetailsTests(TestCase):
+    def test_requires_authentication(self):
+        # Arrange
+        user = factories.UserFactory()
+        song = song_factories.SongFactory()
+        artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
+        genre = song_factories.GenreFactory()
+
+        update_song_details_url = reverse('update_song_details', kwargs={'pk': song.id})
+        login_url = reverse('login')
+
+        # GET test
+        response=self.client.get(reverse('update_song_details', kwargs={'pk': song.id}))
+        self.assertRedirects(response, f"{login_url}?next={update_song_details_url}")
+
+        # POST test
+        response=self.client.post(reverse('update_song_details', kwargs={'pk': song.id}), {'genre_id': genre.id})
+        self.assertRedirects(response, f"{login_url}?next={update_song_details_url}")
+
+    def test_cannot_update_details_of_somebody_elses_song(self):
+        # Arrange
+        user = factories.UserFactory()
+        user_2 = factories.UserFactory()
+        song = song_factories.SongFactory(clean_title='Dirty Title')
+        artist_factories.ArtistFactory(user=user, profile=user.profile)
+        artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
+        genre = song_factories.GenreFactory()
+        self.client.force_login(user)
+
+        # GET test
+        response=self.client.get(reverse('update_song_details', kwargs={'pk': song.id}))
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+
+        # POST test
+        response=self.client.post(reverse('update_song_details', kwargs={'pk': song.id}), {'genre_id': genre.id, 'clean_title': 'Clean Title'})
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+        song.refresh_from_db()
+        self.assertEquals(None, song.genre)
+        self.assertEquals('Dirty Title', song.clean_title)
+
+    def test_can_modify_details_of_own_song(self):
+        # Arrange
+        user = factories.UserFactory()
+        song = song_factories.SongFactory(clean_title="Dirty Title")
+        artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
+        genre = song_factories.GenreFactory()
+        self.client.force_login(user)
+        
+        # GET test
+        response=self.client.get(reverse('update_song_details', kwargs={'pk': song.id}))
+        self.assertTemplateUsed(response, 'update_song_details.html')
+        self.assertEquals(song.id, response.context['object'].id)
+
+        # POST test
+        response=self.client.post(reverse('update_song_details', kwargs={'pk': song.id}), {'genre_id': genre.id, 'clean_title': 'Clean Title'})
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+        song.refresh_from_db()
+        # self.assertEquals(genre, song.genre)
+        self.assertEquals('Clean Title', song.clean_title)

@@ -6,7 +6,7 @@ a {
 body {
     background: url(bg.png) top repeat-x #000000;
     background-attachment: fixed;
-    font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;
+    font-family: Calibri,Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;
 }
 
 .disclaimer {
@@ -14,7 +14,7 @@ body {
 }
 
 .tma-standard {
-    font-size: 90%;
+    font-size: 100%;
 }
 
 @media only screen and (min-width: 970px) {
