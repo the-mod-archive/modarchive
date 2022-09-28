@@ -98,6 +98,12 @@ class Song(models.Model):
         
         return f'{self.file_size} bytes'
 
+    def get_stats(self):
+        if (hasattr(self, 'songstats')):
+            return self.songstats
+
+        return SongStats.objects.create(song=self)
+
     class Meta:
         indexes = [
             GinIndex(fields=['search_document'])

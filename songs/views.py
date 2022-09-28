@@ -18,8 +18,9 @@ def download(request, pk):
         # Obviously this will not remain in place for the final version of the site, but for now it this is how we download
         download_path = f"https://api.modarchive.org/downloads.php?moduleid={song.legacy_id}#{song.filename}"
 
-        song.songstats.downloads += 1
-        song.songstats.save()
+        stats = song.get_stats()
+        stats.downloads += 1
+        stats.save()
 
         return redirect(download_path)
 

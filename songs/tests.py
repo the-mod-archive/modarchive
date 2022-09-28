@@ -64,6 +64,31 @@ class SongModelTests(TestCase):
         self.assertEquals("259.87 KB", song_2.display_file_size())
         self.assertEquals("2.72 MB", song_3.display_file_size())
 
+    def test_retrieves_stats_correctly(self):
+        # Arrange
+        song = song_factories.SongFactory()
+        song_factories.SongStatsFactory(song = song, downloads=123, total_comments=5, average_comment_score=8.0)
+
+        # Act
+        stats = song.get_stats()
+
+        # Assert
+        self.assertEquals(123, stats.downloads)
+        self.assertEquals(5, stats.total_comments)
+        self.assertEquals(8.0, stats.average_comment_score)
+
+    def test_creates_stats_if_not_already_existing(self):
+        # Arrange
+        song = song_factories.SongFactory()
+
+        # Act
+        stats = song.get_stats()
+
+        # Assert
+        self.assertEquals(0, stats.downloads)
+        self.assertEquals(0, stats.total_comments)
+        self.assertEquals(0.0, stats.average_comment_score)
+
 class CommentModelTests(TestCase):
     def test_song_stats_updated_correctly_after_removing_comment(self):
         song = song_factories.SongFactory()
@@ -363,6 +388,21 @@ class AddCommentTests(TestCase):
         self.assertEquals(2, len(song.comment_set.all()))
         self.assertEquals(2, song.songstats.total_comments)
         self.assertEquals(7.5, song.songstats.average_comment_score)
+
+    def test_post_add_comment_calculates_stats_correctly_when_stats_object_not_created_yet(self):
+        # Arrange
+        user = factories.UserFactory()
+        song = song_factories.SongFactory()
+        self.client.force_login(user)
+        
+        # Act
+        self.client.post(reverse('add_comment', kwargs={'pk': song.id}), {'rating': 10, 'text': "This is my review"})
+
+        # Assert
+        song.refresh_from_db()
+        self.assertEquals(1, len(song.comment_set.all()))
+        self.assertEquals(1, song.songstats.total_comments)
+        self.assertEquals(10.0, song.songstats.average_comment_score)
 
     def test_get_user_redirected_for_own_song(self):
         # Arrange

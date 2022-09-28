@@ -6,9 +6,9 @@
     {% if song.genre %}
         <div class="badge text-bg-primary bg-opacity-75 me-1 mb-1">{% bs_icon 'music-note-beamed' size='1.0em' %} {{ song.genre }}</div>
     {% endif %}
-    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'download' size='1.0em' %}{{ song.songstats.downloads }} downloads</div>
-    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'chat-left-text' size='1.0em' %}{{ song.songstats.total_comments }} comments</div>
+    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'download' size='1.0em' %}{{ song.get_stats.downloads }} downloads</div>
+    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'chat-left-text' size='1.0em' %}{{ song.get_stats.total_comments }} comments</div>
     {% if song.songstats.average_comment_score > 0.0 %}
-        <div class="badge text-bg-success bg-opacity-75 mb-1">{% bs_icon 'star' size='1.0em' %}{{ song.songstats.average_comment_score }} average rating</div>
+        <div class="badge text-bg-success bg-opacity-75 mb-1">{% bs_icon 'star' size='1.0em' %}{{ song.get_stats.average_comment_score }} average rating</div>
     {% endif %}
 </div>
