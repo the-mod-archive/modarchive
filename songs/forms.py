@@ -2,7 +2,7 @@ from collections import OrderedDict
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.core.exceptions import ObjectDoesNotExist
-from django.forms import ModelForm, ModelChoiceField
+from django.forms import ModelForm
 
 from songs import models
 
@@ -64,6 +64,7 @@ class SongDetailsForm(ModelForm):
         super().__init__(*args, **kwargs)
 
         genre_choices_dict = OrderedDict()
+        genre_choices_dict["None"] = [("", "None")]
 
         for genre in self.fields['genre'].queryset.order_by('group', 'name'):
             genre_tuple = (genre.id, genre.name)
