@@ -1,6 +1,6 @@
 {% load bootstrap_icons %}
 <div class="d-flex flex-wrap">
-    <div class="badge text-bg-secondary me-1 mb-1">{% bs_icon 'code-square' size='1.0em' %}{{song.format}}</div>
+    <div class="badge text-bg-secondary me-1 mb-1">{% bs_icon 'code-square' size='1.0em' %}{{song.get_format_display}}</div>
     <div class="badge text-bg-secondary me-1 mb-1">{% bs_icon 'box2' size='1.0em' %}{{song.display_file_size}}</div>
     <div class="badge text-bg-secondary me-1 mb-1">{% bs_icon 'layout-three-columns' size='1.0em' %}{{song.channels}} channels</div>
     {% if song.genre %}
