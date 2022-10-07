@@ -40,16 +40,11 @@ class AddCommentForm(ModelForm):
         fields = ("rating", "text")
 
 class AddArtistCommentForm(ModelForm):
-    def is_valid(self) -> bool:
-        for item in self.errors.as_data().items():
-            if item[0] in self.fields:
-                self.fields[item[0]].widget.attrs['class'] = 'input is-danger'
-
-        return super().is_valid()
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['text'].widget.attrs.update({'class': 'form-control'})
+        self.fields['text'].required = False
+        self.fields['text'].label = "Comment Text"
+        self.fields['text'].help_text = "Optional commentary for your own song. Limit 5000 characters."
 
     class Meta:
         model = models.ArtistComment
@@ -62,6 +57,10 @@ class SongDetailsForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['clean_title'].help_text = '''
+        Cleaned up version of title for display and search purposes. Use this to remove unwanted characters, artist name, etc. Does not change the title in the file itself.
+        If left blank, the original title will display instead.
+        '''
 
         genre_choices_dict = OrderedDict()
         genre_choices_dict["None"] = [("", "None")]

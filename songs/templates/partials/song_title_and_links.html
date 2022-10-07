@@ -5,7 +5,7 @@
         <div class="col-sm-6">
             <span class="fs-4">{{ song.get_title }}</span> <span class="text-secondary fs-6">({{song.filename}})</span>
             {% if is_own_song %}
-                <a href="{% url 'update_song_details' song.id %}">{% bs_icon 'pencil' %}</a>
+                <a href="{% url 'song_details' song.id %}">{% bs_icon 'pencil' %} Edit details</a>
             {% endif %}
         </div>
         {% if song.artist_set.all %}
@@ -27,9 +27,7 @@
 
         {% if user.is_authenticated %}
         <div class="col-sm-5 btn-group mb-1" role="group">
-            {% if artist_can_comment %}
-                <a class="btn btn-outline-primary" href="{% url 'add_artist_comment' song.id %}">{% bs_icon 'chat-left-text' %} Add artist comment</a>
-            {% elif can_comment%}
+            {% if can_comment%}
                 <a class="btn btn-outline-primary" href="{% url 'add_comment' song.id %}">{% bs_icon 'chat-left-text' %} Add comment</a>
             {% endif %}
 

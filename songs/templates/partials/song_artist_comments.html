@@ -12,7 +12,7 @@
                 <br>
                 {{comment.text|markdownify:"comment"}}
                 {% if user.is_authenticated and is_own_song and comment.profile_id == user.profile.id %}
-                    <span class="fs-6"><a href="{% url 'update_artist_comment' comment.id %}">Update your comment</a></span>
+                    <span class="fs-6"><a href="{% url 'song_details' song.id %}">Update your comment</a></span>
                 {% endif %}
             </div>
         {% endfor %}

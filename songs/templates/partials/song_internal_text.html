@@ -1,11 +1,21 @@
 {% load filters %}
 
+{% if song.clean_title and song.clean_title != song.title %}
+    <div class="fs-5 my-1">
+        Original Title
+    </div>
+
+    <div class="text-warning bg-dark rounded px-3 py-1 font-monospace internal-comment">
+        {{ song.title|spaces|escape }}
+    </div>
+{% endif  %}
+
 {% if song.comment_text %}
     <div class="fs-5 my-1">
         Internal Comments
     </div>
     
-    <div class="text-warning bg-dark rounded p-3 font-monospace internal-comment">    
+    <div class="text-warning bg-dark rounded p-3 font-monospace internal-comment">
         {{ song.comment_text|hide_email_address|linebreaks|spaces|escape }}
     </div>
 {% endif %}

@@ -1,6 +1,8 @@
-from django.shortcuts import redirect
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import redirect, render
 from django.http import Http404
 from django.views.generic import DetailView, CreateView, View, UpdateView, TemplateView
+from django.views.generic.base import ContextMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from random import choice
@@ -98,63 +100,66 @@ class RemoveFavoriteView(LoginRequiredMixin, View):
             Favorite.objects.get(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).delete()
         return redirect('view_song', kwargs['pk'])
 
-class AddArtistCommentView(LoginRequiredMixin, CreateView):
-    template_name="add_artist_comment.html"
-    form_class=forms.AddArtistCommentForm
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return super().dispatch(request, *args, **kwargs)
-
-        song = Song.objects.get(id=kwargs['pk'])
-
-        if (not song.is_own_song(request.user.profile.id) or song.has_artist_commented(request.user.profile.id)):
-            return redirect('view_song', kwargs['pk'])
-
-        self.extra_context={'song': song}
-        return super().dispatch(request, *args, **kwargs)
-
-    # Add profile and song ID to the comment in order to save it
-    def form_valid(self, form):
-        comment_instance = form.save(commit=False)
-        comment_instance.profile = self.request.user.profile
-        comment_instance.song_id = self.kwargs['pk']
-
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('view_song', kwargs={'pk': self.object.song_id})
-
-class UpdateArtistCommentView(LoginRequiredMixin, UpdateView):
-    form_class=forms.AddArtistCommentForm
-    model=ArtistComment
-    template_name='update_artist_comment.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if (request.user.is_authenticated and obj.profile != self.request.user.profile):
-            return redirect('view_song', obj.song_id)
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_success_url(self):
-        return reverse('view_song', kwargs={'pk': self.object.song_id})
-
 class RandomSongView(View):
     def get(self, request, *args, **kwargs):
         pks = Song.objects.values_list('pk', flat=True)
         random_pk = choice(pks)
         return redirect('view_song', random_pk)
 
-class UpdateSongDetailsView(LoginRequiredMixin, UpdateView):
-    form_class=forms.SongDetailsForm
-    model=Song
-    template_name='update_song_details.html'
-
+class SongDetailsView(LoginRequiredMixin, ContextMixin, View):
     def dispatch(self, request, *args, **kwargs):
-        song = self.get_object()
-        if (request.user.is_authenticated and not song.is_own_song(self.request.user.profile.id)):
+        if (not request.user.is_authenticated):
+            return super().dispatch(request, *args, **kwargs)
+        
+        try:
+            song = Song.objects.get(pk=kwargs['pk'])
+        except ObjectDoesNotExist:
+            raise Http404
+        
+        if (not song.is_own_song(self.request.user.profile.id)):
             return redirect('view_song', song.id)
-        return super().dispatch(request, *args, **kwargs)
 
-    def get_success_url(self):
-        return reverse('view_song', kwargs={'pk': self.object.id})
+        try:
+            comment = ArtistComment.objects.get(song=song, profile=request.user.profile)
+        except ObjectDoesNotExist:
+            comment = ArtistComment(song=song, profile=request.user.profile)
+
+        self.extra_context = {'song': song, 'comment': comment}
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get(self, request, *args, **kwargs):
+        song = self.extra_context['song']
+        comment = self.extra_context['comment']
+        song_form = forms.SongDetailsForm(instance=song)
+        
+        comment_form = forms.AddArtistCommentForm(instance=comment)
+
+        return render(request, 'update_song_details.html', {'object': song, 'form': song_form, 'comment_form': comment_form})
+
+    def post(self, request, *args, **kwargs):
+        song = self.extra_context['song']
+        comment = self.extra_context['comment']
+
+        song_form = forms.SongDetailsForm(request.POST, instance=song)
+        
+        # Only create a comment form if text is present in the payload
+        if (request.POST['text']):
+            comment_form = forms.AddArtistCommentForm(request.POST, instance=comment)
+        else:
+            comment_form = None
+
+        both_forms_valid = song_form.is_valid() and (not comment_form or comment_form.is_valid())
+
+        if (both_forms_valid):
+            song = song_form.save()
+            if (comment_form is not None):
+                comment_form.save()
+            else:
+                # If there is a pk but no comment form, that means the user deleted the text, and we should
+                # delete the comment
+                if (comment.pk):
+                    comment.delete()
+
+            return redirect('view_song', song.id)
+
+        return render(request, 'update_song_details.html', {'object': song, 'form': song_form, 'comment_form': comment_form})

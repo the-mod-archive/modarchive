@@ -9,9 +9,14 @@
     <div>
         <div class="fs-2">Update song details for {{object.get_title}}</div>
 
-        <form action="{% url 'update_song_details' object.id %}" method="post" novalidate>
+        <form action="{% url 'song_details' object.id %}" method="post" novalidate>
             {% csrf_token %}
+            <div class="mb-3" title="You can't change the original title by editing the HTML of this element. Nice try.">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" value="{{object.title}}" class="textinput textInput form-control" disabled>
+            </div>
             {{ form|crispy }}
+            {{ comment_form|crispy }}
             <input type="submit" class='btn btn-primary mt-2' value="Update Song Details">
         </form>
     </div>
