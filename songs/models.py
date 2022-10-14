@@ -70,6 +70,8 @@ class Song(models.Model):
     license=models.CharField(max_length=16, choices=Licenses.choices, null=True, blank=True)
     search_document=SearchVectorField(null=True, blank=True)
     genre=models.ForeignKey('Genre', on_delete=models.SET_NULL, null=True, blank=True)
+    title_vector=SearchVectorField(null=True, blank=True)
+    text_vector=SearchVectorField(null=True, blank=True)
     create_date=models.DateTimeField(auto_now_add=True)
     update_date=models.DateTimeField(auto_now=True)
 

@@ -1,4 +1,5 @@
 {% extends 'base_page/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block title %}
     {{ block.super }}: Search Results
@@ -8,6 +9,12 @@
 
 <div class='fs-2'>Search Results</div>
 
+<form action="{% url 'search' %}" method="GET" value={{request.GET.query}}>
+    {{ form|crispy }}
+    <input type="submit" class='btn btn-primary mt-2' value="Search">
+</form>
+
+<hr>
 
 {% for result in search_results %}
     {% if result.type == 'song' %}

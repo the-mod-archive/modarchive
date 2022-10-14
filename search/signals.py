@@ -8,6 +8,25 @@ from django.db import transaction
 from django.db.models import Value, TextField
 from django.db.models.signals import post_save
 
+from songs.models import Song
+
+@receiver(post_save, sender=Song)
+def index_song(sender, **kwargs):
+    instance = kwargs['instance']
+
+    if (instance.clean_title):
+        title_field = 'clean_title'
+    else:
+        title_field = 'title'
+    
+    title_vector=reduce(operator.add, [SearchVector(title_field)])
+    text_vector=reduce(operator.add, [SearchVector('instrument_text', 'comment_text')])
+    
+    instance.__class__.objects.filter(pk=instance.pk).update(
+        title_vector=title_vector,
+        text_vector=text_vector
+    )
+
 @receiver(post_save)
 def on_save(sender, **kwargs):
     if not hasattr(sender, 'index_components'):
