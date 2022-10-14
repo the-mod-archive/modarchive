@@ -480,6 +480,73 @@ class AddCommentTests(TestCase):
         # Assert
         self.assertRedirects(response, f"{login_url}?next={add_comment_url}")
 
+    def test_genre_form_available_when_song_has_no_genre(self):
+        # Arrange
+        user = factories.UserFactory()
+        song = song_factories.SongFactory()
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('add_comment', kwargs={'pk': song.id}))
+
+        # Assert
+        self.assertTrue(response.context.get('song_form'))
+        self.assertTrue(response.context['song_form'].fields.get('genre'))
+
+    def test_genre_form_not_available_when_song_has_genre(self):
+        # Arrange
+        user = factories.UserFactory()
+        song = song_factories.SongFactory(genre_id=1)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('add_comment', kwargs={'pk': song.id}))
+
+        # Assert
+        self.assertFalse(response.context.get('song_form'))
+
+    def test_post_genre_adds_genre_to_song_when_not_already_set(self):
+        # Arrange
+        user = factories.UserFactory()
+        song = song_factories.SongFactory()
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.post(reverse('add_comment', kwargs={'pk': song.id}), {'rating': 10, 'text': "This is my review", 'genre': 1})
+
+        # Assert
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+        song.refresh_from_db()
+        self.assertEquals(1, song.genre_id)
+
+    def test_post_cannot_change_genre_if_already_set_in_song(self):
+        # Arrange
+        user = factories.UserFactory()
+        song = song_factories.SongFactory(genre_id=1)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.post(reverse('add_comment', kwargs={'pk': song.id}), {'rating': 10, 'text': "This is my review", 'genre': 1})
+
+        # Assert
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+        song.refresh_from_db()
+        self.assertEquals(1, song.genre_id)
+
+    def test_post_leaving_genre_blank_does_not_set_genre_to_blank(self):
+        # Arrange
+        user = factories.UserFactory()
+        song = song_factories.SongFactory(genre_id=1)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.post(reverse('add_comment', kwargs={'pk': song.id}), {'rating': 10, 'text': "This is my review"})
+
+        # Assert
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+        song.refresh_from_db()
+        self.assertEquals(1, song.genre_id)
+
 class FilterTests(TestCase):
     def test_email_address_filter_masks_single_email_address(self):
         comment = "You are listening to a mod by testguy@test.com which was written in 1996"

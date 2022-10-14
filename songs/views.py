@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from django.http import Http404
@@ -50,37 +51,6 @@ class PlayerView(TemplateView):
         song = Song.objects.get(pk = song_id)
         context['song'] = song
         return context
-
-class AddCommentView(LoginRequiredMixin, CreateView):
-    form_class = forms.AddCommentForm
-    template_name = "add_comment.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return super().dispatch(request, *args, **kwargs)
-
-        song = Song.objects.get(id=kwargs['pk'])
-        if (not song.can_user_leave_comment(request.user.profile.id)):
-            return redirect('view_song', kwargs['pk'])
-
-        self.extra_context={'song': song}
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.helper.form_action = reverse('add_comment', kwargs=self.kwargs)
-        return form
-
-    # Add profile and song ID to the comment in order to save it
-    def form_valid(self, form):
-        comment_instance = form.save(commit=False)
-        comment_instance.profile = self.request.user.profile
-        comment_instance.song_id = self.kwargs['pk']
-
-        return super().form_valid(form)
- 
-    def get_success_url(self):
-        return reverse('view_song', kwargs={'pk': self.object.song_id})
 
 class AddFavoriteView(LoginRequiredMixin, View):
     def is_own_song(self, profile, song_id):
@@ -163,3 +133,61 @@ class SongDetailsView(LoginRequiredMixin, ContextMixin, View):
             return redirect('view_song', song.id)
 
         return render(request, 'update_song_details.html', {'object': song, 'form': song_form, 'comment_form': comment_form})
+
+class CommentView(LoginRequiredMixin, ContextMixin, View):
+    def dispatch(self, request, *args, **kwargs):
+        if (not request.user.is_authenticated):
+            return super().dispatch(request, *args, **kwargs)
+
+        try:
+            song = Song.objects.get(pk=kwargs['pk'])
+        except ObjectDoesNotExist:
+            raise Http404
+
+        # Users cannot comment on their own song or songs they have already commented on
+        if (not song.can_user_leave_comment(request.user.profile.id)):
+            return redirect('view_song', kwargs['pk'])
+
+        self.extra_context = {'song': song}
+
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get(self, request, *args, **kwargs):
+        song = self.extra_context['song']
+        context = {'song': song}
+        
+        # If the song does not have a genre, the user leaving the comment may assign it
+        if (not song.genre):
+            song_form = forms.SongGenreForm(instance=song)
+            context['song_form'] = song_form
+        
+        comment_form = forms.AddCommentForm()
+        context['comment_form'] = comment_form
+        
+        return render(request, 'add_comment.html', context)
+
+    def post(self, request, *args, **kwargs):
+        song = self.extra_context['song']
+        comment_form = forms.AddCommentForm(request.POST)
+        
+        # Only update the genre if the genre is not set in the song
+        if not song.genre:
+            song_form = forms.SongGenreForm(request.POST, instance=song)
+        else:
+            song_form = None
+
+        # If song_form is None, that means we don't need to validate that form
+        both_forms_valid = comment_form.is_valid() and (not song_form or song_form.is_valid())
+
+        if (both_forms_valid):
+            with transaction.atomic():
+                comment_instance = comment_form.save(commit=False)
+                comment_instance.profile = self.request.user.profile
+                comment_instance.song_id = song.pk
+                comment_form.save()
+                # If song_form is not None, that means we have a genre to update on the song
+                if song_form:
+                    song_form.save()
+            return redirect('view_song', kwargs['pk'])
+        
+        return render(request, 'add_comment.html', {'song': song, 'song_form': song_form, 'comment_form': comment_form})

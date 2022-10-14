@@ -50,18 +50,9 @@ class AddArtistCommentForm(ModelForm):
         model = models.ArtistComment
         fields = ("text",)
 
-class SongDetailsForm(ModelForm):
-    class Meta:
-        model = models.Song
-        fields = ("clean_title", "genre")
-
+class GenreMixin(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['clean_title'].help_text = '''
-        Cleaned up version of title for display and search purposes. Use this to remove unwanted characters, artist name, etc. Does not change the title in the file itself.
-        If left blank, the original title will display instead.
-        '''
-
         genre_choices_dict = OrderedDict()
         genre_choices_dict["None"] = [("", "None")]
 
@@ -78,3 +69,20 @@ class SongDetailsForm(ModelForm):
                 genre_choices_dict[group] = [genre_tuple]
 
         self.fields['genre'].choices = genre_choices_dict.items()
+
+class SongGenreForm(GenreMixin, ModelForm):
+    class Meta:
+        model = models.Song
+        fields = ("genre",)
+
+class SongDetailsForm(GenreMixin, ModelForm):
+    class Meta:
+        model = models.Song
+        fields = ("clean_title", "genre")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['clean_title'].help_text = '''
+        Cleaned up version of title for display and search purposes. Use this to remove unwanted characters, artist name, etc. Does not change the title in the file itself.
+        If left blank, the original title will display instead.
+        '''
