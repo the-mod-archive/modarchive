@@ -2,19 +2,21 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-    {{ block.super }}: Search Results
+    {{ block.super }}: Quick Search
 {% endblock %}
 
 {% block content %}
 
-<div class='fs-2'>Search Results</div>
+<div class='fs-2'>Quick Search</div>
 
-<form action="{% url 'search' %}" method="GET" value={{request.GET.query}}>
+<form action="{% url 'search' %}" method="GET" value={{request.GET.query}} novalidate>
     {{ form|crispy }}
     <input type="submit" class='btn btn-primary mt-2' value="Search">
 </form>
 
 <hr>
+
+<div class='fs-3'>Search Results</div>
 
 {% for result in search_results %}
     {% if result.type == 'song' %}
@@ -28,6 +30,8 @@
             <a href="{% url 'view_artist' result.item.id %}">{{ result.item.name }}</a>
         </div>
     {% endif %}
+{% empty %}
+    <em>No results found</em>
 {% endfor %}
 
 {% endblock %}

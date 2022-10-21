@@ -8,31 +8,52 @@ from songs.models import Song
 from . import forms
 
 class QuickSearchView(View):
-    def get(self, request, *args, **kwargs):
-        query = request.GET.get('query')
-
-        if not query:
-            return render(request, 'search_results.html', {'search_results': []})
-
+    def search_song_title(self, query, should_search):
         rank_annotation = SearchRank(F('title_vector'), query)
+        
+        if not should_search:
+            return Song.objects.annotate(
+                type=Value('empty', output_field=CharField()),
+                rank=rank_annotation
+            ).values('pk', 'type', 'rank').none()
 
-        query_set = Song.objects.annotate(
+        return Song.objects.annotate(
             type=Value('song', output_field=CharField()),
             rank=rank_annotation
         ).filter(
             title_vector=query
         ).values('pk', 'type', 'rank')
 
+    def search_artist_name(self, query, should_search):
         rank_annotation = SearchRank(F('search_document'), query)
+        
+        if not should_search:
+            return Artist.objects.annotate(
+                type=Value('empty', output_field=CharField()),
+                rank=rank_annotation
+            ).values('pk', 'type', 'rank').none()
 
-        artist_query = Artist.objects.annotate(
+        return Artist.objects.annotate(
             type=Value('artist', output_field=CharField()),
                     rank=rank_annotation
                 ).filter(
                     search_document=query
             ).values('pk', 'type', 'rank')
 
-        merged_query_set = query_set.union(artist_query).order_by('-rank')
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('query')
+        should_search_songs = request.GET.get('songs')
+        should_search_artists = request.GET.get('artists')
+
+        if not query:
+            return render(request, 'search_results.html', {'search_results': [], 'form': forms.SearchForm()})
+
+        search_form = forms.SearchForm(request.GET)
+
+        song_query_set = self.search_song_title(query, should_search_songs)
+        artist_query = self.search_artist_name(query, should_search_artists)
+
+        merged_query_set = song_query_set.union(artist_query).order_by('-rank')
 
         to_fetch = {}
         fetched = {}
@@ -55,7 +76,7 @@ class QuickSearchView(View):
 
         return render(request, 'search_results.html', {
             'search_results': final_results,
-            'form': forms.SearchForm(request.GET)
+            'form': search_form
         })
 
 def search(request):

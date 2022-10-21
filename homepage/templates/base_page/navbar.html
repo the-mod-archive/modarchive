@@ -17,6 +17,8 @@
                 <li class="nav-item">
                     <form action="{% url 'search' %}" method="GET" value={{request.GET.query}}>
                         <input name='query' class='form-control' placeholder="Search" />
+                        <input name='songs' type='hidden' value='on' />
+                        <input name='artists' type='hidden' value='on' />
                     </form>
                 </li>
             </ul>
