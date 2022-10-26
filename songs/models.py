@@ -71,7 +71,8 @@ class Song(models.Model):
     search_document=SearchVectorField(null=True, blank=True)
     genre=models.ForeignKey('Genre', on_delete=models.SET_NULL, null=True, blank=True)
     title_vector=SearchVectorField(null=True, blank=True)
-    text_vector=SearchVectorField(null=True, blank=True)
+    instrument_text_vector=SearchVectorField(null=True, blank=True)
+    comment_text_vector=SearchVectorField(null=True, blank=True)
     create_date=models.DateTimeField(auto_now_add=True)
     update_date=models.DateTimeField(auto_now=True)
 
@@ -108,15 +109,8 @@ class Song(models.Model):
 
     class Meta:
         indexes = [
-            GinIndex(fields=['search_document'])
+            GinIndex(fields=['title_vector', 'instrument_text_vector', 'comment_text_vector'])
         ]
-
-    def index_components(self):
-        return {
-            'A': self.title,
-            'B': self.filename,
-            'C': self.comment_text + ' ' + self.instrument_text
-        }
 
     def __str__(self) -> str:
         return self.get_title()
