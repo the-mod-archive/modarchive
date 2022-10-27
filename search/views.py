@@ -79,6 +79,43 @@ class QuickSearchView(View):
             'form': search_form
         })
 
+class AdvancedSearchView(View):
+    def get(self, request, *args, **kwargs):
+        if not request.GET.get('query'):
+            return render(request, 'advanced_search_results.html', {'search_results': [], 'form': forms.AdvancedSearchForm()})
+        
+        form = forms.AdvancedSearchForm(request.GET)
+
+        if not form.is_valid():
+            return render(request, 'advanced_search_results.html', {'search_results': [], 'form': form})
+
+        query = form.cleaned_data['query']
+        format = form.cleaned_data['format']
+        license = form.cleaned_data['license']
+
+        # Query songs by title
+        rank_annotation = SearchRank(F('title_vector'), query)
+
+        song_query_results = Song.objects.annotate(
+            type=Value('song', output_field=CharField()),
+            rank=rank_annotation
+        ).filter(
+            title_vector=query
+        ).order_by('-rank')
+
+        # Filter by format, if applicable
+        if format:
+            song_query_results = song_query_results.filter(format__in=format)
+
+        # Filter by license, if applicable
+        if license:
+            song_query_results = song_query_results.filter(license__in=license)
+
+        return render(request, 'advanced_search_results.html', {
+            'search_results': song_query_results,
+            'form': form
+        })
+
 def search(request):
     query = request.GET.get('q')
     type = request.GET.get('type')

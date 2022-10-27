@@ -1,0 +1,27 @@
+{% extends 'base_page/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {{ block.super }}: Advanced Search
+{% endblock %}
+
+{% block content %}
+
+<div class='fs-2'>Advanced Search</div>
+
+<form action="{% url 'advanced_search' %}" method="GET" value={{request.GET.query}} novalidate>
+    {{ form|crispy }}
+    <input type="submit" class='btn btn-primary mt-2' value="Search">
+</form>
+
+<div class='fs-3'>Search Results</div>
+
+{% for result in search_results %}
+    <div>
+        <a href="{% url 'view_song' result.id %}">{{ result.get_title }}</a> {% include 'song_artists.html' with song=result %}
+    </div>
+{% empty %}
+    <em>No results found</em>
+{% endfor %}
+
+{% endblock %}

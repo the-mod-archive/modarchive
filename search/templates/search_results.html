@@ -8,6 +8,7 @@
 {% block content %}
 
 <div class='fs-2'>Quick Search</div>
+<div><a href="{% url 'advanced_search' %}">Advanced Song Search</a></div>
 
 <form action="{% url 'search' %}" method="GET" value={{request.GET.query}} novalidate>
     {{ form|crispy }}
