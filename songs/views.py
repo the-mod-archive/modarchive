@@ -1,11 +1,11 @@
 from django.db import transaction
+from django.db.models import F
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from django.http import Http404
-from django.views.generic import DetailView, CreateView, View, UpdateView, TemplateView
+from django.views.generic import DetailView, View, TemplateView
 from django.views.generic.base import ContextMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
 from random import choice
 
 from songs import forms
@@ -22,7 +22,7 @@ def download(request, pk):
         download_path = f"https://api.modarchive.org/downloads.php?moduleid={song.legacy_id}#{song.filename}"
 
         stats = song.get_stats()
-        stats.downloads += 1
+        stats.downloads = F('downloads') + 1
         stats.save()
 
         return redirect(download_path)
