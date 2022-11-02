@@ -4,7 +4,7 @@
     <div class="badge text-bg-secondary me-1 mb-1">{% bs_icon 'box2' size='1.0em' %}{{song.display_file_size}}</div>
     <div class="badge text-bg-secondary me-1 mb-1">{% bs_icon 'layout-three-columns' size='1.0em' %}{{song.channels}} channels</div>
     {% if song.genre %}
-        <div class="badge text-bg-primary bg-opacity-75 me-1 mb-1">{% bs_icon 'music-note-beamed' size='1.0em' %} {{ song.genre }}</div>
+        <div class="badge text-bg-primary bg-opacity-75 me-1 mb-1">{% bs_icon 'music-note-beamed' size='1.0em' %} {{ song.get_genre_display }}</div>
     {% endif %}
     <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'download' size='1.0em' %}{{ song.get_stats.downloads }} downloads</div>
     <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'chat-left-text' size='1.0em' %}{{ song.get_stats.total_comments }} comments</div>

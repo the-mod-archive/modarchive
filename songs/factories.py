@@ -36,11 +36,3 @@ class FavoriteFactory(factory.django.DjangoModelFactory):
 class ArtistCommentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ArtistComment
-
-class GenreFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.Genre
-
-    count=0
-    name='Technomatica'
-    group='Electronica'
