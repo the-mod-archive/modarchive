@@ -99,10 +99,10 @@ class AdvancedSearchTests(TestCase):
     def setUpTestData(self):
         # Lots of songs
         self.song_visions_it = song_factories.SongFactory(title='Visions', format=Song.Formats.IT, license=Song.Licenses.PUBLIC_DOMAIN)
-        self.song_visions_it2 = song_factories.SongFactory(title='Visions of Impulse Tracker', format=Song.Formats.IT)
-        self.song_visions_xm = song_factories.SongFactory(title='Visions XM', format=Song.Formats.XM)
+        self.song_visions_it2 = song_factories.SongFactory(title='Visions of Impulse Tracker', format=Song.Formats.IT, genre=Song.Genres.ALTERNATIVE)
+        self.song_visions_xm = song_factories.SongFactory(title='Visions XM', format=Song.Formats.XM, genre=Song.Genres.ALTERNATIVE_GOTHIC)
         self.song_vision_s3m = song_factories.SongFactory(title='Visions S3M', format=Song.Formats.S3M, license=Song.Licenses.ATTRIBUTION)
-        self.song_vision_mod = song_factories.SongFactory(title='Visions MOD', format=Song.Formats.MOD, license=Song.Licenses.PUBLIC_DOMAIN)
+        self.song_vision_mod = song_factories.SongFactory(title='Visions MOD', format=Song.Formats.MOD, license=Song.Licenses.PUBLIC_DOMAIN, genre=Song.Genres.ALTERNATIVE)
         
         super().setUpTestData()
 
@@ -158,3 +158,22 @@ class AdvancedSearchTests(TestCase):
         # Assert
         self.assertEquals(1, len(response.context['search_results']))
         self.assertEquals(self.song_visions_it, response.context['search_results'][0])
+
+    def test_filters_by_genre(self):
+        # Act
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&genre=57')
+
+        # Assert
+        self.assertEquals(2, len(response.context['search_results']))
+        self.assertEquals(self.song_visions_it2, response.context['search_results'][0])
+        self.assertEquals(self.song_vision_mod, response.context['search_results'][1])
+
+    def test_filters_by_multiple_genres(self):
+        # Act
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&genre=57&genre=58')
+
+        # Assert
+        self.assertEquals(3, len(response.context['search_results']))
+        self.assertEquals(self.song_visions_it2, response.context['search_results'][0])
+        self.assertEquals(self.song_visions_xm, response.context['search_results'][1])
+        self.assertEquals(self.song_vision_mod, response.context['search_results'][2])

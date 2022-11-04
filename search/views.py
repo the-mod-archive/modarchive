@@ -92,6 +92,7 @@ class AdvancedSearchView(View):
         query = form.cleaned_data['query']
         format = form.cleaned_data['format']
         license = form.cleaned_data['license']
+        genre = form.cleaned_data['genre']
 
         # Query songs by title
         rank_annotation = SearchRank(F('title_vector'), query)
@@ -110,6 +111,10 @@ class AdvancedSearchView(View):
         # Filter by license, if applicable
         if license:
             song_query_results = song_query_results.filter(license__in=license)
+
+        # Filter by genre, if applicable
+        if genre:
+            song_query_results = song_query_results.filter(genre__in=genre)
 
         return render(request, 'advanced_search_results.html', {
             'search_results': song_query_results,

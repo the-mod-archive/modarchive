@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from django import forms
 from songs import models
 
@@ -9,4 +10,19 @@ class SearchForm(forms.Form):
 class AdvancedSearchForm(forms.Form):
     query = forms.CharField(label=False)
     format = forms.MultipleChoiceField(required=False, choices=models.Song.Formats.choices)
+    genre = forms.MultipleChoiceField(required=False, choices=models.Song.Genres.choices)
     license = forms.MultipleChoiceField(required=False, choices=models.Song.Licenses.choices)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        genre_choices_dict = OrderedDict()
+        genre_choices_dict["None"] = [("", "None")]
+        genre_choices_dict["Electronica"] = self.fields['genre'].choices[1:25]
+        genre_choices_dict["Demo-style"] = self.fields['genre'].choices[25:28]
+        genre_choices_dict["Pop"] = self.fields['genre'].choices[28:38]
+        genre_choices_dict["Other"] = self.fields['genre'].choices[38:57]
+        genre_choices_dict["Alternative"] = self.fields['genre'].choices[57:63]
+        genre_choices_dict["Jazz"] = self.fields['genre'].choices[63:69]
+        genre_choices_dict["Hip-Hop"] = self.fields['genre'].choices[69:74]
+        genre_choices_dict["Seasonal"] = self.fields['genre'].choices[74:]
+        self.fields['genre'].choices = genre_choices_dict.items()
