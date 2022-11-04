@@ -116,6 +116,20 @@ class AdvancedSearchView(View):
         if genre:
             song_query_results = song_query_results.filter(genre__in=genre)
 
+        # File size filtering
+        if form.cleaned_data['minSize']:
+            song_query_results = song_query_results.filter(file_size__gte=form.cleaned_data['minSize'])
+
+        if form.cleaned_data['maxSize']:
+            song_query_results = song_query_results.filter(file_size__lte=form.cleaned_data['maxSize'])
+
+        # Channel filtering
+        if form.cleaned_data['minChannels']:
+            song_query_results = song_query_results.filter(channels__gte=form.cleaned_data['minChannels'])
+
+        if form.cleaned_data['maxChannels']:
+            song_query_results = song_query_results.filter(channels__lte=form.cleaned_data['maxChannels'])
+
         return render(request, 'advanced_search_results.html', {
             'search_results': song_query_results,
             'form': form
