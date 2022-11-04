@@ -17,12 +17,12 @@ class AdvancedSearchForm(forms.Form):
         super().__init__(*args, **kwargs)
         genre_choices_dict = OrderedDict()
         genre_choices_dict["None"] = [("", "None")]
-        genre_choices_dict["Electronica"] = self.fields['genre'].choices[1:25]
-        genre_choices_dict["Demo-style"] = self.fields['genre'].choices[25:28]
-        genre_choices_dict["Pop"] = self.fields['genre'].choices[28:38]
-        genre_choices_dict["Other"] = self.fields['genre'].choices[38:57]
-        genre_choices_dict["Alternative"] = self.fields['genre'].choices[57:63]
-        genre_choices_dict["Jazz"] = self.fields['genre'].choices[63:69]
-        genre_choices_dict["Hip-Hop"] = self.fields['genre'].choices[69:74]
-        genre_choices_dict["Seasonal"] = self.fields['genre'].choices[74:]
+        genre_choices_dict["Electronica"] = self.fields['genre'].choices[0:24]
+        genre_choices_dict["Demo-style"] = self.fields['genre'].choices[24:27]
+        genre_choices_dict["Pop"] = self.fields['genre'].choices[27:37]
+        genre_choices_dict["Other"] = self.fields['genre'].choices[37:56]
+        genre_choices_dict["Alternative"] = self.fields['genre'].choices[56:62]
+        genre_choices_dict["Jazz"] = self.fields['genre'].choices[62:68]
+        genre_choices_dict["Hip-Hop"] = self.fields['genre'].choices[68:73]
+        genre_choices_dict["Seasonal"] = self.fields['genre'].choices[73:]
         self.fields['genre'].choices = genre_choices_dict.items()
