@@ -98,24 +98,26 @@ class AdvancedSearchTests(TestCase):
     @classmethod
     def setUpTestData(self):
         # Lots of songs
-        self.song_visions_it = song_factories.SongFactory(title='Visions', format=Song.Formats.IT, license=Song.Licenses.PUBLIC_DOMAIN, file_size=10000000)
-        self.song_visions_it2 = song_factories.SongFactory(title='Visions of Impulse Tracker', format=Song.Formats.IT, genre=Song.Genres.ALTERNATIVE)
-        self.song_visions_xm = song_factories.SongFactory(title='Visions XM', format=Song.Formats.XM, genre=Song.Genres.ALTERNATIVE_GOTHIC)
-        self.song_visions_s3m = song_factories.SongFactory(title='Visions S3M', format=Song.Formats.S3M, license=Song.Licenses.ATTRIBUTION, channels=8)
-        self.song_visions_mod = song_factories.SongFactory(title='Visions MOD', format=Song.Formats.MOD, license=Song.Licenses.PUBLIC_DOMAIN, genre=Song.Genres.ALTERNATIVE, file_size=5000, channels=4)
+        self.song_visions_it = song_factories.SongFactory(title='Visions', format=Song.Formats.IT, license=Song.Licenses.PUBLIC_DOMAIN, file_size=10000000, comment_text="flerp")
+        self.song_visions_it2 = song_factories.SongFactory(title='Visions of Impulse Tracker', format=Song.Formats.IT, genre=Song.Genres.ALTERNATIVE, comment_text="flerp", instrument_text="flerp")
+        self.song_visions_xm = song_factories.SongFactory(title='Visions XM', format=Song.Formats.XM, genre=Song.Genres.ALTERNATIVE_GOTHIC, instrument_text="flerp")
+        self.song_visions_s3m = song_factories.SongFactory(title='Visions S3M', format=Song.Formats.S3M, license=Song.Licenses.ATTRIBUTION, channels=8, filename="blerp1.s3m")
+        self.song_visions_mod = song_factories.SongFactory(title='Visions MOD', format=Song.Formats.MOD, license=Song.Licenses.PUBLIC_DOMAIN, genre=Song.Genres.ALTERNATIVE, file_size=5000, channels=4, filename="blerp2.mod")
+        self.song_flerp = song_factories.SongFactory(title="Flerp", format=Song.Formats.MTM)
+        self.song_flerp_filename = song_factories.SongFactory(title="Untitled", format=Song.Formats.MOD, filename="flerp.mod")
         
         super().setUpTestData()
 
     def test_standard_search_with_no_filters(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&type=title')
 
         # Assert
         self.assertEquals(5, len(response.context['search_results']))
 
     def test_filters_by_format(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&format=IT')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&format=IT&type=title')
 
         # Assert
         self.assertEquals(2, len(response.context['search_results']))
@@ -124,7 +126,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_multiple_formats(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&format=IT&format=XM')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&format=IT&format=XM&type=title')
 
         # Assert
         self.assertEquals(3, len(response.context['search_results']))
@@ -134,7 +136,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_license(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&license=publicdomain')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&license=publicdomain&type=title')
 
         # Assert
         self.assertEquals(2, len(response.context['search_results']))
@@ -143,7 +145,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_multiple_licenses(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&license=publicdomain&license=by')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&license=publicdomain&license=by&type=title')
 
         # Assert
         self.assertEquals(3, len(response.context['search_results']))
@@ -153,7 +155,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_mixed_format_and_license_filter(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&format=IT&license=publicdomain')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&format=IT&license=publicdomain&type=title')
 
         # Assert
         self.assertEquals(1, len(response.context['search_results']))
@@ -161,7 +163,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_genre(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&genre=57')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&genre=57&type=title')
 
         # Assert
         self.assertEquals(2, len(response.context['search_results']))
@@ -170,7 +172,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_multiple_genres(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&genre=57&genre=58')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&genre=57&genre=58&type=title')
 
         # Assert
         self.assertEquals(3, len(response.context['search_results']))
@@ -180,7 +182,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_minimum_file_size(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minSize=10000')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minSize=10000&type=title')
 
         # Assert
         self.assertEquals(4, len(response.context['search_results']))
@@ -191,7 +193,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_maximum_file_size(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&maxSize=200000')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&maxSize=200000&type=title')
 
         # Assert
         self.assertEquals(4, len(response.context['search_results']))
@@ -202,7 +204,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_minimum_and_maximum_file_size(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minSize=10000&maxSize=200000')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minSize=10000&maxSize=200000&type=title')
 
         # Assert
         self.assertEquals(3, len(response.context['search_results']))
@@ -212,7 +214,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_minimum_channels(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minChannels=8')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minChannels=8&type=title')
 
         # Assert
         self.assertEquals(4, len(response.context['search_results']))
@@ -223,7 +225,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_maximum_channels(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&maxChannels=8')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&maxChannels=8&type=title')
 
         # Assert
         self.assertEquals(2, len(response.context['search_results']))
@@ -232,7 +234,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_minimum_and_maximum_channels(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minChannels=6&maxChannels=10')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minChannels=6&maxChannels=10&type=title')
 
         # Assert
         self.assertEquals(1, len(response.context['search_results']))
@@ -240,7 +242,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_minimum_file_size_cannot_be_negative(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minSize=-1000')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minSize=-1000&type=title')
 
         # Assert
         self.assertEquals(1, len(response.context['form'].errors))
@@ -249,7 +251,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_maximum_file_size_cannot_be_negative(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&maxSize=-1000')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&maxSize=-1000&type=title')
 
         # Assert
         self.assertEquals(1, len(response.context['form'].errors))
@@ -258,7 +260,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_minimum_channels_cannot_be_negative(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minChannels=-1')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minChannels=-1&type=title')
 
         # Assert
         self.assertEquals(1, len(response.context['form'].errors))
@@ -267,7 +269,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_maximum_channels_cannot_be_negative(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&maxChannels=-1')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&maxChannels=-1&type=title')
 
         # Assert
         self.assertEquals(1, len(response.context['form'].errors))
@@ -276,7 +278,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_max_size_cannot_be_lower_than_min_size(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minSize=10000&maxSize=5000')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minSize=10000&maxSize=5000&type=title')
 
         # Assert
         self.assertEquals(1, len(response.context['form'].errors))
@@ -285,7 +287,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_max_channels_cannot_be_lower_than_min_channels(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minChannels=4&maxChannels=2')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minChannels=4&maxChannels=2&type=title')
 
         # Assert
         self.assertEquals(1, len(response.context['form'].errors))
@@ -294,7 +296,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_only_integers_accepted_for_size_and_channels(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minChannels=abc&maxChannels=2.1&minSize=twerm&maxSize=0.00001')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&minChannels=abc&maxChannels=2.1&minSize=twerm&maxSize=0.00001&type=title')
     
         # Assert
         self.assertEquals(4, len(response.context['form'].errors))
@@ -302,3 +304,59 @@ class AdvancedSearchTests(TestCase):
         self.assertEquals('Enter a whole number.', response.context['form'].errors['minChannels'][0])
         self.assertEquals('Enter a whole number.', response.context['form'].errors['maxSize'][0])
         self.assertEquals('Enter a whole number.', response.context['form'].errors['minSize'][0])
+
+    def test_searches_by_filename(self):
+        # Act
+        response = self.client.get(f'{reverse("advanced_search")}?query=blerp&type=filename')
+
+        # Assert
+        self.assertEquals(2, len(response.context['search_results']))
+        self.assertEquals(self.song_visions_s3m, response.context['search_results'][0])
+        self.assertEquals(self.song_visions_mod, response.context['search_results'][1])
+
+    def test_searches_by_comment_text(self):
+        # Act
+        response = self.client.get(f'{reverse("advanced_search")}?query=flerp&type=comment-text')
+
+        # Assert
+        self.assertEquals(2, len(response.context['search_results']))
+        self.assertEquals(self.song_visions_it, response.context['search_results'][0])
+        self.assertEquals(self.song_visions_it2, response.context['search_results'][1])
+
+    def test_searches_by_instrument_text(self):
+        # Act
+        response = self.client.get(f'{reverse("advanced_search")}?query=flerp&type=instrument-text')
+
+        # Assert
+        self.assertEquals(2, len(response.context['search_results']))
+        self.assertEquals(self.song_visions_it2, response.context['search_results'][0])
+        self.assertEquals(self.song_visions_xm, response.context['search_results'][1])
+
+    def test_searches_by_combined_comment_and_instrument_text(self):
+        # Act
+        response = self.client.get(f'{reverse("advanced_search")}?query=flerp&type=instrument-text&type=comment-text')
+
+        # Assert
+        self.assertEquals(3, len(response.context['search_results']))
+        self.assertEquals(self.song_visions_it, response.context['search_results'][0])
+        self.assertEquals(self.song_visions_it2, response.context['search_results'][1])
+        self.assertEquals(self.song_visions_xm, response.context['search_results'][2])
+
+    def test_searches_by_combined_title_and_comment_text(self):
+        # Act
+        response = self.client.get(f'{reverse("advanced_search")}?query=flerp&type=title&type=comment-text')
+
+        # Assert
+        self.assertEquals(3, len(response.context['search_results']))
+        self.assertEquals(self.song_flerp, response.context['search_results'][0])
+        self.assertEquals(self.song_visions_it, response.context['search_results'][1])
+        self.assertEquals(self.song_visions_it2, response.context['search_results'][2])
+    
+    def test_searches_by_combined_title_and_filename(self):
+        # Act
+        response = self.client.get(f'{reverse("advanced_search")}?query=flerp&type=title&type=filename')
+
+        # Assert
+        self.assertEquals(2, len(response.context['search_results']))
+        self.assertEquals(self.song_flerp, response.context['search_results'][0])
+        self.assertEquals(self.song_flerp_filename, response.context['search_results'][1])

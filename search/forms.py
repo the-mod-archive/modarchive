@@ -9,6 +9,7 @@ class SearchForm(forms.Form):
 
 class AdvancedSearchForm(forms.Form):
     query = forms.CharField(label=False)
+    type = forms.MultipleChoiceField(choices=(("title", "Title"),('filename', "Filename"), ('comment-text', "Comment Text"), ('instrument-text', "Instrument Text")), initial=["title"])
     format = forms.MultipleChoiceField(required=False, choices=models.Song.Formats.choices)
     genre = forms.MultipleChoiceField(required=False, choices=models.Song.Genres.choices)
     license = forms.MultipleChoiceField(required=False, choices=models.Song.Licenses.choices)

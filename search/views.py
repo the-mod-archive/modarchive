@@ -1,4 +1,4 @@
-from django.db.models import F, Value, CharField
+from django.db.models import F, Q, Value, CharField
 from django.shortcuts import render
 from django.contrib.postgres.search import SearchRank
 from django.views.generic import View
@@ -93,16 +93,56 @@ class AdvancedSearchView(View):
         format = form.cleaned_data['format']
         license = form.cleaned_data['license']
         genre = form.cleaned_data['genre']
+        type = form.cleaned_data['type']
 
-        # Query songs by title
-        rank_annotation = SearchRank(F('title_vector'), query)
+        # Title query
+        if 'title' in type:
+            title_query_results = Song.objects.annotate(
+                rank=SearchRank(F('title_vector'), query)
+            ).filter(
+                Q(title_vector=query)
+            )
+        else:
+            title_query_results = Song.objects.annotate(
+                rank=SearchRank(F('title_vector'), query)
+            ).none()
 
-        song_query_results = Song.objects.annotate(
-            type=Value('song', output_field=CharField()),
-            rank=rank_annotation
-        ).filter(
-            title_vector=query
-        ).order_by('-rank')
+        # Filename query
+        if 'filename' in type:
+            file_query_results = Song.objects.annotate(
+                rank=SearchRank(F('title_vector'), query)
+            ).filter(
+                Q(filename__icontains=query)
+            )
+        else:
+            file_query_results = Song.objects.none()
+
+        # Comment text query
+        if 'comment-text' in type:
+            comment_query_results = Song.objects.annotate(
+                rank=SearchRank(F('comment_text_vector'), query)
+            ).filter(
+                comment_text_vector=query
+            )
+        else:
+            comment_query_results = Song.objects.annotate(
+                rank=SearchRank(F('comment_text_vector'), query)
+            ).none()
+
+        # Instrument text query
+        if 'instrument-text' in type:
+            instrument_query_results = Song.objects.annotate(
+                rank=SearchRank(F('instrument_text_vector'), query)
+            ).filter(
+                instrument_text_vector=query
+            )
+        else:
+            instrument_query_results = Song.objects.annotate(
+                rank=SearchRank(F('instrument_text_vector'), query)
+            ).none()
+
+        # Merge all query results
+        song_query_results = (title_query_results | comment_query_results | instrument_query_results | file_query_results).order_by('-rank')
 
         # Filter by format, if applicable
         if format:
