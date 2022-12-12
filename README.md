@@ -16,7 +16,7 @@ First, you will need Python and Django, naturally. You will also need to have a 
 
 ## Setting up testing in local environment
 
-The following instructions are relevant for use with Visual Studio Code. Please note that every directory with tests will need to have __init__.py in the directory.
+The following instructions are relevant for use with Visual Studio Code. Please note that every directory with tests will need to have `__init__.py` in the directory.
 
 First, do pip install pytest-django.
 
