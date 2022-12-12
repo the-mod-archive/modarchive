@@ -1,0 +1,12 @@
+version: '3.9'
+services:
+  db:
+    # https://hub.docker.com/_/postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+    image: postgres
+    ports:
+    - published: 5432
+      target: 5432
+    volumes:
+      - ./fixtures/postgres:/docker-entrypoint-initdb.d:ro

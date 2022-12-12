@@ -8,7 +8,16 @@ To run on a local environment, you will need to install dependencies.
 
 ### Install dependencies
 
-First, you will need Python and Django, naturally. You will also need to have a running PostgreSQL instance with a database called "mod_archive."
+First, you will need Python and Django, naturally.
+
+### Start database
+`docker-compose up` will start the database to the foreground. Add `-d` to daemonize.
+
+`docker-compose down` will stop the database. Add `-v` to destroy the volume data.
+
+`invoke psql` will open an interactive psql shell in the database container.
+See `inv psql --help` for more options.
+
 
 ### Set configs
 
