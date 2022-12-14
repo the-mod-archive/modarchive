@@ -111,10 +111,10 @@ AUTH_PASSWORD_VALIDATORS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': os.getenv('POSTGRES_HOST', ''),
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
         'NAME': os.getenv('POSTGRES_DATABASE_NAME', 'mod_archive'),
-        'USER': os.getenv('POSTGRES_USERNAME', 'postgres'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'USER': os.getenv('POSTGRES_USERNAME', 'mod_archive'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'mod_archive'),
         'PORT': os.getenv('POSTGRES_PORT', '5432')
     }
 }
