@@ -21,7 +21,7 @@ class Artist(models.Model):
         null=True,
         blank=True
     )
-    legacy_id=models.IntegerField(null=True, blank=True, help_text="User ID from the legacy Mod Archive site")
+    legacy_id=models.IntegerField(null=True, blank=True, help_text="User ID from the legacy Mod Archive site", db_index=True)
     key=models.CharField(max_length=32, db_index=True, blank=True)
     name=CICharField(max_length=64, unique=True)
     songs=models.ManyToManyField(Song, blank=True)
