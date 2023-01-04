@@ -3,7 +3,7 @@ from django.db.models import F
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from django.http import Http404
-from django.views.generic import DetailView, View, TemplateView
+from django.views.generic import DetailView, View, TemplateView, ListView
 from django.views.generic.base import ContextMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from random import choice
@@ -26,6 +26,11 @@ def download(request, pk):
         stats.save()
 
         return redirect(download_path)
+
+class SongListView(ListView):
+    template_name='song_list.html'
+    model=Song
+    queryset=Song.objects.order_by('-id')[:50]
 
 class SongView(DetailView):
     template_name='song_bootstrap.html'
