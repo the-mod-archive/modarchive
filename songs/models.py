@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
@@ -224,7 +225,7 @@ class Comment(models.Model):
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     text = models.TextField(max_length=5000)
     rating = models.PositiveSmallIntegerField(choices=Ratings.choices)
-    create_date = models.DateTimeField(auto_now_add=True)
+    create_date = models.DateTimeField(default=timezone.now)
 
 class ArtistComment(models.Model):
     class Meta:
