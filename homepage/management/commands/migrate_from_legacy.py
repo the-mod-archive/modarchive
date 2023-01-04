@@ -157,7 +157,7 @@ class Command(BaseCommand):
                             text = mapping.description
                         )
                     except IntegrityError:
-                        print(f"Integrity error on when saving artist comment for record {mapping.pk} for profile {artist.profile.id} ({artist.profile.name}) and song {song.id} ({song.title})")
+                        print(f"Integrity error on when saving artist comment for record {mapping.pk} for profile {artist.profile.id} ({artist.profile.display_name}) and song {song.id} ({song.title})")
 
     def migrate_files_table(self):
         files = legacy_models.Files.objects.using('legacy').all().order_by('id')
