@@ -6,7 +6,7 @@ from homepage.view import password_views, registration_views
 from homepage.view.bulk_upload_view import BulkUploadView
 from homepage.view.homepage_views import account_settings, LoginView, HomePageView
 from homepage.view.legacy_redirect_view import LegacyUrlRedirectionView
-from homepage.view.profile_view import ProfileView, UpdateProfileView
+from homepage.view.profile_view import ProfileView, UpdateProfileView, ProfileFavoritesView, ProfileCommentsView
 
 urlpatterns = [
     # Basic homepage
@@ -40,6 +40,8 @@ urlpatterns = [
 
     # Profiles
     path('profiles/<int:pk>/', ProfileView.as_view(), {}, 'view_profile'),
+    path('profiles/<int:pk>/comments', ProfileCommentsView.as_view(), {}, 'view_profile_comments'),
+    path('profiles/<int:pk>/favorites', ProfileFavoritesView.as_view(), {}, 'view_profile_favorites'),
     path('profiles/update/', UpdateProfileView.as_view(), {}, 'update_profile')
 ]
 

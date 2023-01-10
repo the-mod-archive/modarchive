@@ -19,6 +19,28 @@ class ProfileView(DetailView):
 
         return response
 
+class ProfileCommentsView(DetailView):
+    model = Profile
+    template_name = 'profile_comments.html'
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        if (hasattr(self.object, 'artist')):
+            return redirect('view_artist_comments', self.object.artist.id)
+
+        return response
+
+class ProfileFavoritesView(DetailView):
+    model = Profile
+    template_name = 'profile_favorites.html'
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        if (hasattr(self.object, 'artist')):
+            return redirect('view_artist_favorites', self.object.artist.id)
+
+        return response
+
 class UpdateProfileView(LoginRequiredMixin, View):
     def get(self, request):
         try:
