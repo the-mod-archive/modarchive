@@ -156,11 +156,8 @@ class Song(models.Model):
     update_date=models.DateTimeField(auto_now=True)
 
     def get_title(self):
-        if (self.clean_title):
-            return self.clean_title
-        elif (self.title):
-            return self.title
-        return self.filename
+        title = self.clean_title if self.clean_title else self.title
+        return self.filename if not title.strip() else title
 
     def is_own_song(self, profile_id):
         return self.artist_set.all().filter(profile_id=profile_id).exists()
