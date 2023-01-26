@@ -44,7 +44,9 @@
 <hr>
 
 <div class="tab-content">
-    {% for favorite in artist.profile.favorite_set.all %}
+    {% include 'partials/pagination.html' with link='view_artist_favorites' %}
+
+    {% for favorite in paginator %}
         <li><a href="{% url 'view_song' favorite.song_id %}">{{ favorite.song.get_title }}</a></li>
     {% empty %}
         No favorites added

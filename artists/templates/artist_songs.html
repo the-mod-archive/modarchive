@@ -44,20 +44,10 @@
 <hr>
 
 <div class="tab-content">
-    {% if has_pages %}
-    <nav aria-label="song pagination">
-        <ul class="pagination justify-content-center">
-            {% for i in range %}
-                <li class="page-item {% if i == page %}disabled{% endif %}">
-                    <a class="page-link" href="{% url 'view_artist_songs' artist.pk %}?p={{i}}" aria-label="First">{{i}}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    </nav>
-    {% endif %}
-
+    {% include 'partials/pagination.html' with link='view_artist_songs' %}
+    
     <ul>
-        {% for song in songs_paginator %}
+        {% for song in paginator %}
         <li>
             <a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a>
         </li>
