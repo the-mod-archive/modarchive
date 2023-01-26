@@ -17,6 +17,14 @@ class SongModelTests(TestCase):
         song = Song(title="song title")
         self.assertEqual("song title", song.get_title())
 
+    def test_shows_filename_when_title_is_empty(self):
+        song = Song(title="", filename="file.mod")
+        self.assertEqual("file.mod", song.get_title())
+
+    def test_shows_filename_when_title_is_whitespace(self):
+        song = Song(title="   ", filename="file.mod")
+        self.assertEqual("file.mod", song.get_title())
+
     def test_can_leave_comment_if_not_own_song_and_not_already_commented(self):
         song = Song(id=1, title="song title")
         self.assertTrue(song.can_user_leave_comment(1))

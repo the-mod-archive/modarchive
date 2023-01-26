@@ -44,8 +44,10 @@
 <hr>
 
 <div class="tab-content">
+    {% include 'partials/pagination.html' with link='view_artist_songs' %}
+    
     <ul>
-        {% for song in artist.songs.all %}
+        {% for song in paginator %}
         <li>
             <a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a>
         </li>

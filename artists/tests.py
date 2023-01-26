@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.urls.base import reverse
 
 from artists import factories
+from songs import factories as song_factories
+from homepage.tests import factories as homepage_factories
 
 class ArtistViewTests(TestCase):
     def test_artist_list_view_contains_all_artists(self):
@@ -50,7 +52,8 @@ class ArtistViewTests(TestCase):
 
     def test_artist_comments_view_contains_specific_artist(self):
         # Arrange
-        artist = factories.ArtistFactory(name='Arcturus', legacy_id=69117)
+        user = homepage_factories.UserFactory()
+        artist = factories.ArtistFactory(name='Arcturus', legacy_id=69117, user=user, profile=user.profile)
         
         # Act
         response = self.client.get(reverse('view_artist_comments', kwargs = {'pk': artist.id}))
@@ -65,7 +68,8 @@ class ArtistViewTests(TestCase):
 
     def test_artist_favorites_view_contains_specific_artist(self):
         # Arrange
-        artist = factories.ArtistFactory(name='Arcturus', legacy_id=69117)
+        user = homepage_factories.UserFactory()
+        artist = factories.ArtistFactory(name='Arcturus', legacy_id=69117, user=user, profile=user.profile)
         
         # Act
         response = self.client.get(reverse('view_artist_favorites', kwargs = {'pk': artist.id}))
@@ -77,3 +81,52 @@ class ArtistViewTests(TestCase):
         artist = response.context['artist']
         self.assertEquals('Arcturus', artist.name)
         self.assertEquals(69117, artist.legacy_id)
+
+class ArtistSongViewTests(TestCase):
+    def test_artist_song_view_contains_songs(self):
+        # Arrange
+        songs = []
+        for x in range(10):
+            songs.append(song_factories.SongFactory())
+        
+        artist = factories.ArtistFactory(name='Arcturus', songs=songs)
+
+        # Act
+        response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.pk}))
+
+        # Assert
+        self.assertEquals(10, len(response.context['paginator']))
+        self.assertFalse(response.context['has_pages'])
+        self.assertEquals(1, response.context['page'])
+
+    def test_artist_song_view_contains_first_page_of_songs(self):
+        # Arrange
+        songs = []
+        for x in range(30):
+            songs.append(song_factories.SongFactory())
+        
+        artist = factories.ArtistFactory(name='Arcturus', songs=songs)
+
+        # Act
+        response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.pk}))
+
+        # Assert
+        self.assertEquals(25, len(response.context['paginator']))
+        self.assertTrue(response.context['has_pages'])
+        self.assertEquals(1, response.context['page'])
+
+    def test_artist_song_view_contains_second_page_of_songs(self):
+        # Arrange
+        songs = []
+        for x in range(30):
+            songs.append(song_factories.SongFactory())
+        
+        artist = factories.ArtistFactory(name='Arcturus', songs=songs)
+
+        # Act
+        response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.pk}) + "?p=2")
+
+        # Assert
+        self.assertEquals(5, len(response.context['paginator']))
+        self.assertTrue(response.context['has_pages'])
+        self.assertEquals(2, response.context['page'])
