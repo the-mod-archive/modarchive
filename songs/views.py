@@ -196,3 +196,13 @@ class CommentView(LoginRequiredMixin, ContextMixin, View):
             return redirect('view_song', kwargs['pk'])
         
         return render(request, 'add_comment.html', {'song': song, 'song_form': song_form, 'comment_form': comment_form})
+
+class BrowseSongsView(ListView):
+    model = Song
+    template_name = 'browse_songs.html'
+    paginate_by = 50
+    context_object_name = 'songs'
+
+    def get_queryset(self):
+        first_letter = self.kwargs['first_letter']
+        return Song.objects.filter(filename__istartswith=first_letter).order_by('filename')

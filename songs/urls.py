@@ -10,5 +10,6 @@ urlpatterns = [
     path('<int:pk>/remove_favorite', views.RemoveFavoriteView.as_view(), {}, 'remove_favorite'),
     path('<int:pk>/song_details', views.SongDetailsView.as_view(), {}, 'song_details'),
     path('random/', views.RandomSongView.as_view(), {}, 'random_song'),
-    path('player/', views.PlayerView.as_view(), {}, 'player')
+    path('player/', views.PlayerView.as_view(), {}, 'player'),
+    path('browse/<str:first_letter>/', views.BrowseSongsView.as_view(), name='browse_songs')
 ]

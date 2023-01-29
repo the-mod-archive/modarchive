@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
 from django.urls.base import reverse
 from unittest.mock import patch
 
@@ -7,6 +7,7 @@ from homepage.tests import factories
 from songs.models import ArtistComment, Favorite, Song
 from songs.templatetags import filters
 from songs import factories as song_factories
+from songs import views
 
 class SongModelTests(TestCase):
     def test_gets_clean_title_when_available(self):
@@ -858,3 +859,41 @@ class SongDetailsTests(TestCase):
         query_set_2 = ArtistComment.objects.filter(song=song, profile=user_2.profile)
         self.assertEquals(0, len(query_set_1))
         self.assertEquals(1, len(query_set_2))
+
+class BrowseSongsViewTests(TestCase):
+    def setUp(self):
+        self.songs = [
+            song_factories.SongFactory(filename="Fading-Memories.mod", title="Fading Memories"),
+            song_factories.SongFactory(filename="FutureVisions.s3m", title="Future Visions"),
+            song_factories.SongFactory(filename="FantasyLand.it", title="Fantasy Land"),
+            song_factories.SongFactory(filename="FireAndIce.xm", title="Fire and Ice"),
+            song_factories.SongFactory(filename="Falling-Star.mod", title="Falling Star"),
+            song_factories.SongFactory(filename="FreeSpirit.s3m", title="Free Spirit"),
+            song_factories.SongFactory(filename="ForgottenDreams.it", title="Forgotten Dreams"),
+            song_factories.SongFactory(filename="FierceBattle.xm", title="Fierce Battle"),
+            song_factories.SongFactory(filename="FadingEchoes.mod", title="Fading Echoes"),
+            song_factories.SongFactory(filename="FutureHorizon.s3m", title="Future Horizon"),
+            song_factories.SongFactory(filename="GloriousDay.mod", title="Glorious Day"),
+            song_factories.SongFactory(filename="GoldenEchoes.s3m", title="Golden Echoes"),
+            song_factories.SongFactory(filename="GreenFields.it", title="Green Fields"),
+            song_factories.SongFactory(filename="GentleRain.xm", title="Gentle Rain"),
+            song_factories.SongFactory(filename="GalacticJourney.mod", title="Galactic Journey")    
+        ]
+
+    def test_view_uses_correct_template(self):
+        response = self.client.get(reverse('browse_songs', kwargs={'first_letter': 'f'}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'browse_songs.html')
+
+    def test_view_lists_correct_songs(self):
+        response = self.client.get(reverse('browse_songs', kwargs={'first_letter': 'f'}))
+        self.assertEqual(response.status_code, 200)
+        filtered_songs = list(filter(lambda song:song.filename[0]=="F", self.songs))
+        self.assertCountEqual(list(response.context_data['songs']), filtered_songs)
+
+    def test_view_lists_correct_songs_in_order(self):
+        response = self.client.get(reverse('browse_songs', kwargs={'first_letter': 'f'}))
+        self.assertEqual(response.status_code, 200)
+        filtered_songs = list(filter(lambda song:song.filename[0]=="F", self.songs))
+        filtered_songs.sort(key=lambda song:song.filename)
+        self.assertEqual(list(response.context_data['songs']), filtered_songs)
