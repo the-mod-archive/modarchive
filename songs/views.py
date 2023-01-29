@@ -200,8 +200,17 @@ class CommentView(LoginRequiredMixin, ContextMixin, View):
 class BrowseSongsView(ListView):
     model = Song
     template_name = 'browse_songs.html'
-    paginate_by = 50
+    paginate_by = 40
     context_object_name = 'songs'
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        paginator = context_data.get('paginator')
+        page = context_data.get('page_obj')
+        if paginator and page:
+            context_data['page_range'] = paginator.get_elided_page_range(number=page.number, on_ends=1)
+
+        return context_data
 
     def get_queryset(self):
         first_letter = self.kwargs['first_letter']
