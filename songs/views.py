@@ -8,6 +8,7 @@ from django.views.generic.base import ContextMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from random import choice
 
+from homepage.view.common_views import PageNavigationListView
 from songs import forms
 from songs.models import ArtistComment, Song, Favorite
 
@@ -197,20 +198,10 @@ class CommentView(LoginRequiredMixin, ContextMixin, View):
         
         return render(request, 'add_comment.html', {'song': song, 'song_form': song_form, 'comment_form': comment_form})
 
-class BrowseSongsView(ListView):
+class BrowseSongsView(PageNavigationListView):
     model = Song
     template_name = 'browse_songs.html'
     paginate_by = 40
-    context_object_name = 'songs'
-
-    def get_context_data(self, **kwargs):
-        context_data = super().get_context_data(**kwargs)
-        paginator = context_data.get('paginator')
-        page = context_data.get('page_obj')
-        if paginator and page:
-            context_data['page_range'] = paginator.get_elided_page_range(number=page.number, on_ends=1)
-
-        return context_data
 
     def get_queryset(self):
         first_letter = self.kwargs['first_letter']

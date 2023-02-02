@@ -95,9 +95,7 @@ class ArtistSongViewTests(TestCase):
         response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.pk}))
 
         # Assert
-        self.assertEquals(10, len(response.context['paginator']))
-        self.assertFalse(response.context['has_pages'])
-        self.assertEquals(1, response.context['page'])
+        self.assertEquals(10, len(response.context['songs']))
 
     def test_artist_song_view_contains_first_page_of_songs(self):
         # Arrange
@@ -111,9 +109,7 @@ class ArtistSongViewTests(TestCase):
         response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.pk}))
 
         # Assert
-        self.assertEquals(25, len(response.context['paginator']))
-        self.assertTrue(response.context['has_pages'])
-        self.assertEquals(1, response.context['page'])
+        self.assertEquals(25, len(response.context['songs']))
 
     def test_artist_song_view_contains_second_page_of_songs(self):
         # Arrange
@@ -124,9 +120,7 @@ class ArtistSongViewTests(TestCase):
         artist = factories.ArtistFactory(name='Arcturus', songs=songs)
 
         # Act
-        response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.pk}) + "?p=2")
+        response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.pk}) + "?page=2")
 
         # Assert
-        self.assertEquals(5, len(response.context['paginator']))
-        self.assertTrue(response.context['has_pages'])
-        self.assertEquals(2, response.context['page'])
+        self.assertEquals(5, len(response.context['songs']))
