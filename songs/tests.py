@@ -881,18 +881,18 @@ class BrowseSongsViewTests(TestCase):
         ]
 
     def test_view_uses_correct_template(self):
-        response = self.client.get(reverse('browse_songs', kwargs={'first_letter': 'f'}))
+        response = self.client.get(reverse('browse_by_filename', kwargs={'query': 'f'}))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'browse_songs.html')
 
     def test_view_lists_correct_songs(self):
-        response = self.client.get(reverse('browse_songs', kwargs={'first_letter': 'f'}))
+        response = self.client.get(reverse('browse_by_filename', kwargs={'query': 'f'}))
         self.assertEqual(response.status_code, 200)
         filtered_songs = list(filter(lambda song:song.filename[0]=="F", self.songs))
         self.assertCountEqual(list(response.context_data['songs']), filtered_songs)
 
     def test_view_lists_correct_songs_in_order(self):
-        response = self.client.get(reverse('browse_songs', kwargs={'first_letter': 'f'}))
+        response = self.client.get(reverse('browse_by_filename', kwargs={'query': 'f'}))
         self.assertEqual(response.status_code, 200)
         filtered_songs = list(filter(lambda song:song.filename[0]=="F", self.songs))
         filtered_songs.sort(key=lambda song:song.filename)

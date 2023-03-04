@@ -10,13 +10,20 @@
 
 <p><a href="{% url 'random_song' %}">Go to a random song</a></p>
 
-{% for song in object_list %}
-    <div>
-        <a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a> {% include 'song_artists.html' with song=song %}
-    </div>
-{% empty %}
-    <div>No songs yet.</div>
-{% endfor %}
+<div>
+    <a href="{% url 'browse_by_filename' 'a' %}">Browse by Filename</a>
+</div>
 
+<div>
+    <a href="{% url 'browse_by_license' 'by' %}">Browse by License</a>
+</div>
+
+<div>
+    <a href="{% url 'browse_by_genre' 1 %}">Browse by Genre</a>
+</div>
+
+<div>
+    <a href="{% url 'browse_by_rating' 9 %}">Browse by Rating</a>
+</div>
 
 {% endblock %}

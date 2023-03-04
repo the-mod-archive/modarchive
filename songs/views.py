@@ -1,3 +1,5 @@
+import re
+
 from django.db import transaction
 from django.db.models import F
 from django.core.exceptions import ObjectDoesNotExist
@@ -7,6 +9,7 @@ from django.views.generic import DetailView, View, TemplateView, ListView
 from django.views.generic.base import ContextMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from random import choice
+from django.urls import reverse
 
 from homepage.view.common_views import PageNavigationListView
 from songs import forms
@@ -198,11 +201,98 @@ class CommentView(LoginRequiredMixin, ContextMixin, View):
         
         return render(request, 'add_comment.html', {'song': song, 'song_form': song_form, 'comment_form': comment_form})
 
-class BrowseSongsView(PageNavigationListView):
+class BrowseSongsByLicenseView(PageNavigationListView):
     model = Song
     template_name = 'browse_songs.html'
     paginate_by = 40
 
+    def dispatch(self, request, *args, **kwargs):
+        query = kwargs['query']
+        if query not in dict(Song.Licenses.choices).keys():
+            return redirect('home')
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.kwargs['query']
+        context['licenses'] = Song.Licenses.choices
+        context['options'] = [(code, name, reverse('browse_by_license', kwargs={'query': code})) for code, name in Song.Licenses.choices]
+        context['label'] = 'license'
+        return context
+
     def get_queryset(self):
-        first_letter = self.kwargs['first_letter']
-        return Song.objects.filter(filename__istartswith=first_letter).order_by('filename')
+        return Song.objects.filter(license=self.kwargs['query']).order_by('filename')
+    
+class BrowseSongsByFilenameView(PageNavigationListView):
+    model = Song
+    template_name = 'browse_songs.html'
+    paginate_by = 40
+
+    def dispatch(self, request, *args, **kwargs):
+        query = kwargs['query']
+        if not re.match(r'^[A-Za-z0-9_]$', query):
+            return redirect('home')
+        
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.kwargs['query']
+        context['options'] = [(char, char, reverse('browse_by_filename', kwargs={'query': char})) for char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"]
+        context['label'] = 'filename'
+        return context
+
+    def get_queryset(self):
+        return Song.objects.filter(filename__istartswith=self.kwargs['query']).order_by('filename')
+
+class BrowseSongsByGenreView(PageNavigationListView):
+    model = Song
+    template_name = 'browse_songs.html'
+    paginate_by = 40
+
+    def dispatch(self, request, *args, **kwargs):
+        query = kwargs['query']
+
+        if query not in dict(Song.Genres.choices).keys():
+            return redirect('home')
+        
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.kwargs['query']
+        context['options'] = [(id, name, reverse('browse_by_genre', kwargs={'query': id})) for id, name in Song.Genres.choices]
+        context['label'] = 'genre'
+
+        return context
+
+    def get_queryset(self):
+        return Song.objects.filter(genre=self.kwargs['query']).order_by('filename')
+
+class BrowseSongsByRatingView(PageNavigationListView):
+    model = Song
+    template_name = 'browse_songs.html'
+    paginate_by = 40
+
+    def dispatch(self, request, *args, **kwargs):
+        query = kwargs['query']
+
+        if not query or query < 1 or query > 9:
+            return redirect('home')
+        
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.kwargs['query']
+        context['options'] = [(score, score, reverse('browse_by_rating', kwargs={'query': score})) for score in [9, 8, 7, 6, 5, 4, 3, 2, 1]]
+        context['label'] = 'rating'
+
+        return context
+
+    def get_queryset(self):
+        if self.kwargs['query'] == 9:
+            return Song.objects.filter(songstats__average_comment_score__gte=9).order_by('-songstats__average_comment_score', 'filename')
+        else:
+            return Song.objects.filter(songstats__average_comment_score__lt=self.kwargs['query']+1, songstats__average_comment_score__gte=self.kwargs['query']).order_by('-songstats__average_comment_score', 'filename')

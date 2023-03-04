@@ -1,18 +1,29 @@
 {% extends 'base_page/base.html' %}
 
 {% block title %}
-    {{ block.super }}: Browse Songs
+    {{ block.super }}: Browse Songs by {{label}}
 {% endblock %}
 
 {% block content %}
 
 <div class="fs-2">Songs</div>
 
-<div>
-    Browse songs: {% for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_" %}
-        <a href="{% url 'browse_songs' letter %}">{{ letter }}</a>
-    {% endfor %}
+
+<div class="form-group">
+    <label class="form-group-label" for="filter-dropdown">Browse by {{label}}:</label>
+    <select id="filter-dropdown" class="form-select">
+        {% for option in options %}
+            <option value="{{ option.2 }}" {% if option.0 == query %}selected{% endif %}>{{ option.1 }}</option>
+        {% endfor %}
+    </select>
 </div>
+
+
+<script>
+    document.getElementById("filter-dropdown").onchange = function() {
+        window.location.href = this.value;
+    }
+</script>
 
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
@@ -37,6 +48,7 @@
             <th>Filename</th>
             <th>Title</th>
             <th>Author</th>
+            <th>Rating</th>
         </tr>
     </thead>
     <tbody>
@@ -45,6 +57,7 @@
         <td><a href="{% url 'view_song' song.id %}">{{song.filename}}</a></td>
         <td>{{ song.get_title }}</td>
         <td>{% include 'song_artists.html' with song=song %}</td>
+        <td>{{ song.songstats.average_comment_score}}</td>
     </tr>
 {% empty %}
     <div>No songs yet.</div>
