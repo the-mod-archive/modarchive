@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.db.models import F, Q, Value, CharField
 from django.shortcuts import render
 from django.contrib.postgres.search import SearchRank
@@ -170,9 +171,24 @@ class AdvancedSearchView(View):
         if form.cleaned_data['maxChannels']:
             song_query_results = song_query_results.filter(channels__lte=form.cleaned_data['maxChannels'])
 
+        paginator = Paginator(song_query_results, 25)
+        
+        page = request.GET.get("page", 1)
+        try:
+            page = int(page)
+            if page < 1:
+                page = 1
+        except (TypeError, ValueError):
+            page = 1
+        
+        search_results = paginator.get_page(page)
+
+        page_range = paginator.get_elided_page_range(number=page, on_ends=1)
+
         return render(request, 'advanced_search_results.html', {
-            'search_results': song_query_results,
-            'form': form
+            'search_results': search_results,
+            'form': form,
+            'page_range': page_range
         })
 
 def search(request):

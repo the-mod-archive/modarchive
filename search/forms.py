@@ -8,15 +8,15 @@ class SearchForm(forms.Form):
     artists = forms.BooleanField(required=False, initial=True)
 
 class AdvancedSearchForm(forms.Form):
-    query = forms.CharField(label=False)
-    type = forms.MultipleChoiceField(choices=(("title", "Title"),('filename', "Filename"), ('comment-text', "Comment Text"), ('instrument-text', "Instrument Text")), initial=["title"])
-    format = forms.MultipleChoiceField(required=False, choices=models.Song.Formats.choices)
-    genre = forms.MultipleChoiceField(required=False, choices=models.Song.Genres.choices)
-    license = forms.MultipleChoiceField(required=False, choices=models.Song.Licenses.choices)
-    minSize = forms.IntegerField(required=False, label="Minimum Size (in bytes)", min_value=0)
-    maxSize = forms.IntegerField(required=False, label="Maximum Size (in bytes)", min_value=0)
-    minChannels = forms.IntegerField(required=False, label="Minimum number of channels", min_value=1)
-    maxChannels = forms.IntegerField(required=False, label="Maximum number of channels", min_value=1)
+    query = forms.CharField(label=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    type = forms.MultipleChoiceField(choices=(("title", "Title"),('filename', "Filename"), ('comment-text', "Comment Text"), ('instrument-text', "Instrument Text")), initial=["title"], widget=forms.SelectMultiple(attrs={'class': 'selectmultiple form-select'}))
+    format = forms.MultipleChoiceField(required=False, choices=models.Song.Formats.choices, widget=forms.SelectMultiple(attrs={'class': 'selectmultiple form-select'}))
+    genre = forms.MultipleChoiceField(required=False, choices=models.Song.Genres.choices, widget=forms.SelectMultiple(attrs={'class': 'selectmultiple form-select'}))
+    license = forms.MultipleChoiceField(required=False, choices=models.Song.Licenses.choices, widget=forms.SelectMultiple(attrs={'class': 'selectmultiple form-select'}))
+    minSize = forms.IntegerField(required=False, label="Minimum Size (in bytes)", min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    maxSize = forms.IntegerField(required=False, label="Maximum Size (in bytes)", min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    minChannels = forms.IntegerField(required=False, label="Minimum number of channels", min_value=1, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    maxChannels = forms.IntegerField(required=False, label="Maximum number of channels", min_value=1, widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
     def clean(self):
         minSize = self.cleaned_data.get('minSize')

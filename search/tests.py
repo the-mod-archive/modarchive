@@ -1,7 +1,8 @@
+import random
+
 from django.test import TestCase
 from django.urls.base import reverse
 
-from artists.models import Artist
 from artists import factories as artist_factories
 from songs import factories as song_factories
 from songs.models import Song
@@ -360,3 +361,22 @@ class AdvancedSearchTests(TestCase):
         self.assertEquals(2, len(response.context['search_results']))
         self.assertEquals(self.song_flerp, response.context['search_results'][0])
         self.assertEquals(self.song_flerp_filename, response.context['search_results'][1])
+
+    def test_searches_are_divided_by_page(self):
+        # Arrange
+        formats = [Song.Formats.MOD, Song.Formats.S3M, Song.Formats.IT, Song.Formats.XM]
+
+        for i in range(30):
+            title = f"Space {random.choice(['Jam', 'Funk', 'Rock', 'Pop', 'Boogie', 'Symphony'])}"
+            format = random.choice(formats)
+            filename_ext = format.name.lower()
+            filename = f"{title.lower().replace(' ', '_')}.{filename_ext}"
+            song = song_factories.SongFactory(title=title, format=format, filename=filename)
+
+        # Page 1
+        response = self.client.get(f'{reverse("advanced_search")}?query=space&type=title')
+        self.assertEquals(25, len(response.context['search_results']))
+
+        # Page 2
+        response = self.client.get(f'{reverse("advanced_search")}?query=space&type=title&page=2')
+        self.assertEquals(5, len(response.context['search_results']))

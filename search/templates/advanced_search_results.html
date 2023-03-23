@@ -9,19 +9,91 @@
 
 <div class='fs-2'>Advanced Search</div>
 
-<form action="{% url 'advanced_search' %}" method="GET" value={{request.GET.query}} novalidate>
-    {{ form|crispy }}
+<form action="{% url 'advanced_search' %}" method="GET" value="{{request.GET.query}}" novalidate>
+    <div id="div_id_query" class="mb-3"> 
+        {{form.query}}
+    </div>
+    <div class="row">
+        <div id="div_id_type" class="col mb-3">
+            <label for="id_type" class="form-label requiredField">{{form.type.label}}</label> 
+            {{form.type}}
+        </div>
+        <div id="div_id_format" class="col mb-3"> 
+            <label for="id_format" class="form-label">{{form.format.label}}</label> 
+            {{form.format}}
+        </div>
+    </div>
+    <div class="row">
+        <div id="div_id_genre" class="col mb-3"> 
+            <label for="id_genre" class="form-label">{{form.genre.label}}</label> 
+            {{form.genre}}
+        </div>
+        <div id="div_id_license" class="col mb-3"> 
+            <label for="id_license" class="form-label">{{form.license.label}}</label> 
+            {{form.license}}
+        </div>
+    </div>
+    <div class="row">
+        <div id="div_id_minSize" class="col mb-3"> 
+            <label for="id_minSize" class="form-label">{{form.minSize.label}}</label> 
+            {{form.minSize}} 
+        </div>
+        <div id="div_id_maxSize" class="col mb-3"> 
+            <label for="id_maxSize" class="form-label">{{form.maxSize.label}}</label> 
+            {{form.maxSize}}
+        </div>
+        <div id="div_id_minChannels" class="col mb-3"> 
+            <label for="id_minChannels" class="form-label">{{form.minChannels.label}}</label> 
+            {{form.minChannels}}
+        </div>
+        <div id="div_id_maxChannels" class="col mb-3"> 
+            <label for="id_maxChannels" class="form-label">{{form.maxChannels.label}}</label> 
+            {{form.maxChannels}}
+        </div>
+    </div>
     <input type="submit" class='btn btn-primary mt-2' value="Search">
 </form>
 
 <div class='fs-3'>Search Results</div>
 
-{% for result in search_results %}
-    <div>
-        <a href="{% url 'view_song' result.id %}">{{ result.get_title }}</a> {% include 'song_artists.html' with song=result %}
-    </div>
-{% empty %}
-    <em>No results found</em>
+<table class="table table-striped" style="border: 0;">
+    <thead>
+        <tr>
+            <th>Filename</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Rating</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for song in search_results %}
+    <tr>
+        <td><a href="{% url 'view_song' song.id %}">{{song.filename}}</a></td>
+        <td>{{ song.get_title }}</td>
+        <td>{% include 'song_artists.html' with song=song %}</td>
+        <td>{{ song.songstats.average_comment_score}}</td>
+    </tr>
 {% endfor %}
+    </tbody>
+</table>
+
+{% if page_range %}
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% for i in page_range|default_if_none:search_results.paginator.get_elided_page_range %}
+            {% if search_results.number == i %}
+                <li class="active page-item"><span class="page-link">{{ i }}</span>
+                </li>
+            {% else %}
+                {% if i == search_results.paginator.ELLIPSIS %}
+                    <li class="page-item"><span class="page-link">{{ i }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?{{ request.GET.urlencode }}&page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+</nav>
+{% endif %}
 
 {% endblock %}
