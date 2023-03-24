@@ -164,7 +164,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_genre(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&genre=57&type=title')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&genre={Song.Genres.ALTERNATIVE}&type=title')
 
         # Assert
         self.assertEquals(2, len(response.context['search_results']))
@@ -173,7 +173,7 @@ class AdvancedSearchTests(TestCase):
 
     def test_filters_by_multiple_genres(self):
         # Act
-        response = self.client.get(f'{reverse("advanced_search")}?query=visions&genre=57&genre=58&type=title')
+        response = self.client.get(f'{reverse("advanced_search")}?query=visions&genre={Song.Genres.ALTERNATIVE}&genre={Song.Genres.ALTERNATIVE_GOTHIC}&type=title')
 
         # Assert
         self.assertEquals(3, len(response.context['search_results']))
