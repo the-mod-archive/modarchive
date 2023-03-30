@@ -1,11 +1,11 @@
 from collections import OrderedDict
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from django.forms import ModelForm
+from django import forms
 
 from songs import models
 
-class AdminSongForm(ModelForm):
+class AdminSongForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AdminSongForm, self).__init__(*args, **kwargs)
         self.fields['comment_text'].strip = False
@@ -15,7 +15,7 @@ class AdminSongForm(ModelForm):
         model = models.Song
         fields = "__all__"
 
-class AddCommentForm(ModelForm):
+class AddCommentForm(forms.ModelForm):
     def is_valid(self) -> bool:
         for item in self.errors.as_data().items():
             if item[0] in self.fields:
@@ -38,7 +38,7 @@ class AddCommentForm(ModelForm):
         model = models.Comment
         fields = ("rating", "text")
 
-class AddArtistCommentForm(ModelForm):
+class AddArtistCommentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['text'].required = False
@@ -49,7 +49,7 @@ class AddArtistCommentForm(ModelForm):
         model = models.ArtistComment
         fields = ("text",)
 
-class GenreMixin(ModelForm):
+class GenreMixin(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         genre_choices_dict = OrderedDict()
@@ -65,12 +65,12 @@ class GenreMixin(ModelForm):
 
         self.fields['genre'].choices = genre_choices_dict.items()
 
-class SongGenreForm(GenreMixin, ModelForm):
+class SongGenreForm(GenreMixin, forms.ModelForm):
     class Meta:
         model = models.Song
         fields = ("genre",)
 
-class SongDetailsForm(GenreMixin, ModelForm):
+class SongDetailsForm(GenreMixin, forms.ModelForm):
     class Meta:
         model = models.Song
         fields = ("clean_title", "genre")
@@ -81,3 +81,14 @@ class SongDetailsForm(GenreMixin, ModelForm):
         Cleaned up version of title for display and search purposes. Use this to remove unwanted characters, artist name, etc. Does not change the title in the file itself.
         If left blank, the original title will display instead.
         '''
+
+class UploadForm(forms.Form):
+    CHOICES = (
+        ('yes', 'Yes. Selecting this option will also ensure your material is added to your artist profile after passing screening.'),
+        ('no', 'No. I am uploading material I understand to be in the Public Domain, or have acquired permission from the author to upload the material here.'),
+    )
+    written_by_me = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(), required=True, label='Is this material your own work to which you own the copyright?')
+    song_file = forms.FileField(required=True)
+
+    class Meta:
+        required_css_class = None

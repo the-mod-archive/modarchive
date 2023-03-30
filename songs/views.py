@@ -5,7 +5,7 @@ from django.db.models import F
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from django.http import Http404
-from django.views.generic import DetailView, View, TemplateView, ListView
+from django.views.generic import DetailView, View, TemplateView, ListView, FormView
 from django.views.generic.base import ContextMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from random import choice
@@ -296,3 +296,20 @@ class BrowseSongsByRatingView(PageNavigationListView):
             return Song.objects.filter(songstats__average_comment_score__gte=9).order_by('-songstats__average_comment_score', 'filename')
         else:
             return Song.objects.filter(songstats__average_comment_score__lt=self.kwargs['query']+1, songstats__average_comment_score__gte=self.kwargs['query']).order_by('-songstats__average_comment_score', 'filename')
+        
+class UploadView(LoginRequiredMixin, FormView):
+    template_name="upload.html"
+    form_class = forms.UploadForm
+    success_url = 'upload_report'
+
+    def form_valid(self, form):
+        # Handle the uploaded file and the radio button value here
+        written_by_me = form.cleaned_data['written_by_me']
+        song_file = form.cleaned_data['song_file']
+        
+        # Save the uploaded file to a storage backend
+        # ...
+        return super().form_valid(form)
+    
+class UploadReportView(LoginRequiredMixin, TemplateView):
+    template_name="upload_report.html"

@@ -1076,3 +1076,27 @@ class BrowseSongsByRatingTest(TestCase):
     def test_browse_by_genre_view_rejects_invalid_query_params(self):
         response = self.client.get(reverse('browse_by_rating', kwargs={'query': 11}))
         self.assertRedirects(response, reverse('home'))
+
+class UploadFormTests(TestCase):
+    def test_upload_view_redirects_unauthenticated_user(self):
+        # Arrange
+        upload_url = reverse('upload_songs')
+        login_url = reverse('login')
+
+        # Act
+        response = self.client.get(upload_url)
+
+        # Assert
+        self.assertRedirects(response, f"{login_url}?next={upload_url}")
+
+    def test_upload_view_permits_authenticated_user(self):
+        # Arrange
+        user = factories.UserFactory()
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('upload_songs'))
+
+        # Assert
+        self.assertEquals(200, response.status_code)
+        self.assertTemplateUsed(response, "upload.html")
