@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from homepage.models import Profile
 from songs.models import Song
 from django.contrib.postgres.fields import CICharField
@@ -26,7 +27,7 @@ class Artist(models.Model):
     name=CICharField(max_length=64, unique=True)
     songs=models.ManyToManyField(Song, blank=True)
     search_document=SearchVectorField(null=True)
-    create_date=models.DateTimeField(auto_now_add=True)
+    create_date=models.DateTimeField(default=timezone.now)
     update_date=models.DateTimeField(auto_now=True)
 
     class Meta:

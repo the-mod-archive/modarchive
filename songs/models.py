@@ -152,7 +152,7 @@ class Song(models.Model):
     title_vector=SearchVectorField(null=True, blank=True)
     instrument_text_vector=SearchVectorField(null=True, blank=True)
     comment_text_vector=SearchVectorField(null=True, blank=True)
-    create_date=models.DateTimeField(auto_now_add=True)
+    create_date=models.DateTimeField(default=timezone.now)
     update_date=models.DateTimeField(auto_now=True)
 
     def get_title(self):
@@ -233,7 +233,7 @@ class ArtistComment(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     text = models.TextField(max_length=5000)
-    create_date = models.DateTimeField(auto_now_add=True)
+    create_date = models.DateTimeField(default=timezone.now)
     update_date=models.DateTimeField(auto_now=True)
 
 class Favorite(models.Model):

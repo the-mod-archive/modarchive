@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Profile(models.Model):
     user = models.OneToOneField(
@@ -11,7 +12,7 @@ class Profile(models.Model):
     legacy_id=models.IntegerField(null=True, db_index=True)
     display_name = models.CharField(max_length=255)
     blurb = models.TextField(max_length=24000, null=True, blank=True)
-    create_date=models.DateTimeField(auto_now_add=True)
+    create_date=models.DateTimeField(default=timezone.now)
     update_date=models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:

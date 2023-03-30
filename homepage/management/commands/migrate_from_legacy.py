@@ -176,6 +176,7 @@ class Command(BaseCommand):
 
     def generate_song(self, legacy_file):
         # Generate song
+        create_date = legacy_file.date if legacy_file.date else legacy_file.timestamp
         
         song = Song.objects.create(
             legacy_id = legacy_file.id, 
@@ -189,7 +190,7 @@ class Command(BaseCommand):
             hash = legacy_file.hash,
             pattern_hash = legacy_file.patternhash,
             license = self.get_license(legacy_file.license),
-            create_date = legacy_file.date,
+            create_date = create_date,
             update_date = legacy_file.timestamp,
             genre = self.get_genre(legacy_file.genre_id)
         )
