@@ -1,13 +1,16 @@
-from django.test import TestCase, RequestFactory
+import os
+
+from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase
 from django.urls.base import reverse
 from unittest.mock import patch
 
 from artists import factories as artist_factories
 from homepage.tests import factories
-from songs.models import ArtistComment, Favorite, Song
+from songs.models import ArtistComment, Favorite, Song, NewSong
 from songs.templatetags import filters
 from songs import factories as song_factories
-from songs import views
 
 class SongModelTests(TestCase):
     def test_gets_clean_title_when_available(self):
@@ -1078,6 +1081,18 @@ class BrowseSongsByRatingTest(TestCase):
         self.assertRedirects(response, reverse('home'))
 
 class UploadFormTests(TestCase):
+    test_mod_filename = 'test1.mod'
+
+    def setUp(self):
+        self.temp_upload_dir = settings.TEMP_UPLOAD_DIR
+        self.new_file_dir = settings.NEW_FILE_DIR
+
+    def tearDown(self):
+        # Cleanup new_file_dir after each test
+        for filename in os.listdir(self.new_file_dir):
+            file_path = os.path.join(self.new_file_dir, filename)
+            os.remove(file_path)
+
     def test_upload_view_redirects_unauthenticated_user(self):
         # Arrange
         upload_url = reverse('upload_songs')
@@ -1100,3 +1115,31 @@ class UploadFormTests(TestCase):
         # Assert
         self.assertEquals(200, response.status_code)
         self.assertTemplateUsed(response, "upload.html")
+
+    def test_upload_single_song_puts_it_into_new_files_directory(self):
+        # Arrange
+        user = factories.UserFactory()
+        file_path = os.path.join(os.path.dirname(__file__), 'testdata', self.test_mod_filename)
+
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+        uploaded_file = SimpleUploadedFile(self.test_mod_filename, file_data, content_type='application/octet-stream')
+
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.post(reverse('upload_songs'), {
+            'written_by_me': 'yes',
+            'song_file': uploaded_file
+        })
+
+        # Assert
+        self.assertRedirects(response, reverse('upload_report'))
+        self.assertTrue(os.path.isfile(os.path.join(self.new_file_dir, self.test_mod_filename)))
+        self.assertEqual(os.listdir(self.temp_upload_dir), [])
+        new_song = NewSong.objects.get(filename=self.test_mod_filename)
+        self.assertEqual('Test Song', new_song.title)
+        self.assertEqual(Song.Formats.MOD, new_song.format)
+        self.assertEqual(4, new_song.channels)    
+        self.assertEqual(user.profile, new_song.uploader_profile)
+        self.assertTrue(new_song.is_by_uploader)

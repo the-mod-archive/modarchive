@@ -1,8 +1,12 @@
+import hashlib
+import json
 import re
+import subprocess
 
 from django.db import transaction
 from django.db.models import F
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.shortcuts import redirect, render
 from django.http import Http404
 from django.views.generic import DetailView, View, TemplateView, ListView, FormView
@@ -12,8 +16,9 @@ from random import choice
 from django.urls import reverse
 
 from homepage.view.common_views import PageNavigationListView
+from modarchive import file_repository
 from songs import forms
-from songs.models import ArtistComment, Song, Favorite
+from songs.models import ArtistComment, Song, Favorite, NewSong
 
 def download(request, pk):
     if request.method == 'GET':
@@ -304,11 +309,41 @@ class UploadView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         # Handle the uploaded file and the radio button value here
-        written_by_me = form.cleaned_data['written_by_me']
+        if form.cleaned_data['written_by_me'] == 'yes':
+            written_by_me = True
+        else:
+            written_by_me = False
         song_file = form.cleaned_data['song_file']
         
         # Save the uploaded file to a storage backend
-        # ...
+        if isinstance(song_file, TemporaryUploadedFile) or isinstance(song_file, InMemoryUploadedFile):
+            file_name = song_file.name
+            temp_file_path = file_repository.put_into_upload_processing(song_file)
+
+            # Execute modinfo on the file to gather metadata
+            modinfo_command = ['modinfo', '--json', temp_file_path]
+            modinfo_output = subprocess.check_output(modinfo_command)
+            modinfo = json.loads(modinfo_output)
+
+            # Create a NewSong object for the uploaded song
+            NewSong.objects.create(
+                filename=file_name,
+                title=modinfo.get('name', 'untitled'),
+                format=getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None),
+                file_size=song_file.size,
+                channels=int(modinfo.get('channels', '')),
+                instrument_text=modinfo.get('instruments', ''),
+                comment_text=modinfo.get('comment', ''),
+                hash=hashlib.md5(song_file.read()).hexdigest(),
+                pattern_hash=modinfo.get('patterns', ''),
+                artist_from_file=modinfo.get('artist', ''),
+                uploader_profile=self.request.user.profile,
+                uploader_ip_address=self.request.META.get('REMOTE_ADDR'),
+                is_by_uploader=written_by_me
+            )
+
+            file_repository.move_into_new_songs(file_name, temp_file_path)
+
         return super().form_valid(form)
     
 class UploadReportView(LoginRequiredMixin, TemplateView):
