@@ -1,4 +1,6 @@
 import os
+import tempfile
+import zipfile
 
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -1082,6 +1084,8 @@ class BrowseSongsByRatingTest(TestCase):
 
 class UploadFormTests(TestCase):
     test_mod_filename = 'test1.mod'
+    test_it_filename = 'test2.it'
+    test_s3m_filename = 'test3.s3m'
 
     def setUp(self):
         self.temp_upload_dir = settings.TEMP_UPLOAD_DIR
@@ -1143,3 +1147,54 @@ class UploadFormTests(TestCase):
         self.assertEqual(4, new_song.channels)    
         self.assertEqual(user.profile, new_song.uploader_profile)
         self.assertTrue(new_song.is_by_uploader)
+
+    def test_upload_multiple_songs(self):
+        # Arrange
+        user = factories.UserFactory()
+        self.client.force_login(user)
+
+        mod_path = os.path.join(os.path.dirname(__file__), 'testdata', self.test_mod_filename)
+        it_path = os.path.join(os.path.dirname(__file__), 'testdata', self.test_it_filename)
+        s3m_path = os.path.join(os.path.dirname(__file__), 'testdata', self.test_s3m_filename)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            zip_file_path = os.path.join(temp_dir, 'test.zip')
+
+            with zipfile.ZipFile(zip_file_path, 'w') as zip_file:
+                zip_file.write(mod_path, arcname=self.test_mod_filename)
+                zip_file.write(it_path, arcname=self.test_it_filename)
+                zip_file.write(s3m_path, arcname=self.test_s3m_filename)
+
+            # Act
+            with open(zip_file_path, 'rb') as f:
+                response = self.client.post(reverse('upload_songs'), {'written_by_me': 'no', 'song_file': f})
+
+            # Assert
+            self.assertRedirects(response, reverse('upload_report'))
+
+            # Files are found in the new file dir and are not in temp_upload_dir
+            self.assertTrue(os.path.exists(os.path.join(self.new_file_dir, self.test_mod_filename)))
+            self.assertTrue(os.path.exists(os.path.join(self.new_file_dir, self.test_it_filename)))
+            self.assertTrue(os.path.exists(os.path.join(self.new_file_dir, self.test_s3m_filename)))
+            self.assertEqual(len(os.listdir(self.temp_upload_dir)), 0)
+
+            test_mod = NewSong.objects.get(filename=self.test_mod_filename)
+            self.assertEqual('Test Song', test_mod.title)
+            self.assertEqual(Song.Formats.MOD, test_mod.format)
+            self.assertEqual(4, test_mod.channels)    
+            self.assertEqual(user.profile, test_mod.uploader_profile)
+            self.assertFalse(test_mod.is_by_uploader)
+
+            test_it = NewSong.objects.get(filename=self.test_it_filename)
+            self.assertEqual('Test IT', test_it.title)
+            self.assertEqual(Song.Formats.IT, test_it.format)
+            self.assertEqual(32, test_it.channels)    
+            self.assertEqual(user.profile, test_it.uploader_profile)
+            self.assertFalse(test_it.is_by_uploader)
+
+            test_s3m = NewSong.objects.get(filename=self.test_s3m_filename)
+            self.assertEqual('Test S3M', test_s3m.title)
+            self.assertEqual(Song.Formats.S3M, test_s3m.format)
+            self.assertEqual(16, test_s3m.channels)    
+            self.assertEqual(user.profile, test_s3m.uploader_profile)
+            self.assertFalse(test_s3m.is_by_uploader)

@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import re
 import subprocess
 
@@ -318,31 +319,40 @@ class UploadView(LoginRequiredMixin, FormView):
         # Save the uploaded file to a storage backend
         if isinstance(song_file, TemporaryUploadedFile) or isinstance(song_file, InMemoryUploadedFile):
             file_name = song_file.name
-            temp_file_path = file_repository.put_into_upload_processing(song_file)
+            upload_processor = file_repository.UploadProcessor(song_file)
 
-            # Execute modinfo on the file to gather metadata
-            modinfo_command = ['modinfo', '--json', temp_file_path]
-            modinfo_output = subprocess.check_output(modinfo_command)
-            modinfo = json.loads(modinfo_output)
+            for file in upload_processor.get_files():
+                file_name = os.path.basename(file)
 
-            # Create a NewSong object for the uploaded song
-            NewSong.objects.create(
-                filename=file_name,
-                title=modinfo.get('name', 'untitled'),
-                format=getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None),
-                file_size=song_file.size,
-                channels=int(modinfo.get('channels', '')),
-                instrument_text=modinfo.get('instruments', ''),
-                comment_text=modinfo.get('comment', ''),
-                hash=hashlib.md5(song_file.read()).hexdigest(),
-                pattern_hash=modinfo.get('patterns', ''),
-                artist_from_file=modinfo.get('artist', ''),
-                uploader_profile=self.request.user.profile,
-                uploader_ip_address=self.request.META.get('REMOTE_ADDR'),
-                is_by_uploader=written_by_me
-            )
+                # Execute modinfo on the file to gather metadata
+                modinfo_command = ['modinfo', '--json', file]
+                modinfo_output = subprocess.check_output(modinfo_command)
+                modinfo = json.loads(modinfo_output)
 
-            file_repository.move_into_new_songs(file_name, temp_file_path)
+                file_size = os.path.getsize(file)
+                with open(file, 'rb') as f:
+                    md5hash = hashlib.md5(f.read()).hexdigest()
+
+                # Create a NewSong object for the uploaded song
+                NewSong.objects.create(
+                    filename=file_name,
+                    title=modinfo.get('name', 'untitled'),
+                    format=getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None),
+                    file_size=file_size,
+                    channels=int(modinfo.get('channels', '')),
+                    instrument_text=modinfo.get('instruments', ''),
+                    comment_text=modinfo.get('comment', ''),
+                    hash=md5hash,
+                    pattern_hash=modinfo.get('patterns', ''),
+                    artist_from_file=modinfo.get('artist', ''),
+                    uploader_profile=self.request.user.profile,
+                    uploader_ip_address=self.request.META.get('REMOTE_ADDR'),
+                    is_by_uploader=written_by_me
+                )
+
+                upload_processor.move_into_new_songs(file)
+
+            upload_processor.remove_processing_directory()
 
         return super().form_valid(form)
     
