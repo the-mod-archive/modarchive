@@ -306,7 +306,6 @@ class BrowseSongsByRatingView(PageNavigationListView):
 class UploadView(LoginRequiredMixin, FormView):
     template_name="upload.html"
     form_class = forms.UploadForm
-    success_url = 'upload_report'
 
     def form_valid(self, form):
         # Handle the uploaded file and the radio button value here
@@ -320,6 +319,7 @@ class UploadView(LoginRequiredMixin, FormView):
         if isinstance(song_file, TemporaryUploadedFile) or isinstance(song_file, InMemoryUploadedFile):
             file_name = song_file.name
             upload_processor = file_repository.UploadProcessor(song_file)
+            successful_files = []
 
             for file in upload_processor.get_files():
                 file_name = os.path.basename(file)
@@ -333,11 +333,14 @@ class UploadView(LoginRequiredMixin, FormView):
                 with open(file, 'rb') as f:
                     md5hash = hashlib.md5(f.read()).hexdigest()
 
+                title = modinfo.get('name', 'untitled')
+                format = getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None)
+
                 # Create a NewSong object for the uploaded song
                 NewSong.objects.create(
                     filename=file_name,
-                    title=modinfo.get('name', 'untitled'),
-                    format=getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None),
+                    title=title,
+                    format=format,
                     file_size=file_size,
                     channels=int(modinfo.get('channels', '')),
                     instrument_text=modinfo.get('instruments', ''),
@@ -352,9 +355,22 @@ class UploadView(LoginRequiredMixin, FormView):
 
                 upload_processor.move_into_new_songs(file)
 
+                successful_files.append({
+                    'filename': file_name,
+                    'title': title,
+                    'format': format,
+                })
+
             upload_processor.remove_processing_directory()
 
-        return super().form_valid(form)
-    
+        context = self.get_context_data(successful_files=successful_files)
+        return self.render_to_response(context)
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if 'successful_files' in kwargs:
+            context['successful_files'] = kwargs['successful_files']
+        return context
+
 class UploadReportView(LoginRequiredMixin, TemplateView):
     template_name="upload_report.html"

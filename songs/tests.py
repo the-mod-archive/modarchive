@@ -1120,7 +1120,7 @@ class UploadFormTests(TestCase):
         self.assertEquals(200, response.status_code)
         self.assertTemplateUsed(response, "upload.html")
 
-    def test_upload_single_song_puts_it_into_new_files_directory(self):
+    def test_upload_single_song(self):
         # Arrange
         user = factories.UserFactory()
         file_path = os.path.join(os.path.dirname(__file__), 'testdata', self.test_mod_filename)
@@ -1138,7 +1138,6 @@ class UploadFormTests(TestCase):
         })
 
         # Assert
-        self.assertRedirects(response, reverse('upload_report'))
         self.assertTrue(os.path.isfile(os.path.join(self.new_file_dir, self.test_mod_filename)))
         self.assertEqual(os.listdir(self.temp_upload_dir), [])
         new_song = NewSong.objects.get(filename=self.test_mod_filename)
@@ -1147,6 +1146,14 @@ class UploadFormTests(TestCase):
         self.assertEqual(4, new_song.channels)    
         self.assertEqual(user.profile, new_song.uploader_profile)
         self.assertTrue(new_song.is_by_uploader)
+
+        self.assertIn('successful_files', response.context)
+        successful_files = response.context['successful_files']
+        self.assertEqual(len(successful_files), 1)
+        successful_file = successful_files[0]
+        self.assertEqual(successful_file['filename'], self.test_mod_filename)
+        self.assertEqual(successful_file['title'], 'Test Song')
+        self.assertEqual(successful_file['format'], Song.Formats.MOD.name)
 
     def test_upload_multiple_songs(self):
         # Arrange
@@ -1170,8 +1177,6 @@ class UploadFormTests(TestCase):
                 response = self.client.post(reverse('upload_songs'), {'written_by_me': 'no', 'song_file': f})
 
             # Assert
-            self.assertRedirects(response, reverse('upload_report'))
-
             # Files are found in the new file dir and are not in temp_upload_dir
             self.assertTrue(os.path.exists(os.path.join(self.new_file_dir, self.test_mod_filename)))
             self.assertTrue(os.path.exists(os.path.join(self.new_file_dir, self.test_it_filename)))
@@ -1198,3 +1203,22 @@ class UploadFormTests(TestCase):
             self.assertEqual(16, test_s3m.channels)    
             self.assertEqual(user.profile, test_s3m.uploader_profile)
             self.assertFalse(test_s3m.is_by_uploader)
+
+            self.assertIn('successful_files', response.context)
+            successful_files = response.context['successful_files']
+            self.assertEqual(len(successful_files), 3)
+            
+            successful_file = successful_files[0]
+            self.assertEqual(successful_file['filename'], self.test_mod_filename)
+            self.assertEqual(successful_file['title'], 'Test Song')
+            self.assertEqual(successful_file['format'], Song.Formats.MOD.name)
+
+            successful_file = successful_files[1]
+            self.assertEqual(successful_file['filename'], self.test_it_filename)
+            self.assertEqual(successful_file['title'], 'Test IT')
+            self.assertEqual(successful_file['format'], Song.Formats.IT.name)
+
+            successful_file = successful_files[2]
+            self.assertEqual(successful_file['filename'], self.test_s3m_filename)
+            self.assertEqual(successful_file['title'], 'Test S3M')
+            self.assertEqual(successful_file['format'], Song.Formats.S3M.name)
