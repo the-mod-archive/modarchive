@@ -1255,3 +1255,36 @@ class UploadFormTests(TestCase):
         failed_file = failed_files[0]
         self.assertEqual(failed_file['filename'], self.test_mod_filename)
         self.assertEqual(failed_file['reason'], 'An identical song was already found in the upload processing queue.')
+
+    def test_reject_files_already_in_archive(self):
+        # Arrange
+        user = factories.UserFactory()
+        file_path = os.path.join(os.path.dirname(__file__), 'testdata', self.test_mod_filename)
+
+        song_factories.SongFactory(hash='47c9d81e6c4966913e068a84b1b340f6')
+
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+        uploaded_file = SimpleUploadedFile(self.test_mod_filename, file_data, content_type='application/octet-stream')
+
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.post(reverse('upload_songs'), {
+            'written_by_me': 'yes',
+            'song_file': uploaded_file
+        })
+
+        # Assert
+        self.assertFalse(os.path.isfile(os.path.join(self.new_file_dir, self.test_mod_filename)))
+        
+        self.assertIn('successful_files', response.context)
+        successful_files = response.context['successful_files']
+        self.assertEqual(len(successful_files), 0)
+
+        self.assertIn('failed_files', response.context)
+        failed_files = response.context['failed_files']
+        self.assertEqual(len(failed_files), 1)
+        failed_file = failed_files[0]
+        self.assertEqual(failed_file['filename'], self.test_mod_filename)
+        self.assertEqual(failed_file['reason'], 'An identical song was already found in the archive.')

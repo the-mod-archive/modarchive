@@ -337,6 +337,12 @@ class UploadView(LoginRequiredMixin, FormView):
                 title = modinfo.get('name', 'untitled')
                 format = getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None)
 
+                # Ensure that the song is not already in the archive
+                songs_in_archive = Song.objects.filter(hash=md5hash)
+                if songs_in_archive.count() > 0:
+                    failed_files.append({'filename': file_name, 'reason': 'An identical song was already found in the archive.'})
+                    continue
+
                 # Ensure that the song is not already in the processing queue
                 songs_in_processing_count = NewSong.objects.filter(hash=md5hash).count()
 
