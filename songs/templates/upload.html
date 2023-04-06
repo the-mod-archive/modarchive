@@ -7,8 +7,6 @@
 
 {% block content %}
 
-<div class="fs-2">Upload songs</div>
-
 {% if successful_files %}
     <div class="fs-3 text-success">Success</div>
 
@@ -32,25 +30,53 @@
         {% endfor %}
         </tbody>
     </table>
+    
+    <hr>
+{% endif %}
 
-    <p><a href="{% url 'upload_songs' %}">Upload more songs</a></p>
-{% else %}
-    <p>
-        Uploading is simple enough, just browse and select the module from your hard disk. Alternatively, multiple files in a zipped archive is also supported. You can also upload individually zipped modules one at a time.
-    </p>
+{% if failed_files %}
+    <div class="fs-3 text-danger">Failures</div>
 
-    <p>
-        There is a maximum file size limit on uploads, so please ensure that your file is no larger than 15mb for a single module (standalone-upload) or 25mb for a multi-upload ZIP file. Are you really sure you want to upload a 15MB module file? Unless it is an EXCEEDINGLY GOOD track, large modules that are larger than an MP3 render of the same length will probably not be considered for archiving.
-    </p>
+    <p>The following uploads were not processed successfully. Please review the reason before attempting to upload again.</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+            <th scope="col">Filename</th>
+            <th scope="col">Reason</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for file in failed_files %}
+            <tr>
+                <td>{{file.filename}}</td>
+                <td>{{file.reason}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     <hr>
-
-    <div>  
-        <form action="{% url 'upload_songs' %}" method="post" enctype="multipart/form-data" novalidate>    
-            {% csrf_token %}
-            {{ form|crispy }}
-            <input type="submit" class='btn btn-primary mt-2' value="Upload">
-        </form>
-    </div>
 {% endif %}
+
+<div class="fs-2">Upload songs</div>
+
+<p>
+    Uploading is simple enough, just browse and select the module from your hard disk. Alternatively, multiple files in a zipped archive is also supported. You can also upload individually zipped modules one at a time.
+</p>
+
+<p>
+    There is a maximum file size limit on uploads, so please ensure that your file is no larger than 15mb for a single module (standalone-upload) or 25mb for a multi-upload ZIP file. Are you really sure you want to upload a 15MB module file? Unless it is an EXCEEDINGLY GOOD track, large modules that are larger than an MP3 render of the same length will probably not be considered for archiving.
+</p>
+
+<hr>
+
+<div>  
+    <form action="{% url 'upload_songs' %}" method="post" enctype="multipart/form-data" novalidate>    
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class='btn btn-primary mt-2' value="Upload">
+    </form>
+</div>
+
 {% endblock %}

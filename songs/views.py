@@ -320,6 +320,7 @@ class UploadView(LoginRequiredMixin, FormView):
             file_name = song_file.name
             upload_processor = file_repository.UploadProcessor(song_file)
             successful_files = []
+            failed_files = []
 
             for file in upload_processor.get_files():
                 file_name = os.path.basename(file)
@@ -335,6 +336,13 @@ class UploadView(LoginRequiredMixin, FormView):
 
                 title = modinfo.get('name', 'untitled')
                 format = getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None)
+
+                # Ensure that the song is not already in the processing queue
+                songs_in_processing_count = NewSong.objects.filter(hash=md5hash).count()
+
+                if songs_in_processing_count > 0:
+                    failed_files.append({'filename': file_name, 'reason': 'An identical song was already found in the upload processing queue.'})
+                    continue
 
                 # Create a NewSong object for the uploaded song
                 NewSong.objects.create(
@@ -363,13 +371,15 @@ class UploadView(LoginRequiredMixin, FormView):
 
             upload_processor.remove_processing_directory()
 
-        context = self.get_context_data(successful_files=successful_files)
+        context = self.get_context_data(successful_files=successful_files, failed_files=failed_files)
         return self.render_to_response(context)
         
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if 'successful_files' in kwargs:
             context['successful_files'] = kwargs['successful_files']
+        if 'failed_files' in kwargs:
+            context['failed_files'] = kwargs['failed_files']
         return context
 
 class UploadReportView(LoginRequiredMixin, TemplateView):
