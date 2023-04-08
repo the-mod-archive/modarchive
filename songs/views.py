@@ -6,6 +6,7 @@ import subprocess
 
 from django.db import transaction
 from django.db.models import F
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.shortcuts import redirect, render
@@ -322,58 +323,10 @@ class UploadView(LoginRequiredMixin, FormView):
             successful_files = []
             failed_files = []
 
-            for file in upload_processor.get_files():
-                file_name = os.path.basename(file)
-
-                # Execute modinfo on the file to gather metadata
-                modinfo_command = ['modinfo', '--json', file]
-                modinfo_output = subprocess.check_output(modinfo_command)
-                modinfo = json.loads(modinfo_output)
-
-                file_size = os.path.getsize(file)
-                with open(file, 'rb') as f:
-                    md5hash = hashlib.md5(f.read()).hexdigest()
-
-                title = modinfo.get('name', 'untitled')
-                format = getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None)
-
-                # Ensure that the song is not already in the archive
-                songs_in_archive = Song.objects.filter(hash=md5hash)
-                if songs_in_archive.count() > 0:
-                    failed_files.append({'filename': file_name, 'reason': 'An identical song was already found in the archive.'})
-                    continue
-
-                # Ensure that the song is not already in the processing queue
-                songs_in_processing_count = NewSong.objects.filter(hash=md5hash).count()
-
-                if songs_in_processing_count > 0:
-                    failed_files.append({'filename': file_name, 'reason': 'An identical song was already found in the upload processing queue.'})
-                    continue
-
-                # Create a NewSong object for the uploaded song
-                NewSong.objects.create(
-                    filename=file_name,
-                    title=title,
-                    format=format,
-                    file_size=file_size,
-                    channels=int(modinfo.get('channels', '')),
-                    instrument_text=modinfo.get('instruments', ''),
-                    comment_text=modinfo.get('comment', ''),
-                    hash=md5hash,
-                    pattern_hash=modinfo.get('patterns', ''),
-                    artist_from_file=modinfo.get('artist', ''),
-                    uploader_profile=self.request.user.profile,
-                    uploader_ip_address=self.request.META.get('REMOTE_ADDR'),
-                    is_by_uploader=written_by_me
-                )
-
-                upload_processor.move_into_new_songs(file)
-
-                successful_files.append({
-                    'filename': file_name,
-                    'title': title,
-                    'format': format,
-                })
+            if (song_file.size > settings.MAXIMUM_UPLOAD_SIZE):
+                failed_files.append({'filename': file_name, 'reason': f'The file was above the maximum allowed size of {settings.MAXIMUM_UPLOAD_SIZE} bytes.'})
+            else:
+                self.process_files(upload_processor, failed_files, successful_files, written_by_me)
 
             upload_processor.remove_processing_directory()
 
@@ -387,6 +340,60 @@ class UploadView(LoginRequiredMixin, FormView):
         if 'failed_files' in kwargs:
             context['failed_files'] = kwargs['failed_files']
         return context
+    
+    def process_files(self, upload_processor, failed_files, successful_files, written_by_me):
+        for file in upload_processor.get_files():
+            file_name = os.path.basename(file)
+
+            # Execute modinfo on the file to gather metadata
+            modinfo_command = ['modinfo', '--json', file]
+            modinfo_output = subprocess.check_output(modinfo_command)
+            modinfo = json.loads(modinfo_output)
+
+            file_size = os.path.getsize(file)
+            with open(file, 'rb') as f:
+                md5hash = hashlib.md5(f.read()).hexdigest()
+
+            title = modinfo.get('name', 'untitled')
+            format = getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None)
+
+            # Ensure that the song is not already in the archive
+            songs_in_archive = Song.objects.filter(hash=md5hash)
+            if songs_in_archive.count() > 0:
+                failed_files.append({'filename': file_name, 'reason': 'An identical song was already found in the archive.'})
+                continue
+
+            # Ensure that the song is not already in the processing queue
+            songs_in_processing_count = NewSong.objects.filter(hash=md5hash).count()
+
+            if songs_in_processing_count > 0:
+                failed_files.append({'filename': file_name, 'reason': 'An identical song was already found in the upload processing queue.'})
+                continue
+
+            # Create a NewSong object for the uploaded song
+            NewSong.objects.create(
+                filename=file_name,
+                title=title,
+                format=format,
+                file_size=file_size,
+                channels=int(modinfo.get('channels', '')),
+                instrument_text=modinfo.get('instruments', ''),
+                comment_text=modinfo.get('comment', ''),
+                hash=md5hash,
+                pattern_hash=modinfo.get('patterns', ''),
+                artist_from_file=modinfo.get('artist', ''),
+                uploader_profile=self.request.user.profile,
+                uploader_ip_address=self.request.META.get('REMOTE_ADDR'),
+                is_by_uploader=written_by_me
+            )
+
+            upload_processor.move_into_new_songs(file)
+
+            successful_files.append({
+                'filename': file_name,
+                'title': title,
+                'format': format,
+            })
 
 class UploadReportView(LoginRequiredMixin, TemplateView):
     template_name="upload_report.html"
