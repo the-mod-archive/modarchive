@@ -33,10 +33,17 @@ class UploadProcessor:
         
     def move_into_new_songs(self, file):
         """
-        Accepts a filename and moves the file from the processing directory to the new files directory
+        Accepts a file and zips and moves the file from the processing directory to the new files directory
         """
-        final_file_path = os.path.join(settings.NEW_FILE_DIR, os.path.basename(file))
-        os.rename(file, final_file_path)
+
+        # Create a zip file with the same name as the original file
+        zip_filename = os.path.join(settings.TEMP_UPLOAD_DIR, f"{os.path.basename(file)}.zip")
+        with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            zip_file.write(file, arcname=os.path.basename(file))
+
+        # Move the zip file to the new files directory
+        final_file_path = os.path.join(settings.NEW_FILE_DIR, f"{os.path.basename(file)}.zip")
+        os.rename(zip_filename, final_file_path)
 
     def remove_processing_directory(self):
         if os.path.exists(self.unique_temp_dir_path):

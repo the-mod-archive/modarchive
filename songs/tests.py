@@ -1084,8 +1084,11 @@ class BrowseSongsByRatingTest(TestCase):
 
 class UploadFormTests(TestCase):
     test_mod_filename = 'test1.mod'
+    test_mod_zip_name = 'test1.mod.zip'
     test_it_filename = 'test2.it'
+    test_it_zip_name = 'test2.it.zip'
     test_s3m_filename = 'test3.s3m'
+    test_s3m_zip_name = 'test3.s3m.zip'
 
     def setUp(self):
         self.temp_upload_dir = settings.TEMP_UPLOAD_DIR
@@ -1096,6 +1099,37 @@ class UploadFormTests(TestCase):
         for filename in os.listdir(self.new_file_dir):
             file_path = os.path.join(self.new_file_dir, filename)
             os.remove(file_path)
+            
+    def assert_zipped_file(self, new_file_dir, zipped_filename, unzipped_filename):
+        # Verify that a zip file has been added 
+        self.assertTrue(os.path.isfile(os.path.join(new_file_dir, zipped_filename)))
+
+        # Open the zip file and get the list of files inside
+        with zipfile.ZipFile(os.path.join(new_file_dir, zipped_filename), 'r') as zip_file:
+            file_list = zip_file.namelist()
+
+        # Verify that the zip file contains the original song
+        self.assertEqual(len(file_list), 1)
+        self.assertEqual(file_list[0], unzipped_filename)
+
+    def assert_song_in_database(self, filename, title, format, channels, profile, is_by_uploader):
+        new_song = NewSong.objects.get(filename=filename)
+        self.assertEqual(title, new_song.title)
+        self.assertEqual(format, new_song.format)
+        self.assertEqual(channels, new_song.channels)    
+        self.assertEqual(profile, new_song.uploader_profile)
+        self.assertEqual(is_by_uploader, new_song.is_by_uploader)
+
+    def assert_context_success(self, context, total_expected, filenames, titles, formats):
+        self.assertIn('successful_files', context)
+        successful_files = context['successful_files']
+        self.assertEqual(len(successful_files), total_expected)
+
+        for i in range(total_expected):
+            successful_file = successful_files[i]
+            self.assertEqual(successful_file['filename'], filenames[i])
+            self.assertEqual(successful_file['title'], titles[i])
+            self.assertEqual(successful_file['format'], formats[i])
 
     def test_upload_view_redirects_unauthenticated_user(self):
         # Arrange
@@ -1137,23 +1171,11 @@ class UploadFormTests(TestCase):
             'song_file': uploaded_file
         })
 
-        # Assert
-        self.assertTrue(os.path.isfile(os.path.join(self.new_file_dir, self.test_mod_filename)))
+        # Assert        
+        self.assert_zipped_file(self.new_file_dir, self.test_mod_zip_name, self.test_mod_filename)
         self.assertEqual(os.listdir(self.temp_upload_dir), [])
-        new_song = NewSong.objects.get(filename=self.test_mod_filename)
-        self.assertEqual('Test Song', new_song.title)
-        self.assertEqual(Song.Formats.MOD, new_song.format)
-        self.assertEqual(4, new_song.channels)    
-        self.assertEqual(user.profile, new_song.uploader_profile)
-        self.assertTrue(new_song.is_by_uploader)
-
-        self.assertIn('successful_files', response.context)
-        successful_files = response.context['successful_files']
-        self.assertEqual(len(successful_files), 1)
-        successful_file = successful_files[0]
-        self.assertEqual(successful_file['filename'], self.test_mod_filename)
-        self.assertEqual(successful_file['title'], 'Test Song')
-        self.assertEqual(successful_file['format'], Song.Formats.MOD.name)
+        self.assert_song_in_database(self.test_mod_filename, 'Test Song', Song.Formats.MOD, 4, user.profile, True)
+        self.assert_context_success(response.context, 1, [self.test_mod_filename], ['Test Song'], [Song.Formats.MOD])
 
     def test_upload_multiple_songs(self):
         # Arrange
@@ -1177,51 +1199,17 @@ class UploadFormTests(TestCase):
                 response = self.client.post(reverse('upload_songs'), {'written_by_me': 'no', 'song_file': f})
 
             # Assert
-            # Files are found in the new file dir and are not in temp_upload_dir
-            self.assertTrue(os.path.exists(os.path.join(self.new_file_dir, self.test_mod_filename)))
-            self.assertTrue(os.path.exists(os.path.join(self.new_file_dir, self.test_it_filename)))
-            self.assertTrue(os.path.exists(os.path.join(self.new_file_dir, self.test_s3m_filename)))
+            self.assert_zipped_file(self.new_file_dir, self.test_mod_zip_name, self.test_mod_filename)
+            self.assert_zipped_file(self.new_file_dir, self.test_it_zip_name, self.test_it_filename)
+            self.assert_zipped_file(self.new_file_dir, self.test_s3m_zip_name, self.test_s3m_filename)
+
             self.assertEqual(len(os.listdir(self.temp_upload_dir)), 0)
 
-            test_mod = NewSong.objects.get(filename=self.test_mod_filename)
-            self.assertEqual('Test Song', test_mod.title)
-            self.assertEqual(Song.Formats.MOD, test_mod.format)
-            self.assertEqual(4, test_mod.channels)    
-            self.assertEqual(user.profile, test_mod.uploader_profile)
-            self.assertFalse(test_mod.is_by_uploader)
+            self.assert_song_in_database(self.test_mod_filename, 'Test Song', Song.Formats.MOD, 4, user.profile, False)
+            self.assert_song_in_database(self.test_it_filename, 'Test IT', Song.Formats.IT, 32, user.profile, False)
+            self.assert_song_in_database(self.test_s3m_filename, 'Test S3M', Song.Formats.S3M, 16, user.profile, False)
 
-            test_it = NewSong.objects.get(filename=self.test_it_filename)
-            self.assertEqual('Test IT', test_it.title)
-            self.assertEqual(Song.Formats.IT, test_it.format)
-            self.assertEqual(32, test_it.channels)    
-            self.assertEqual(user.profile, test_it.uploader_profile)
-            self.assertFalse(test_it.is_by_uploader)
-
-            test_s3m = NewSong.objects.get(filename=self.test_s3m_filename)
-            self.assertEqual('Test S3M', test_s3m.title)
-            self.assertEqual(Song.Formats.S3M, test_s3m.format)
-            self.assertEqual(16, test_s3m.channels)    
-            self.assertEqual(user.profile, test_s3m.uploader_profile)
-            self.assertFalse(test_s3m.is_by_uploader)
-
-            self.assertIn('successful_files', response.context)
-            successful_files = response.context['successful_files']
-            self.assertEqual(len(successful_files), 3)
-            
-            successful_file = successful_files[0]
-            self.assertEqual(successful_file['filename'], self.test_mod_filename)
-            self.assertEqual(successful_file['title'], 'Test Song')
-            self.assertEqual(successful_file['format'], Song.Formats.MOD.name)
-
-            successful_file = successful_files[1]
-            self.assertEqual(successful_file['filename'], self.test_it_filename)
-            self.assertEqual(successful_file['title'], 'Test IT')
-            self.assertEqual(successful_file['format'], Song.Formats.IT.name)
-
-            successful_file = successful_files[2]
-            self.assertEqual(successful_file['filename'], self.test_s3m_filename)
-            self.assertEqual(successful_file['title'], 'Test S3M')
-            self.assertEqual(successful_file['format'], Song.Formats.S3M.name)
+            self.assert_context_success(response.context, 3, [self.test_mod_filename, self.test_it_filename, self.test_s3m_filename], ['Test Song', 'Test IT', 'Test S3M'], [Song.Formats.MOD, Song.Formats.IT, Song.Formats.S3M])
 
     def test_reject_files_already_in_screening(self):
         # Arrange
