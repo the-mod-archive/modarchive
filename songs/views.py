@@ -352,7 +352,11 @@ class UploadView(LoginRequiredMixin, FormView):
 
             # Execute modinfo on the file to gather metadata
             modinfo_command = ['modinfo', '--json', file]
-            modinfo_output = subprocess.check_output(modinfo_command)
+            try:
+                modinfo_output = subprocess.check_output(modinfo_command)
+            except subprocess.CalledProcessError as e:
+                failed_files.append({'filename': file_name, 'reason': 'Did not recognize this file as a valid mod format.'})
+                continue
             modinfo = json.loads(modinfo_output)
 
             file_size = os.path.getsize(file)

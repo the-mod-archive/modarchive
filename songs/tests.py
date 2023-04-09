@@ -1340,3 +1340,34 @@ class UploadFormTests(TestCase):
         failed_file = failed_files[0]
         self.assertEqual(failed_file['filename'], self.test_mod_filename)
         self.assertEqual(failed_file['reason'], f'The filename length was above the maximum allowed limit of {settings.MAXIMUM_UPLOAD_FILENAME_LENGTH} characters.')
+
+    def test_reject_file_when_modinfo_fails(self):
+        # Arrange
+        user = factories.UserFactory()
+        file_path = os.path.join(os.path.dirname(__file__), 'testdata', 'not_a_mod.txt')
+
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+        uploaded_file = SimpleUploadedFile('not_a_mod.txt', file_data, content_type='application/octet-stream')
+
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.post(reverse('upload_songs'), {
+            'written_by_me': 'yes',
+            'song_file': uploaded_file
+        })
+
+        # Assert
+        self.assertFalse(os.path.isfile(os.path.join(self.new_file_dir, 'not_a_mod.txt')))
+
+        self.assertIn('successful_files', response.context)
+        successful_files = response.context['successful_files']
+        self.assertEqual(len(successful_files), 0)
+
+        self.assertIn('failed_files', response.context)
+        failed_files = response.context['failed_files']
+        self.assertEqual(len(failed_files), 1)
+        failed_file = failed_files[0]
+        self.assertEqual(failed_file['filename'], 'not_a_mod.txt')
+        self.assertEqual(failed_file['reason'], f'Did not recognize this file as a valid mod format.')
