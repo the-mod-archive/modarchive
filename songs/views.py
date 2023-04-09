@@ -345,6 +345,11 @@ class UploadView(LoginRequiredMixin, FormView):
         for file in upload_processor.get_files():
             file_name = os.path.basename(file)
 
+            # Ensure the song's filename length does not exceed the limit
+            if len(file_name) > settings.MAXIMUM_UPLOAD_FILENAME_LENGTH:
+                failed_files.append({'filename': file_name, 'reason': f'The filename length was above the maximum allowed limit of {settings.MAXIMUM_UPLOAD_FILENAME_LENGTH} characters.'})
+                continue
+
             # Execute modinfo on the file to gather metadata
             modinfo_command = ['modinfo', '--json', file]
             modinfo_output = subprocess.check_output(modinfo_command)
@@ -365,7 +370,6 @@ class UploadView(LoginRequiredMixin, FormView):
 
             # Ensure that the song is not already in the processing queue
             songs_in_processing_count = NewSong.objects.filter(hash=md5hash).count()
-
             if songs_in_processing_count > 0:
                 failed_files.append({'filename': file_name, 'reason': 'An identical song was already found in the upload processing queue.'})
                 continue
