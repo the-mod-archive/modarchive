@@ -364,6 +364,16 @@ class UploadView(LoginRequiredMixin, FormView):
                 failed_files.append({'filename': file_name, 'reason': 'This format is not currently supported.'})
                 continue
 
+            # Rename the file if the extension does not match the format returned by modinfo
+            file_ext = os.path.splitext(file_name)[1].lstrip('.')
+            mod_format = modinfo.get('format', 'unknown').lower()
+            if file_ext.lower() != mod_format:
+                new_file_name = os.path.splitext(file_name)[0] + '.' + mod_format
+                new_file_path = os.path.join(os.path.dirname(file), new_file_name)
+                os.rename(file, new_file_path)
+                file_name = new_file_name
+                file = new_file_path
+
             file_size = os.path.getsize(file)
             with open(file, 'rb') as f:
                 md5hash = hashlib.md5(f.read()).hexdigest()

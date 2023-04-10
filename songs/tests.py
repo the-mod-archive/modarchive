@@ -1403,3 +1403,26 @@ class UploadFormTests(TestCase):
         failed_file = failed_files[0]
         self.assertEqual(failed_file['filename'], self.test_it_filename)
         self.assertEqual(failed_file['reason'], 'This format is not currently supported.')
+
+    def test_rename_file_extension_when_it_does_not_match_the_format(self):
+        # Arrange
+        user = factories.UserFactory()
+        file_path = os.path.join(os.path.dirname(__file__), 'testdata', self.test_mod_filename)
+
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+        uploaded_file = SimpleUploadedFile('test1.xm', file_data, content_type='application/octet-stream')
+
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.post(reverse('upload_songs'), {
+            'written_by_me': 'yes',
+            'song_file': uploaded_file
+        })
+
+        # Assert        
+        self.assert_zipped_file(self.new_file_dir, self.test_mod_zip_name, self.test_mod_filename)
+        self.assertEqual(os.listdir(self.temp_upload_dir), [])
+        self.assert_song_in_database(self.test_mod_filename, 'Test Song', Song.Formats.MOD, 4, user.profile, True)
+        self.assert_context_success(response.context, 1, [self.test_mod_filename], ['Test Song'], [Song.Formats.MOD])
