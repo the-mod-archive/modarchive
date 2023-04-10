@@ -359,6 +359,11 @@ class UploadView(LoginRequiredMixin, FormView):
                 continue
             modinfo = json.loads(modinfo_output)
 
+            # Ensure the song is not in an unsupported format
+            if modinfo.get('format', 'unknown') in settings.UNSUPPORTED_FORMATS:
+                failed_files.append({'filename': file_name, 'reason': 'This format is not currently supported.'})
+                continue
+
             file_size = os.path.getsize(file)
             with open(file, 'rb') as f:
                 md5hash = hashlib.md5(f.read()).hexdigest()
