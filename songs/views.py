@@ -429,3 +429,11 @@ class UploadView(LoginRequiredMixin, FormView):
 
 class UploadReportView(LoginRequiredMixin, TemplateView):
     template_name="upload_report.html"
+
+class PendingUploadsView(LoginRequiredMixin, ListView):
+    model = NewSong
+    template_name = 'pending_uploads.html'
+    context_object_name = 'pending_uploads'
+
+    def get_queryset(self):
+        return NewSong.objects.filter(uploader_profile=self.request.user.profile)

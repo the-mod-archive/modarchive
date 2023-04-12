@@ -1,0 +1,39 @@
+{% extends 'base_page/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {{ block.super }}: Pending uploads
+{% endblock %}
+
+{% block content %}
+<div class="fs-2">Pending uploads</div>
+
+{% if pending_uploads %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Filename</th>
+            <th scope="col">Title</th>
+            <th scope="col">Format</th>
+            <th scope="col">File Size</th>
+            <th scope="col">Upload date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for upload in pending_uploads %}
+        <tr>
+            <td>{{ upload.filename }}</td>
+            <td>{{ upload.title }}</td>
+            <td>{{ upload.format }}</td>
+            <td>{{ upload.display_file_size }}</td>
+            <td>{{ upload.create_date|date:"M d, Y" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    You have no pending uploads.
+{% endif %}
+
+
+{% endblock %}
