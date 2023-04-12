@@ -374,6 +374,15 @@ class UploadView(LoginRequiredMixin, FormView):
                 file_name = new_file_name
                 file = new_file_path
 
+            if any(char.isupper() for char in file_name) or ' ' in file_name or '__' in file_name:
+                new_file_name = file_name.lower().replace(' ', '_')
+                while '__' in new_file_name:
+                    new_file_name = new_file_name.replace('__', '_')
+                new_file_path = os.path.join(os.path.dirname(file), new_file_name)
+                os.rename(file, new_file_path)
+                file_name = new_file_name
+                file = new_file_path
+
             file_size = os.path.getsize(file)
             with open(file, 'rb') as f:
                 md5hash = hashlib.md5(f.read()).hexdigest()

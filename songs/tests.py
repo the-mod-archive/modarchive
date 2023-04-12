@@ -1426,3 +1426,26 @@ class UploadFormTests(TestCase):
         self.assertEqual(os.listdir(self.temp_upload_dir), [])
         self.assert_song_in_database(self.test_mod_filename, 'Test Song', Song.Formats.MOD, 4, user.profile, True)
         self.assert_context_success(response.context, 1, [self.test_mod_filename], ['Test Song'], [Song.Formats.MOD])
+
+    def test_rename_file_to_remove_whitespace_and_uppercase_letters(self):
+        # Arrange
+        user = factories.UserFactory()
+        file_path = os.path.join(os.path.dirname(__file__), 'testdata', self.test_mod_filename)
+
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+        uploaded_file = SimpleUploadedFile('Test  1.mod', file_data, content_type='application/octet-stream')
+
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.post(reverse('upload_songs'), {
+            'written_by_me': 'yes',
+            'song_file': uploaded_file
+        })
+
+        # Assert        
+        self.assert_zipped_file(self.new_file_dir, 'test_1.mod.zip', 'test_1.mod')
+        self.assertEqual(os.listdir(self.temp_upload_dir), [])
+        self.assert_song_in_database('test_1.mod', 'Test Song', Song.Formats.MOD, 4, user.profile, True)
+        self.assert_context_success(response.context, 1, ['test_1.mod'], ['Test Song'], [Song.Formats.MOD])
