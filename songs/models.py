@@ -255,7 +255,7 @@ class NewSong(models.Model):
     hash=models.CharField(max_length=33)
     pattern_hash=models.CharField(max_length=16, null=True, blank=True)
     artist_from_file=models.CharField(max_length=120, null=True, blank=True)
-    uploader_profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    uploader_profile = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True)
     uploader_ip_address = models.CharField(max_length=32, default='0.0.0.0')
     is_by_uploader = models.BooleanField()
     create_date=models.DateTimeField(default=timezone.now)

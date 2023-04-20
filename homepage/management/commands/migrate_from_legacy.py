@@ -8,7 +8,7 @@ from collections import defaultdict
 from homepage import legacy_models
 from homepage.models import Profile
 from artists.models import Artist
-from songs.models import Song, SongStats, ArtistComment, Favorite, Comment
+from songs.models import Song, SongStats, ArtistComment, Favorite, Comment, NewSong
 
 class Command(BaseCommand):
     help = "Migrates a legacy database table"
@@ -38,6 +38,9 @@ class Command(BaseCommand):
         if ('tma_comments' == source_table):
             with DisableSignals():
                 self.migrate_comments()
+
+        if ('files_new' == source_table):
+            self.migrate_files_new()
     
     def migrate_comments(self):
         comments = legacy_models.TmaComments.objects.using('legacy').all()
@@ -180,8 +183,8 @@ class Command(BaseCommand):
         
         song = Song.objects.create(
             legacy_id = legacy_file.id, 
-            filename = legacy_file.filename, 
-            title = legacy_file.songtitle, 
+            filename = legacy_file.filename,
+            title = legacy_file.songtitle,
             format = self.get_format(legacy_file.format),
             file_size = legacy_file.filesize,
             channels = legacy_file.channels,
@@ -484,6 +487,45 @@ class Command(BaseCommand):
                 continue
 
             new_artist = self.generate_artist(user, new_user, new_profile)
+    
+    def migrate_files_new(self):
+        # files = legacy_models.Files.objects.using('legacy').all().order_by('id')
+        files = legacy_models.FilesNew.objects.using('legacy').all().order_by('id')
+
+        total = len(files)
+        counter = 0
+        print(f"Starting migrations of {total} files from files_new.")
+
+        for file in files:
+            counter += 1
+
+            if (counter % 1000 == 0):
+                print(f"Generated {counter} out of {total} from the legacy files_new table.")
+
+            # Get the profile
+            try:
+                profile = Profile.objects.get(legacy_id=file.uploader_uid) if file.uploader_uid != 1 else None
+            except ObjectDoesNotExist:
+                print(f"Could not find a profile for user_id {file.uploader_uid} for record from files_new with id {file.id}")
+                continue
+
+            NewSong.objects.create(
+                filename=file.filename,
+                title=file.songtitle,
+                format=file.filename.split('.')[-1],
+                file_size=file.filesize,
+                channels=file.channels,
+                instrument_text=file.insttext,
+                comment_text=file.comment,
+                hash=file.hash,
+                pattern_hash=file.patternhash,
+                artist_from_file=file.artist_file,
+                uploader_profile=profile,
+                uploader_ip_address=file.uploader,
+                is_by_uploader=file.ismine,
+                create_date=file.dateuploaded
+            )
+            
 
     def generate_user(self, legacy_user):
         username = legacy_user.username
