@@ -12,3 +12,8 @@
         <div class="badge text-bg-success bg-opacity-75 mb-1">{% bs_icon 'star' size='1.0em' %}{{ song.get_stats.average_comment_score }} average rating</div>
     {% endif %}
 </div>
+{% if song.is_featured %}
+    <div class="fst-italic text-secondary">
+        This song was spotlit on {{ song.featured_date|date:"M d, Y" }}
+    </div>
+{% endif %}
