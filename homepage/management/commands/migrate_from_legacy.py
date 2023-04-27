@@ -41,6 +41,9 @@ class Command(BaseCommand):
 
         if ('files_new' == source_table):
             self.migrate_files_new()
+
+        if ('tma_nominations' == source_table):
+            self.migrate_nominations()
     
     def migrate_comments(self):
         comments = legacy_models.TmaComments.objects.using('legacy').all()
@@ -489,7 +492,6 @@ class Command(BaseCommand):
             new_artist = self.generate_artist(user, new_user, new_profile)
     
     def migrate_files_new(self):
-        # files = legacy_models.Files.objects.using('legacy').all().order_by('id')
         files = legacy_models.FilesNew.objects.using('legacy').all().order_by('id')
 
         total = len(files)
@@ -525,7 +527,40 @@ class Command(BaseCommand):
                 is_by_uploader=file.ismine,
                 create_date=file.dateuploaded
             )
-            
+
+    def migrate_nominations(self):
+        nominations = legacy_models.TmaNominations.objects.using('legacy').all().order_by('id')
+        
+        total = len(nominations)
+        counter = 0
+        print(f"Starting migrations of {total} records from tma_nominations.")
+
+        for nom in nominations:
+            counter += 1
+
+            if (counter % 1000 == 0):
+                print(f"Updated {counter} out of {total} songs with nomination info.")
+
+            # Get the record from the songs table
+            try:
+                song = Song.objects.get(hash=nom.hash)
+            except ObjectDoesNotExist:
+                print(f"Song does not exist for hash {nom.hash}")
+                continue
+            except MultipleObjectsReturned:
+                print(f"Multiple songs returned for hash {nom.hash}")
+                continue
+
+            # Get the profile
+            try:
+                profile = Profile.objects.get(legacy_id=nom.userid) if nom.userid != 1 else None
+            except ObjectDoesNotExist:
+                profile = None
+
+            song.is_featured = True
+            song.featured_date = nom.date
+            song.featured_by = profile
+            song.save()
 
     def generate_user(self, legacy_user):
         username = legacy_user.username
