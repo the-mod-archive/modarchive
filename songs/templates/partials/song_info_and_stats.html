@@ -6,10 +6,11 @@
     {% if song.genre %}
         <div class="badge text-bg-primary bg-opacity-75 me-1 mb-1">{% bs_icon 'music-note-beamed' size='1.0em' %} {{ song.get_genre_display }}</div>
     {% endif %}
-    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'download' size='1.0em' %}{{ song.get_stats.downloads }} downloads</div>
-    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'chat-left-text' size='1.0em' %}{{ song.get_stats.total_comments }} comments</div>
-    {% if song.songstats.average_comment_score > 0.0 %}
-        <div class="badge text-bg-success bg-opacity-75 mb-1">{% bs_icon 'star' size='1.0em' %}{{ song.get_stats.average_comment_score }} average rating</div>
+    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'download' size='1.0em' %}{{ stats.downloads }} downloads</div>
+    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'heart-fill' size='1.0em' %}{{ stats.total_favorites }} favorites</div>
+    <div class="badge text-bg-success bg-opacity-75 me-1 mb-1">{% bs_icon 'chat-left-text' size='1.0em' %}{{ stats.total_comments }} comments</div>
+    {% if stats.average_comment_score > 0.0 %}
+        <div class="badge text-bg-success bg-opacity-75 mb-1">{% bs_icon 'star' size='1.0em' %}{{ stats.average_comment_score }} average rating</div>
     {% endif %}
 </div>
 {% if song.is_featured %}

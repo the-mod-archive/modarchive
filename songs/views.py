@@ -9,7 +9,8 @@ from django.db.models import F
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
+
 from django.http import Http404
 from django.views.generic import DetailView, View, TemplateView, ListView, FormView
 from django.views.generic.base import ContextMixin
@@ -56,6 +57,8 @@ class SongView(DetailView):
             context['is_favorite'] = self.request.user.profile.favorite_set.filter(song_id=context['song'].id).count() > 0
             context['artist_can_comment'] = context['is_own_song'] and not context['song'].has_artist_commented(self.request.user.profile.id)
 
+        context['stats'] = context['song'].get_stats()
+
         return context
 
 class PlayerView(TemplateView):
@@ -78,12 +81,21 @@ class AddFavoriteView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         if (not self.is_own_song(self.request.user.profile, kwargs['pk']) and not self.is_already_favorite(self.request.user.profile, kwargs['pk'])):
             Favorite(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).save()
+            song = get_object_or_404(Song, pk=kwargs['pk'])
+            song_stats = song.get_stats()
+            song_stats.total_favorites = F('total_favorites') + 1
+            song_stats.save()
         return redirect('view_song', kwargs['pk'])
 
 class RemoveFavoriteView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         if (Favorite.objects.filter(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).count() > 0):
             Favorite.objects.get(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).delete()
+            song = get_object_or_404(Song, pk=kwargs['pk'])
+            song_stats = song.get_stats()
+            song_stats.total_favorites = F('total_favorites') - 1
+            song_stats.save()
+
         return redirect('view_song', kwargs['pk'])
 
 class RandomSongView(View):

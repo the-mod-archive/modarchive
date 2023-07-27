@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 from artists import factories as artist_factories
 from homepage.tests import factories
-from songs.models import ArtistComment, Favorite, Song, NewSong
+from songs.models import ArtistComment, Favorite, Song, NewSong, SongStats
 from songs.templatetags import filters
 from songs import factories as song_factories
 
@@ -581,6 +581,7 @@ class AddFavoriteTests(TestCase):
     def test_adds_favorite(self):
         song = song_factories.SongFactory()
         user = factories.UserFactory()
+        song_factories.SongStatsFactory(song=song, total_favorites=5)
         self.client.force_login(user)
         
         # Act
@@ -589,6 +590,7 @@ class AddFavoriteTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         self.assertEquals(1, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
+        self.assertEquals(6, SongStats.objects.filter(song=song)[0].total_favorites)
         
 
     def test_does_not_add_favorite_when_already_favorited(self):
@@ -635,6 +637,7 @@ class RemoveFavoriteTests(TestCase):
     def test_removes_favorite(self):
         # Arrange
         song = song_factories.SongFactory()
+        song_factories.SongStatsFactory(song=song, total_favorites=5)
         user = factories.UserFactory()
         self.client.force_login(user)
         song_factories.FavoriteFactory(profile=user.profile, song=song)
@@ -645,6 +648,7 @@ class RemoveFavoriteTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         self.assertEquals(0, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
+        self.assertEquals(4, SongStats.objects.filter(song=song)[0].total_favorites)
 
     def test_does_not_remove_favorite_when_not_favorited(self):
         # Arrange

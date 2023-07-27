@@ -207,6 +207,7 @@ class SongStats(models.Model):
     average_comment_score=models.DecimalField(default=0.0, decimal_places=1, max_digits=3)
     total_reviews=models.PositiveSmallIntegerField(default=0)
     average_review_score=models.DecimalField(default=0.0, decimal_places=1, max_digits=3)
+    total_favorites=models.PositiveIntegerField(default=0)
 
 class Comment(models.Model):
     class Ratings(models.IntegerChoices):
