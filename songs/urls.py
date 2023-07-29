@@ -17,5 +17,6 @@ urlpatterns = [
     path('browse/rating/<int:query>/', views.BrowseSongsByRatingView.as_view(), name='browse_by_rating'),
     path('upload', views.UploadView.as_view(), name='upload_songs'),
     path('upload_report', views.UploadReportView.as_view(), name='upload_report'),
-    path('pending_uploads', views.PendingUploadsView.as_view(), name='pending_uploads')
+    path('pending_uploads', views.PendingUploadsView.as_view(), name='pending_uploads'),
+    path('view_new_songs', views.NewSongListView.as_view(), name='view_new_songs')
 ]

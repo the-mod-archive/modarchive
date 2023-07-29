@@ -30,6 +30,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'upload_songs' %}">Upload Songs</a>
                     </li>
+                    {% if perms.songs.can_approve_songs %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'view_new_songs' %}">Approve Songs</a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Logged in as: {{ user.username }}

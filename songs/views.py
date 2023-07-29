@@ -14,7 +14,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.http import Http404
 from django.views.generic import DetailView, View, TemplateView, ListView, FormView
 from django.views.generic.base import ContextMixin
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from random import choice
 from django.urls import reverse
 
@@ -449,3 +449,10 @@ class PendingUploadsView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return NewSong.objects.filter(uploader_profile=self.request.user.profile)
+
+class NewSongListView(PermissionRequiredMixin, PageNavigationListView):
+    model = NewSong
+    template_name = 'new_songs_list.html'
+    context_object_name = 'new_songs'
+    permission_required = 'songs.can_approve_songs'
+    paginate_by = 40

@@ -249,6 +249,11 @@ class Favorite(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)
 
 class NewSong(models.Model):
+    class Meta:
+        permissions = (
+            ('can_approve_songs', "Can approve songs"),
+        )
+
     filename=models.CharField(max_length=120, db_index=True)
     title=models.CharField(max_length=120, db_index=True)
     format=models.CharField(max_length=6, choices=Song.Formats.choices, db_index=True)
