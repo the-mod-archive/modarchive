@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.contrib.auth.models import User
 from django.db import IntegrityError
+from django.db.models import F
 from django.db.models.signals import *
 from collections import defaultdict
 
@@ -115,6 +116,15 @@ class Command(BaseCommand):
             except IntegrityError:
                 print(f"Integrity error when trying to create a favorite for record {fave.id}, profile {profile.pk} ({profile.display_name}) and song {song.pk} ({song.get_title})")
                 continue
+
+            # Increment the number of favorites
+            try:
+                stats = song.get_stats()
+                stats.total_favorites = F('total_favorites') + 1
+                stats.save()
+            except IntegrityError:
+                print(f"Integrity error when trying to increment favorites count for record {fave.id}, profile {profile.pk} ({profile.display_name}) and song {song.pk} ({song.get_title})")
+
 
     def migrate_real_artist_mappings_table(self):
         mappings = legacy_models.TmaArtistMappingsReal.objects.using('legacy').all()

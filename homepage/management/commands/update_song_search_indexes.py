@@ -31,12 +31,16 @@ class Command(BaseCommand):
             return
         
         self.stdout.write(f'Updating {len(song_ids)} songs...')
+        counter = 0
 
         for song_id in song_ids:
             try:
+                counter += 1
+                if (counter % 1000 == 0):
+                    print(f"Updated search vectors for {counter} out of {len(song_ids)} songs.")
+
                 song = Song.objects.get(id=song_id)
                 signals.index_song(sender=Song, instance=song)
-                self.stdout.write(f'Search vector fields updated for song {song_id}')
             except Song.DoesNotExist:
                 self.stderr.write(f'Song with ID {song_id} does not exist')
                 continue
