@@ -160,7 +160,7 @@ class Song(models.Model):
 
     def get_title(self):
         title = self.clean_title if self.clean_title else self.title
-        return self.filename if not title.strip() else title
+        return self.filename if not title.strip() else title.strip()
 
     def is_own_song(self, profile_id):
         return self.artist_set.all().filter(profile_id=profile_id).exists()

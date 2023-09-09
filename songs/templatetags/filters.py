@@ -1,8 +1,11 @@
 from django import template
 from django.template.defaultfilters import stringfilter
+from django.urls import reverse
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 import re
+
+from songs.models import Song
 
 register = template.Library()
 
@@ -23,3 +26,19 @@ def hide_email_address(value):
         return address.replace("@", "_")
 
     return re.sub(r'([a-zA-Z0-9+._-]+)@([a-zA-Z0-9._-]+)\.([a-zA-Z0-9_-]+)', lambda x: modify_email_address(x.group()), value)
+
+@register.filter(name='modpage')
+def modpage(value):
+    pattern = r'\[modpage\](\d+)\[/modpage\]'
+
+    def replace_link(match):
+        song_id = match.group(1)
+        try:
+            song = Song.objects.get(id=song_id)
+            url = reverse('view_song', kwargs = {'pk': song.id})
+            return f'<a href="{url}">{song.get_title()}</a>'
+        except Song.DoesNotExist:
+            return match.group(0)  # Return the original text if song doesn't exist
+        
+    # Use regex to replace [modpage] tags with links
+    return re.sub(pattern, replace_link, value)
