@@ -76,19 +76,9 @@ class Command(BaseCommand):
 
             # Update [modpage] links
             pattern = r'\[modpage\](\d+)\[/modpage\]'
-
-            def replace_link(match):
-                legacy_id = int(match.group(1))
-                try:
-                    # Find the corresponding song with the legacy ID
-                    song = Song.objects.get(legacy_id=legacy_id)
-                    # Replace the [modpage] tag with the new song ID
-                    return f'[modpage]{song.id}[/modpage]'
-                except Song.DoesNotExist:
-                    return match.group(0)
                 
             # Use regex to replace [modpage] tags with new song IDs
-            comment_text = re.sub(pattern, replace_link, comment.comment_text)
+            comment_text = re.sub(pattern, self.replace_link, comment.comment_text)
 
             markdown_text = self.convert_bbcode_to_markdown(comment_text)
 
@@ -108,9 +98,11 @@ class Command(BaseCommand):
         # Define regular expressions for BBCode tags
         bbcode_bold = r'\[b\](.*?)\[/b\]'
         bbcode_italic = r'\[i\](.*?)\[/i\]'
+        bbcode_url = r'\[url=(.*?)\](.*?)\[/url\]'
 
         markdown_text = re.sub(bbcode_bold, r'**\1**', bbcode_text, flags=re.IGNORECASE)
-        return re.sub(bbcode_italic, r'*\1*', markdown_text, flags=re.IGNORECASE)
+        markdown_text = re.sub(bbcode_italic, r'*\1*', markdown_text, flags=re.IGNORECASE)
+        return re.sub(bbcode_url, r'[\2](\1)', markdown_text, flags=re.IGNORECASE)
 
     def migrate_favorites(self):
         favorites = legacy_models.TmaFavourites.objects.using('legacy').all()
@@ -190,15 +182,20 @@ class Command(BaseCommand):
                 artist.songs.add(song)
                 artist.save()
 
-                if artist.profile.pk == 4104 and song.id == 138010:
-                    print(f"Found an instance of that song! pk in mapping table is {mapping.pk}")
-
                 if (mapping.description):
+                    # Update [modpage] links
+                    pattern = r'\[modpage\](\d+)\[/modpage\]'
+                
+                    # Use regex to replace [modpage] tags with new song IDs
+                    artist_comment_text = re.sub(pattern, self.replace_link, mapping.description)
+
+                    markdown_text = self.convert_bbcode_to_markdown(artist_comment_text)
+
                     try:
                         ArtistComment.objects.create(
                             profile = artist.profile,
                             song = song,
-                            text = mapping.description
+                            text = markdown_text
                         )
                     except IntegrityError:
                         print(f"Integrity error on when saving artist comment for record {mapping.pk} for profile {artist.profile.id} ({artist.profile.display_name}) and song {song.id} ({song.title})")
@@ -658,6 +655,16 @@ class Command(BaseCommand):
             return "hmac$" + password
 
         return password
+    
+    def replace_link(self, match):
+        legacy_id = int(match.group(1))
+        try:
+            # Find the corresponding song with the legacy ID
+            song = Song.objects.get(legacy_id=legacy_id)
+            # Replace the [modpage] tag with the new song ID
+            return f'[modpage]{song.id}[/modpage]'
+        except Song.DoesNotExist:
+            return match.group(0)
 
 class DisableSignals(object):
     def __init__(self, disabled_signals=None):

@@ -179,6 +179,22 @@ MARKDOWNIFY = {
         "MARKDOWN_EXTENSIONS": [
             "pymdownx.tilde"
         ]
+    },
+    "artist_comment": {
+        "WHITELIST_TAGS": [
+            'em',
+            'strong',
+            'p',
+            'del',
+            'a',
+            'br'
+        ],
+        "WHITELIST_ATTRS": [
+            'href',
+        ],
+        "MARKDOWN_EXTENSIONS": [
+            "pymdownx.tilde"
+        ]
     }
 }
 
