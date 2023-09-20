@@ -107,7 +107,7 @@ class Command(BaseCommand):
         return re.sub(r'\[modpage\](\d+)\[/modpage\]', self.replace_modpage, text, flags=re.IGNORECASE)
     
     def convert_modlinks(self, text):
-        return re.sub(r'\[modlinks\](\d+)\[/modlinks\]', self.replace_modpage, text, flags=re.IGNORECASE)
+        return re.sub(r'\[modlinks\](\d+)\[/modlinks\]', self.replace_modlinks, text, flags=re.IGNORECASE)
 
     def replace_modpage(self, match):
         legacy_id = int(match.group(1))
