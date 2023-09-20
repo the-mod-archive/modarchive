@@ -1,5 +1,6 @@
 {% extends 'base_page/base.html' %}
 {% load markdownify %}
+{% load filters %}
 
 {% block title %}
     {{ block.super }}: {{profile.display_name}} profile
@@ -32,7 +33,7 @@
     <div class="tab-content mx-3 mt-2">
         <!-- Overview tab -->
         {% if profile.blurb %}
-            {{ profile.blurb|markdownify:"profile" }}
+            {{ profile.blurb|markdownify:"profile"|modpage|safe }}
         {% endif %}
     </div>
 {% endblock %}

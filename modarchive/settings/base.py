@@ -174,7 +174,13 @@ MARKDOWNIFY = {
             'strong',
             'p',
             'del',
-            'hr'
+            'hr',
+            'h3',
+            'a',
+            'br'
+        ],
+        "WHITELIST_ATTRS": [
+            'href',
         ],
         "MARKDOWN_EXTENSIONS": [
             "pymdownx.tilde"

@@ -1,5 +1,6 @@
 {% extends 'base_page/base.html' %}
 {% load markdownify %}
+{% load filters %}
 
 {% block title %}
     {{ block.super }}: {{ artist.name }} artist profile
@@ -45,7 +46,7 @@
 
 <div class="tab-content mx-3 mt-2" id="myTabContent">
     {% if artist.profile.blurb %}
-        {{ artist.profile.blurb|markdownify:"profile" }}
+        {{ artist.profile.blurb|markdownify:"profile"|modpage|safe }}
     {% endif %}
 </div>
 
