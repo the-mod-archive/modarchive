@@ -283,6 +283,8 @@ class Command(BaseCommand):
                 return Song.Formats.STM
             case 'stp':
                 return Song.Formats.STP
+            case 'stx':
+                return Song.Formats.STX
             case 'symmod':
                 return Song.Formats.SymMOD
             case 'ult':
