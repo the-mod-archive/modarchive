@@ -15,7 +15,7 @@ NEW_FILE_DIR = tempfile.mkdtemp(prefix='new_files_')
 
 DATABASES['legacy'] = {
     'ENGINE': 'django.db.backends.mysql',
-    'HOST': 'localhost',
+    'HOST': '127.0.0.1',
     'NAME': 'mods_tma',
     'USER': 'modarchive_local',
     'PASSWORD': 'password23',

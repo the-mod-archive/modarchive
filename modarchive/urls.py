@@ -21,6 +21,7 @@ urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^', include('homepage.urls')),
     path('songs/', include('songs.urls')),
+    path('api/v1/', include('api.urls')),
     path('artists/', include('artists.urls')),
     path('search/', include('search.urls')),
     path('account/sceneid/', include('sceneid.urls')),

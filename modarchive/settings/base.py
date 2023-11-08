@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_bootstrap_icons',
     "crispy_forms",
     "crispy_bootstrap5",
+    "rest_framework"
 ]
 
 MIDDLEWARE = [
@@ -165,7 +166,7 @@ MARKDOWNIFY = {
             'del'
         ],
         "MARKDOWN_EXTENSIONS": [
-            "pymdownx.tilde"
+            'pymdownx.tilde'
         ]
     },
     "profile": {
@@ -183,7 +184,7 @@ MARKDOWNIFY = {
             'href',
         ],
         "MARKDOWN_EXTENSIONS": [
-            "pymdownx.tilde"
+            'pymdownx.tilde'
         ]
     },
     "artist_comment": {
@@ -199,7 +200,7 @@ MARKDOWNIFY = {
             'href',
         ],
         "MARKDOWN_EXTENSIONS": [
-            "pymdownx.tilde"
+            'pymdownx.tilde'
         ]
     }
 }
