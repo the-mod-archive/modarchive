@@ -2,7 +2,7 @@ from rest_framework import serializers
 from songs.models import Song, SongStats
 from artists.models import Artist
 
-class ArtistSerializer(serializers.ModelSerializer):
+class LimitedArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artist
         fields = [
@@ -22,7 +22,7 @@ class SongStatsSerializer(serializers.ModelSerializer):
 
 class SongSerializer(serializers.ModelSerializer):
     stats = SongStatsSerializer(source='get_stats', read_only=True)
-    artists = ArtistSerializer(many=True, read_only=True, source='artist_set')
+    artists = LimitedArtistSerializer(many=True, read_only=True, source='artist_set')
 
     class Meta:
         model = Song
@@ -40,4 +40,32 @@ class SongSerializer(serializers.ModelSerializer):
             'genre',
             'stats',
             'artists'
+        ]
+
+class LimitedSongSerializer(serializers.ModelSerializer):
+    stats = SongStatsSerializer(source='get_stats', read_only=True)
+    
+    class Meta:
+        model = Song
+        fields = [
+            'id',
+            'title',
+            'clean_title',
+            'filename',
+            'file_size',
+            'channels',
+            'format',
+            'license',
+            'genre',
+            'stats',
+        ]
+
+class ArtistSerializer(serializers.ModelSerializer):
+    songs = LimitedSongSerializer(many=True, read_only=True)
+    class Meta:
+        model = Artist
+        fields = [
+            'id',
+            'name',
+            'songs'
         ]

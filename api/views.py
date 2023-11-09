@@ -1,9 +1,14 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 
-from songs import models
-from .serializers import SongSerializer
+from songs.models import Song
+from artists.models import Artist
+from .serializers import SongSerializer, ArtistSerializer
 
 class SongViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = models.Song.objects.all()
+    queryset = Song.objects.all()
     serializer_class = SongSerializer
+
+class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Artist.objects.all()
+    serializer_class = ArtistSerializer
