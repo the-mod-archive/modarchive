@@ -75,9 +75,9 @@ class SongModelTests(TestCase):
         song = song_factories.SongFactory(file_size = 5000)
         song_2 = song_factories.SongFactory(file_size = 259871)
         song_3 = song_factories.SongFactory(file_size = 2716816)
-        self.assertEquals("5000 bytes", song.display_file_size())
-        self.assertEquals("259.87 KB", song_2.display_file_size())
-        self.assertEquals("2.72 MB", song_3.display_file_size())
+        self.assertEqual("5000 bytes", song.display_file_size())
+        self.assertEqual("259.87 KB", song_2.display_file_size())
+        self.assertEqual("2.72 MB", song_3.display_file_size())
 
     def test_retrieves_stats_correctly(self):
         # Arrange
@@ -88,9 +88,9 @@ class SongModelTests(TestCase):
         stats = song.get_stats()
 
         # Assert
-        self.assertEquals(123, stats.downloads)
-        self.assertEquals(5, stats.total_comments)
-        self.assertEquals(8.0, stats.average_comment_score)
+        self.assertEqual(123, stats.downloads)
+        self.assertEqual(5, stats.total_comments)
+        self.assertEqual(8.0, stats.average_comment_score)
 
     def test_creates_stats_if_not_already_existing(self):
         # Arrange
@@ -100,24 +100,24 @@ class SongModelTests(TestCase):
         stats = song.get_stats()
 
         # Assert
-        self.assertEquals(0, stats.downloads)
-        self.assertEquals(0, stats.total_comments)
-        self.assertEquals(0.0, stats.average_comment_score)
+        self.assertEqual(0, stats.downloads)
+        self.assertEqual(0, stats.total_comments)
+        self.assertEqual(0.0, stats.average_comment_score)
 
 class CommentModelTests(TestCase):
     def test_song_stats_updated_correctly_after_removing_comment(self):
         song = song_factories.SongFactory()
         song_factories.SongStatsFactory(song=song)
         comment_1 = song_factories.CommentFactory(song=song, rating=10)
-        comment_2 = song_factories.CommentFactory(song=song, rating=5)
+        song_factories.CommentFactory(song=song, rating=5)
 
-        self.assertEquals(2, song.songstats.total_comments)
-        self.assertEquals(7.5, song.songstats.average_comment_score)
+        self.assertEqual(2, song.songstats.total_comments)
+        self.assertEqual(7.5, song.songstats.average_comment_score)
 
         comment_1.delete()
         
-        self.assertEquals(1, song.songstats.total_comments)
-        self.assertEquals(5.0, song.songstats.average_comment_score)
+        self.assertEqual(1, song.songstats.total_comments)
+        self.assertEqual(5.0, song.songstats.average_comment_score)
 
     def test_song_stats_updated_correctly_after_removing_final_comment(self):
         song = song_factories.SongFactory()
@@ -126,8 +126,8 @@ class CommentModelTests(TestCase):
 
         comment_1.delete()
 
-        self.assertEquals(0, song.songstats.total_comments)
-        self.assertEquals(0.0, song.songstats.average_comment_score)
+        self.assertEqual(0, song.songstats.total_comments)
+        self.assertEqual(0.0, song.songstats.average_comment_score)
 
 class SongListTests(TestCase):
     def test_song_list_view_contains_all_songs(self):
@@ -156,13 +156,13 @@ class ViewSongTests(TestCase):
 
         self.assertTrue('song' in response.context)
         song = response.context['song']
-        self.assertEquals("file2.s3m", song.filename)
-        self.assertEquals("File 2", song.get_title())
-        self.assertEquals(2, len(song.comment_set.all()))
-        self.assertEquals("This was definitely a song!", song.comment_set.all()[0].text)
-        self.assertEquals("I disagree, this was not a song.", song.comment_set.all()[1].text)
-        self.assertEquals(10, song.comment_set.all()[0].rating)
-        self.assertEquals(5, song.comment_set.all()[1].rating)
+        self.assertEqual("file2.s3m", song.filename)
+        self.assertEqual("File 2", song.get_title())
+        self.assertEqual(2, len(song.comment_set.all()))
+        self.assertEqual("This was definitely a song!", song.comment_set.all()[0].text)
+        self.assertEqual("I disagree, this was not a song.", song.comment_set.all()[1].text)
+        self.assertEqual(10, song.comment_set.all()[0].rating)
+        self.assertEqual(5, song.comment_set.all()[1].rating)
 
     def test_unauthenticated_user_cannot_comment(self):
         # Arrange
@@ -333,7 +333,7 @@ class DownloadTests(TestCase):
         song.refresh_from_db()
 
         # Assert
-        self.assertEquals(stats.downloads + 1, song.songstats.downloads)
+        self.assertEqual(stats.downloads + 1, song.songstats.downloads)
 
     def test_returns_404_if_song_id_is_missing(self):
         # Act
@@ -353,10 +353,10 @@ class AddCommentTests(TestCase):
         response = self.client.get(reverse('add_comment', kwargs={'pk': song.id}))
 
         # Assert
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, "add_comment.html")
-        self.assertEquals(song.id, response.context['song'].id)
-        self.assertEquals(song.title, response.context['song'].get_title())
+        self.assertEqual(song.id, response.context['song'].id)
+        self.assertEqual(song.title, response.context['song'].get_title())
 
     def test_post_add_comment_happy_path(self):
         # Arrange
@@ -369,7 +369,7 @@ class AddCommentTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
-        self.assertEquals(1, len(song.comment_set.all()))
+        self.assertEqual(1, len(song.comment_set.all()))
 
     def test_post_add_comment_calculates_stats_correctly(self):
         # Arrange
@@ -383,9 +383,9 @@ class AddCommentTests(TestCase):
 
         # Assert
         song.refresh_from_db()
-        self.assertEquals(1, len(song.comment_set.all()))
-        self.assertEquals(1, song.songstats.total_comments)
-        self.assertEquals(10.0, song.songstats.average_comment_score)
+        self.assertEqual(1, len(song.comment_set.all()))
+        self.assertEqual(1, song.songstats.total_comments)
+        self.assertEqual(10.0, song.songstats.average_comment_score)
 
     def test_post_add_comment_calculates_stats_correctly_with_existing_comments(self):
         # Arrange
@@ -400,9 +400,9 @@ class AddCommentTests(TestCase):
 
         # Assert
         song.refresh_from_db()
-        self.assertEquals(2, len(song.comment_set.all()))
-        self.assertEquals(2, song.songstats.total_comments)
-        self.assertEquals(7.5, song.songstats.average_comment_score)
+        self.assertEqual(2, len(song.comment_set.all()))
+        self.assertEqual(2, song.songstats.total_comments)
+        self.assertEqual(7.5, song.songstats.average_comment_score)
 
     def test_post_add_comment_calculates_stats_correctly_when_stats_object_not_created_yet(self):
         # Arrange
@@ -415,9 +415,9 @@ class AddCommentTests(TestCase):
 
         # Assert
         song.refresh_from_db()
-        self.assertEquals(1, len(song.comment_set.all()))
-        self.assertEquals(1, song.songstats.total_comments)
-        self.assertEquals(10.0, song.songstats.average_comment_score)
+        self.assertEqual(1, len(song.comment_set.all()))
+        self.assertEqual(1, song.songstats.total_comments)
+        self.assertEqual(10.0, song.songstats.average_comment_score)
 
     def test_get_user_redirected_for_own_song(self):
         # Arrange
@@ -444,7 +444,7 @@ class AddCommentTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
-        self.assertEquals(0, Song.objects.get(id=song.id).comment_set.all().count())
+        self.assertEqual(0, Song.objects.get(id=song.id).comment_set.all().count())
 
     def test_get_user_redirected_when_already_commented(self):
         # Arrange
@@ -471,7 +471,7 @@ class AddCommentTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
-        self.assertEquals(1, Song.objects.get(id=song.id).comment_set.all().count())
+        self.assertEqual(1, Song.objects.get(id=song.id).comment_set.all().count())
 
     def test_get_redirect_unauthenticated_user(self):
         # Arrange
@@ -532,7 +532,7 @@ class AddCommentTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         song.refresh_from_db()
-        self.assertEquals(Song.Genres.ELECTRONIC_GENERAL, song.genre)
+        self.assertEqual(Song.Genres.ELECTRONIC_GENERAL, song.genre)
 
     def test_post_cannot_change_genre_if_already_set_in_song(self):
         # Arrange
@@ -546,7 +546,7 @@ class AddCommentTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         song.refresh_from_db()
-        self.assertEquals(Song.Genres.ELECTRONIC_GENERAL, song.genre)
+        self.assertEqual(Song.Genres.ELECTRONIC_GENERAL, song.genre)
 
     def test_post_leaving_genre_blank_does_not_set_genre_to_blank(self):
         # Arrange
@@ -560,23 +560,23 @@ class AddCommentTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         song.refresh_from_db()
-        self.assertEquals(Song.Genres.ELECTRONIC_GENERAL, song.genre)
+        self.assertEqual(Song.Genres.ELECTRONIC_GENERAL, song.genre)
 
 class FilterTests(TestCase):
     def test_email_address_filter_masks_single_email_address(self):
         comment = "You are listening to a mod by testguy@test.com which was written in 1996"
         filtered_comment = filters.hide_email_address(comment)
-        self.assertEquals("You are listening to a mod by testguy_test.com which was written in 1996", filtered_comment)
+        self.assertEqual("You are listening to a mod by testguy_test.com which was written in 1996", filtered_comment)
 
     def test_email_address_filter_masks_multiple_email_addresses(self):
         comment = "You are listening to a mod by testguy@test.com and testguy2@test.com which was written in 1996"
         filtered_comment = filters.hide_email_address(comment)
-        self.assertEquals("You are listening to a mod by testguy_test.com and testguy2_test.com which was written in 1996", filtered_comment)
+        self.assertEqual("You are listening to a mod by testguy_test.com and testguy2_test.com which was written in 1996", filtered_comment)
 
     def test_email_address_filter_does_not_change_input_without_email_addresses(self):
         comment = "You are listening to a mod by testguy which was written in 1996"
         filtered_comment = filters.hide_email_address(comment)
-        self.assertEquals(comment, filtered_comment)
+        self.assertEqual(comment, filtered_comment)
 
 class AddFavoriteTests(TestCase):
     def test_adds_favorite(self):
@@ -590,8 +590,8 @@ class AddFavoriteTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
-        self.assertEquals(1, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
-        self.assertEquals(6, SongStats.objects.filter(song=song)[0].total_favorites)
+        self.assertEqual(1, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
+        self.assertEqual(6, SongStats.objects.filter(song=song)[0].total_favorites)
         
 
     def test_does_not_add_favorite_when_already_favorited(self):
@@ -606,7 +606,7 @@ class AddFavoriteTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
-        self.assertEquals(1, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
+        self.assertEqual(1, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
 
     def test_does_not_add_favorite_when_not_authenticated(self):
         # Arrange
@@ -619,7 +619,7 @@ class AddFavoriteTests(TestCase):
         
         # Assert
         self.assertRedirects(response, f"{login_url}?next={add_favorite_url}")
-        self.assertEquals(0, Favorite.objects.filter(song_id=song.id).count())
+        self.assertEqual(0, Favorite.objects.filter(song_id=song.id).count())
 
     def test_does_not_add_artists_own_song_as_favorite(self):
         # Arrange
@@ -632,7 +632,7 @@ class AddFavoriteTests(TestCase):
         self.client.get(reverse('add_favorite', kwargs = {'pk': song.id}))
 
         # Assert
-        self.assertEquals(0, Favorite.objects.filter(song_id=song.id).count())
+        self.assertEqual(0, Favorite.objects.filter(song_id=song.id).count())
 
 class RemoveFavoriteTests(TestCase):
     def test_removes_favorite(self):
@@ -648,8 +648,8 @@ class RemoveFavoriteTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
-        self.assertEquals(0, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
-        self.assertEquals(4, SongStats.objects.filter(song=song)[0].total_favorites)
+        self.assertEqual(0, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
+        self.assertEqual(4, SongStats.objects.filter(song=song)[0].total_favorites)
 
     def test_does_not_remove_favorite_when_not_favorited(self):
         # Arrange
@@ -662,7 +662,7 @@ class RemoveFavoriteTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
-        self.assertEquals(0, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
+        self.assertEqual(0, Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count())
 
     def test_does_not_remove_favorite_when_not_authenticated(self):
         # Arrange
@@ -677,7 +677,7 @@ class RemoveFavoriteTests(TestCase):
         
         # Assert
         self.assertRedirects(response, f"{login_url}?next={remove_favorite_url}")
-        self.assertEquals(1, Favorite.objects.filter(song_id=song.id).count())
+        self.assertEqual(1, Favorite.objects.filter(song_id=song.id).count())
 
 class RandomSongTests(TestCase):
     @patch('songs.views.choice')
@@ -735,8 +735,8 @@ class SongDetailsTests(TestCase):
         response=self.client.post(reverse('song_details', kwargs={'pk': song.id}), {'genre': Song.Genres.ELECTRONIC_GENERAL, 'clean_title': self.new_title})
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         song.refresh_from_db()
-        self.assertEquals(None, song.genre)
-        self.assertEquals(self.old_title, song.clean_title)
+        self.assertEqual(None, song.genre)
+        self.assertEqual(self.old_title, song.clean_title)
 
     def test_happy_path_updates_all_fields(self):
         # Arrange
@@ -749,16 +749,16 @@ class SongDetailsTests(TestCase):
         # GET test
         response=self.client.get(reverse('song_details', kwargs={'pk': song.id}))
         self.assertTemplateUsed(response, 'update_song_details.html')
-        self.assertEquals(song, response.context['object'])
+        self.assertEqual(song, response.context['object'])
         
         # POST test
         response=self.client.post(reverse('song_details', kwargs={'pk': song.id}), {'genre': Song.Genres.ELECTRONIC_GENERAL, 'clean_title': self.new_title, 'text': self.new_text})
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         song.refresh_from_db()
-        self.assertEquals(self.new_title, song.clean_title)
-        self.assertEquals(Song.Genres.ELECTRONIC_GENERAL, song.genre)
+        self.assertEqual(self.new_title, song.clean_title)
+        self.assertEqual(Song.Genres.ELECTRONIC_GENERAL, song.genre)
         comment.refresh_from_db()
-        self.assertEquals(self.new_text, comment.text)
+        self.assertEqual(self.new_text, comment.text)
 
     def test_adding_text_creates_new_artist_comment(self):
         # Arrange
@@ -773,10 +773,10 @@ class SongDetailsTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         song.refresh_from_db()
-        self.assertEquals(Song.Genres.ELECTRONIC_GENERAL, song.genre)
+        self.assertEqual(Song.Genres.ELECTRONIC_GENERAL, song.genre)
         self.assertIsNone(song.clean_title)
         comment = ArtistComment.objects.get(song=song, profile=user.profile)
-        self.assertEquals(self.new_text, comment.text)
+        self.assertEqual(self.new_text, comment.text)
 
     def test_removing_text_deletes_artist_comment(self):
         # Arrange
@@ -792,7 +792,7 @@ class SongDetailsTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         query_set = ArtistComment.objects.filter(song=song, profile=user.profile)
-        self.assertEquals(0, len(query_set))
+        self.assertEqual(0, len(query_set))
 
     def test_leaving_text_blank_does_not_create_new_artist_comment(self):
         # Arrange
@@ -807,7 +807,7 @@ class SongDetailsTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         query_set = ArtistComment.objects.filter(song=song, profile=user.profile)
-        self.assertEquals(0, len(query_set))
+        self.assertEqual(0, len(query_set))
 
     def test_artist_only_creates_their_own_comment_to_song(self):
         # Arrange
@@ -823,8 +823,8 @@ class SongDetailsTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
-        self.assertEquals(1, len(ArtistComment.objects.filter(song=song, profile=user.profile)))
-        self.assertEquals(0, len(ArtistComment.objects.filter(song=song, profile=user_2.profile)))
+        self.assertEqual(1, len(ArtistComment.objects.filter(song=song, profile=user.profile)))
+        self.assertEqual(0, len(ArtistComment.objects.filter(song=song, profile=user_2.profile)))
 
     def test_artist_only_modifies_their_own_comment_to_song(self):
         # Arrange
@@ -844,10 +844,10 @@ class SongDetailsTests(TestCase):
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         query_set_1 = ArtistComment.objects.filter(song=song, profile=user.profile)
         query_set_2 = ArtistComment.objects.filter(song=song, profile=user_2.profile)
-        self.assertEquals(1, len(query_set_1))
-        self.assertEquals(1, len(query_set_2))
-        self.assertEquals(self.new_text, query_set_1[0].text)
-        self.assertEquals(self.old_text, query_set_2[0].text)
+        self.assertEqual(1, len(query_set_1))
+        self.assertEqual(1, len(query_set_2))
+        self.assertEqual(self.new_text, query_set_1[0].text)
+        self.assertEqual(self.old_text, query_set_2[0].text)
 
     def test_artist_only_deletes_their_own_comment_to_song(self):
         # Arrange
@@ -867,8 +867,8 @@ class SongDetailsTests(TestCase):
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         query_set_1 = ArtistComment.objects.filter(song=song, profile=user.profile)
         query_set_2 = ArtistComment.objects.filter(song=song, profile=user_2.profile)
-        self.assertEquals(0, len(query_set_1))
-        self.assertEquals(1, len(query_set_2))
+        self.assertEqual(0, len(query_set_1))
+        self.assertEqual(1, len(query_set_2))
 
 class BrowseSongsByFilenameViewTests(TestCase):
     def setUp(self):
@@ -904,9 +904,8 @@ class BrowseSongsByFilenameViewTests(TestCase):
     def test_browse_by_filename_view_lists_correct_songs_in_order(self):
         response = self.client.get(reverse('browse_by_filename', kwargs={'query': 'f'}))
         self.assertEqual(response.status_code, 200)
-        filtered_songs = list(filter(lambda song:song.filename[0]=="F", self.songs))
-        filtered_songs.sort(key=lambda song:song.filename)
-        self.assertEqual(list(response.context_data['songs']), filtered_songs)
+        filtered_songs = Song.objects.filter(filename__istartswith='F').order_by('filename')
+        self.assertEqual(list(response.context_data['songs']), list(filtered_songs))
 
     def test_browse_by_filename_view_accepts_valid_input(self):
         for c in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_":
@@ -1156,7 +1155,7 @@ class UploadFormTests(TestCase):
         response = self.client.get(reverse('upload_songs'))
 
         # Assert
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, "upload.html")
 
     def test_upload_single_song(self):
@@ -1476,7 +1475,7 @@ class PendingUploadsViewTest(TestCase):
         response = self.client.get(reverse('pending_uploads'))
 
         # Assert
-        self.assertEquals(200, response.status_code)
+        self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, "pending_uploads.html")
 
     def test_only_retrieves_pending_uploads_for_authenticated_user(self):

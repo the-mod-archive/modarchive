@@ -3,6 +3,8 @@ from homepage import forms
 from homepage.tests import factories
 from django.contrib.auth.models import User
 
+FIELD_REQUIRED_ERROR_MESSAGE = 'This field is required.'
+
 class ForgotPasswordFormTests(TestCase):
     def test_form_without_email_address_is_invalid(self):
         # Arrange
@@ -13,7 +15,7 @@ class ForgotPasswordFormTests(TestCase):
 
         # Assert
         self.assertFalse(is_valid, 'Form should not have been valid with missing email address')
-        self.assertEquals(['This field is required.'], form.errors['email'], 'Error message for missing email address was incorrect.')
+        self.assertEqual([FIELD_REQUIRED_ERROR_MESSAGE], form.errors['email'], 'Error message for missing email address was incorrect.')
 
     def test_form_with_malformed_email_address_is_invalid(self):
         # Arrange
@@ -24,7 +26,7 @@ class ForgotPasswordFormTests(TestCase):
 
         # Assert
         self.assertFalse(is_valid, 'Form should not have been valid with malformed email address')
-        self.assertEquals(['Enter a valid email address.'], form.errors['email'], 'Error message for malformed email address was incorrect.')
+        self.assertEqual(['Enter a valid email address.'], form.errors['email'], 'Error message for malformed email address was incorrect.')
 
     def test_form_with_valid_email_address_is_valid(self):
         # Arrange
@@ -40,6 +42,7 @@ class ResetPasswordFormTests(TestCase):
     strong_password = "abc123!iz1"
     weak_password = "password"
 
+
     def setUp(self):
         self.user = factories.UserFactory(password='testpassword') 
 
@@ -49,7 +52,7 @@ class ResetPasswordFormTests(TestCase):
 
         # Assert
         self.assertTrue(form.is_valid, 'Form with strong matching passwords should have been valid.')
-        self.assertEquals(0, len(form.errors), f'Expected no errors but got { len(form.errors) }')
+        self.assertEqual(0, len(form.errors), f'Expected no errors but got { len(form.errors) }')
 
     def test_form_with_weak_matching_passwords_is_invalid(self):
         # Arrange
@@ -57,8 +60,8 @@ class ResetPasswordFormTests(TestCase):
 
         # Assert
         self.assertFalse(form.is_valid(), 'Form with weak matching passwords should not have been valid.')
-        self.assertEquals(1, len(form.errors), f'Expected 1 error but got {len(form.errors)}')
-        self.assertEquals(['This password is too common.'], form.errors['new_password2'], 'Error message for weak password was incorrect.')
+        self.assertEqual(1, len(form.errors), f'Expected 1 error but got {len(form.errors)}')
+        self.assertEqual(['This password is too common.'], form.errors['new_password2'], 'Error message for weak password was incorrect.')
 
     def test_form_missing_first_password_is_invalid(self):
         # Arrange
@@ -66,8 +69,8 @@ class ResetPasswordFormTests(TestCase):
 
         # Assert
         self.assertFalse(form.is_valid(), 'Form with missing first password should not have been valid.')
-        self.assertEquals(1, len(form.errors), f'Expected 1 error but got {len(form.errors)}')
-        self.assertEquals(['This field is required.'], form.errors['new_password1'], 'Error message for missing password field was incorrect.')
+        self.assertEqual(1, len(form.errors), f'Expected 1 error but got {len(form.errors)}')
+        self.assertEqual([FIELD_REQUIRED_ERROR_MESSAGE], form.errors['new_password1'])
 
     def test_form_missing_second_password_is_invalid(self):
         # Arrange
@@ -75,8 +78,8 @@ class ResetPasswordFormTests(TestCase):
 
         # Assert
         self.assertFalse(form.is_valid(), 'Form with missing second password should not have been valid.')
-        self.assertEquals(1, len(form.errors), f'Expected 1 error but got {len(form.errors)}')
-        self.assertEquals(['This field is required.'], form.errors['new_password2'], 'Error message for missing password field was incorrect.')
+        self.assertEqual(1, len(form.errors), f'Expected 1 error but got {len(form.errors)}')
+        self.assertEqual([FIELD_REQUIRED_ERROR_MESSAGE], form.errors['new_password2'])
 
     def test_form_missing_both_passwords_is_invalid(self):
         # Arrange
@@ -84,9 +87,9 @@ class ResetPasswordFormTests(TestCase):
 
         # Assert
         self.assertFalse(form.is_valid(), 'Form with both passwords missing should not have been valid.')
-        self.assertEquals(2, len(form.errors), f'Expected 2 errors but got {len(form.errors)}')
-        self.assertEquals(["This field is required."], form.errors['new_password1'], 'Error message for missing password field was incorrect.')
-        self.assertEquals(["This field is required."], form.errors['new_password2'], 'Error message for missing password field was incorrect.')
+        self.assertEqual(2, len(form.errors), f'Expected 2 errors but got {len(form.errors)}')
+        self.assertEqual([FIELD_REQUIRED_ERROR_MESSAGE], form.errors['new_password1'])
+        self.assertEqual([FIELD_REQUIRED_ERROR_MESSAGE], form.errors['new_password2'])
 
     def test_form_with_mismatching_passwords_is_invalid(self):
         # Arrange 
@@ -94,8 +97,8 @@ class ResetPasswordFormTests(TestCase):
 
         # Assert
         self.assertFalse(form.is_valid(), 'Form with mismatching password should not have been valid.')
-        self.assertEquals(1, len(form.errors), f'Expected 1 error but got {len(form.errors)}')
-        self.assertEquals(["The two password fields didn’t match."], form.errors['new_password2'], 'Error message for mismatching passwords was incorrect.')
+        self.assertEqual(1, len(form.errors), f'Expected 1 error but got {len(form.errors)}')
+        self.assertEqual(["The two password fields didn’t match."], form.errors['new_password2'], 'Error message for mismatching passwords was incorrect.')
 
 class RegisterUserFormTests(TestCase):
     strong_password = "abc123!iz1"
@@ -135,7 +138,7 @@ class RegisterUserFormTests(TestCase):
         user = User.objects.get(email = self.email_address)
 
         # Assert
-        self.assertEquals(self.additional_username, user.username, "Username did not match")
+        self.assertEqual(self.additional_username, user.username, "Username did not match")
         self.assertFalse(user.is_active, "New user should not be active before account activation")
 
     def test_completed_form_is_valid(self):
@@ -151,8 +154,8 @@ class RegisterUserFormTests(TestCase):
         
         # Assert
         self.assertFalse(form.is_valid(), "Form with already existing username should not be valid.")
-        self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
-        self.assertEquals(["A user with that username already exists."], form.errors['username'], "Error message for duplicate username is incorrect.")
+        self.assertEqual(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
+        self.assertEqual(["A user with that username already exists."], form.errors['username'], "Error message for duplicate username is incorrect.")
 
     def test_form_with_weak_password_is_invalid(self):
         # Arrange
@@ -160,8 +163,8 @@ class RegisterUserFormTests(TestCase):
         
         # Assert
         self.assertFalse(form.is_valid(), "Form with weak password should not be valid.")
-        self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
-        self.assertEquals(["This password is too common."], form.errors['password2'], "Error message for weak password is incorrect.")
+        self.assertEqual(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
+        self.assertEqual(["This password is too common."], form.errors['password2'], "Error message for weak password is incorrect.")
 
     def test_form_missing_username_is_invalid(self):
         # Arrange
@@ -169,8 +172,8 @@ class RegisterUserFormTests(TestCase):
         
         # Assert
         self.assertFalse(form.is_valid(), "Form without username should not be valid.")
-        self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
-        self.assertEquals(["This field is required."], form.errors['username'], "Error message for missing username is incorrect.")
+        self.assertEqual(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
+        self.assertEqual([FIELD_REQUIRED_ERROR_MESSAGE], form.errors['username'], "Error message for missing username is incorrect.")
 
     def test_form_missing_email_address_is_invalid(self):
         # Arrange
@@ -178,8 +181,8 @@ class RegisterUserFormTests(TestCase):
         
         # Assert
         self.assertFalse(form.is_valid(), "Form without email should not be valid.")
-        self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
-        self.assertEquals(["This field is required."], form.errors['email'], "Error message for missing email is incorrect.")
+        self.assertEqual(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
+        self.assertEqual([FIELD_REQUIRED_ERROR_MESSAGE], form.errors['email'], "Error message for missing email is incorrect.")
 
     def test_form_missing_password_is_invalid(self):
         # Arrange
@@ -187,9 +190,9 @@ class RegisterUserFormTests(TestCase):
         
         # Assert
         self.assertFalse(form.is_valid(), "Form without password should not be valid.")
-        self.assertEquals(2, len(form.errors), f"Expected 2 errors but got {len(form.errors)}")
-        self.assertEquals(["This field is required."], form.errors['password1'], "Error message for missing password is incorrect.")
-        self.assertEquals(["This field is required."], form.errors['password2'], "Error message for missing password is incorrect.")
+        self.assertEqual(2, len(form.errors), f"Expected 2 errors but got {len(form.errors)}")
+        self.assertEqual([FIELD_REQUIRED_ERROR_MESSAGE], form.errors['password1'], "Error message for missing password is incorrect.")
+        self.assertEqual([FIELD_REQUIRED_ERROR_MESSAGE], form.errors['password2'], "Error message for missing password is incorrect.")
 
     def test_form_with_mismatching_passwords_is_invalid(self):
         # Arrange
@@ -197,8 +200,8 @@ class RegisterUserFormTests(TestCase):
         
         # Assert
         self.assertFalse(form.is_valid(), "Form with mismatching passwords should not be valid.")
-        self.assertEquals(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
-        self.assertEquals(["The two password fields didn’t match."], form.errors['password2'], "Error message for mismatching passwords is incorrect.")
+        self.assertEqual(1, len(form.errors), f"Expected 1 error but got {len(form.errors)}")
+        self.assertEqual(["The two password fields didn’t match."], form.errors['password2'], "Error message for mismatching passwords is incorrect.")
 
 class UpdateProfileFormTests(TestCase):
     def test_form_with_empty_blurb_is_valid(self):

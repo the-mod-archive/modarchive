@@ -322,7 +322,7 @@ class ProfileViewTests(TestCase):
         self.assertTrue('profile' in response.context)
 
         profile = response.context['profile']
-        self.assertEquals('Arcturus', profile.display_name)
+        self.assertEqual('Arcturus', profile.display_name)
 
     def test_profile_page_responds_with_404_when_profile_does_not_exist(self):
         # Act
@@ -364,7 +364,7 @@ class UpdateProfileViewTests(TestCase):
         # Assert
         self.assertTemplateUsed(response, 'update_profile.html')
         self.assertTrue('profile' in response.context)
-        self.assertEquals(user.profile.display_name, response.context['profile'].display_name)
+        self.assertEqual(user.profile.display_name, response.context['profile'].display_name)
 
     def test_post_update_profile_redirects_unauthenticated_user(self):  
         # Arrange
@@ -399,6 +399,6 @@ class FrontPageViewTests(TestCase):
         response = self.client.get(reverse('home'))
 
         # Assert
-        self.assertEquals(5, len(response.context['latest_news']))
-        self.assertEquals("This is headline 6", response.context['latest_news'][0].headline)
-        self.assertEquals("This is headline 2", response.context['latest_news'][4].headline)
+        self.assertEqual(5, len(response.context['latest_news']))
+        self.assertEqual("This is headline 6", response.context['latest_news'][0].headline)
+        self.assertEqual("This is headline 2", response.context['latest_news'][4].headline)

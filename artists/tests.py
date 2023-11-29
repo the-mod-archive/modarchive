@@ -9,7 +9,7 @@ class ArtistViewTests(TestCase):
     def test_artist_list_view_contains_all_artists(self):
         # Arrange
         expected_length = 15
-        for x in range(expected_length):
+        for _ in range(expected_length):
             factories.ArtistFactory()
         
         # Act
@@ -32,8 +32,8 @@ class ArtistViewTests(TestCase):
         self.assertTrue('artist' in response.context)
 
         artist = response.context['artist']
-        self.assertEquals('Arcturus', artist.name)
-        self.assertEquals(69117, artist.legacy_id)
+        self.assertEqual('Arcturus', artist.name)
+        self.assertEqual(69117, artist.legacy_id)
 
     def test_artist_songs_view_contains_specific_artist(self):
         # Arrange
@@ -47,8 +47,8 @@ class ArtistViewTests(TestCase):
         self.assertTrue('artist' in response.context)
 
         artist = response.context['artist']
-        self.assertEquals('Arcturus', artist.name)
-        self.assertEquals(69117, artist.legacy_id)
+        self.assertEqual('Arcturus', artist.name)
+        self.assertEqual(69117, artist.legacy_id)
 
     def test_artist_comments_view_contains_specific_artist(self):
         # Arrange
@@ -63,8 +63,8 @@ class ArtistViewTests(TestCase):
         self.assertTrue('artist' in response.context)
 
         artist = response.context['artist']
-        self.assertEquals('Arcturus', artist.name)
-        self.assertEquals(69117, artist.legacy_id)
+        self.assertEqual('Arcturus', artist.name)
+        self.assertEqual(69117, artist.legacy_id)
 
     def test_artist_favorites_view_contains_specific_artist(self):
         # Arrange
@@ -79,15 +79,13 @@ class ArtistViewTests(TestCase):
         self.assertTrue('artist' in response.context)
 
         artist = response.context['artist']
-        self.assertEquals('Arcturus', artist.name)
-        self.assertEquals(69117, artist.legacy_id)
+        self.assertEqual('Arcturus', artist.name)
+        self.assertEqual(69117, artist.legacy_id)
 
 class ArtistSongViewTests(TestCase):
     def test_artist_song_view_contains_songs(self):
         # Arrange
-        songs = []
-        for x in range(10):
-            songs.append(song_factories.SongFactory())
+        songs = [song_factories.SongFactory() for _ in range(10)]
         
         artist = factories.ArtistFactory(name='Arcturus', songs=songs)
 
@@ -95,13 +93,11 @@ class ArtistSongViewTests(TestCase):
         response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.pk}))
 
         # Assert
-        self.assertEquals(10, len(response.context['songs']))
+        self.assertEqual(10, len(response.context['songs']))
 
     def test_artist_song_view_contains_first_page_of_songs(self):
         # Arrange
-        songs = []
-        for x in range(30):
-            songs.append(song_factories.SongFactory())
+        songs = [song_factories.SongFactory() for _ in range(30)]
         
         artist = factories.ArtistFactory(name='Arcturus', songs=songs)
 
@@ -109,13 +105,11 @@ class ArtistSongViewTests(TestCase):
         response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.pk}))
 
         # Assert
-        self.assertEquals(25, len(response.context['songs']))
+        self.assertEqual(25, len(response.context['songs']))
 
     def test_artist_song_view_contains_second_page_of_songs(self):
         # Arrange
-        songs = []
-        for x in range(30):
-            songs.append(song_factories.SongFactory())
+        songs = [song_factories.SongFactory() for _ in range(30)]
         
         artist = factories.ArtistFactory(name='Arcturus', songs=songs)
 
@@ -123,4 +117,4 @@ class ArtistSongViewTests(TestCase):
         response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.pk}) + "?page=2")
 
         # Assert
-        self.assertEquals(5, len(response.context['songs']))
+        self.assertEqual(5, len(response.context['songs']))
