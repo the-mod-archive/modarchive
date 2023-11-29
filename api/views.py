@@ -30,11 +30,26 @@ class SongSearchAPIView(generics.ListAPIView):
         query = self.request.query_params.get('query')
         if not query:
             raise ValidationError("The 'query' parameter is required.")
+
+        file_format = self.request.query_params.get('file_format')
+        genre = self.request.query_params.get('genre')
+        license_filter = self.request.query_params.get('license')
     
-        return Song.objects.annotate(
+        queryset = Song.objects.annotate(
             search=SearchVector('title_vector'),
         ).filter(
             search=SearchQuery(query)
         ).annotate(
             relevance=F('search')
         ).order_by('-relevance')
+
+        if file_format:
+            queryset = queryset.filter(format=file_format)
+
+        if genre:
+            queryset = queryset.filter(genre=genre)
+
+        if license_filter:
+            queryset = queryset.filter(license=license_filter)
+
+        return queryset
