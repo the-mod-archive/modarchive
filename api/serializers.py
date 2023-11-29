@@ -69,3 +69,21 @@ class ArtistSerializer(serializers.ModelSerializer):
             'name',
             'songs'
         ]
+
+class SongSearchResultSerializer(serializers.ModelSerializer):
+    artists = LimitedArtistSerializer(many=True, read_only=True, source='artist_set')
+    
+    class Meta:
+        model = Song
+        fields = [
+            'id',
+            'title',
+            'clean_title',
+            'filename',
+            'file_size',
+            'channels',
+            'format',
+            'license',
+            'genre',
+            'artists'
+        ]
