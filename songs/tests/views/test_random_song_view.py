@@ -1,6 +1,6 @@
+from unittest.mock import patch
 from django.test import TestCase
 from django.urls import reverse
-from unittest.mock import patch
 
 from songs import factories as song_factories
 

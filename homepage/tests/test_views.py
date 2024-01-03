@@ -156,7 +156,7 @@ class RegistrationTests(TestCase):
         mock_recaptcha.return_value = True
         response = self.client.post(reverse('register'), {'username': 'new_user', 'email': 'newuser@test.com', 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
 
-        # Assert 
+        # Assert
         self.assertRedirects(response, reverse('register_done'))
         self.assertEqual(1, len(mail.outbox))
         self.assertEqual(['newuser@test.com'], mail.outbox[0].to)

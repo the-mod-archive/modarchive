@@ -1,8 +1,6 @@
 import hashlib
-import json
 import os
 import re
-import subprocess
 
 from django.db import transaction
 from django.db.models import F
@@ -22,12 +20,15 @@ from homepage.view.common_views import PageNavigationListView
 from modarchive import file_repository
 from songs import forms
 from songs.models import ArtistComment, Song, Favorite, NewSong
+from songs.mod_info import get_mod_info
+
+BROWSE_SONGS_TEMPLATE = 'browse_songs.html'
 
 def download(request, pk):
     if request.method == 'GET':
         try:
             song = Song.objects.get(pk = pk)
-        except:
+        except ObjectDoesNotExist:
             raise Http404
 
         # Obviously this will not remain in place for the final version of the site, but for now it this is how we download
@@ -42,7 +43,6 @@ def download(request, pk):
 class SongListView(ListView):
     template_name='song_list.html'
     model=Song
-    queryset=Song.objects.order_by('-id')[:50]
 
 class SongView(DetailView):
     template_name='song_bootstrap.html'
@@ -222,7 +222,7 @@ class CommentView(LoginRequiredMixin, ContextMixin, View):
 
 class BrowseSongsByLicenseView(PageNavigationListView):
     model = Song
-    template_name = 'browse_songs.html'
+    template_name = BROWSE_SONGS_TEMPLATE
     paginate_by = 40
 
     def dispatch(self, request, *args, **kwargs):
@@ -245,16 +245,16 @@ class BrowseSongsByLicenseView(PageNavigationListView):
     
 class BrowseSongsByFilenameView(PageNavigationListView):
     model = Song
-    template_name = 'browse_songs.html'
+    template_name = BROWSE_SONGS_TEMPLATE
     paginate_by = 40
 
     def dispatch(self, request, *args, **kwargs):
         query = kwargs['query']
-        if not re.match(r'^[A-Za-z0-9_]$', query):
+        if not re.fullmatch(r'^\w+$', query):
             return redirect('home')
-        
+
         return super().dispatch(request, *args, **kwargs)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['query'] = self.kwargs['query']
@@ -267,7 +267,7 @@ class BrowseSongsByFilenameView(PageNavigationListView):
 
 class BrowseSongsByGenreView(PageNavigationListView):
     model = Song
-    template_name = 'browse_songs.html'
+    template_name = BROWSE_SONGS_TEMPLATE
     paginate_by = 40
 
     def dispatch(self, request, *args, **kwargs):
@@ -277,7 +277,7 @@ class BrowseSongsByGenreView(PageNavigationListView):
             return redirect('home')
         
         return super().dispatch(request, *args, **kwargs)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['query'] = self.kwargs['query']
@@ -291,7 +291,7 @@ class BrowseSongsByGenreView(PageNavigationListView):
 
 class BrowseSongsByRatingView(PageNavigationListView):
     model = Song
-    template_name = 'browse_songs.html'
+    template_name = BROWSE_SONGS_TEMPLATE
     paginate_by = 40
 
     def dispatch(self, request, *args, **kwargs):
@@ -362,23 +362,20 @@ class UploadView(LoginRequiredMixin, FormView):
                 failed_files.append({'filename': file_name, 'reason': f'The filename length was above the maximum allowed limit of {settings.MAXIMUM_UPLOAD_FILENAME_LENGTH} characters.'})
                 continue
 
-            # Execute modinfo on the file to gather metadata
-            modinfo_command = ['modinfo', '--json', file]
-            try:
-                modinfo_output = subprocess.check_output(modinfo_command)
-            except subprocess.CalledProcessError as e:
+            modinfo = get_mod_info(file)
+
+            if modinfo is None:
                 failed_files.append({'filename': file_name, 'reason': 'Did not recognize this file as a valid mod format.'})
                 continue
-            modinfo = json.loads(modinfo_output)
 
             # Ensure the song is not in an unsupported format
-            if modinfo.get('format', 'unknown') in settings.UNSUPPORTED_FORMATS:
+            mod_format = modinfo.get('format', 'unknown').lower()
+            if mod_format in settings.UNSUPPORTED_FORMATS:
                 failed_files.append({'filename': file_name, 'reason': 'This format is not currently supported.'})
                 continue
 
             # Rename the file if the extension does not match the format returned by modinfo
             file_ext = os.path.splitext(file_name)[1].lstrip('.')
-            mod_format = modinfo.get('format', 'unknown').lower()
             if file_ext.lower() != mod_format:
                 new_file_name = os.path.splitext(file_name)[0] + '.' + mod_format
                 new_file_path = os.path.join(os.path.dirname(file), new_file_name)
@@ -400,7 +397,7 @@ class UploadView(LoginRequiredMixin, FormView):
                 md5hash = hashlib.md5(f.read()).hexdigest()
 
             title = modinfo.get('name', 'untitled')
-            format = getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None)
+            song_format = getattr(Song.Formats, modinfo.get('format', 'unknown').upper(), None)
 
             # Ensure that the song is not already in the archive
             songs_in_archive = Song.objects.filter(hash=md5hash)
@@ -418,7 +415,7 @@ class UploadView(LoginRequiredMixin, FormView):
             NewSong.objects.create(
                 filename=file_name,
                 title=title,
-                format=format,
+                format=song_format,
                 file_size=file_size,
                 channels=int(modinfo.get('channels', '')),
                 instrument_text=modinfo.get('instruments', ''),
@@ -436,7 +433,7 @@ class UploadView(LoginRequiredMixin, FormView):
             successful_files.append({
                 'filename': file_name,
                 'title': title,
-                'format': format,
+                'format': song_format,
             })
 
 class UploadReportView(LoginRequiredMixin, TemplateView):
