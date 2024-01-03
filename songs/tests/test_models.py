@@ -5,26 +5,28 @@ from homepage.tests import factories
 from songs.models import Song
 from songs import factories as song_factories
 
-
 class SongModelTests(TestCase):
+    LOWERCASE_TITLE = "song title"
+    MOD_FILE = "file.mod"
+
     def test_gets_clean_title_when_available(self):
-        song = Song(title="song title", clean_title="Song Title")
+        song = Song(title=self.LOWERCASE_TITLE, clean_title="Song Title")
         self.assertEqual("Song Title", song.get_title())
 
     def test_gets_original_title_when_no_clean_title_available(self):
-        song = Song(title="song title")
-        self.assertEqual("song title", song.get_title())
+        song = Song(title=self.LOWERCASE_TITLE)
+        self.assertEqual(self.LOWERCASE_TITLE, song.get_title())
 
     def test_shows_filename_when_title_is_empty(self):
-        song = Song(title="", filename="file.mod")
-        self.assertEqual("file.mod", song.get_title())
+        song = Song(title="", filename=self.MOD_FILE)
+        self.assertEqual(self.MOD_FILE, song.get_title())
 
     def test_shows_filename_when_title_is_whitespace(self):
-        song = Song(title="   ", filename="file.mod")
-        self.assertEqual("file.mod", song.get_title())
+        song = Song(title="   ", filename=self.MOD_FILE)
+        self.assertEqual(self.MOD_FILE, song.get_title())
 
     def test_can_leave_comment_if_not_own_song_and_not_already_commented(self):
-        song = Song(id=1, title="song title")
+        song = Song(id=1, title=self.LOWERCASE_TITLE)
         self.assertTrue(song.can_user_leave_comment(1))
 
     def test_cannot_leave_comment_if_own_song(self):
@@ -94,7 +96,6 @@ class SongModelTests(TestCase):
         self.assertEqual(0, stats.downloads)
         self.assertEqual(0, stats.total_comments)
         self.assertEqual(0.0, stats.average_comment_score)
-
 class CommentModelTests(TestCase):
     def test_song_stats_updated_correctly_after_removing_comment(self):
         song = song_factories.SongFactory()
@@ -119,4 +120,3 @@ class CommentModelTests(TestCase):
 
         self.assertEqual(0, song.songstats.total_comments)
         self.assertEqual(0.0, song.songstats.average_comment_score)
-        
