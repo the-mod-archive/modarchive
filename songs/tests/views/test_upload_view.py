@@ -350,7 +350,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(len(failed_files), 1)
         failed_file = failed_files[0]
         self.assertEqual(failed_file['filename'], NOT_A_MOD_FILENAME)
-        self.assertEqual(failed_file['reason'], 'Did not recognize this file as a valid mod format.')
+        self.assertEqual(failed_file['reason'], 'The file was not recognized as a valid module file.')
 
     @override_settings(UNSUPPORTED_FORMATS=['it'])
     @patch('songs.views.upload_view.get_mod_info')
