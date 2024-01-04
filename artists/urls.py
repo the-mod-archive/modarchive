@@ -1,5 +1,4 @@
 from django.urls import path
-from django.views.generic import ListView
 
 from artists.views import artist_view
 

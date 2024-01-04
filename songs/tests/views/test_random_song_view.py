@@ -5,7 +5,7 @@ from django.urls import reverse
 from songs import factories as song_factories
 
 class RandomSongTests(TestCase):
-    @patch('songs.views.choice')
+    @patch('songs.views.random_song_view.choice')
     def test_redirects_to_random_song(self, mock_choice):
         # Arrange
         song1 = song_factories.SongFactory()

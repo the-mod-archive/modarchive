@@ -113,7 +113,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, "upload.html")
 
-    @patch('songs.views.get_mod_info')
+    @patch('songs.views.upload_view.get_mod_info')
     def test_upload_single_song(self, mock_mod_info):
         # Arrange
         user = factories.UserFactory()
@@ -138,7 +138,7 @@ class UploadViewTests(TestCase):
         self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, user.profile, True)
         self.assert_context_success(response.context, 1, [TEST_MOD_FILENAME], [SONG_TITLE], [Song.Formats.MOD])
 
-    @patch('songs.views.get_mod_info')
+    @patch('songs.views.upload_view.get_mod_info')
     def test_upload_multiple_songs(self, mock_mod_info):
         # Arrange
         user = factories.UserFactory()
@@ -181,7 +181,7 @@ class UploadViewTests(TestCase):
 
             self.assert_context_success(response.context, 3, [TEST_MOD_FILENAME, TEST_IT_FILENAME, TEST_S3M_FILENAME], [SONG_TITLE, IT_TITLE, S3M_TITLE], [Song.Formats.MOD, Song.Formats.IT, Song.Formats.S3M])
 
-    @patch('songs.views.get_mod_info')
+    @patch('songs.views.upload_view.get_mod_info')
     def test_reject_files_already_in_screening(self, mock_mod_info):
         # Arrange
         user = factories.UserFactory()
@@ -216,7 +216,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['filename'], TEST_MOD_FILENAME)
         self.assertEqual(failed_file['reason'], 'An identical song was already found in the upload processing queue.')
 
-    @patch('songs.views.get_mod_info')
+    @patch('songs.views.upload_view.get_mod_info')
     def test_reject_files_already_in_archive(self, mock_mod_info):
         # Arrange
         user = factories.UserFactory()
@@ -252,7 +252,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['reason'], 'An identical song was already found in the archive.')
 
     @override_settings(MAXIMUM_UPLOAD_SIZE=1000)
-    @patch('songs.views.get_mod_info')
+    @patch('songs.views.upload_view.get_mod_info')
     def test_reject_files_that_are_too_large(self, mock_mod_info):
         # Arrange
         user = factories.UserFactory()
@@ -286,7 +286,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['reason'], f'The file was above the maximum allowed size of {settings.MAXIMUM_UPLOAD_SIZE} bytes.')
 
     @override_settings(MAXIMUM_UPLOAD_FILENAME_LENGTH=4)
-    @patch('songs.views.get_mod_info')
+    @patch('songs.views.upload_view.get_mod_info')
     def test_reject_file_with_long_filename(self, mock_mod_info):
         # Arrange
         user = factories.UserFactory()
@@ -319,7 +319,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['filename'], TEST_MOD_FILENAME)
         self.assertEqual(failed_file['reason'], f'The filename length was above the maximum allowed limit of {settings.MAXIMUM_UPLOAD_FILENAME_LENGTH} characters.')
 
-    @patch('songs.views.get_mod_info')
+    @patch('songs.views.upload_view.get_mod_info')
     def test_reject_file_when_modinfo_fails(self, mock_mod_info):
         # Arrange
         user = factories.UserFactory()
@@ -353,7 +353,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['reason'], 'Did not recognize this file as a valid mod format.')
 
     @override_settings(UNSUPPORTED_FORMATS=['it'])
-    @patch('songs.views.get_mod_info')
+    @patch('songs.views.upload_view.get_mod_info')
     def test_reject_file_if_format_not_supported(self, mock_mod_info):
         # Arrange
         user = factories.UserFactory()
@@ -386,7 +386,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['filename'], TEST_IT_FILENAME)
         self.assertEqual(failed_file['reason'], 'This format is not currently supported.')
 
-    @patch('songs.views.get_mod_info')
+    @patch('songs.views.upload_view.get_mod_info')
     def test_rename_file_extension_when_it_does_not_match_the_format(self, mock_mod_info):
         # Arrange
         user = factories.UserFactory()
@@ -411,7 +411,7 @@ class UploadViewTests(TestCase):
         self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, user.profile, True)
         self.assert_context_success(response.context, 1, [TEST_MOD_FILENAME], [SONG_TITLE], [Song.Formats.MOD])
 
-    @patch('songs.views.get_mod_info')
+    @patch('songs.views.upload_view.get_mod_info')
     def test_rename_file_to_remove_whitespace_and_uppercase_letters(self, mock_mod_info):
         # Arrange
         user = factories.UserFactory()
