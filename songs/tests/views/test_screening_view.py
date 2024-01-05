@@ -5,7 +5,7 @@ from django.urls.base import reverse
 from homepage.tests import factories
 from songs import factories as song_factories
 
-class UploadViewTests(TestCase):
+class ScreeningViewTests(TestCase):
     def test_screening_view_permits_access_to_authenticated_users(self):
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')

@@ -20,6 +20,7 @@ from songs.views.upload_report_view import UploadReportView
 from songs.views.pending_uploads_view import PendingUploadsView
 from songs.views.new_song_list_view import NewSongListView
 from songs.views.screening_view import ScreeningView
+from songs.views.screening_action_view import ScreeningActionView
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='song_list.html'), name='songs'),
@@ -39,5 +40,6 @@ urlpatterns = [
     path('upload_report', UploadReportView.as_view(), name='upload_report'),
     path('pending_uploads', PendingUploadsView.as_view(), name='pending_uploads'),
     path('view_new_songs', NewSongListView.as_view(), name='view_new_songs'),
-    path('screen_songs', ScreeningView.as_view(), name='screen_songs')
+    path('screen_songs', ScreeningView.as_view(), name='screen_songs'),
+    path('screen_songs/action', ScreeningActionView.as_view(), name='screening_action')
 ]

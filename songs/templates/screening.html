@@ -56,30 +56,41 @@
 <div class="fs-2">Screen Songs</div>
 
 <div class="container mt-5">
-    <table class="table table-dark table-hover rounded">
-        <thead>
-            <tr>
-                <th><input type="checkbox" id="selectAllCheckbox"></th>
-                <th>Filename</th>
-                <th>Title</th>
-                <th>File Size</th>
-                <th>Format</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for song in new_songs %}
-                <tr class='song-row'>
-                    <td>
-                        <input type="checkbox" class="song-checkbox" name="selected_songs" value="{{ song.id }}">
-                    </td>
-                    <td>{{ song.filename }}</td>
-                    <td>{{ song.title }}</td>
-                    <td>{{ song.file_size }}</td>
-                    <td>{{ song.format }}</td>
+    <form id="songForm" method="post" action="{% url 'screening_action' %}">
+        {% csrf_token %}
+        <table class="table table-dark table-hover rounded">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAllCheckbox"></th>
+                    <th>Filename</th>
+                    <th>Title</th>
+                    <th>File Size</th>
+                    <th>Format</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for song in new_songs %}
+                    <tr class='song-row'>
+                        <td>
+                            <input type="checkbox" class="song-checkbox" name="selected_songs" value="{{ song.id }}">
+                        </td>
+                        <td>{{ song.filename }}</td>
+                        <td>{{ song.title }}</td>
+                        <td>{{ song.file_size }}</td>
+                        <td>{{ song.format }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="mb-3">
+            <label for="actionDropdown" class="form-label">Select Action:</label>
+            <select class="form-select" id="actionDropdown" name="action">
+                <option value="approve">Approve Songs</option>
+                <option value="reject">Reject Songs</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Perform Action</button>
+    </form>
 </div>
 
 {% endblock %}

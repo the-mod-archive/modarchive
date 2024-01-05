@@ -1,0 +1,17 @@
+{% extends 'base_page/base.html' %}
+
+{% block content %}
+
+<div class="fs-2">Action on Screen Songs</div>
+
+Action Performed: {{ action }}
+
+Songs:
+
+<ul>
+    {% for song in selected_songs %}
+        <li>{{ song.filename }}</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
