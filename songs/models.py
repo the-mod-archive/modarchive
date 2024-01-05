@@ -177,13 +177,14 @@ class Song(models.Model):
     def display_file_size(self):
         if self.file_size >= 1000000:
             return f'{"{:.2f}".format(self.file_size / 1000000)} MB'
-        elif self.file_size >= 10000:
+
+        if self.file_size >= 10000:
             return f'{"{:.2f}".format(self.file_size / 1000)} KB'
-        
+
         return f'{self.file_size} bytes'
 
     def get_stats(self):
-        if (hasattr(self, 'songstats')):
+        if hasattr(self, 'songstats'):
             return self.songstats
 
         return SongStats.objects.create(song=self)
@@ -275,5 +276,5 @@ class NewSong(models.Model):
             return f'{"{:.2f}".format(self.file_size / 1000000)} MB'
         elif self.file_size >= 10000:
             return f'{"{:.2f}".format(self.file_size / 1000)} KB'
-        
+
         return f'{self.file_size} bytes'
