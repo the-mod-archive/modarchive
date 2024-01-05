@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.urls.base import reverse
 
 from homepage.tests import factories
+from songs import factories as song_factories
 
 class UploadViewTests(TestCase):
     def test_screening_view_permits_access_to_authenticated_users(self):
@@ -34,3 +35,17 @@ class UploadViewTests(TestCase):
 
         # Assert
         self.assertEqual(403, response.status_code)
+
+    def test_screening_view_contains_new_songs(self):
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        self.client.force_login(user)
+
+        song = song_factories.NewSongFactory(filename='song1.mod', uploader_profile=user.profile)
+
+        response = self.client.get(reverse('screen_songs'))
+
+        # Assert
+        self.assertIn(song, response.context['new_songs'])
+        self.assertEqual(len(response.context['new_songs']), 1)
