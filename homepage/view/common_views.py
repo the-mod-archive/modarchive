@@ -10,4 +10,5 @@ class PageNavigationListView(ListView):
         page = context_data.get('page_obj')
         if paginator and page:
             context_data['page_range'] = paginator.get_elided_page_range(number=page.number, on_ends=1)
+            context_data['full_page_range'] = paginator.page_range
         return context_data

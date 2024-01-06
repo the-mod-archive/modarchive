@@ -55,6 +55,8 @@
 
 <div class="fs-2">Screen Songs</div>
 
+{% include 'partials/page_navigation.html' %}
+
 <div class="container mt-5">
     <form id="songForm" method="post" action="{% url 'screening_action' %}">
         {% csrf_token %}

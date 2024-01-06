@@ -8,3 +8,4 @@ class ScreeningView(PermissionRequiredMixin, PageNavigationListView):
     template_name="screening.html"
     permission_required = 'songs.can_approve_songs'
     context_object_name = 'new_songs'
+    paginate_by = 40
