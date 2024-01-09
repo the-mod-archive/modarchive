@@ -1,9 +1,9 @@
+import re
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.urls import reverse
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
-import re
 
 from songs.models import Song
 
@@ -16,7 +16,7 @@ def spaces(value, autoescape=None):
         esc = conditional_escape
     else:
         esc = lambda x: x
-    return mark_safe(re.sub('\s', '&'+'nbsp;', esc(value)))
+    return mark_safe(re.sub(r'\s', '&'+'nbsp;', esc(value)))
 spaces.needs_autoescape = True
 
 @register.filter
@@ -39,6 +39,15 @@ def modpage(value):
             return f'<a href="{url}">{song.get_title()}</a>'
         except Song.DoesNotExist:
             return match.group(0)  # Return the original text if song doesn't exist
-        
+
     # Use regex to replace [modpage] tags with links
     return re.sub(pattern, replace_link, value)
+
+@register.filter
+def url_with_page(querydict, page_number):
+    """
+    Returns a URL for the given page number in a paginated list.
+    """
+    querydict = querydict.copy()
+    querydict['page'] = page_number
+    return querydict.urlencode()

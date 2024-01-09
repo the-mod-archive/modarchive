@@ -1,10 +1,10 @@
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 
-from .disable_signals import DisableSignals
 from homepage import legacy_models
 from homepage.models import Profile
 from songs.models import NewSong
+from .disable_signals import DisableSignals
 
 class Command(BaseCommand):
     help = "Migrate the legacy files_new table"
@@ -20,7 +20,7 @@ class Command(BaseCommand):
             for file in files:
                 counter += 1
 
-                if (counter % 1000 == 0):
+                if counter % 1000 == 0:
                     print(f"Generated {counter} out of {total} from the legacy files_new table.")
 
                 # Get the profile

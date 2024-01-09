@@ -37,6 +37,12 @@
             });
         });
 
+        document.querySelector('#filterDropdown').addEventListener('change', function (event) {
+            const selectedFilter = event.target.value;
+            // Reload the page with the new filter and page=1
+            window.location.href = window.location.pathname + '?filter=' + selectedFilter + '&page=1';
+        });
+
         function updateRowStyles() {
             rows.forEach(row => {
                 const checkbox = row.querySelector('.song-checkbox');
@@ -55,12 +61,24 @@
 
 <div class="fs-2">Screen Songs</div>
 
+<!-- Filters dropdown -->
+<div class="container mt-3 mb-3">
+    <label for="filterDropdown" class="form-label">Select Filter:</label>
+    <select class="form-select" id="filterDropdown" name="filter">
+        <option value="" {% if not filter %}selected{% endif %} disabled>Select Filter</option>
+        {% for key, value in filter_options.items %}
+            <option value="{{ key }}" {% if key == filter %}selected{% endif %}>{{ value }}</option>
+        {% endfor %}
+    </select>
+</div>
+
 {% include 'partials/page_navigation.html' %}
 
 <div class="container mt-5">
     <form id="songForm" method="post" action="{% url 'screening_action' %}">
         {% csrf_token %}
         <table class="table table-dark table-hover rounded">
+            <caption>List of songs in the screening queue</caption>
             <thead>
                 <tr>
                     <th><input type="checkbox" id="selectAllCheckbox"></th>
