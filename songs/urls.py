@@ -21,6 +21,7 @@ from songs.views.pending_uploads_view import PendingUploadsView
 from songs.views.new_song_list_view import NewSongListView
 from songs.views.screening_view import ScreeningView
 from songs.views.screening_action_view import ScreeningActionView
+from songs.views.screen_song_view import ScreenSongView
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='song_list.html'), name='songs'),
@@ -41,5 +42,6 @@ urlpatterns = [
     path('pending_uploads', PendingUploadsView.as_view(), name='pending_uploads'),
     path('view_new_songs', NewSongListView.as_view(), name='view_new_songs'),
     path('screen_songs', ScreeningView.as_view(), name='screen_songs'),
-    path('screen_songs/action', ScreeningActionView.as_view(), name='screening_action')
+    path('screen_songs/action', ScreeningActionView.as_view(), name='screening_action'),
+    path('screen_song/<int:pk>/', ScreenSongView.as_view(), name='screen_song')
 ]
