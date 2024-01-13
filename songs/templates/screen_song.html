@@ -6,6 +6,18 @@
 {% endblock %}
 
 {% block content %}
+    {% if claimed_by_me %}
+        <div class="alert alert-info" role="alert">
+            You have claimed this song for screening. If you do not take an action within 48 hours of claiming it, it will be released back into the pool.
+        </div>
+    {% endif %}
+
+    {% if claimed_by_other_user %}
+        <div class="alert alert-warning" role="alert">
+            This song has been claimed for screening by <a href="{% url 'view_profile' new_song.claimed_by.pk %}">{{ new_song.claimed_by.display_name }}</a>. You cannot take any actions on this song until it is released back into the pool. It will be released back into the pool automatically if no action has been taken within 48 hours of being claimed.
+        </div>
+    {% endif %}
+
     <div class="fs-4">{{new_song.filename}}</div>
     
     {% if new_song.uploader_profile %}
@@ -44,4 +56,16 @@
             {{ new_song.instrument_text|hide_email_address|linebreaks|spaces|escape }}
         </div>
     {% endif %}
+
+    <form method="post" action="{% url 'screening_action' %}">
+        {% csrf_token %}
+        <input type="hidden" name="selected_songs" value="{{ new_song.pk }}">
+        <div class="mb-3">
+            <label for="actionDropdown" class="form-label">Select Action:</label>
+            <select class="form-select" id="actionDropdown" name="action">
+                <option value="claim">Claim Song for Screening</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Perform Action</button>
+    </form>
 {% endblock %}

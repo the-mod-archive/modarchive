@@ -46,3 +46,38 @@ class ScreenSongViewTests(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, "screen_song.html")
         self.assertIn('new_song', response.context)
+
+    def test_song_claimed_by_user_shows_claimed_by_me(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song = song_factories.NewSongFactory(claimed_by=user.profile)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertEqual(200, response.status_code)
+        self.assertIn('claimed_by_me', response.context)
+        self.assertTrue(response.context['claimed_by_me'])
+
+    def test_song_claimed_by_other_user_shows_claimed_by_other_user(self):
+        # Arrange
+        user = factories.UserFactory()
+        other_user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song = song_factories.NewSongFactory(claimed_by=other_user.profile)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertEqual(200, response.status_code)
+        self.assertIn('claimed_by_me', response.context)
+        self.assertFalse(response.context['claimed_by_me'])
+        self.assertIn('claimed_by_other_user', response.context)
+        self.assertTrue(response.context['claimed_by_other_user'])

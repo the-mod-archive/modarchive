@@ -59,3 +59,61 @@ class ScreeningActionViewTests(TestCase):
         self.assertIn(song1, response.context['selected_songs'])
         self.assertIn(song2, response.context['selected_songs'])
         self.assertEqual(2, len(response.context['selected_songs']))
+
+    def test_screener_can_claim_single_unclaimed_song(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song1 = song_factories.NewSongFactory(filename='song1.mod')
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': 'claim'})
+
+        # Assert
+        self.assertRedirects(response, reverse('screen_songs'))
+        song1.refresh_from_db()
+        self.assertEqual(user.profile, song1.claimed_by)
+        self.assertIsNotNone(song1.claim_date)
+
+    def test_screener_can_claim_multiple_unclaimed_songs(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song1 = song_factories.NewSongFactory(filename='song1.mod')
+        song2 = song_factories.NewSongFactory(filename='song2.mod')
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'claim'})
+
+        # Assert
+        self.assertRedirects(response, reverse('screen_songs'))
+        song1.refresh_from_db()
+        song2.refresh_from_db()
+        self.assertEqual(user.profile, song1.claimed_by)
+        self.assertIsNotNone(song1.claim_date)
+        self.assertEqual(user.profile, song2.claimed_by)
+        self.assertIsNotNone(song2.claim_date)
+
+    def test_cannot_claim_songs_already_claimed_by_others(self):
+        # Arrange
+        user = factories.UserFactory()
+        other_user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song1 = song_factories.NewSongFactory(filename='song1.mod', claimed_by=other_user.profile)
+        song2 = song_factories.NewSongFactory(filename='song2.mod', claimed_by=other_user.profile)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'claim'})
+
+        # Assert
+        self.assertRedirects(response, reverse('screen_songs'))
+        song1.refresh_from_db()
+        song2.refresh_from_db()
+        self.assertEqual(other_user.profile, song1.claimed_by)
+        self.assertEqual(other_user.profile, song2.claimed_by)

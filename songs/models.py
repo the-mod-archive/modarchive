@@ -270,6 +270,8 @@ class NewSong(models.Model):
     is_by_uploader = models.BooleanField()
     create_date=models.DateTimeField(default=timezone.now)
     update_date=models.DateTimeField(auto_now=True)
+    claimed_by=models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, related_name='claimed_by')
+    claim_date=models.DateTimeField(null=True, blank=True)
 
     def display_file_size(self):
         if self.file_size >= 1000000:

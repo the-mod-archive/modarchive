@@ -20,7 +20,7 @@ class UploadProcessor:
         if zipfile.is_zipfile(self.temp_file_path):
             with zipfile.ZipFile(self.temp_file_path, 'r') as zip_ref:
                 zip_ref.extractall(self.unique_temp_dir_path)
-            
+
             os.remove(self.temp_file_path)
             extracted_files = []
             for file_name in os.listdir(self.unique_temp_dir_path):
@@ -30,7 +30,7 @@ class UploadProcessor:
             return extracted_files
         else:
             return [self.temp_file_path]
-        
+
     def move_into_new_songs(self, file):
         """
         Accepts a file and zips and moves the file from the processing directory to the new files directory
