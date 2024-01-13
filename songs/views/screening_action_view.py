@@ -28,4 +28,4 @@ class ScreeningActionView(PermissionRequiredMixin, View):
                 pass
 
         # Redirect to screening view
-        return redirect('screen_songs')
+        return redirect('screening_index')

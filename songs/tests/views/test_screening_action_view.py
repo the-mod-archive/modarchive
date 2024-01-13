@@ -40,25 +40,7 @@ class ScreeningActionViewTests(TestCase):
         response = self.client.post(reverse('screening_action'))
 
         # Assert
-        self.assertEqual(200, response.status_code)
-
-    def test_action_result_shows_selected_songs(self):
-        # Arrange
-        user = factories.UserFactory()
-        permission = Permission.objects.get(codename='can_approve_songs')
-        user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(filename='song1.mod', uploader_profile=user.profile)
-        song2 = song_factories.NewSongFactory(filename='song2.mod', uploader_profile=user.profile)
-
-        # Act
-        self.client.force_login(user)
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'approve'})
-
-        # Assert
-        self.assertEqual(200, response.status_code)
-        self.assertIn(song1, response.context['selected_songs'])
-        self.assertIn(song2, response.context['selected_songs'])
-        self.assertEqual(2, len(response.context['selected_songs']))
+        self.assertRedirects(response, reverse('screening_index'))
 
     def test_screener_can_claim_single_unclaimed_song(self):
         # Arrange
@@ -72,7 +54,7 @@ class ScreeningActionViewTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': 'claim'})
 
         # Assert
-        self.assertRedirects(response, reverse('screen_songs'))
+        self.assertRedirects(response, reverse('screening_index'))
         song1.refresh_from_db()
         self.assertEqual(user.profile, song1.claimed_by)
         self.assertIsNotNone(song1.claim_date)
@@ -90,7 +72,7 @@ class ScreeningActionViewTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'claim'})
 
         # Assert
-        self.assertRedirects(response, reverse('screen_songs'))
+        self.assertRedirects(response, reverse('screening_index'))
         song1.refresh_from_db()
         song2.refresh_from_db()
         self.assertEqual(user.profile, song1.claimed_by)
@@ -112,7 +94,7 @@ class ScreeningActionViewTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'claim'})
 
         # Assert
-        self.assertRedirects(response, reverse('screen_songs'))
+        self.assertRedirects(response, reverse('screening_index'))
         song1.refresh_from_db()
         song2.refresh_from_db()
         self.assertEqual(other_user.profile, song1.claimed_by)

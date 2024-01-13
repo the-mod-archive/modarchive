@@ -41,7 +41,7 @@ urlpatterns = [
     path('upload_report', UploadReportView.as_view(), name='upload_report'),
     path('pending_uploads', PendingUploadsView.as_view(), name='pending_uploads'),
     path('view_new_songs', NewSongListView.as_view(), name='view_new_songs'),
-    path('screen_songs', ScreeningIndexView.as_view(), name='screen_songs'),
+    path('screen_songs', ScreeningIndexView.as_view(), name='screening_index'),
     path('screen_songs/action', ScreeningActionView.as_view(), name='screening_action'),
     path('screen_song/<int:pk>/', ScreenSongView.as_view(), name='screen_song')
 ]
