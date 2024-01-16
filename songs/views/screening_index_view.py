@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from homepage.view.common_views import PageNavigationListView
 from songs.models import NewSong
+from songs import constants
 
 class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
     model = NewSong
@@ -14,50 +15,61 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
     context_object_name = 'new_songs'
     paginate_by = 25
     filter_options = {
-        'high_priority': 'High Priority',
-        'low_priority': 'Low Priority',
-        'by_uploader': 'Uploaded by Artist',
-        'my_screening': 'Songs I\'m Screening',
-        'others_screening': 'Songs Others are Screening',
-        'pre_screened': 'Pre-Screened',
-        'pre_screened_plus': 'Pre-Screened and Recommended',
-        'all': 'All'
+        constants.HIGH_PRIORITY_FILTER: constants.HIGH_PRIORITY_FILTER_DESCRIPTION,
+        constants.LOW_PRIORITY_FILTER: constants.LOW_PRIORITY_FILTER_DESCRIPTION,
+        constants.BY_UPLOADER_FILTER: constants.BY_UPLOADER_FILTER_DESCRIPTION,
+        constants.MY_SCREENING_FILTER: constants.MY_SCREENING_FILTER_DESCRIPTION,
+        constants.OTHERS_SCREENING_FILTER: constants.OTHERS_SCREENING_FILTER_DESCRIPTION,
+        constants.PRE_SCREENED_FILTER: constants.PRE_SCREENED_FILTER_DESCRIPTION,
+        constants.PRE_SCREENED_AND_RECOMMENDED_FILTER: constants.PRE_SCREENED_AND_RECOMMENDED_FILTER_DESCRIPTION
     }
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['filter_options'] = self.filter_options
         context['filter'] = self.request.GET.get('filter', 'all')
+
+        if context['filter'] in [constants.HIGH_PRIORITY_FILTER, constants.LOW_PRIORITY_FILTER, constants.BY_UPLOADER_FILTER]:
+            context['actions'] = [
+                constants.CLAIM_ACTION
+            ]
+        elif context['filter'] == constants.MY_SCREENING_FILTER:
+            context['actions'] = [
+                constants.PRE_SCREEN_ACTION,
+                constants.PRE_SCREEN_AND_RECOMMEND_ACTION
+            ]
+        elif context['filter'] == constants.OTHERS_SCREENING_FILTER:
+            context['actions'] = []
+
         return context
 
     def get_queryset(self) -> QuerySet[Any]:
         queryset = super().get_queryset()
 
         # Get filter option from request
-        filter_option = self.request.GET.get('filter', 'all')
+        filter_option = self.request.GET.get('filter', constants.HIGH_PRIORITY_FILTER)
 
         if filter_option not in self.filter_options:
-            filter_option = 'all'
+            filter_option = constants.HIGH_PRIORITY_FILTER
 
         # Before doing anything, clear any song claims that are older than 48 hours
         NewSong.objects.filter(claim_date__lte=timezone.now() - timedelta(hours=48)).update(claimed_by=None, claim_date=None)
 
         # High priority is defined as any song where it's not uploaded by the placeholder account (id of 1)
-        if filter_option == 'high_priority':
-            queryset = queryset.filter(uploader_profile__user_id__isnull=False).filter(claimed_by=None)
-        elif filter_option == 'low_priority':
-            queryset = queryset.filter(uploader_profile__user_id=None).filter(claimed_by=None)
-        elif filter_option == 'by_uploader':
-            queryset = queryset.filter(is_by_uploader=True).filter(claimed_by=None)
-        elif filter_option == 'my_screening':
-            queryset = queryset.filter(claimed_by=self.request.user.profile)
-        elif filter_option == 'others_screening':
-            queryset = queryset.exclude(claimed_by=None).exclude(claimed_by=self.request.user.profile)
-        elif filter_option == 'pre_screened':
-            queryset = queryset.filter(flag=NewSong.Flags.PRE_SCREENED)
-        elif filter_option == 'pre_screened_plus':
-            queryset = queryset.filter(flag=NewSong.Flags.PRE_SCREENED_PLUS)
-        else:
-            queryset = queryset.filter(claimed_by=None)
+        match filter_option:
+            case constants.HIGH_PRIORITY_FILTER:
+                queryset = queryset.filter(uploader_profile__user_id__isnull=False).filter(claimed_by=None)
+            case constants.LOW_PRIORITY_FILTER:
+                queryset = queryset.filter(uploader_profile__user_id=None).filter(claimed_by=None)
+            case constants.BY_UPLOADER_FILTER:
+                queryset = queryset.filter(is_by_uploader=True).filter(claimed_by=None)
+            case constants.MY_SCREENING_FILTER:
+                queryset = queryset.filter(claimed_by=self.request.user.profile)
+            case constants.OTHERS_SCREENING_FILTER:
+                queryset = queryset.exclude(claimed_by=None).exclude(claimed_by=self.request.user.profile)
+            case constants.PRE_SCREENED_FILTER:
+                queryset = queryset.filter(flag=NewSong.Flags.PRE_SCREENED)
+            case constants.PRE_SCREENED_AND_RECOMMENDED_FILTER:
+                queryset = queryset.filter(flag=NewSong.Flags.PRE_SCREENED_PLUS)
 
         return queryset.order_by('-create_date')

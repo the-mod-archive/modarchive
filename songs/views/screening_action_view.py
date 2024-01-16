@@ -4,17 +4,16 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.utils import timezone
 
 from songs.models import NewSong
+from songs import constants
 
 class ScreeningActionView(PermissionRequiredMixin, View):
     template_name = 'screening_action_result.html'
     permission_required = 'songs.can_approve_songs'
 
     class ScreeningAction:
-        APPROVE = 'approve'
-        REJECT = 'reject'
-        CLAIM = 'claim'
-        PRE_SCREEN = 'pre_screen'
-        PRE_SCREEN_AND_RECOMMEND = 'pre_screen_and_recommend'
+        CLAIM = constants.CLAIM_KEYWORD
+        PRE_SCREEN = constants.PRE_SCREEN_KEYWORD
+        PRE_SCREEN_AND_RECOMMEND = constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD
 
     def post(self, request, *args, **kwargs):
         # Determine action from request, reject if not a valid action

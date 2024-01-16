@@ -57,15 +57,19 @@
         </div>
     {% endif %}
 
+    {% if actions %}
     <form method="post" action="{% url 'screening_action' %}">
         {% csrf_token %}
         <input type="hidden" name="selected_songs" value="{{ new_song.pk }}">
         <div class="mb-3">
             <label for="actionDropdown" class="form-label">Select Action:</label>
             <select class="form-select" id="actionDropdown" name="action">
-                <option value="claim">Claim Song for Screening</option>
+                {% for action, label in actions %}
+                    <option value="{{ action }}">{{ label }}</option>
+                {% endfor %}
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Perform Action</button>
     </form>
+    {% endif %}
 {% endblock %}

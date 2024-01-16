@@ -104,15 +104,17 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% if actions %}
         <div class="mb-3">
             <label for="actionDropdown" class="form-label">Select Action:</label>
             <select class="form-select" id="actionDropdown" name="action">
-                <option value="claim">Claim Songs for Screening</option>
-                <option value="pre_screen">Pre-Screen Songs</option>
-                <option value="pre_screen_and_recommend">Pre-Screen Songs and Recommend for Featured</option>
+                {% for action, label in actions %}
+                    <option value="{{ action }}">{{ label }}</option>
+                {% endfor %}
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Perform Action</button>
+        {% endif %}
     </form>
 </div>
 

@@ -7,6 +7,7 @@ from django.utils import timezone
 from homepage.tests import factories
 from songs import factories as song_factories
 from songs.models import NewSong
+from songs import constants
 
 class ScreeningIndexViewTests(TestCase):
     def test_screening_view_permits_access_to_authenticated_users(self):
@@ -66,7 +67,7 @@ class ScreeningIndexViewTests(TestCase):
         low_priority_song_2 = song_factories.NewSongFactory(uploader_profile=None)
         claimed_high_priority_song = song_factories.NewSongFactory(uploader_profile=uploading_user.profile, claimed_by=user.profile)
 
-        response = self.client.get(f"{reverse('screening_index')}?filter=high_priority")
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.HIGH_PRIORITY_FILTER}")
 
         # Assert
         self.assertIn(high_priority_song_1, response.context['new_songs'])
@@ -89,7 +90,7 @@ class ScreeningIndexViewTests(TestCase):
         low_priority_song_2 = song_factories.NewSongFactory(uploader_profile=None)
         claimed_song = song_factories.NewSongFactory(uploader_profile=None, claimed_by=user.profile)
 
-        response = self.client.get(f"{reverse('screening_index')}?filter=low_priority")
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.LOW_PRIORITY_FILTER}")
 
         # Assert
         self.assertIn(low_priority_song_1, response.context['new_songs'])
@@ -112,14 +113,14 @@ class ScreeningIndexViewTests(TestCase):
         song_factories.NewSongFactory(uploader_profile=None)
         song_that_should_be_excluded = song_factories.NewSongFactory(uploader_profile=uploading_user.profile, is_by_uploader=True, claimed_by=user.profile)
 
-        response = self.client.get(f"{reverse('screening_index')}?filter=by_uploader")
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.BY_UPLOADER_FILTER}")
 
         # Assert
         self.assertIn(high_priority_song_2, response.context['new_songs'])
         self.assertNotIn(song_that_should_be_excluded, response.context['new_songs'])
         self.assertEqual(len(response.context['new_songs']), 1)
 
-    def test_screening_view_shows_all_songs_by_default(self):
+    def test_screening_view_shows_high_priority_songs_by_default(self):
         uploading_user = factories.UserFactory()
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
@@ -137,10 +138,10 @@ class ScreeningIndexViewTests(TestCase):
         # Assert
         self.assertIn(high_priority_song_1, response.context['new_songs'])
         self.assertIn(high_priority_song_2, response.context['new_songs'])
-        self.assertIn(low_priority_song_1, response.context['new_songs'])
-        self.assertIn(low_priority_song_2, response.context['new_songs'])
+        self.assertNotIn(low_priority_song_1, response.context['new_songs'])
+        self.assertNotIn(low_priority_song_2, response.context['new_songs'])
         self.assertNotIn(song_that_should_be_excluded, response.context['new_songs'])
-        self.assertEqual(len(response.context['new_songs']), 4)
+        self.assertEqual(len(response.context['new_songs']), 2)
 
     def test_screening_view_shows_songs_claimed_by_current_user(self):
         uploading_user = factories.UserFactory()
@@ -155,7 +156,7 @@ class ScreeningIndexViewTests(TestCase):
         song_factories.NewSongFactory(uploader_profile=None)
         user_screening_song = song_factories.NewSongFactory(uploader_profile=None, claimed_by=user.profile)
 
-        response = self.client.get(f"{reverse('screening_index')}?filter=my_screening")
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.MY_SCREENING_FILTER}")
 
         # Assert
         self.assertEqual(len(response.context['new_songs']), 1)
@@ -175,7 +176,7 @@ class ScreeningIndexViewTests(TestCase):
         song_factories.NewSongFactory(uploader_profile=None)
         user_screening_song = song_factories.NewSongFactory(uploader_profile=None, claimed_by=other_user.profile)
 
-        response = self.client.get(f"{reverse('screening_index')}?filter=others_screening")
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.OTHERS_SCREENING_FILTER}")
 
         # Assert
         self.assertEqual(len(response.context['new_songs']), 1)
@@ -196,7 +197,7 @@ class ScreeningIndexViewTests(TestCase):
         song_factories.NewSongFactory(uploader_profile=None)
         user_screening_song = song_factories.NewSongFactory(uploader_profile=None, claimed_by=other_user.profile, claim_date=timezone.now())
 
-        response = self.client.get(f"{reverse('screening_index')}?filter=others_screening")
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.OTHERS_SCREENING_FILTER}")
 
         # Assert
         self.assertEqual(len(response.context['new_songs']), 1)
@@ -215,7 +216,7 @@ class ScreeningIndexViewTests(TestCase):
         song_factories.NewSongFactory(uploader_profile=None)
         pre_screened_song_2 = song_factories.NewSongFactory(uploader_profile=None, flag=NewSong.Flags.PRE_SCREENED)
 
-        response = self.client.get(f"{reverse('screening_index')}?filter=pre_screened")
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.PRE_SCREENED_FILTER}")
 
         # Assert
         self.assertEqual(len(response.context['new_songs']), 2)
@@ -235,9 +236,79 @@ class ScreeningIndexViewTests(TestCase):
         song_factories.NewSongFactory(uploader_profile=None)
         pre_screened_song_2 = song_factories.NewSongFactory(uploader_profile=None, flag=NewSong.Flags.PRE_SCREENED_PLUS)
 
-        response = self.client.get(f"{reverse('screening_index')}?filter=pre_screened_plus")
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.PRE_SCREENED_AND_RECOMMENDED_FILTER}")
 
         # Assert
         self.assertEqual(len(response.context['new_songs']), 2)
         self.assertIn(pre_screened_song_1, response.context['new_songs'])
         self.assertIn(pre_screened_song_2, response.context['new_songs'])
+
+    def test_high_priority_filter_only_shows_claim_action(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.HIGH_PRIORITY_FILTER}")
+
+        # Assert
+        self.assertEqual(len(response.context['actions']), 1)
+        self.assertIn(constants.CLAIM_ACTION, response.context['actions'])
+
+    def test_low_priority_filter_only_shows_claim_action(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.LOW_PRIORITY_FILTER}")
+
+        # Assert
+        self.assertEqual(len(response.context['actions']), 1)
+        self.assertIn(constants.CLAIM_ACTION, response.context['actions'])
+
+    def test_by_uploader_filter_only_shows_claim_action(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.BY_UPLOADER_FILTER}")
+
+        # Assert
+        self.assertEqual(len(response.context['actions']), 1)
+        self.assertIn(constants.CLAIM_ACTION, response.context['actions'])
+
+    def test_my_screening_filter_shows_legal_actions(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.MY_SCREENING_FILTER}")
+
+        # Assert
+        self.assertEqual(len(response.context['actions']), 2)
+        self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
+        self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
+
+    def test_others_screening_filter_contains_no_actions(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.OTHERS_SCREENING_FILTER}")
+
+        # Assert
+        self.assertEqual(len(response.context['actions']), 0)

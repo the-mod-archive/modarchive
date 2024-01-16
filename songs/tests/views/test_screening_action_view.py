@@ -5,6 +5,10 @@ from django.urls.base import reverse
 from homepage.tests import factories
 from songs import factories as song_factories
 from songs.models import NewSong
+from songs import constants
+
+SONG_1_FILENAME = 'song1.mod'
+SONG_2_FILENAME = 'song2.mod'
 
 class ScreeningActionViewTests(TestCase):
     def test_unauthenticated_user_is_redirected_to_login(self):
@@ -48,11 +52,11 @@ class ScreeningActionViewTests(TestCase):
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(filename='song1.mod')
+        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME)
 
         # Act
         self.client.force_login(user)
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': 'claim'})
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.CLAIM_KEYWORD})
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
@@ -65,12 +69,12 @@ class ScreeningActionViewTests(TestCase):
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(filename='song1.mod')
-        song2 = song_factories.NewSongFactory(filename='song2.mod')
+        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME)
+        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME)
 
         # Act
         self.client.force_login(user)
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'claim'})
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.CLAIM_KEYWORD})
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
@@ -87,12 +91,12 @@ class ScreeningActionViewTests(TestCase):
         other_user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(filename='song1.mod', claimed_by=other_user.profile)
-        song2 = song_factories.NewSongFactory(filename='song2.mod', claimed_by=other_user.profile)
+        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=other_user.profile)
+        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=other_user.profile)
 
         # Act
         self.client.force_login(user)
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'claim'})
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.CLAIM_KEYWORD})
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
@@ -106,12 +110,12 @@ class ScreeningActionViewTests(TestCase):
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(filename='song1.mod', claimed_by=user.profile)
-        song2 = song_factories.NewSongFactory(filename='song2.mod', claimed_by=user.profile)
+        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=user.profile)
+        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=user.profile)
 
         # Act
         self.client.force_login(user)
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'pre_screen'})
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_KEYWORD})
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
@@ -129,12 +133,12 @@ class ScreeningActionViewTests(TestCase):
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(filename='song1.mod')
-        song2 = song_factories.NewSongFactory(filename='song2.mod')
+        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME)
+        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME)
 
         # Act
         self.client.force_login(user)
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'pre_screen'})
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_KEYWORD})
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
@@ -153,12 +157,12 @@ class ScreeningActionViewTests(TestCase):
         other_user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(filename='song1.mod', claimed_by=other_user.profile)
-        song2 = song_factories.NewSongFactory(filename='song2.mod', claimed_by=other_user.profile)
+        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=other_user.profile)
+        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=other_user.profile)
 
         # Act
         self.client.force_login(user)
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'pre_screen'})
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_KEYWORD})
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
@@ -174,12 +178,12 @@ class ScreeningActionViewTests(TestCase):
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(filename='song1.mod', claimed_by=user.profile)
-        song2 = song_factories.NewSongFactory(filename='song2.mod', claimed_by=user.profile)
+        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=user.profile)
+        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=user.profile)
 
         # Act
         self.client.force_login(user)
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'pre_screen_and_recommend'})
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD})
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
@@ -197,12 +201,12 @@ class ScreeningActionViewTests(TestCase):
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(filename='song1.mod')
-        song2 = song_factories.NewSongFactory(filename='song2.mod')
+        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME)
+        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME)
 
         # Act
         self.client.force_login(user)
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'pre_screen_and_recommend'})
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD})
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
@@ -221,12 +225,12 @@ class ScreeningActionViewTests(TestCase):
         other_user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(filename='song1.mod', claimed_by=other_user.profile)
-        song2 = song_factories.NewSongFactory(filename='song2.mod', claimed_by=other_user.profile)
+        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=other_user.profile)
+        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=other_user.profile)
 
         # Act
         self.client.force_login(user)
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': 'pre_screen_and_recommend'})
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD})
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
