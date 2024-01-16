@@ -13,6 +13,8 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         APPROVE = 'approve'
         REJECT = 'reject'
         CLAIM = 'claim'
+        PRE_SCREEN = 'pre_screen'
+        PRE_SCREEN_AND_RECOMMEND = 'pre_screen_and_recommend'
 
     def post(self, request, *args, **kwargs):
         # Determine action from request, reject if not a valid action
@@ -24,8 +26,10 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         match action:
             case self.ScreeningAction.CLAIM:
                 songs.filter(claimed_by=None).update(claimed_by=request.user.profile, claim_date=timezone.now())
-            case _:
-                pass
+            case self.ScreeningAction.PRE_SCREEN:
+                songs.filter(claimed_by=request.user.profile).update(claimed_by=None, claim_date=None, flag=NewSong.Flags.PRE_SCREENED)
+            case self.ScreeningAction.PRE_SCREEN_AND_RECOMMEND:
+                songs.filter(claimed_by=request.user.profile).update(claimed_by=None, claim_date=None, flag=NewSong.Flags.PRE_SCREENED_PLUS)
 
         # Redirect to screening view
         return redirect('screening_index')

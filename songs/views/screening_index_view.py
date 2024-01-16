@@ -19,6 +19,8 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
         'by_uploader': 'Uploaded by Artist',
         'my_screening': 'Songs I\'m Screening',
         'others_screening': 'Songs Others are Screening',
+        'pre_screened': 'Pre-Screened',
+        'pre_screened_plus': 'Pre-Screened and Recommended',
         'all': 'All'
     }
 
@@ -51,6 +53,10 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
             queryset = queryset.filter(claimed_by=self.request.user.profile)
         elif filter_option == 'others_screening':
             queryset = queryset.exclude(claimed_by=None).exclude(claimed_by=self.request.user.profile)
+        elif filter_option == 'pre_screened':
+            queryset = queryset.filter(flag=NewSong.Flags.PRE_SCREENED)
+        elif filter_option == 'pre_screened_plus':
+            queryset = queryset.filter(flag=NewSong.Flags.PRE_SCREENED_PLUS)
         else:
             queryset = queryset.filter(claimed_by=None)
 

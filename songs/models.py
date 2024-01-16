@@ -231,7 +231,7 @@ class Comment(models.Model):
 
 class ArtistComment(models.Model):
     class Meta:
-        unique_together = (('profile', 'song'))
+        unique_together = ('profile', 'song')
         verbose_name_plural = 'artist comments'
         db_table = 'songs_artist_comments'
 
@@ -255,6 +255,10 @@ class NewSong(models.Model):
             ('can_approve_songs', "Can approve songs"),
         )
 
+    class Flags(models.TextChoices):
+        PRE_SCREENED = 'pre-screened', _('Pre-screened')
+        PRE_SCREENED_PLUS = 'pre-screened+', _('Pre-screened and recommend featured')
+
     filename=models.CharField(max_length=120, db_index=True)
     title=models.CharField(max_length=120, db_index=True)
     format=models.CharField(max_length=6, choices=Song.Formats.choices, db_index=True)
@@ -272,6 +276,7 @@ class NewSong(models.Model):
     update_date=models.DateTimeField(auto_now=True)
     claimed_by=models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, related_name='claimed_by')
     claim_date=models.DateTimeField(null=True, blank=True)
+    flag=models.CharField(max_length=16, choices=Flags.choices, blank=True, null=True)
 
     def display_file_size(self):
         if self.file_size >= 1000000:

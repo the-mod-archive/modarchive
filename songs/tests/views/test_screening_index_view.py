@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from homepage.tests import factories
 from songs import factories as song_factories
+from songs.models import NewSong
 
 class ScreeningIndexViewTests(TestCase):
     def test_screening_view_permits_access_to_authenticated_users(self):
@@ -200,3 +201,43 @@ class ScreeningIndexViewTests(TestCase):
         # Assert
         self.assertEqual(len(response.context['new_songs']), 1)
         self.assertIn(user_screening_song, response.context['new_songs'])
+
+    def test_screening_view_shows_prescreened_songs(self):
+        uploading_user = factories.UserFactory()
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        self.client.force_login(user)
+
+        pre_screened_song_1 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile, flag=NewSong.Flags.PRE_SCREENED)
+        song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        song_factories.NewSongFactory(uploader_profile=None)
+        song_factories.NewSongFactory(uploader_profile=None)
+        pre_screened_song_2 = song_factories.NewSongFactory(uploader_profile=None, flag=NewSong.Flags.PRE_SCREENED)
+
+        response = self.client.get(f"{reverse('screening_index')}?filter=pre_screened")
+
+        # Assert
+        self.assertEqual(len(response.context['new_songs']), 2)
+        self.assertIn(pre_screened_song_1, response.context['new_songs'])
+        self.assertIn(pre_screened_song_2, response.context['new_songs'])
+
+    def test_screening_view_shows_prescreened_and_recommended_songs(self):
+        uploading_user = factories.UserFactory()
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        self.client.force_login(user)
+
+        pre_screened_song_1 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        song_factories.NewSongFactory(uploader_profile=None)
+        song_factories.NewSongFactory(uploader_profile=None)
+        pre_screened_song_2 = song_factories.NewSongFactory(uploader_profile=None, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+
+        response = self.client.get(f"{reverse('screening_index')}?filter=pre_screened_plus")
+
+        # Assert
+        self.assertEqual(len(response.context['new_songs']), 2)
+        self.assertIn(pre_screened_song_1, response.context['new_songs'])
+        self.assertIn(pre_screened_song_2, response.context['new_songs'])
