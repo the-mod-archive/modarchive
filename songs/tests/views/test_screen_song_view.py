@@ -3,8 +3,8 @@ from django.urls.base import reverse
 from django.contrib.auth.models import Permission
 
 from songs import factories as song_factories
-from homepage.tests import factories
 from songs import constants
+from homepage.tests import factories
 
 class ScreenSongViewTests(TestCase):
     def test_unauthenticated_user_is_redirected_to_login(self):

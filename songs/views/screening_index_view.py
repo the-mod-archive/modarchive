@@ -58,11 +58,11 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
         # High priority is defined as any song where it's not uploaded by the placeholder account (id of 1)
         match filter_option:
             case constants.HIGH_PRIORITY_FILTER:
-                queryset = queryset.filter(uploader_profile__user_id__isnull=False).filter(claimed_by=None)
+                queryset = queryset.filter(uploader_profile__user_id__isnull=False).filter(claimed_by=None).filter(flag=None)
             case constants.LOW_PRIORITY_FILTER:
-                queryset = queryset.filter(uploader_profile__user_id=None).filter(claimed_by=None)
+                queryset = queryset.filter(uploader_profile__user_id=None).filter(claimed_by=None).filter(flag=None)
             case constants.BY_UPLOADER_FILTER:
-                queryset = queryset.filter(is_by_uploader=True).filter(claimed_by=None)
+                queryset = queryset.filter(is_by_uploader=True).filter(claimed_by=None).filter(flag=None)
             case constants.MY_SCREENING_FILTER:
                 queryset = queryset.filter(claimed_by=self.request.user.profile)
             case constants.OTHERS_SCREENING_FILTER:

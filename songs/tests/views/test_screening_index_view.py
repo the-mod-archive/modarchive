@@ -312,3 +312,56 @@ class ScreeningIndexViewTests(TestCase):
 
         # Assert
         self.assertEqual(len(response.context['actions']), 0)
+
+    def test_high_priority_filter_does_not_show_prescreened_songs(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song_factories.NewSongFactory(uploader_profile=user.profile, flag=NewSong.Flags.PRE_SCREENED)
+        song_factories.NewSongFactory(uploader_profile=user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        high_priority_song_1 = song_factories.NewSongFactory(uploader_profile=user.profile)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.HIGH_PRIORITY_FILTER}")
+
+        # Assert
+        self.assertEqual(len(response.context['new_songs']), 1)
+        self.assertIn(high_priority_song_1, response.context['new_songs'])
+
+    def test_low_priority_filter_does_not_show_prescreened_songs(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        low_priority_song_1 = song_factories.NewSongFactory()
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.LOW_PRIORITY_FILTER}")
+
+        # Assert
+        self.assertEqual(len(response.context['new_songs']), 1)
+        self.assertIn(low_priority_song_1, response.context['new_songs'])
+
+    def test_uploaded_by_artist_filter_does_not_show_prescreened_songs(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, is_by_uploader=True)
+        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS, is_by_uploader=True)
+        by_uploader_song_1 = song_factories.NewSongFactory(is_by_uploader=True)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.BY_UPLOADER_FILTER}")
+
+        # Assert
+        self.assertEqual(len(response.context['new_songs']), 1)
+        self.assertIn(by_uploader_song_1, response.context['new_songs'])
