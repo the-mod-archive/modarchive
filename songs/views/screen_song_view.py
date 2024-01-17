@@ -21,7 +21,8 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
         elif self.object.claimed_by == self.request.user.profile:
             context['actions'] = [
                 constants.PRE_SCREEN_ACTION,
-                constants.PRE_SCREEN_AND_RECOMMEND_ACTION
+                constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
+                constants.NEEDS_SECOND_OPINION_ACTION
             ]
         elif self.object.claimed_by != self.request.user.profile:
             context['actions'] = []

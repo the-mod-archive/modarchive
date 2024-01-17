@@ -4,6 +4,7 @@ from crispy_forms.layout import Submit
 from django import forms
 
 from songs import models
+from songs import constants
 
 class AdminSongForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -13,7 +14,24 @@ class AdminSongForm(forms.ModelForm):
 
     class Meta:
         model = models.Song
-        fields = "__all__"
+        fields = (
+            'legacy_id',
+            'filename',
+            'title',
+            'clean_title',
+            'format',
+            'file_size',
+            'channels',
+            'comment_text',
+            'instrument_text',
+            'hash',
+            'pattern_hash',
+            'license',
+            'genre',
+            'is_featured',
+            'featured_date',
+            'featured_by'
+        )
 
 class AddCommentForm(forms.ModelForm):
     def is_valid(self) -> bool:
@@ -89,6 +107,35 @@ class UploadForm(forms.Form):
     )
     written_by_me = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(), required=True, label='Is this material your own work to which you own the copyright?')
     song_file = forms.FileField(required=True)
+
+    class Meta:
+        required_css_class = None
+
+class ScreeningQueueFilterForm(forms.Form):
+    FILTER_CHOICES = (
+        (constants.UNCLAIMED_GROUP, (
+            (constants.HIGH_PRIORITY_FILTER, constants.HIGH_PRIORITY_FILTER_DESCRIPTION),
+            (constants.LOW_PRIORITY_FILTER, constants.LOW_PRIORITY_FILTER_DESCRIPTION),
+            (constants.BY_UPLOADER_FILTER, constants.BY_UPLOADER_FILTER_DESCRIPTION),
+            )
+        ),
+        (constants.CLAIMED_GROUP, (
+            (constants.MY_SCREENING_FILTER, constants.MY_SCREENING_FILTER_DESCRIPTION),
+            (constants.OTHERS_SCREENING_FILTER, constants.OTHERS_SCREENING_FILTER_DESCRIPTION),
+            )
+        ),
+        (constants.DONE_GROUP, (
+            (constants.PRE_SCREENED_FILTER, constants.PRE_SCREENED_FILTER_DESCRIPTION),
+            (constants.PRE_SCREENED_AND_RECOMMENDED_FILTER, constants.PRE_SCREENED_AND_RECOMMENDED_FILTER_DESCRIPTION),
+            )
+        ),
+        (constants.SECOND_OPINION_GROUP, (
+            (constants.NEEDS_SECOND_OPINION_FILTER, constants.NEEDS_SECOND_OPINION_FILTER_DESCRIPTION),
+            )
+        )
+    )
+
+    filter = forms.ChoiceField(choices=FILTER_CHOICES, required=False, widget=forms.Select(attrs={'id': 'filterDropdown'}))
 
     class Meta:
         required_css_class = None

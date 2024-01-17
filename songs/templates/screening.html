@@ -1,4 +1,5 @@
 {% extends 'base_page/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block title %}
     {{ block.super }}: Screen Songs
@@ -12,7 +13,6 @@
         }
     </style>
 {% endblock %}
-
 
 {% block script %}
 <script>
@@ -63,13 +63,7 @@
 
 <!-- Filters dropdown -->
 <div class="container mt-3 mb-3">
-    <label for="filterDropdown" class="form-label">Select Filter:</label>
-    <select class="form-select" id="filterDropdown" name="filter">
-        <option value="" {% if not filter %}selected{% endif %} disabled>Select Filter</option>
-        {% for key, value in filter_options.items %}
-            <option value="{{ key }}" {% if key == filter %}selected{% endif %}>{{ value }}</option>
-        {% endfor %}
-    </select>
+    {{ form|crispy }}
 </div>
 
 {% include 'partials/page_navigation.html' %}

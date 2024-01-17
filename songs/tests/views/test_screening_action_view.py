@@ -127,6 +127,8 @@ class ScreeningActionViewTests(TestCase):
         self.assertIsNone(song2.claim_date)
         self.assertEqual(NewSong.Flags.PRE_SCREENED, song1.flag)
         self.assertEqual(NewSong.Flags.PRE_SCREENED, song2.flag)
+        self.assertEqual(user.profile, song1.flagged_by)
+        self.assertEqual(user.profile, song2.flagged_by)
 
     def test_cannot_prescreen_unclaimed_songs(self):
         # Arrange
@@ -195,6 +197,8 @@ class ScreeningActionViewTests(TestCase):
         self.assertIsNone(song2.claim_date)
         self.assertEqual(NewSong.Flags.PRE_SCREENED_PLUS, song1.flag)
         self.assertEqual(NewSong.Flags.PRE_SCREENED_PLUS, song2.flag)
+        self.assertEqual(user.profile, song1.flagged_by)
+        self.assertEqual(user.profile, song2.flagged_by)
 
     def test_cannot_prescreen_and_recommend_unclaimed_songs(self):
         # Arrange
@@ -240,3 +244,73 @@ class ScreeningActionViewTests(TestCase):
         self.assertEqual(other_user.profile, song2.claimed_by)
         self.assertIsNone(song1.flag)
         self.assertIsNone(song2.flag)
+
+    def test_can_flag_claimed_song_as_needing_second_opinion(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song1 = song_factories.NewSongFactory(claimed_by=user.profile)
+        song2 = song_factories.NewSongFactory(claimed_by=user.profile)
+        song3 = song_factories.NewSongFactory(claimed_by=user.profile)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.NEEDS_SECOND_OPINION_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        song2.refresh_from_db()
+        song3.refresh_from_db()
+        self.assertEqual(NewSong.Flags.NEEDS_SECOND_OPINION, song1.flag)
+        self.assertEqual(user.profile, song1.flagged_by)
+        self.assertEqual(NewSong.Flags.NEEDS_SECOND_OPINION, song2.flag)
+        self.assertEqual(user.profile, song2.flagged_by)
+        self.assertIsNone(song3.flag)
+        self.assertIsNone(song3.flagged_by)
+
+    def test_cannot_flag_unclaimed_song_as_needing_second_opinion(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        other_user = factories.UserFactory()
+        song1 = song_factories.NewSongFactory(claimed_by=other_user.profile)
+        song2 = song_factories.NewSongFactory()
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.NEEDS_SECOND_OPINION_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        song2.refresh_from_db()        
+        self.assertIsNone(song1.flag)
+        self.assertIsNone(song1.flagged_by)
+        self.assertIsNone(song2.flag)
+        self.assertIsNone(song2.flagged_by)
+
+    def test_cannot_claim_song_needing_second_opinion_when_flagged_by_self(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.NEEDS_SECOND_OPINION, flagged_by=user.profile)
+        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.NEEDS_SECOND_OPINION, flagged_by=user.profile)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.CLAIM_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        song2.refresh_from_db()
+        self.assertIsNone(song1.claimed_by)
+        self.assertEqual(user.profile, song1.flagged_by)
+        self.assertEqual(NewSong.Flags.NEEDS_SECOND_OPINION, song1.flag)
+        self.assertIsNone(song2.claimed_by)
+        self.assertEqual(user.profile, song2.flagged_by)
+        self.assertEqual(NewSong.Flags.NEEDS_SECOND_OPINION, song2.flag)

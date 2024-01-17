@@ -14,6 +14,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         CLAIM = constants.CLAIM_KEYWORD
         PRE_SCREEN = constants.PRE_SCREEN_KEYWORD
         PRE_SCREEN_AND_RECOMMEND = constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD
+        NEEDS_SECOND_OPINION = constants.NEEDS_SECOND_OPINION_KEYWORD
 
     def post(self, request, *args, **kwargs):
         # Determine action from request, reject if not a valid action
@@ -24,11 +25,42 @@ class ScreeningActionView(PermissionRequiredMixin, View):
 
         match action:
             case self.ScreeningAction.CLAIM:
-                songs.filter(claimed_by=None).update(claimed_by=request.user.profile, claim_date=timezone.now())
+                songs.filter(
+                    claimed_by=None
+                ).exclude(
+                    flagged_by=request.user.profile,
+                    flag=NewSong.Flags.NEEDS_SECOND_OPINION
+                ).update(
+                    claimed_by=request.user.profile,
+                    claim_date=timezone.now()
+                )
             case self.ScreeningAction.PRE_SCREEN:
-                songs.filter(claimed_by=request.user.profile).update(claimed_by=None, claim_date=None, flag=NewSong.Flags.PRE_SCREENED)
+                songs.filter(
+                    claimed_by=request.user.profile
+                ).update(
+                    claimed_by=None,
+                    claim_date=None,
+                    flag=NewSong.Flags.PRE_SCREENED,
+                    flagged_by=request.user.profile
+                )
             case self.ScreeningAction.PRE_SCREEN_AND_RECOMMEND:
-                songs.filter(claimed_by=request.user.profile).update(claimed_by=None, claim_date=None, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+                songs.filter(
+                    claimed_by=request.user.profile
+                ).update(
+                    claimed_by=None,
+                    claim_date=None,
+                    flag=NewSong.Flags.PRE_SCREENED_PLUS,
+                    flagged_by=request.user.profile
+                )
+            case self.ScreeningAction.NEEDS_SECOND_OPINION:
+                songs.filter(
+                    claimed_by=request.user.profile
+                ).update(
+                    claimed_by=None,
+                    claim_date=None,
+                    flag=NewSong.Flags.NEEDS_SECOND_OPINION,
+                    flagged_by=request.user.profile
+                )
 
         # Redirect to screening view
         return redirect('screening_index')

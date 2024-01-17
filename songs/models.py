@@ -243,7 +243,7 @@ class ArtistComment(models.Model):
 
 class Favorite(models.Model):
     class Meta:
-        unique_together = (('profile', 'song'))
+        unique_together = ('profile', 'song')
 
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
@@ -258,6 +258,7 @@ class NewSong(models.Model):
     class Flags(models.TextChoices):
         PRE_SCREENED = 'pre-screened', _('Pre-screened')
         PRE_SCREENED_PLUS = 'pre-screened+', _('Pre-screened and recommend featured')
+        NEEDS_SECOND_OPINION = 'needs-second-opinion', _('Needs second opinion')
 
     filename=models.CharField(max_length=120, db_index=True)
     title=models.CharField(max_length=120, db_index=True)
@@ -276,7 +277,8 @@ class NewSong(models.Model):
     update_date=models.DateTimeField(auto_now=True)
     claimed_by=models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, related_name='claimed_by')
     claim_date=models.DateTimeField(null=True, blank=True)
-    flag=models.CharField(max_length=16, choices=Flags.choices, blank=True, null=True)
+    flag=models.CharField(max_length=32, choices=Flags.choices, blank=True, null=True)
+    flagged_by=models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, related_name='flagged_by')
 
     def display_file_size(self):
         if self.file_size >= 1000000:
