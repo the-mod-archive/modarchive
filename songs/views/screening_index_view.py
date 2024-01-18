@@ -11,7 +11,7 @@ from songs import constants
 
 class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
     model = NewSong
-    template_name="screening.html"
+    template_name="screening_index.html"
     permission_required = 'songs.can_approve_songs'
     context_object_name = 'new_songs'
     paginate_by = 25

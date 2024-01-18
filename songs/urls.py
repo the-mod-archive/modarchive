@@ -22,6 +22,7 @@ from songs.views.new_song_list_view import NewSongListView
 from songs.views.screening_index_view import ScreeningIndexView
 from songs.views.screening_action_view import ScreeningActionView
 from songs.views.screen_song_view import ScreenSongView
+from songs.views.screening_download_view import ScreeningDownloadView
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='song_list.html'), name='songs'),
@@ -43,5 +44,6 @@ urlpatterns = [
     path('view_new_songs', NewSongListView.as_view(), name='view_new_songs'),
     path('screen_songs', ScreeningIndexView.as_view(), name='screening_index'),
     path('screen_songs/action', ScreeningActionView.as_view(), name='screening_action'),
-    path('screen_song/<int:pk>/', ScreenSongView.as_view(), name='screen_song')
+    path('screen_song/<int:pk>/', ScreenSongView.as_view(), name='screen_song'),
+    path('screen_song/<int:pk>/download', ScreeningDownloadView.as_view(), name='screening_download'),
 ]

@@ -20,6 +20,8 @@
 
     <div class="fs-4">{{new_song.filename}}</div>
     
+    <a href="{% url 'screening_download' new_song.pk %}" class="btn btn-primary" download>Download</a>
+
     {% if new_song.uploader_profile %}
         <div>Uploaded by: <a href="{% url 'view_profile' new_song.uploader_profile.pk %}">{{new_song.uploader_profile.display_name}}</a></div>
     {% else %}

@@ -1,5 +1,6 @@
 {% extends 'base_page/base.html' %}
 {% load crispy_forms_tags %}
+{% load bootstrap_icons %}
 
 {% block title %}
     {{ block.super }}: Screen Songs
@@ -81,6 +82,7 @@
                     <th>File Size</th>
                     <th>Format</th>
                     <th>Link</th>
+                    <th>Get</th>
                 </tr>
             </thead>
             <tbody>
@@ -94,6 +96,7 @@
                         <td>{{ song.file_size }}</td>
                         <td>{{ song.format }}</td>
                         <td><a href="{% url 'screen_song' song.id %}" class="btn btn-primary">View</a></td>
+                        <td><a href="{% url 'screening_download' song.id %}" class="btn btn-primary">{% bs_icon 'download' %}</a></td>
                     </tr>
                 {% endfor %}
             </tbody>

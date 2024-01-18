@@ -20,7 +20,7 @@ class ScreeningIndexViewTests(TestCase):
 
         # Assert
         self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(response, "screening.html")
+        self.assertTemplateUsed(response, "screening_index.html")
 
     def test_screening_view_rejects_access_to_unauthenticated_users(self):
         response = self.client.get(reverse('screening_index'))
