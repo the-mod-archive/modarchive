@@ -314,3 +314,85 @@ class ScreeningActionViewTests(TestCase):
         self.assertIsNone(song2.claimed_by)
         self.assertEqual(user.profile, song2.flagged_by)
         self.assertEqual(NewSong.Flags.NEEDS_SECOND_OPINION, song2.flag)
+
+    def test_can_flag_claimed_song_as_possible_duplicate(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song1 = song_factories.NewSongFactory(claimed_by=user.profile)
+        song2 = song_factories.NewSongFactory(claimed_by=user.profile)
+        song3 = song_factories.NewSongFactory(claimed_by=user.profile)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.POSSIBLE_DUPLICATE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        song2.refresh_from_db()
+        song3.refresh_from_db()
+        self.assertEqual(NewSong.Flags.POSSIBLE_DUPLICATE, song1.flag)
+        self.assertEqual(user.profile, song1.flagged_by)
+        self.assertIsNone(song2.flag)
+        self.assertIsNone(song2.flagged_by)
+        self.assertIsNone(song3.flag)
+        self.assertIsNone(song3.flagged_by)
+
+    def test_cannot_flag_unclaimed_song_as_possible_duplicate(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song1 = song_factories.NewSongFactory()
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.POSSIBLE_DUPLICATE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        self.assertIsNone(song1.flag)
+        self.assertIsNone(song1.flagged_by)
+
+    def test_cannot_flag_song_claimed_by_others_as_possible_duplicate(self):
+        # Arrange
+        user = factories.UserFactory()
+        other_user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song1 = song_factories.NewSongFactory(claimed_by=other_user.profile)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.POSSIBLE_DUPLICATE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        self.assertIsNone(song1.flag)
+        self.assertIsNone(song1.flagged_by)
+
+    def test_cannot_claim_song_flagged_as_possible_duplicate_by_self(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.POSSIBLE_DUPLICATE, flagged_by=user.profile)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.CLAIM_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        self.assertIsNone(song1.claimed_by)
+        self.assertEqual(user.profile, song1.flagged_by)
+        self.assertEqual(NewSong.Flags.POSSIBLE_DUPLICATE, song1.flag)

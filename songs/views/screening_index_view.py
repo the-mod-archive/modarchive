@@ -23,7 +23,8 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
         constants.OTHERS_SCREENING_FILTER: constants.OTHERS_SCREENING_FILTER_DESCRIPTION,
         constants.PRE_SCREENED_FILTER: constants.PRE_SCREENED_FILTER_DESCRIPTION,
         constants.PRE_SCREENED_AND_RECOMMENDED_FILTER: constants.PRE_SCREENED_AND_RECOMMENDED_FILTER_DESCRIPTION,
-        constants.NEEDS_SECOND_OPINION_FILTER: constants.NEEDS_SECOND_OPINION_FILTER_DESCRIPTION
+        constants.NEEDS_SECOND_OPINION_FILTER: constants.NEEDS_SECOND_OPINION_FILTER_DESCRIPTION,
+        constants.POSSIBLE_DUPLICATE_FILTER: constants.POSSIBLE_DUPLICATE_FILTER_DESCRIPTION
     }
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -39,7 +40,8 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
             context['actions'] = [
                 constants.PRE_SCREEN_ACTION,
                 constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
-                constants.NEEDS_SECOND_OPINION_ACTION
+                constants.NEEDS_SECOND_OPINION_ACTION,
+                constants.POSSIBLE_DUPLICATE_ACTION
             ]
         elif context['filter'] == constants.OTHERS_SCREENING_FILTER:
             context['actions'] = []
@@ -78,5 +80,7 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
                 queryset = queryset.filter(flag=NewSong.Flags.PRE_SCREENED_PLUS)
             case constants.NEEDS_SECOND_OPINION_FILTER:
                 queryset = queryset.filter(flag=NewSong.Flags.NEEDS_SECOND_OPINION)
+            case constants.POSSIBLE_DUPLICATE_FILTER:
+                queryset = queryset.filter(flag=NewSong.Flags.POSSIBLE_DUPLICATE)
 
         return queryset.order_by('-create_date')

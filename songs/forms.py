@@ -129,8 +129,9 @@ class ScreeningQueueFilterForm(forms.Form):
             (constants.PRE_SCREENED_AND_RECOMMENDED_FILTER, constants.PRE_SCREENED_AND_RECOMMENDED_FILTER_DESCRIPTION),
             )
         ),
-        (constants.SECOND_OPINION_GROUP, (
+        (constants.FLAGGED_GROUP, (
             (constants.NEEDS_SECOND_OPINION_FILTER, constants.NEEDS_SECOND_OPINION_FILTER_DESCRIPTION),
+            (constants.POSSIBLE_DUPLICATE_FILTER, constants.POSSIBLE_DUPLICATE_FILTER_DESCRIPTION),
             )
         )
     )

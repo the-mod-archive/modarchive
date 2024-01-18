@@ -296,10 +296,11 @@ class ScreeningIndexViewTests(TestCase):
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.MY_SCREENING_FILTER}")
 
         # Assert
-        self.assertEqual(len(response.context['actions']), 3)
+        self.assertEqual(len(response.context['actions']), 4)
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
+        self.assertIn(constants.POSSIBLE_DUPLICATE_ACTION, response.context['actions'])
 
     def test_others_screening_filter_contains_no_actions(self):
         # Arrange
@@ -386,3 +387,23 @@ class ScreeningIndexViewTests(TestCase):
         self.assertEqual(len(response.context['new_songs']), 2)
         self.assertIn(second_opinion_song_1, response.context['new_songs'])
         self.assertIn(second_opinion_song_2, response.context['new_songs'])
+
+    def test_possible_duplicate_filter_only_shows_songs_with_possible_duplicate_flag(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        possible_duplicate_song_1 = song_factories.NewSongFactory(flag=NewSong.Flags.POSSIBLE_DUPLICATE)
+        possible_duplicate_song_2 = song_factories.NewSongFactory(flag=NewSong.Flags.POSSIBLE_DUPLICATE)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.POSSIBLE_DUPLICATE_FILTER}")
+
+        # Assert
+        self.assertEqual(len(response.context['new_songs']), 2)
+        self.assertIn(possible_duplicate_song_1, response.context['new_songs'])
+        self.assertIn(possible_duplicate_song_2, response.context['new_songs'])

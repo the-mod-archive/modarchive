@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.views import View
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -15,6 +16,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         PRE_SCREEN = constants.PRE_SCREEN_KEYWORD
         PRE_SCREEN_AND_RECOMMEND = constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD
         NEEDS_SECOND_OPINION = constants.NEEDS_SECOND_OPINION_KEYWORD
+        POSSIBLE_DUPLICATE = constants.POSSIBLE_DUPLICATE_KEYWORD
 
     def post(self, request, *args, **kwargs):
         # Determine action from request, reject if not a valid action
@@ -28,8 +30,8 @@ class ScreeningActionView(PermissionRequiredMixin, View):
                 songs.filter(
                     claimed_by=None
                 ).exclude(
-                    flagged_by=request.user.profile,
-                    flag=NewSong.Flags.NEEDS_SECOND_OPINION
+                    Q(flagged_by=request.user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION) |
+                    Q(flagged_by=request.user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE)
                 ).update(
                     claimed_by=request.user.profile,
                     claim_date=timezone.now()
@@ -59,6 +61,15 @@ class ScreeningActionView(PermissionRequiredMixin, View):
                     claimed_by=None,
                     claim_date=None,
                     flag=NewSong.Flags.NEEDS_SECOND_OPINION,
+                    flagged_by=request.user.profile
+                )
+            case self.ScreeningAction.POSSIBLE_DUPLICATE:
+                songs.filter(
+                    claimed_by=request.user.profile
+                ).update(
+                    claimed_by=None,
+                    claim_date=None,
+                    flag=NewSong.Flags.POSSIBLE_DUPLICATE,
                     flagged_by=request.user.profile
                 )
 
