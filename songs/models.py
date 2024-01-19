@@ -260,6 +260,7 @@ class NewSong(models.Model):
         PRE_SCREENED_PLUS = 'pre-screened+', _('Pre-screened and recommend featured')
         NEEDS_SECOND_OPINION = 'needs-second-opinion', _('Needs second opinion')
         POSSIBLE_DUPLICATE = 'possible-duplicate', _('Possible duplicate')
+        UNDER_INVESTIGATION = 'under-investigation', _('Under investigation (do not approve)')
 
     filename=models.CharField(max_length=120, db_index=True)
     title=models.CharField(max_length=120, db_index=True)

@@ -132,6 +132,7 @@ class ScreeningQueueFilterForm(forms.Form):
         (constants.FLAGGED_GROUP, (
             (constants.NEEDS_SECOND_OPINION_FILTER, constants.NEEDS_SECOND_OPINION_FILTER_DESCRIPTION),
             (constants.POSSIBLE_DUPLICATE_FILTER, constants.POSSIBLE_DUPLICATE_FILTER_DESCRIPTION),
+            (constants.UNDER_INVESTIGATION_FILTER, constants.UNDER_INVESTIGATION_FILTER_DESCRIPTION),
             )
         )
     )

@@ -23,12 +23,10 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
                 constants.PRE_SCREEN_ACTION,
                 constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
                 constants.NEEDS_SECOND_OPINION_ACTION,
-                constants.POSSIBLE_DUPLICATE_ACTION
+                constants.POSSIBLE_DUPLICATE_ACTION,
+                constants.UNDER_INVESTIGATION_ACTION
             ]
         elif self.object.claimed_by != self.request.user.profile:
             context['actions'] = []
 
         return context
-
-    # def get(self, request, pk):
-    #     pass

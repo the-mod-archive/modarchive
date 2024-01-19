@@ -110,11 +110,12 @@ class ScreenSongViewTests(TestCase):
         response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
 
         # Assert
-        self.assertEqual(4, len(response.context['actions']))
+        self.assertEqual(5, len(response.context['actions']))
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
         self.assertIn(constants.POSSIBLE_DUPLICATE_ACTION, response.context['actions'])
+        self.assertIn(constants.UNDER_INVESTIGATION_ACTION, response.context['actions'])
 
     def test_song_claimed_by_other_shows_no_actions(self):
         # Arrange
