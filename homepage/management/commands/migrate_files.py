@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 
-from .disable_signals import DisableSignals
 from homepage import legacy_models
 from songs.models import Song, SongStats
+from .disable_signals import DisableSignals
 
 class Command(BaseCommand):
     help = "Migrate the legacy files table"
@@ -14,11 +14,11 @@ class Command(BaseCommand):
             total = len(files)
             counter = 0
             print(f"Starting migrations of {total} files. This process will create all song and song_stats objects.")
-            
+
             for file in files:
                 counter += 1
 
-                if (counter % 1000 == 0):
+                if counter % 1000 == 0:
                     print(f"Generated {counter} out of {total} from the legacy files table.")
 
                 self.generate_song(file)
@@ -26,10 +26,11 @@ class Command(BaseCommand):
     def generate_song(self, legacy_file):
         # Generate song
         create_date = legacy_file.date if legacy_file.date else legacy_file.timestamp
-        
+
         song = Song.objects.create(
-            legacy_id = legacy_file.id, 
+            legacy_id = legacy_file.id,
             filename = legacy_file.filename,
+            filename_unzipped = legacy_file.filename_unzipped,
             title = legacy_file.songtitle,
             format = self.get_format(legacy_file.format),
             file_size = legacy_file.filesize,
@@ -41,11 +42,12 @@ class Command(BaseCommand):
             license = self.get_license(legacy_file.license),
             create_date = create_date,
             update_date = legacy_file.timestamp,
-            genre = self.get_genre(legacy_file.genre_id)
+            genre = self.get_genre(legacy_file.genre_id),
+            folder = legacy_file.download
         )
 
         # Generate song stats
-        stats = SongStats.objects.create(
+        SongStats.objects.create(
             song = song,
             downloads = legacy_file.hits,
             total_comments = legacy_file.comment_total,
@@ -212,7 +214,7 @@ class Command(BaseCommand):
                 return Song.Genres.ELECTRONIC_CHILLOUT
             case 107:
                 return Song.Genres.POP_EASY_LISTENING
-            
+
     def get_format(self, format):
         match format:
             case 'it':
@@ -304,7 +306,7 @@ class Command(BaseCommand):
             case 'by-nc-sa':
                 return Song.Licenses.NON_COMMERCIAL_SHARE_ALIKE
             case 'by-nd':
-                return Song.Licenses.NO_DERIVATIVES    
+                return Song.Licenses.NO_DERIVATIVES
             case 'by-sa':
                 return Song.Licenses.SHARE_ALIKE
             case 'by':

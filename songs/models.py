@@ -137,6 +137,7 @@ class Song(models.Model):
 
     legacy_id=models.IntegerField(null=True, db_index=True, blank=True)
     filename=models.CharField(max_length=120, db_index=True)
+    filename_unzipped = models.CharField(max_length=120, blank=True)
     title=models.CharField(max_length=120, db_index=True)
     clean_title=models.CharField(max_length=120, null=True, db_index=True, blank=True, help_text="Cleaned-up version of the title for better display and search")
     format=models.CharField(max_length=6, choices=Formats.choices, db_index=True)
@@ -152,6 +153,7 @@ class Song(models.Model):
     is_featured=models.BooleanField(null=True, blank=True, db_index=True)
     featured_date=models.DateTimeField(null=True, blank=True)
     featured_by=models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True)
+    folder=models.CharField(max_length=4)
     title_vector=SearchVectorField(null=True, blank=True)
     instrument_text_vector=SearchVectorField(null=True, blank=True)
     comment_text_vector=SearchVectorField(null=True, blank=True)

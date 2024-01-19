@@ -1,11 +1,13 @@
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 
-from .disable_signals import DisableSignals
 from homepage import legacy_models
 from homepage.models import Profile
 from artists.models import Artist
+from .disable_signals import DisableSignals
+
+User = get_user_model()
 
 # Recommended order for migration:
 # 1. --migrate_users
@@ -15,10 +17,10 @@ from artists.models import Artist
 # 5. --migrate_comments
 # 6. --migrate_files_new
 # 7. --migrate_nominations
-# 
-# --update_artist_search_indexes
-# --update_song_search_indexes
-# 
+#
+# --update_artist_search_indexes --all
+# --update_song_search_indexes --all
+#
 # --convert_bbcode --comments
 # --convert_bbcode --artist_comments
 # --convert_bbcode --profile_blurbs
@@ -29,13 +31,13 @@ class Command(BaseCommand):
         with DisableSignals():
             users = legacy_models.Users.objects.using('legacy').all().order_by('userid')
             total = len(users)
-            
+
             print(f"Starting migrations of {total} users. This process will create all user, profile, and artist objects.")
             counter = 0
 
             for user in users:
                 counter += 1
-                if (counter % 1000 == 0):
+                if counter % 1000 == 0:
                     print(f"Generated {counter} out of {total} from the legacy users table.")
                 new_user = self.generate_user(user)
 
@@ -47,7 +49,7 @@ class Command(BaseCommand):
                 if not new_profile or not user.cred_artist:
                     continue
 
-                new_artist = self.generate_artist(user, new_user, new_profile)
+                self.generate_artist(user, new_user, new_profile)
 
     def generate_user(self, legacy_user):
         username = legacy_user.username
@@ -61,7 +63,7 @@ class Command(BaseCommand):
         except IntegrityError as e:
             print(f"Could not create user {username} due to IntegrityError {str(e)}")
             return None
-        
+
     def generate_profile(self, legacy_user, new_user):
         try:
             return Profile.objects.create(
@@ -98,11 +100,11 @@ class Command(BaseCommand):
                 create_date = legacy_user.date,
                 update_date = legacy_user.lastlogin
             )
-        
+
     def get_password_with_hashing_algorithm(self, password):
         if password.startswith("$2y"):
             return "bcrypt$" + password
-        
+
         if password:
             return "hmac$" + password
 

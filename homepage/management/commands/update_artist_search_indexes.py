@@ -15,7 +15,7 @@ class Command(BaseCommand):
                             help='The ID of the last artist to rebuild search index')
         parser.add_argument('--all', action='store_true',
                             help='Update the search vector fields for all artists')
-        
+
     def handle(self, *args, **options):
         artist_ids = set()
 
@@ -29,7 +29,7 @@ class Command(BaseCommand):
         if not artist_ids:
             self.stdout.write('No artists found to update')
             return
-        
+
         self.stdout.write(f'Updating {len(artist_ids)} artists...')
 
         for artist_id in artist_ids:

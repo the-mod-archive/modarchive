@@ -17,6 +17,7 @@ class AdminSongForm(forms.ModelForm):
         fields = (
             'legacy_id',
             'filename',
+            'filename_unzipped',
             'title',
             'clean_title',
             'format',
@@ -28,6 +29,7 @@ class AdminSongForm(forms.ModelForm):
             'pattern_hash',
             'license',
             'genre',
+            'folder',
             'is_featured',
             'featured_date',
             'featured_by'
