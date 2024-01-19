@@ -71,9 +71,10 @@ class UploadViewTests(TestCase):
         new_song = NewSong.objects.get(filename=filename)
         self.assertEqual(title, new_song.title)
         self.assertEqual(song_format, new_song.format)
-        self.assertEqual(channels, new_song.channels)    
+        self.assertEqual(channels, new_song.channels)
         self.assertEqual(profile, new_song.uploader_profile)
         self.assertEqual(is_by_uploader, new_song.is_by_uploader)
+        self.assertEqual(filename, new_song.filename_unzipped)
 
     def assert_context_success(self, context, total_expected, filenames, titles, formats):
         self.assertIn('successful_files', context)

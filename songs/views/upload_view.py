@@ -143,6 +143,7 @@ class UploadView(LoginRequiredMixin, FormView):
         """Moves the file into the upload processing directory and creates a NewSong record"""
         NewSong.objects.create(
             filename=song_data['filename'],
+            filename_unzipped=song_data['filename'],
             title=song_data['title'],
             format=song_data['format'],
             file_size=song_data['file_size'],

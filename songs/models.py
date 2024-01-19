@@ -263,6 +263,7 @@ class NewSong(models.Model):
         UNDER_INVESTIGATION = 'under-investigation', _('Under investigation (do not approve)')
 
     filename=models.CharField(max_length=120, db_index=True)
+    filename_unzipped=models.CharField(max_length=120)
     title=models.CharField(max_length=120, db_index=True)
     format=models.CharField(max_length=6, choices=Song.Formats.choices, db_index=True)
     file_size=models.PositiveIntegerField()
