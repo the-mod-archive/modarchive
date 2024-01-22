@@ -5,7 +5,7 @@ from django.views import View
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.utils import timezone
 
-from songs.models import NewSong
+from songs.models import NewSong, Song
 from songs import constants
 
 class ScreeningActionView(PermissionRequiredMixin, View):
@@ -92,13 +92,25 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         return redirect('screening_index')
 
     def approve_songs(self, songs, request):
-        if songs.filter(claimed_by=request.user.profile).exists():
-            if songs.filter(flag=NewSong.Flags.UNDER_INVESTIGATION).exists():
-                messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_UNDER_INVESTIGATION)
-                return redirect('screen_song', pk=songs[0].id)
-            elif songs.filter(flag=NewSong.Flags.POSSIBLE_DUPLICATE).exists():
-                messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_POSSIBLE_DUPLICATE)
-                return redirect('screen_song', pk=songs[0].id)
+        if len(songs) > 1:
+            messages.warning(request, 'Approving multiple songs at once is not supported yet.')
+            return redirect('screening_index')
 
-        messages.warning(request, constants.MESSAGE_APPROVAL_REQUIRES_CLAIM)
+        song = songs[0]
+
+        if not song.claimed_by or song.claimed_by != request.user.profile:
+            messages.warning(request, constants.MESSAGE_APPROVAL_REQUIRES_CLAIM)
+
+        if song.flag == NewSong.Flags.UNDER_INVESTIGATION:
+            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_UNDER_INVESTIGATION)
+
+        elif song.flag == NewSong.Flags.POSSIBLE_DUPLICATE:
+            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_POSSIBLE_DUPLICATE)
+
+        if Song.objects.filter(filename=song.filename).exists():
+            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_FILENAME)
+
+        if Song.objects.filter(hash=song.hash).exists():
+            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_HASH)
+
         return redirect('screen_song', pk=songs[0].id)

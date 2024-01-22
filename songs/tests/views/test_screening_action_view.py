@@ -525,3 +525,41 @@ class ScreeningActionViewTests(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(1, len(messages))
         self.assertEqual(constants.MESSAGE_CANNOT_APPROVE_POSSIBLE_DUPLICATE, str(messages[0]))
+
+    def test_song_with_duplicate_filename_in_main_archive_cannot_be_approved(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song_factories.SongFactory(filename=SONG_1_FILENAME, hash='1234567890')
+        song1 = song_factories.NewSongFactory(claimed_by=user.profile, filename=SONG_1_FILENAME, hash='0987654321')
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screen_song', kwargs={'pk': song1.id}))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_FILENAME, str(messages[0]))
+
+    def test_song_with_duplicate_hash_in_main_archive_cannot_be_approved(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song_factories.SongFactory(hash='1234567890', filename='song2.mod')
+        song1 = song_factories.NewSongFactory(claimed_by=user.profile, hash='1234567890', filename='song1.mod')
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screen_song', kwargs={'pk': song1.id}))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_HASH, str(messages[0]))
