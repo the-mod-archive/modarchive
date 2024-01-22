@@ -53,3 +53,9 @@ UNDER_INVESTIGATION_FILTER_DESCRIPTION = 'Under Investigation (do not approve)'
 
 MESSAGE_APPROVAL_REQUIRES_CLAIM = 'You must claim a song before you can approve it.'
 MESSAGE_CANNOT_APPROVE_UNDER_INVESTIGATION = 'You cannot approve a song that is under investigation.'
+
+FLAG_MESSAGE_SECOND_OPINION = 'Another screener would like a second opinion on this song.'
+FLAG_MESSAGE_POSSIBLE_DUPLICATE = 'This song may be a duplicate of another song in the database. Please verify.'
+FLAG_MESSAGE_UNDER_INVESTIGATION = 'Do not approve. This song is under investigation. This flag must be cleared before song can be approved.'
+FLAG_MESSAGE_PRE_SCREENED = 'This song has been pre-screened and can be added to the archive.'
+FLAG_MESSAGE_PRE_SCREENED_AND_RECOMMENDED = 'This song has been pre-screened and is recommended to be a featured song. It can be added to the archive.'

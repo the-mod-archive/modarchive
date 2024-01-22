@@ -18,7 +18,19 @@
         </div>
     {% endif %}
 
-    <div class="fs-4">{{new_song.filename}}</div>
+    <div class="fs-4">{% if new_song.title %} {{new_song.title}} - ({{new_song.filename}}) {% else %} {{new_song.filename}} {% endif %}</div>
+
+    <!-- Show flag -->
+    {% if new_song.flag %}
+        <div class='alert alert-{{ flag_message_class }}'>
+            {{ flag_message }}
+            <hr>
+            {% if new_song.flagged_by %}
+                Flagged by: <a href="{% url 'view_profile' new_song.flagged_by.pk %}">{{ new_song.flagged_by.display_name }}</a>
+            {% endif %}
+        </div>
+
+    {% endif %}
     
     <a href="{% url 'screening_download' new_song.pk %}" class="btn btn-primary" download>Download</a>
 

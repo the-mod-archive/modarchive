@@ -203,3 +203,93 @@ class ScreenSongViewTests(TestCase):
 
         # Assert
         self.assertEqual(0, len(response.context['actions']))
+
+    def test_flagged_song_for_second_opinion_includes_message_in_context(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
+
+        # Assert
+        self.assertIn('flag_message', response.context)
+        self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_SECOND_OPINION)
+        self.assertIn('flag_message_class', response.context)
+        self.assertEqual(response.context['flag_message_class'], 'warning')
+
+    def test_flagged_song_for_possible_duplicate_includes_message_in_context(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
+
+        # Assert
+        self.assertIn('flag_message', response.context)
+        self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_POSSIBLE_DUPLICATE)
+        self.assertIn('flag_message_class', response.context)
+        self.assertEqual(response.context['flag_message_class'], 'warning')
+
+    def test_flagged_song_for_under_investigation_includes_message_in_context(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.UNDER_INVESTIGATION)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
+
+        # Assert
+        self.assertIn('flag_message', response.context)
+        self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_UNDER_INVESTIGATION)
+        self.assertIn('flag_message_class', response.context)
+        self.assertEqual(response.context['flag_message_class'], 'warning')
+
+    def test_flagged_song_for_pre_screened_includes_message_in_context(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.PRE_SCREENED)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
+
+        # Assert
+        self.assertIn('flag_message', response.context)
+        self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_PRE_SCREENED)
+        self.assertIn('flag_message_class', response.context)
+        self.assertEqual(response.context['flag_message_class'], 'success')
+
+    def test_flagged_song_for_pre_screened_and_recommended_includes_message_in_context(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
+
+        # Assert
+        self.assertIn('flag_message', response.context)
+        self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_PRE_SCREENED_AND_RECOMMENDED)
+        self.assertIn('flag_message_class', response.context)
+        self.assertEqual(response.context['flag_message_class'], 'success')

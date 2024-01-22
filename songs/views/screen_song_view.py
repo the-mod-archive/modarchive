@@ -41,10 +41,20 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
         constants.APPROVE_ACTION
     ]
 
+    flag_messages_mapping = {
+        NewSong.Flags.NEEDS_SECOND_OPINION: constants.FLAG_MESSAGE_SECOND_OPINION,
+        NewSong.Flags.POSSIBLE_DUPLICATE: constants.FLAG_MESSAGE_POSSIBLE_DUPLICATE,
+        NewSong.Flags.UNDER_INVESTIGATION: constants.FLAG_MESSAGE_UNDER_INVESTIGATION,
+        NewSong.Flags.PRE_SCREENED: constants.FLAG_MESSAGE_PRE_SCREENED,
+        NewSong.Flags.PRE_SCREENED_PLUS: constants.FLAG_MESSAGE_PRE_SCREENED_AND_RECOMMENDED
+    }
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['claimed_by_me'] = self.request.user.profile == self.object.claimed_by
         context['claimed_by_other_user'] = self.object.claimed_by is not None and self.request.user.profile != self.object.claimed_by
+        context['flag_message'] = self.flag_messages_mapping.get(self.object.flag, None)
+        context['flag_message_class'] = 'success' if self.object.flag in [NewSong.Flags.PRE_SCREENED, NewSong.Flags.PRE_SCREENED_PLUS] else 'warning'
         if self.object.claimed_by is None:
             context['actions'] = [
                 constants.CLAIM_ACTION
