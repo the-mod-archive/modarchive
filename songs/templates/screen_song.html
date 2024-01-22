@@ -18,6 +18,14 @@
         </div>
     {% endif %}
 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
     <div class="fs-4">{% if new_song.title %} {{new_song.title}} - ({{new_song.filename}}) {% else %} {{new_song.filename}} {% endif %}</div>
 
     <!-- Show flag -->

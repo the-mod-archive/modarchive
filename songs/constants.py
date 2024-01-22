@@ -1,29 +1,29 @@
 CLAIM_KEYWORD = 'claim'
-CLAIM_DESCRIPTION = 'Claim Songs for Screening'
+CLAIM_DESCRIPTION = 'Claim for Screening'
 CLAIM_ACTION = (CLAIM_KEYWORD, CLAIM_DESCRIPTION)
 
 PRE_SCREEN_KEYWORD = 'pre_screen'
-PRE_SCREEN_DESCRIPTION = 'Pre-Screen Songs'
+PRE_SCREEN_DESCRIPTION = 'Mark as Pre-Screened'
 PRE_SCREEN_ACTION = (PRE_SCREEN_KEYWORD, PRE_SCREEN_DESCRIPTION)
 
 PRE_SCREEN_AND_RECOMMEND_KEYWORD = 'pre_screen_and_recommend'
-PRE_SCREEN_AND_RECOMMEND_DESCRIPTION = 'Pre-Screen Songs and Recommend for Featured'
+PRE_SCREEN_AND_RECOMMEND_DESCRIPTION = 'Mark as Pre-Screened, and Recommend for Featured Song'
 PRE_SCREEN_AND_RECOMMEND_ACTION = (PRE_SCREEN_AND_RECOMMEND_KEYWORD, PRE_SCREEN_AND_RECOMMEND_DESCRIPTION)
 
 APPROVE_KEYWORD = 'approve'
-APPROVE_DESCRIPTION = 'Approve Songs'
+APPROVE_DESCRIPTION = 'Approve and Add to Archive'
 APPROVE_ACTION = (APPROVE_KEYWORD, APPROVE_DESCRIPTION)
 
 NEEDS_SECOND_OPINION_KEYWORD = 'needs_second_opinion'
-NEEDS_SECOND_OPINION_DESCRIPTION = 'Apply Flag: Needs Second Opinion'
+NEEDS_SECOND_OPINION_DESCRIPTION = 'Request a Second Opinion'
 NEEDS_SECOND_OPINION_ACTION = (NEEDS_SECOND_OPINION_KEYWORD, NEEDS_SECOND_OPINION_DESCRIPTION)
 
 POSSIBLE_DUPLICATE_KEYWORD = 'possible_duplicate'
-POSSIBLE_DUPLICATE_DESCRIPTION = 'Apply Flag: Possible Duplicate'
+POSSIBLE_DUPLICATE_DESCRIPTION = 'Report as Possible Duplicate'
 POSSIBLE_DUPLICATE_ACTION = (POSSIBLE_DUPLICATE_KEYWORD, POSSIBLE_DUPLICATE_DESCRIPTION)
 
 UNDER_INVESTIGATION_KEYWORD = 'under_investigation'
-UNDER_INVESTIGATION_DESCRIPTION = 'Apply Flag: Under Investigation'
+UNDER_INVESTIGATION_DESCRIPTION = 'Report as Under Investigation'
 UNDER_INVESTIGATION_ACTION = (UNDER_INVESTIGATION_KEYWORD, UNDER_INVESTIGATION_DESCRIPTION)
 
 UNCLAIMED_GROUP = 'Unclaimed'
@@ -51,8 +51,9 @@ POSSIBLE_DUPLICATE_FILTER_DESCRIPTION = 'Possible Duplicate'
 UNDER_INVESTIGATION_FILTER = 'under_investigation'
 UNDER_INVESTIGATION_FILTER_DESCRIPTION = 'Under Investigation (do not approve)'
 
-MESSAGE_APPROVAL_REQUIRES_CLAIM = 'You must claim a song before you can approve it.'
+MESSAGE_APPROVAL_REQUIRES_CLAIM = 'You must claim a song before you can approve it, or the song must be pre-screened.'
 MESSAGE_CANNOT_APPROVE_UNDER_INVESTIGATION = 'You cannot approve a song that is under investigation.'
+MESSAGE_CANNOT_APPROVE_POSSIBLE_DUPLICATE = 'You cannot approve a song that is a possible duplicate.'
 
 FLAG_MESSAGE_SECOND_OPINION = 'Another screener would like a second opinion on this song.'
 FLAG_MESSAGE_POSSIBLE_DUPLICATE = 'This song may be a duplicate of another song in the database. Please verify.'

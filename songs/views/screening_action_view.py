@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.views import View
@@ -18,6 +19,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         NEEDS_SECOND_OPINION = constants.NEEDS_SECOND_OPINION_KEYWORD
         POSSIBLE_DUPLICATE = constants.POSSIBLE_DUPLICATE_KEYWORD
         UNDER_INVESTIGATION = constants.UNDER_INVESTIGATION_KEYWORD
+        APPROVE = constants.APPROVE_KEYWORD
 
     def post(self, request, *args, **kwargs):
         # Determine action from request, reject if not a valid action
@@ -83,6 +85,20 @@ class ScreeningActionView(PermissionRequiredMixin, View):
                     flag=NewSong.Flags.UNDER_INVESTIGATION,
                     flagged_by=request.user.profile
                 )
+            case self.ScreeningAction.APPROVE:
+                return self.approve_songs(songs, request)
 
         # Redirect to screening view
         return redirect('screening_index')
+
+    def approve_songs(self, songs, request):
+        if songs.filter(claimed_by=request.user.profile).exists():
+            if songs.filter(flag=NewSong.Flags.UNDER_INVESTIGATION).exists():
+                messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_UNDER_INVESTIGATION)
+                return redirect('screen_song', pk=songs[0].id)
+            elif songs.filter(flag=NewSong.Flags.POSSIBLE_DUPLICATE).exists():
+                messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_POSSIBLE_DUPLICATE)
+                return redirect('screen_song', pk=songs[0].id)
+
+        messages.warning(request, constants.MESSAGE_APPROVAL_REQUIRES_CLAIM)
+        return redirect('screen_song', pk=songs[0].id)

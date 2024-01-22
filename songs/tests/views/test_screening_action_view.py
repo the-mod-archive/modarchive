@@ -1,3 +1,4 @@
+from django.contrib.messages import get_messages
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls.base import reverse
@@ -470,3 +471,57 @@ class ScreeningActionViewTests(TestCase):
         self.assertIsNone(song1.claimed_by)
         self.assertEqual(user.profile, song1.flagged_by)
         self.assertEqual(NewSong.Flags.UNDER_INVESTIGATION, song1.flag)
+
+    def test_cannot_approve_single_unclaimed_song(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song1 = song_factories.NewSongFactory()
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screen_song', kwargs={'pk': song1.id}))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_APPROVAL_REQUIRES_CLAIM, str(messages[0]))
+
+    def test_cannot_approve_song_under_investigation(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song1 = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.UNDER_INVESTIGATION)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screen_song', kwargs={'pk': song1.id}))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_CANNOT_APPROVE_UNDER_INVESTIGATION, str(messages[0]))
+
+    def test_cannot_approve_possible_duplicate_song(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song1 = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screen_song', kwargs={'pk': song1.id}))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_CANNOT_APPROVE_POSSIBLE_DUPLICATE, str(messages[0]))
