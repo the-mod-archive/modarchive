@@ -4,6 +4,7 @@ from django.contrib.auth.models import Permission
 
 from songs import factories as song_factories
 from songs import constants
+from songs.models import NewSong
 from homepage.tests import factories
 
 class ScreenSongViewTests(TestCase):
@@ -98,7 +99,7 @@ class ScreenSongViewTests(TestCase):
         self.assertEqual(1, len(response.context['actions']))
         self.assertIn(constants.CLAIM_ACTION, response.context['actions'])
 
-    def test_claimed_song_shows_permitted_actions(self):
+    def test_claimed_song_with_no_flags_has_permitted_actions(self):
         # Arrange
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
@@ -110,12 +111,13 @@ class ScreenSongViewTests(TestCase):
         response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
 
         # Assert
-        self.assertEqual(5, len(response.context['actions']))
+        self.assertEqual(6, len(response.context['actions']))
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
         self.assertIn(constants.POSSIBLE_DUPLICATE_ACTION, response.context['actions'])
         self.assertIn(constants.UNDER_INVESTIGATION_ACTION, response.context['actions'])
+        self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
 
     def test_song_claimed_by_other_shows_no_actions(self):
         # Arrange
@@ -128,6 +130,76 @@ class ScreenSongViewTests(TestCase):
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertEqual(0, len(response.context['actions']))
+
+    def test_claimed_song_with_second_opinion_flag_has_permitted_actions(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertEqual(5, len(response.context['actions']))
+        self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
+        self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
+        self.assertIn(constants.POSSIBLE_DUPLICATE_ACTION, response.context['actions'])
+        self.assertIn(constants.UNDER_INVESTIGATION_ACTION, response.context['actions'])
+        self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
+
+    def test_claimed_song_with_possible_duplicate_flag_has_permitted_actions(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertEqual(4, len(response.context['actions']))
+        self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
+        self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
+        self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
+        self.assertIn(constants.UNDER_INVESTIGATION_ACTION, response.context['actions'])
+
+    def test_claimed_song_with_under_investigation_flag_has_permitted_actions(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.UNDER_INVESTIGATION)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertEqual(4, len(response.context['actions']))
+        self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
+        self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
+        self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
+        self.assertIn(constants.POSSIBLE_DUPLICATE_ACTION, response.context['actions'])
+
+    def test_claimed_song_and_flagged_by_self_as_second_opinion_shows_no_actions(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song = song_factories.NewSongFactory(claimed_by=user.profile, flagged_by=user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
 
         # Assert
         self.assertEqual(0, len(response.context['actions']))

@@ -10,6 +10,37 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
     template_name = 'screen_song.html'
     context_object_name = 'new_song'
 
+    flag_actions_mapping = {
+        NewSong.Flags.POSSIBLE_DUPLICATE: [
+            constants.PRE_SCREEN_ACTION,
+            constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
+            constants.NEEDS_SECOND_OPINION_ACTION,
+            constants.UNDER_INVESTIGATION_ACTION
+        ],
+        NewSong.Flags.UNDER_INVESTIGATION: [
+            constants.PRE_SCREEN_ACTION,
+            constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
+            constants.NEEDS_SECOND_OPINION_ACTION,
+            constants.POSSIBLE_DUPLICATE_ACTION
+        ],
+        NewSong.Flags.NEEDS_SECOND_OPINION: [
+            constants.PRE_SCREEN_ACTION,
+            constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
+            constants.POSSIBLE_DUPLICATE_ACTION,
+            constants.UNDER_INVESTIGATION_ACTION,
+            constants.APPROVE_ACTION
+        ],
+    }
+
+    claimed_and_no_flag_actions = [
+        constants.PRE_SCREEN_ACTION,
+        constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
+        constants.NEEDS_SECOND_OPINION_ACTION,
+        constants.POSSIBLE_DUPLICATE_ACTION,
+        constants.UNDER_INVESTIGATION_ACTION,
+        constants.APPROVE_ACTION
+    ]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['claimed_by_me'] = self.request.user.profile == self.object.claimed_by
@@ -19,13 +50,10 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
                 constants.CLAIM_ACTION
             ]
         elif self.object.claimed_by == self.request.user.profile:
-            context['actions'] = [
-                constants.PRE_SCREEN_ACTION,
-                constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
-                constants.NEEDS_SECOND_OPINION_ACTION,
-                constants.POSSIBLE_DUPLICATE_ACTION,
-                constants.UNDER_INVESTIGATION_ACTION
-            ]
+            if self.object.flagged_by == self.request.user.profile and self.object.flag in [NewSong.Flags.NEEDS_SECOND_OPINION]:
+                context['actions'] = []
+            else:
+                context['actions'] = self.flag_actions_mapping.get(self.object.flag, self.claimed_and_no_flag_actions)
         elif self.object.claimed_by != self.request.user.profile:
             context['actions'] = []
 
