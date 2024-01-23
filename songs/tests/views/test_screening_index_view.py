@@ -316,6 +316,20 @@ class ScreeningIndexViewTests(TestCase):
         # Assert
         self.assertEqual(len(response.context['actions']), 0)
 
+    def test_prescreened_filter_shows_legal_actions(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.get(f"{reverse('screening_index')}?filter={constants.PRE_SCREENED_FILTER}")
+
+        # Assert
+        self.assertEqual(len(response.context['actions']), 1)
+        self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
+
     def test_high_priority_filter_does_not_show_prescreened_songs(self):
         # Arrange
         user = factories.UserFactory()

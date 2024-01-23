@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib import messages
@@ -7,6 +8,7 @@ from django.shortcuts import redirect
 from django.views import View
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.utils import timezone
+from django.urls.base import reverse
 
 from songs.models import NewSong, Song
 from songs import constants
@@ -96,30 +98,15 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         return redirect('screening_index')
 
     def approve_songs(self, songs, request):
-        if len(songs) > 1:
-            messages.warning(request, 'Approving multiple songs at once is not supported yet.')
-            return redirect('screening_index')
+        if len(songs) > 1 and not self.validate_bulk_approval(songs, request):
+            base_url = reverse('screening_index')
+            query_string = urlencode({'filter': constants.PRE_SCREENED_FILTER})
+            return redirect(f'{base_url}?{query_string}')
+
+        if len(songs) == 1 and not self.validate_single_approval(songs, request):
+            return redirect('screen_song', pk=songs[0].id)
 
         approved_song = songs[0]
-
-        if not approved_song.claimed_by or approved_song.claimed_by != request.user.profile:
-            messages.warning(request, constants.MESSAGE_APPROVAL_REQUIRES_CLAIM)
-            return redirect('screen_song', pk=songs[0].id)
-
-        if approved_song.flag == NewSong.Flags.UNDER_INVESTIGATION:
-            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_UNDER_INVESTIGATION)
-            return redirect('screen_song', pk=songs[0].id)
-        elif approved_song.flag == NewSong.Flags.POSSIBLE_DUPLICATE:
-            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_POSSIBLE_DUPLICATE)
-            return redirect('screen_song', pk=songs[0].id)
-
-        if Song.objects.filter(filename=approved_song.filename).exists():
-            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_FILENAME)
-            return redirect('screen_song', pk=songs[0].id)
-
-        if Song.objects.filter(hash=approved_song.hash).exists():
-            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_HASH)
-            return redirect('screen_song', pk=songs[0].id)
 
         # Folder is the capitalized first character of the filename. If it's a number, use '0_9'
         if approved_song.filename[0].isdigit():
@@ -168,3 +155,41 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         approved_song.delete()
 
         return redirect('view_song', pk=song.pk)
+
+    def validate_bulk_approval(self, songs, request) -> bool:
+        if songs.exclude(flag=NewSong.Flags.PRE_SCREENED).exists():
+            messages.warning(request, constants.MESSAGE_ALL_SONGS_MUST_BE_PRESCREENED_FOR_BULK_APPROVAL)
+        elif Song.objects.filter(filename__in=songs.values_list('filename', flat=True)).exists():
+            messages.warning(request, constants.MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_FILENAME_FOR_BULK_APPROVAL)
+        elif Song.objects.filter(hash__in=songs.values_list('hash', flat=True)).exists():
+            messages.warning(request, constants.MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_HASH_FOR_BULK_APPROVAL)
+        elif songs.exclude(claimed_by=request.user.profile).filter(claimed_by__isnull=False).exists():
+            messages.warning(request, constants.MESSAGE_ALL_SONGS_MUST_NOT_BE_CLAIMED_BY_OTHERS_FOR_BULK_APPROVAL)
+        else:
+            messages.warning(request, 'Approving multiple songs at once is not supported yet.')
+
+        if messages.get_messages(request):
+            return False
+
+        return True
+
+    def validate_single_approval(self, songs, request) -> bool:
+        approved_song = songs[0]
+        if not approved_song.claimed_by or approved_song.claimed_by != request.user.profile:
+            messages.warning(request, constants.MESSAGE_APPROVAL_REQUIRES_CLAIM)
+
+        if approved_song.flag == NewSong.Flags.UNDER_INVESTIGATION:
+            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_UNDER_INVESTIGATION)
+        elif approved_song.flag == NewSong.Flags.POSSIBLE_DUPLICATE:
+            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_POSSIBLE_DUPLICATE)
+
+        if Song.objects.filter(filename=approved_song.filename).exists():
+            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_FILENAME)
+
+        if Song.objects.filter(hash=approved_song.hash).exists():
+            messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_HASH)
+
+        if messages.get_messages(request):
+            return False
+
+        return True

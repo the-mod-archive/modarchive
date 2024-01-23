@@ -56,6 +56,10 @@ MESSAGE_CANNOT_APPROVE_UNDER_INVESTIGATION = 'You cannot approve a song that is 
 MESSAGE_CANNOT_APPROVE_POSSIBLE_DUPLICATE = 'You cannot approve a song that is a possible duplicate.'
 MESSAGE_CANNOT_APPROVE_DUPLICATE_FILENAME = 'A song with this filename already exists in the archive. You will need to change the filename before it can be approved.'
 MESSAGE_CANNOT_APPROVE_DUPLICATE_HASH = 'A song with this hash already exists in the archive.'
+MESSAGE_ALL_SONGS_MUST_BE_PRESCREENED_FOR_BULK_APPROVAL = 'All songs must be pre-screened before they can be bulk approved.'
+MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_FILENAME_FOR_BULK_APPROVAL = 'All songs must have a unique filename before they can be bulk approved.'
+MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_HASH_FOR_BULK_APPROVAL = 'All songs must have a unique hash before they can be bulk approved.'
+MESSAGE_ALL_SONGS_MUST_NOT_BE_CLAIMED_BY_OTHERS_FOR_BULK_APPROVAL = 'You cannot bulk approve if any song is claimed by somebody else.'
 
 FLAG_MESSAGE_SECOND_OPINION = 'Another screener would like a second opinion on this song.'
 FLAG_MESSAGE_POSSIBLE_DUPLICATE = 'This song may be a duplicate of another song in the database. Please verify.'

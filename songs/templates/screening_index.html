@@ -62,6 +62,16 @@
 
 <div class="fs-2">Screen Songs</div>
 
+<!-- Display messages, if any -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
 <!-- Filters dropdown -->
 <div class="container mt-3 mb-3">
     {{ form|crispy }}

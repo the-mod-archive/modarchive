@@ -723,3 +723,84 @@ class ScreeningActionViewTests(TestCase):
         self.assertIn(artist, song.artist_set.all())
         self.assertEqual(1, len(artist.songs.all()))
         self.assertIn(song, artist.songs.all())
+
+    def test_cannot_bulk_approve_unless_all_songs_are_prescreened(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song3 = song_factories.NewSongFactory()
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index') + '?filter=pre_screened')
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_ALL_SONGS_MUST_BE_PRESCREENED_FOR_BULK_APPROVAL, str(messages[0]))
+
+    def test_cannot_bulk_approve_if_any_song_has_duplicate_filename(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song_factories.SongFactory(filename=SONG_1_FILENAME)
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_1_FILENAME, hash='0987654321')
+        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_2_FILENAME, hash='1234567890')
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index') + '?filter=pre_screened')
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_FILENAME_FOR_BULK_APPROVAL, str(messages[0]))
+
+    def test_cannot_bulk_approve_if_any_song_has_duplicate_hash(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song_factories.SongFactory(hash='1234567890')
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_1_FILENAME, hash='0987654321')
+        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_2_FILENAME, hash='1234567890')
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index') + '?filter=pre_screened')
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_HASH_FOR_BULK_APPROVAL, str(messages[0]))
+
+    def test_cannot_bulk_approve_if_any_song_is_claimed_by_somebody_else(self):
+        # Arrange
+        user = factories.UserFactory()
+        other_user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, claimed_by=other_user.profile)
+        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song3 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index') + '?filter=pre_screened')
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_ALL_SONGS_MUST_NOT_BE_CLAIMED_BY_OTHERS_FOR_BULK_APPROVAL, str(messages[0]))
