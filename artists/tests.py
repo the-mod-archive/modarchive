@@ -11,10 +11,10 @@ class ArtistViewTests(TestCase):
         expected_length = 15
         for _ in range(expected_length):
             factories.ArtistFactory()
-        
+
         # Act
         response = self.client.get(reverse('artists'))
-        
+
         # Assert
         actual_length = len(response.context['object_list'])
         self.assertEqual(expected_length, actual_length, f"Expected {expected_length} objects in artists list but got {actual_length}")
@@ -23,7 +23,7 @@ class ArtistViewTests(TestCase):
     def test_artist_view_contains_specific_artist(self):
         # Arrange
         artist = factories.ArtistFactory(name='Arcturus', legacy_id=69117)
-        
+
         # Act
         response = self.client.get(reverse('view_artist', kwargs = {'pk': artist.id}))
 
@@ -38,7 +38,7 @@ class ArtistViewTests(TestCase):
     def test_artist_songs_view_contains_specific_artist(self):
         # Arrange
         artist = factories.ArtistFactory(name='Arcturus', legacy_id=69117)
-        
+
         # Act
         response = self.client.get(reverse('view_artist_songs', kwargs = {'pk': artist.id}))
 
@@ -54,7 +54,7 @@ class ArtistViewTests(TestCase):
         # Arrange
         user = homepage_factories.UserFactory()
         artist = factories.ArtistFactory(name='Arcturus', legacy_id=69117, user=user, profile=user.profile)
-        
+
         # Act
         response = self.client.get(reverse('view_artist_comments', kwargs = {'pk': artist.id}))
 
@@ -70,7 +70,7 @@ class ArtistViewTests(TestCase):
         # Arrange
         user = homepage_factories.UserFactory()
         artist = factories.ArtistFactory(name='Arcturus', legacy_id=69117, user=user, profile=user.profile)
-        
+
         # Act
         response = self.client.get(reverse('view_artist_favorites', kwargs = {'pk': artist.id}))
 
@@ -86,7 +86,7 @@ class ArtistSongViewTests(TestCase):
     def test_artist_song_view_contains_songs(self):
         # Arrange
         songs = [song_factories.SongFactory() for _ in range(10)]
-        
+
         artist = factories.ArtistFactory(name='Arcturus', songs=songs)
 
         # Act
@@ -98,7 +98,7 @@ class ArtistSongViewTests(TestCase):
     def test_artist_song_view_contains_first_page_of_songs(self):
         # Arrange
         songs = [song_factories.SongFactory() for _ in range(30)]
-        
+
         artist = factories.ArtistFactory(name='Arcturus', songs=songs)
 
         # Act
@@ -110,7 +110,7 @@ class ArtistSongViewTests(TestCase):
     def test_artist_song_view_contains_second_page_of_songs(self):
         # Arrange
         songs = [song_factories.SongFactory() for _ in range(30)]
-        
+
         artist = factories.ArtistFactory(name='Arcturus', songs=songs)
 
         # Act
@@ -118,3 +118,26 @@ class ArtistSongViewTests(TestCase):
 
         # Assert
         self.assertEqual(5, len(response.context['songs']))
+
+class ArtistModelTests(TestCase):
+    def test_creates_random_token_on_save(self):
+        # Arrange
+        artist = factories.ArtistFactory(name='Arcturus')
+
+        # Act
+        artist.save()
+
+        # Assert
+        self.assertIsNotNone(artist.random_token)
+
+    def test_two_artists_with_same_name_have_different_random_tokens(self):
+        # Arrange
+        artist1 = factories.ArtistFactory(name='Arcturus')
+        artist2 = factories.ArtistFactory(name='Arcturus')
+
+        # Act
+        artist1.save()
+        artist2.save()
+
+        # Assert
+        self.assertNotEqual(artist1.random_token, artist2.random_token)

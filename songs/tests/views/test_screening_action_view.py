@@ -10,11 +10,29 @@ from homepage.tests import factories
 from songs import factories as song_factories
 from songs.models import NewSong, Song
 from songs import constants
+from artists.factories import ArtistFactory
 
 SONG_1_FILENAME = 'song1.mod'
 SONG_2_FILENAME = 'song2.mod'
 
 class ScreeningActionViewTests(TestCase):
+    new_file_dir = settings.NEW_FILE_DIR
+    main_archive_dir = settings.MAIN_ARCHIVE_DIR
+
+    def tearDown(self):
+        # Cleanup new_file_dir after each test
+        for filename in os.listdir(self.new_file_dir):
+            file_path = os.path.join(self.new_file_dir, filename)
+            os.remove(file_path)
+
+        # Empty all subdirectories of main_archive_dir and then delete them
+        for directory in os.listdir(self.main_archive_dir):
+            directory_path = os.path.join(self.main_archive_dir, directory)
+            for filename in os.listdir(directory_path):
+                file_path = os.path.join(directory_path, filename)
+                os.remove(file_path)
+            os.rmdir(directory_path)
+
     def test_unauthenticated_user_is_redirected_to_login(self):
         # Arrange
         screening_url = reverse('screening_action')
@@ -574,9 +592,8 @@ class ScreeningActionViewTests(TestCase):
         user.user_permissions.add(permission)
         song1 = song_factories.NewSongFactory(claimed_by=user.profile, hash='0987654321', filename=SONG_1_FILENAME, format='mod')
 
-        new_file_dir = settings.NEW_FILE_DIR
         # Put a file in the new_file_dir called test.mod.zip - doesn't matter what it contains
-        with open(f'{new_file_dir}/{SONG_1_FILENAME}.zip', 'w', encoding='utf-8') as file:
+        with open(f'{self.new_file_dir}/{SONG_1_FILENAME}.zip', 'w', encoding='utf-8') as file:
             file.write('test')
         # Create an S folder in the main archive dir
         os.mkdir(f'{settings.MAIN_ARCHIVE_DIR}/S')
@@ -599,3 +616,105 @@ class ScreeningActionViewTests(TestCase):
         previous_location = f'{settings.NEW_FILE_DIR}/{song.filename}.zip'
         self.assertFalse(os.path.exists(previous_location))
         self.assertFalse(NewSong.objects.filter(id=song1.id).exists())
+
+    def test_song_is_added_to_artist_profile_when_uploaded_by_artist(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        uploader_profile = factories.UserFactory().profile
+        artist = ArtistFactory(profile=uploader_profile)
+        song1 = song_factories.NewSongFactory(
+            claimed_by=user.profile,
+            hash='0987654321',
+            filename=SONG_1_FILENAME,
+            format='mod',
+            is_by_uploader=True,
+            uploader_profile=uploader_profile
+        )
+
+        # Put a file in the new_file_dir called test.mod.zip - doesn't matter what it contains
+        with open(f'{self.new_file_dir}/{SONG_1_FILENAME}.zip', 'w', encoding='utf-8') as file:
+            file.write('test')
+        # Create an S folder in the main archive dir
+        os.mkdir(f'{settings.MAIN_ARCHIVE_DIR}/S')
+
+        # Act
+        self.client.force_login(user)
+        self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        song = Song.objects.get(hash=song1.hash)
+        self.assertEqual(1, len(song.artist_set.all()))
+        self.assertIn(artist, song.artist_set.all())
+        self.assertEqual(1, len(artist.songs.all()))
+        self.assertIn(song, artist.songs.all())
+
+    def test_artist_profile_created_when_uploader_does_not_have_one_yet(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        uploader_profile = factories.UserFactory().profile
+        song1 = song_factories.NewSongFactory(
+            claimed_by=user.profile,
+            hash='0987654321',
+            filename=SONG_1_FILENAME,
+            format='mod',
+            is_by_uploader=True,
+            uploader_profile=uploader_profile
+        )
+
+        # Put a file in the new_file_dir called test.mod.zip - doesn't matter what it contains
+        with open(f'{self.new_file_dir}/{SONG_1_FILENAME}.zip', 'w', encoding='utf-8') as file:
+            file.write('test')
+        # Create an S folder in the main archive dir
+        os.mkdir(f'{settings.MAIN_ARCHIVE_DIR}/S')
+
+        # Act
+        self.client.force_login(user)
+        self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        song = Song.objects.get(hash=song1.hash)
+        artist = uploader_profile.artist
+        self.assertEqual(uploader_profile.display_name, artist.name)
+        self.assertEqual(1, len(song.artist_set.all()))
+        self.assertIn(artist, song.artist_set.all())
+        self.assertEqual(1, len(artist.songs.all()))
+        self.assertIn(song, artist.songs.all())
+
+    def test_artist_profile_created_has_unique_username(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        uploader_profile = factories.UserFactory(username='TrackerDude').profile
+        ArtistFactory(name='TrackerDude')
+        song1 = song_factories.NewSongFactory(
+            claimed_by=user.profile,
+            hash='0987654321',
+            filename=SONG_1_FILENAME,
+            format='mod',
+            is_by_uploader=True,
+            uploader_profile=uploader_profile
+        )
+
+        # Put a file in the new_file_dir called test.mod.zip - doesn't matter what it contains
+        with open(f'{self.new_file_dir}/{SONG_1_FILENAME}.zip', 'w', encoding='utf-8') as file:
+            file.write('test')
+        # Create an S folder in the main archive dir
+        os.mkdir(f'{settings.MAIN_ARCHIVE_DIR}/S')
+
+        # Act
+        self.client.force_login(user)
+        self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        song = Song.objects.get(hash=song1.hash)
+        artist = uploader_profile.artist
+        self.assertEqual('TrackerDude', artist.name)
+        self.assertEqual(1, len(song.artist_set.all()))
+        self.assertIn(artist, song.artist_set.all())
+        self.assertEqual(1, len(artist.songs.all()))
+        self.assertIn(song, artist.songs.all())

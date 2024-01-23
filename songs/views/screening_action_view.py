@@ -10,6 +10,7 @@ from django.utils import timezone
 
 from songs.models import NewSong, Song
 from songs import constants
+from artists.models import Artist
 
 class ScreeningActionView(PermissionRequiredMixin, View):
     template_name = 'screening_action_result.html'
@@ -126,6 +127,11 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         else:
             folder = approved_song.filename[0].upper()
 
+        # Move file into the new directory
+        current_location = os.path.join(settings.NEW_FILE_DIR, f'{approved_song.filename}.zip')
+        new_location = os.path.join(settings.MAIN_ARCHIVE_DIR, folder, f'{approved_song.filename}.zip')
+        os.rename(current_location, new_location)
+
         # If all looks okay, add the song to the archive
         song = Song.objects.create(
             filename=approved_song.filename,
@@ -141,10 +147,21 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             folder=folder,
         )
 
-        # Move file into the new directory
-        current_location = os.path.join(settings.NEW_FILE_DIR, f'{approved_song.filename}.zip')
-        new_location = os.path.join(settings.MAIN_ARCHIVE_DIR, folder, f'{approved_song.filename}.zip')
-        os.rename(current_location, new_location)
+        # If uploaded by artist, add to artist's list of songs
+        if approved_song.is_by_uploader:
+            # Determine if the uploader profile has an artist
+            if not Artist.objects.filter(profile=approved_song.uploader_profile).exists():
+                # If not, create a new artist
+                artist = Artist.objects.create(
+                    user=approved_song.uploader_profile.user,
+                    profile=approved_song.uploader_profile,
+                    name=approved_song.uploader_profile.user.username
+                )
+            else:
+                # If so, use the existing one
+                artist = approved_song.uploader_profile.artist
+
+            artist.songs.add(song)
 
         # Delete the NewSong record
         approved_song.delete()
