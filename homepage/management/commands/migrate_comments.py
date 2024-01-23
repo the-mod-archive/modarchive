@@ -1,12 +1,11 @@
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.db.models import F
 
-from .disable_signals import DisableSignals
 from homepage import legacy_models
 from homepage.models import Profile
 from songs.models import Song, Comment
+from .disable_signals import DisableSignals
 
 class Command(BaseCommand):
     help = "Migrate the legacy comments table"
@@ -21,7 +20,7 @@ class Command(BaseCommand):
             for comment in comments:
                 counter += 1
 
-                if (counter % 1000 == 0):
+                if counter % 1000 == 0:
                     print(f"Generated {counter} out of {total} comments.")
 
                 # Get the profile

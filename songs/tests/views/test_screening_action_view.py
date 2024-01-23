@@ -588,9 +588,10 @@ class ScreeningActionViewTests(TestCase):
     def test_single_song_is_added_to_archive_when_approved(self):
         # Arrange
         user = factories.UserFactory()
+        uploader = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song1 = song_factories.NewSongFactory(claimed_by=user.profile, hash='0987654321', filename=SONG_1_FILENAME, format='mod')
+        song1 = song_factories.NewSongFactory(claimed_by=user.profile, hash='0987654321', filename=SONG_1_FILENAME, format='mod', uploader_profile=uploader.profile)
 
         # Put a file in the new_file_dir called test.mod.zip - doesn't matter what it contains
         with open(f'{self.new_file_dir}/{SONG_1_FILENAME}.zip', 'w', encoding='utf-8') as file:
@@ -609,6 +610,7 @@ class ScreeningActionViewTests(TestCase):
         self.assertEqual('S', song.folder)
         self.assertEqual(Song.Formats.MOD, song.format)
         self.assertEqual(song1.title, song.title)
+        self.assertEqual(uploader.profile, song.uploaded_by)
 
         self.assertRedirects(response, reverse('view_song', kwargs={'pk': song.id}))
         file_location = f'{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip'
@@ -645,6 +647,7 @@ class ScreeningActionViewTests(TestCase):
 
         # Assert
         song = Song.objects.get(hash=song1.hash)
+        self.assertEqual(uploader_profile, song.uploaded_by)
         self.assertEqual(1, len(song.artist_set.all()))
         self.assertIn(artist, song.artist_set.all())
         self.assertEqual(1, len(artist.songs.all()))
@@ -679,6 +682,7 @@ class ScreeningActionViewTests(TestCase):
         song = Song.objects.get(hash=song1.hash)
         artist = uploader_profile.artist
         self.assertEqual(uploader_profile.display_name, artist.name)
+        self.assertEqual(uploader_profile, song.uploaded_by)
         self.assertEqual(1, len(song.artist_set.all()))
         self.assertIn(artist, song.artist_set.all())
         self.assertEqual(1, len(artist.songs.all()))
@@ -713,6 +717,7 @@ class ScreeningActionViewTests(TestCase):
         # Assert
         song = Song.objects.get(hash=song1.hash)
         artist = uploader_profile.artist
+        self.assertEqual(uploader_profile, song.uploaded_by)
         self.assertEqual('TrackerDude', artist.name)
         self.assertEqual(1, len(song.artist_set.all()))
         self.assertIn(artist, song.artist_set.all())

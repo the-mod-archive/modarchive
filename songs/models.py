@@ -152,11 +152,12 @@ class Song(models.Model):
     genre=models.CharField(choices=Genres.choices, null=True, blank=True, db_index=True, max_length=32)
     is_featured=models.BooleanField(null=True, blank=True, db_index=True)
     featured_date=models.DateTimeField(null=True, blank=True)
-    featured_by=models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True)
+    featured_by=models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, related_name='featured_by')
     folder=models.CharField(max_length=4)
     title_vector=SearchVectorField(null=True, blank=True)
     instrument_text_vector=SearchVectorField(null=True, blank=True)
     comment_text_vector=SearchVectorField(null=True, blank=True)
+    uploaded_by=models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, db_index=True, related_name='uploaded_by')
     create_date=models.DateTimeField(default=timezone.now)
     update_date=models.DateTimeField(auto_now=True)
 

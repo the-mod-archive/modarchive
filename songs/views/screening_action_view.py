@@ -145,6 +145,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             hash=approved_song.hash,
             pattern_hash=approved_song.pattern_hash,
             folder=folder,
+            uploaded_by=approved_song.uploader_profile,
         )
 
         # If uploaded by artist, add to artist's list of songs

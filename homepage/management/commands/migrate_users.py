@@ -17,6 +17,7 @@ User = get_user_model()
 # 5. --migrate_comments
 # 6. --migrate_files_new
 # 7. --migrate_nominations
+# 8. --migrate_files_uploader
 #
 # --update_artist_search_indexes --all
 # --update_song_search_indexes --all
