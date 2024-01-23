@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from django.contrib.messages import get_messages
 from django.contrib.auth.models import Permission
 from django.test import TestCase
@@ -5,7 +8,7 @@ from django.urls.base import reverse
 
 from homepage.tests import factories
 from songs import factories as song_factories
-from songs.models import NewSong
+from songs.models import NewSong, Song
 from songs import constants
 
 SONG_1_FILENAME = 'song1.mod'
@@ -552,7 +555,7 @@ class ScreeningActionViewTests(TestCase):
         user.user_permissions.add(permission)
 
         song_factories.SongFactory(hash='1234567890', filename='song2.mod')
-        song1 = song_factories.NewSongFactory(claimed_by=user.profile, hash='1234567890', filename='song1.mod')
+        song1 = song_factories.NewSongFactory(claimed_by=user.profile, hash='1234567890', filename=SONG_1_FILENAME)
 
         # Act
         self.client.force_login(user)
@@ -563,3 +566,36 @@ class ScreeningActionViewTests(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(1, len(messages))
         self.assertEqual(constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_HASH, str(messages[0]))
+
+    def test_single_song_is_added_to_archive_when_approved(self):
+        # Arrange
+        user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song1 = song_factories.NewSongFactory(claimed_by=user.profile, hash='0987654321', filename=SONG_1_FILENAME, format='mod')
+
+        new_file_dir = settings.NEW_FILE_DIR
+        # Put a file in the new_file_dir called test.mod.zip - doesn't matter what it contains
+        with open(f'{new_file_dir}/{SONG_1_FILENAME}.zip', 'w', encoding='utf-8') as file:
+            file.write('test')
+        # Create an S folder in the main archive dir
+        os.mkdir(f'{settings.MAIN_ARCHIVE_DIR}/S')
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        song = Song.objects.get(hash=song1.hash)
+        self.assertEqual('0987654321', song.hash)
+        self.assertEqual(SONG_1_FILENAME, song.filename)
+        self.assertEqual('S', song.folder)
+        self.assertEqual(Song.Formats.MOD, song.format)
+        self.assertEqual(song1.title, song.title)
+
+        self.assertRedirects(response, reverse('view_song', kwargs={'pk': song.id}))
+        file_location = f'{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip'
+        self.assertTrue(os.path.isfile(file_location))
+        previous_location = f'{settings.NEW_FILE_DIR}/{song.filename}.zip'
+        self.assertFalse(os.path.exists(previous_location))
+        self.assertFalse(NewSong.objects.filter(id=song1.id).exists())

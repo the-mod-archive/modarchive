@@ -12,3 +12,4 @@ BASE_URL = 'http://localhost:8000'
 
 TEMP_UPLOAD_DIR = tempfile.mkdtemp(prefix='temp_uploads_')
 NEW_FILE_DIR = tempfile.mkdtemp(prefix='new_files_')
+MAIN_ARCHIVE_DIR = tempfile.mkdtemp(prefix='main_archive_')

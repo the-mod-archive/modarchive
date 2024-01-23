@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -96,21 +99,54 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             messages.warning(request, 'Approving multiple songs at once is not supported yet.')
             return redirect('screening_index')
 
-        song = songs[0]
+        approved_song = songs[0]
 
-        if not song.claimed_by or song.claimed_by != request.user.profile:
+        if not approved_song.claimed_by or approved_song.claimed_by != request.user.profile:
             messages.warning(request, constants.MESSAGE_APPROVAL_REQUIRES_CLAIM)
+            return redirect('screen_song', pk=songs[0].id)
 
-        if song.flag == NewSong.Flags.UNDER_INVESTIGATION:
+        if approved_song.flag == NewSong.Flags.UNDER_INVESTIGATION:
             messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_UNDER_INVESTIGATION)
-
-        elif song.flag == NewSong.Flags.POSSIBLE_DUPLICATE:
+            return redirect('screen_song', pk=songs[0].id)
+        elif approved_song.flag == NewSong.Flags.POSSIBLE_DUPLICATE:
             messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_POSSIBLE_DUPLICATE)
+            return redirect('screen_song', pk=songs[0].id)
 
-        if Song.objects.filter(filename=song.filename).exists():
+        if Song.objects.filter(filename=approved_song.filename).exists():
             messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_FILENAME)
+            return redirect('screen_song', pk=songs[0].id)
 
-        if Song.objects.filter(hash=song.hash).exists():
+        if Song.objects.filter(hash=approved_song.hash).exists():
             messages.warning(request, constants.MESSAGE_CANNOT_APPROVE_DUPLICATE_HASH)
+            return redirect('screen_song', pk=songs[0].id)
 
-        return redirect('screen_song', pk=songs[0].id)
+        # Folder is the capitalized first character of the filename. If it's a number, use '0_9'
+        if approved_song.filename[0].isdigit():
+            folder = '0_9'
+        else:
+            folder = approved_song.filename[0].upper()
+
+        # If all looks okay, add the song to the archive
+        song = Song.objects.create(
+            filename=approved_song.filename,
+            filename_unzipped=approved_song.filename_unzipped,
+            title=approved_song.title,
+            format=approved_song.format.upper(),
+            file_size=approved_song.file_size,
+            channels=approved_song.channels,
+            instrument_text=approved_song.instrument_text,
+            comment_text=approved_song.comment_text,
+            hash=approved_song.hash,
+            pattern_hash=approved_song.pattern_hash,
+            folder=folder,
+        )
+
+        # Move file into the new directory
+        current_location = os.path.join(settings.NEW_FILE_DIR, f'{approved_song.filename}.zip')
+        new_location = os.path.join(settings.MAIN_ARCHIVE_DIR, folder, f'{approved_song.filename}.zip')
+        os.rename(current_location, new_location)
+
+        # Delete the NewSong record
+        approved_song.delete()
+
+        return redirect('view_song', pk=song.pk)
