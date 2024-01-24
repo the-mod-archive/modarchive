@@ -177,6 +177,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             return song.pk
         except Error:
             os.rename(new_location, current_location)
+            transaction.set_rollback(True)
             return None
 
     def validate_bulk_approval(self, songs, request) -> bool:
