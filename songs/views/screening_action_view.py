@@ -27,6 +27,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         POSSIBLE_DUPLICATE = constants.POSSIBLE_DUPLICATE_KEYWORD
         UNDER_INVESTIGATION = constants.UNDER_INVESTIGATION_KEYWORD
         APPROVE = constants.APPROVE_KEYWORD
+        APPROVE_AND_FEATURE = constants.APPROVE_AND_FEATURE_KEYWORD
 
     def post(self, request, *args, **kwargs):
         # Determine action from request, reject if not a valid action
@@ -98,11 +99,15 @@ class ScreeningActionView(PermissionRequiredMixin, View):
                 )
             case self.ScreeningAction.APPROVE:
                 return self.approve_songs(songs, request)
+            case self.ScreeningAction.APPROVE_AND_FEATURE:
+                return self.approve_songs(songs, request, feature=True)
 
         # Redirect to screening view
         return redirect('screening_index')
 
-    def approve_songs(self, songs, request):
+    def approve_songs(self, songs, request, feature=False):
+        # Bulk approval has different validation rules from single approval
+        # In particular, bulk approval requires that all songs be pre-screened
         if len(songs) > 1 and not self.validate_bulk_approval(songs, request):
             base_url = reverse('screening_index')
             query_string = urlencode({'filter': constants.PRE_SCREENED_FILTER})
@@ -113,7 +118,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
 
         pks = []
         for approved_song in songs:
-            pk = self.finalize_approval(approved_song)
+            pk = self.finalize_approval(approved_song, feature, request.user.profile)
             if pk:
                 pks.append(pk)
 
@@ -124,7 +129,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             return redirect('view_song', pk=pks[0])
 
     @transaction.atomic
-    def finalize_approval(self, approved_song):
+    def finalize_approval(self, approved_song, feature=False, approver=None):
         # Folder is the capitalized first character of the filename. If it's a number, use '0_9'
         if approved_song.filename[0].isdigit():
             folder = '0_9'
@@ -140,7 +145,6 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             return None
 
         try:
-            # If all looks okay, add the song to the archive
             song = Song.objects.create(
                 filename=approved_song.filename,
                 filename_unzipped=approved_song.filename_unzipped,
@@ -154,6 +158,8 @@ class ScreeningActionView(PermissionRequiredMixin, View):
                 pattern_hash=approved_song.pattern_hash,
                 folder=folder,
                 uploaded_by=approved_song.uploader_profile,
+                featured_by=approver if feature else None,
+                featured_date=timezone.now() if feature else None,
             )
 
             # If uploaded by artist, add to artist's list of songs

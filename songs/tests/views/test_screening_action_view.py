@@ -611,6 +611,8 @@ class ScreeningActionViewTests(TestCase):
         self.assertEqual(Song.Formats.MOD, song.format)
         self.assertEqual(song1.title, song.title)
         self.assertEqual(uploader.profile, song.uploaded_by)
+        self.assertIsNone(song.featured_by)
+        self.assertIsNone(song.featured_date)
 
         self.assertRedirects(response, reverse('view_song', kwargs={'pk': song.id}))
         file_location = f'{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip'
@@ -887,3 +889,34 @@ class ScreeningActionViewTests(TestCase):
         self.assertEqual(1, len(messages))
         self.assertEqual(constants.MESSAGE_SONGS_APPROVED.format(3), str(messages[0]))
         self.assertRedirects(response, reverse('screening_index'))
+
+    def test_single_song_is_added_to_archive_and_featured_when_approved(self):
+        # Arrange
+        user = factories.UserFactory()
+        uploader = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song1 = song_factories.NewSongFactory(claimed_by=user.profile, hash='0987654321', filename=SONG_1_FILENAME, format='mod', uploader_profile=uploader.profile)
+
+        # Put a file in the new_file_dir called test.mod.zip - doesn't matter what it contains
+        with open(f'{self.new_file_dir}/{SONG_1_FILENAME}.zip', 'w', encoding='utf-8') as file:
+            file.write('test')
+        os.mkdir(f'{settings.MAIN_ARCHIVE_DIR}/S')
+
+        # Act
+        self.client.force_login(user)
+        self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_AND_FEATURE_KEYWORD})
+
+        # Assert
+        song = Song.objects.get(hash=song1.hash)
+        self.assertEqual('0987654321', song.hash)
+        self.assertEqual(SONG_1_FILENAME, song.filename)
+        self.assertEqual('S', song.folder)
+        self.assertEqual(Song.Formats.MOD, song.format)
+        self.assertEqual(song1.title, song.title)
+        self.assertEqual(uploader.profile, song.uploaded_by)
+        self.assertEqual(user.profile, song.featured_by)
+
+        self.assertTrue(os.path.isfile(f'{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip'))
+        self.assertFalse(os.path.exists(f'{settings.NEW_FILE_DIR}/{song.filename}.zip'))
+        self.assertFalse(NewSong.objects.filter(id=song1.id).exists())
