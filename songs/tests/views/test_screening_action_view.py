@@ -14,6 +14,7 @@ from artists.factories import ArtistFactory
 
 SONG_1_FILENAME = 'song1.mod'
 SONG_2_FILENAME = 'song2.mod'
+SONG_3_FILENAME = 'my_song.it'
 
 class ScreeningActionViewAuthenticationTests(TestCase):
     def test_unauthenticated_user_is_redirected_to_login(self):
@@ -495,6 +496,21 @@ class ApprovalActionValidationTests(TestCase):
         self.assertEqual(1, len(messages))
         self.assertEqual(constants.MESSAGE_ALL_SONGS_MUST_BE_PRESCREENED_FOR_BULK_APPROVAL, str(messages[0]))
 
+    def test_cannot_bulk_approve_and_feature_unless_all_songs_are_prescreened(self):
+        # Arrange
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song3 = song_factories.NewSongFactory()
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_AND_FEATURE_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index') + f'?filter={constants.PRE_SCREENED_FILTER}')
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_ALL_SONGS_MUST_BE_PRESCREENED_FOR_BULK_APPROVAL, str(messages[0]))
+
     def test_cannot_bulk_approve_if_any_song_has_duplicate_filename(self):
         # Arrange
         song_factories.SongFactory(filename=SONG_1_FILENAME)
@@ -610,6 +626,8 @@ class ApprovalActionTests(TestCase):
 
         if featured:
             self.assertEqual(self.user.profile, song.featured_by)
+        else:
+            self.assertIsNone(song.featured_by)
 
         file_location = f'{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip'
         self.assertTrue(os.path.isfile(file_location))
@@ -620,6 +638,18 @@ class ApprovalActionTests(TestCase):
         # Arrange
         uploader = factories.UserFactory()
         song1 = self.make_song(self.user.profile, '0987654321', SONG_1_FILENAME, Song.Formats.MOD, uploader.profile)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assert_song_added_to_archive(song1)
+        self.assertRedirects(response, reverse('view_song', kwargs={'pk': Song.objects.get(hash=song1.hash).id}))
+
+    def test_unclaimed_prescreened_song_is_added_to_archive_when_approved(self):
+        # Arrange
+        uploader = factories.UserFactory()
+        song1 = self.make_song(None, '0987654321', SONG_1_FILENAME, Song.Formats.MOD, uploader.profile, flag=NewSong.Flags.PRE_SCREENED)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
@@ -673,7 +703,32 @@ class ApprovalActionTests(TestCase):
         second_uploader = factories.UserFactory()
         song1 = self.make_song(self.user.profile, '0987654321', SONG_1_FILENAME, Song.Formats.MOD, uploader.profile, flag=NewSong.Flags.PRE_SCREENED)
         song2 = self.make_song(self.user.profile, '1234567890', SONG_2_FILENAME, Song.Formats.MOD, uploader.profile, is_by_uploader=True, flag=NewSong.Flags.PRE_SCREENED)
-        song3 = self.make_song(self.user.profile, '2345678901', 'my_song.it', Song.Formats.IT, second_uploader.profile, is_by_uploader=True, flag=NewSong.Flags.PRE_SCREENED)
+        song3 = self.make_song(self.user.profile, '2345678901', SONG_3_FILENAME, Song.Formats.IT, second_uploader.profile, is_by_uploader=True, flag=NewSong.Flags.PRE_SCREENED)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assert_song_added_to_archive(song1)
+        self.assert_song_added_to_archive(song2, [uploader_artist])
+        self.assert_song_added_to_archive(song3, [second_uploader.profile.artist])
+
+        self.assertEqual(3, Song.objects.count())
+        self.assertEqual(0, NewSong.objects.count())
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_SONGS_APPROVED.format(3), str(messages[0]))
+        self.assertRedirects(response, reverse('screening_index'))
+
+    def test_approves_multiple_songs_with_pre_screened_plus_flag(self):
+        # Arrange
+        uploader = factories.UserFactory()
+        uploader_artist = ArtistFactory(profile=uploader.profile)
+        second_uploader = factories.UserFactory()
+        song1 = self.make_song(self.user.profile, '0987654321', SONG_1_FILENAME, Song.Formats.MOD, uploader.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        song2 = self.make_song(self.user.profile, '1234567890', SONG_2_FILENAME, Song.Formats.MOD, uploader.profile, is_by_uploader=True, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        song3 = self.make_song(self.user.profile, '2345678901', SONG_3_FILENAME, Song.Formats.IT, second_uploader.profile, is_by_uploader=True, flag=NewSong.Flags.PRE_SCREENED_PLUS)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_KEYWORD})
@@ -702,3 +757,28 @@ class ApprovalActionTests(TestCase):
 
         # Assert
         self.assert_song_added_to_archive(song1, featured=True)
+
+    def test_approves_and_features_multiple_songs(self):
+        # Arrange
+        uploader = factories.UserFactory()
+        uploader_artist = ArtistFactory(profile=uploader.profile)
+        second_uploader = factories.UserFactory()
+        song1 = self.make_song(self.user.profile, '0987654321', SONG_1_FILENAME, Song.Formats.MOD, uploader.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        song2 = self.make_song(self.user.profile, '1234567890', SONG_2_FILENAME, Song.Formats.MOD, uploader.profile, is_by_uploader=True, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        song3 = self.make_song(self.user.profile, '2345678901', SONG_3_FILENAME, Song.Formats.IT, second_uploader.profile, is_by_uploader=True, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_AND_FEATURE_KEYWORD})
+
+        # Assert
+        self.assert_song_added_to_archive(song1, featured=True)
+        self.assert_song_added_to_archive(song2, [uploader_artist], featured=True)
+        self.assert_song_added_to_archive(song3, [second_uploader.profile.artist], featured=True)
+
+        self.assertEqual(3, Song.objects.count())
+        self.assertEqual(0, NewSong.objects.count())
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_SONGS_APPROVED.format(3), str(messages[0]))
+        self.assertRedirects(response, reverse('screening_index'))

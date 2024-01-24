@@ -187,7 +187,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             return None
 
     def validate_bulk_approval(self, songs, request) -> bool:
-        if songs.exclude(flag=NewSong.Flags.PRE_SCREENED).exists():
+        if songs.exclude(flag=NewSong.Flags.PRE_SCREENED).exclude(flag=NewSong.Flags.PRE_SCREENED_PLUS).exists():
             messages.warning(request, constants.MESSAGE_ALL_SONGS_MUST_BE_PRESCREENED_FOR_BULK_APPROVAL)
         elif Song.objects.filter(filename__in=songs.values_list('filename', flat=True)).exists():
             messages.warning(request, constants.MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_FILENAME_FOR_BULK_APPROVAL)
@@ -203,7 +203,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
 
     def validate_single_approval(self, songs, request) -> bool:
         approved_song = songs[0]
-        if not approved_song.claimed_by or approved_song.claimed_by != request.user.profile:
+        if approved_song.claimed_by != request.user.profile and approved_song.flag not in [NewSong.Flags.PRE_SCREENED, NewSong.Flags.PRE_SCREENED_PLUS]:
             messages.warning(request, constants.MESSAGE_APPROVAL_REQUIRES_CLAIM)
 
         if approved_song.flag == NewSong.Flags.UNDER_INVESTIGATION:
