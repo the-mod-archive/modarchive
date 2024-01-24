@@ -60,6 +60,8 @@ MESSAGE_ALL_SONGS_MUST_BE_PRESCREENED_FOR_BULK_APPROVAL = 'All songs must be pre
 MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_FILENAME_FOR_BULK_APPROVAL = 'All songs must have a unique filename before they can be bulk approved.'
 MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_HASH_FOR_BULK_APPROVAL = 'All songs must have a unique hash before they can be bulk approved.'
 MESSAGE_ALL_SONGS_MUST_NOT_BE_CLAIMED_BY_OTHERS_FOR_BULK_APPROVAL = 'You cannot bulk approve if any song is claimed by somebody else.'
+MESSAGE_SONGS_APPROVED = '%s songs approved.'
+MESSAGE_NO_SONGS_SELECTED = 'No songs selected.'
 
 FLAG_MESSAGE_SECOND_OPINION = 'Another screener would like a second opinion on this song.'
 FLAG_MESSAGE_POSSIBLE_DUPLICATE = 'This song may be a duplicate of another song in the database. Please verify.'

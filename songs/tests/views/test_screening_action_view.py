@@ -739,7 +739,7 @@ class ScreeningActionViewTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, reverse('screening_index') + '?filter=pre_screened')
+        self.assertRedirects(response, reverse('screening_index') + f'?filter={constants.PRE_SCREENED_FILTER}')
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(1, len(messages))
         self.assertEqual(constants.MESSAGE_ALL_SONGS_MUST_BE_PRESCREENED_FOR_BULK_APPROVAL, str(messages[0]))
@@ -779,7 +779,7 @@ class ScreeningActionViewTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.APPROVE_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, reverse('screening_index') + '?filter=pre_screened')
+        self.assertRedirects(response, reverse('screening_index') + f'?filter={constants.PRE_SCREENED_FILTER}')
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(1, len(messages))
         self.assertEqual(constants.MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_HASH_FOR_BULK_APPROVAL, str(messages[0]))
@@ -800,7 +800,90 @@ class ScreeningActionViewTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, reverse('screening_index') + '?filter=pre_screened')
+        self.assertRedirects(response, reverse('screening_index') + f'?filter={constants.PRE_SCREENED_FILTER}')
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(1, len(messages))
         self.assertEqual(constants.MESSAGE_ALL_SONGS_MUST_NOT_BE_CLAIMED_BY_OTHERS_FOR_BULK_APPROVAL, str(messages[0]))
+
+    def test_approves_multiple_songs(self):
+        # Arrange
+        user = factories.UserFactory()
+        uploader = factories.UserFactory()
+        uploader_artist = ArtistFactory(profile=uploader.profile)
+        second_uploader = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        user.user_permissions.add(permission)
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, hash='0987654321', filename=SONG_1_FILENAME, format='mod', uploader_profile=uploader.profile)
+        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, hash='1234567890', filename=SONG_2_FILENAME, format='mod', uploader_profile=uploader.profile, is_by_uploader=True)
+        song3 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, hash='2345678901', filename='my_song.it', format='it', uploader_profile=second_uploader.profile, is_by_uploader=True)
+
+        # Put a file in the new_file_dir called test.mod.zip - doesn't matter what it contains
+        with open(f'{self.new_file_dir}/{SONG_1_FILENAME}.zip', 'w', encoding='utf-8') as file:
+            file.write('test')
+        with open(f'{self.new_file_dir}/{SONG_2_FILENAME}.zip', 'w', encoding='utf-8') as file:
+            file.write('test')
+        with open(f'{self.new_file_dir}/my_song.it.zip', 'w', encoding='utf-8') as file:
+            file.write('test')
+        os.mkdir(f'{settings.MAIN_ARCHIVE_DIR}/S')
+        os.mkdir(f'{settings.MAIN_ARCHIVE_DIR}/M')
+
+        # Act
+        self.client.force_login(user)
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        song = Song.objects.get(hash=song1.hash)
+        self.assertEqual('0987654321', song.hash)
+        self.assertEqual(SONG_1_FILENAME, song.filename)
+        self.assertEqual('S', song.folder)
+        self.assertEqual(Song.Formats.MOD, song.format)
+        self.assertEqual(song1.title, song.title)
+        self.assertEqual(uploader.profile, song.uploaded_by)
+        self.assertEqual(0, len(song.artist_set.all()))
+        file_location = f'{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip'
+        self.assertTrue(os.path.isfile(file_location))
+        previous_location = f'{settings.NEW_FILE_DIR}/{song.filename}.zip'
+        self.assertFalse(os.path.exists(previous_location))
+
+        song = Song.objects.get(hash=song2.hash)
+        self.assertEqual('1234567890', song.hash)
+        self.assertEqual(SONG_2_FILENAME, song.filename)
+        self.assertEqual('S', song.folder)
+        self.assertEqual(Song.Formats.MOD, song.format)
+        self.assertEqual(song2.title, song.title)
+        self.assertEqual(uploader.profile, song.uploaded_by)
+        self.assertEqual(1, len(song.artist_set.all()))
+        self.assertIn(uploader_artist, song.artist_set.all())
+        self.assertEqual(1, len(uploader_artist.songs.all()))
+        self.assertIn(song, uploader_artist.songs.all())
+        file_location = f'{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip'
+        self.assertTrue(os.path.isfile(file_location))
+        previous_location = f'{settings.NEW_FILE_DIR}/{song.filename}.zip'
+        self.assertFalse(os.path.exists(previous_location))
+
+        song = Song.objects.get(hash=song3.hash)
+        artist = song.artist_set.all()[0]
+        self.assertEqual('2345678901', song.hash)
+        self.assertEqual('my_song.it', song.filename)
+        self.assertEqual('M', song.folder)
+        self.assertEqual(Song.Formats.IT, song.format)
+        self.assertEqual(song3.title, song.title)
+        self.assertEqual(second_uploader.profile, song.uploaded_by)
+        self.assertEqual(second_uploader.profile.display_name, artist.name)
+        self.assertEqual(second_uploader.profile, song.uploaded_by)
+        self.assertEqual(1, len(song.artist_set.all()))
+        self.assertIn(artist, song.artist_set.all())
+        self.assertEqual(1, len(artist.songs.all()))
+        self.assertIn(song, artist.songs.all())
+        file_location = f'{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip'
+        self.assertTrue(os.path.isfile(file_location))
+        previous_location = f'{settings.NEW_FILE_DIR}/{song.filename}.zip'
+        self.assertFalse(os.path.exists(previous_location))
+
+        self.assertEqual(3, Song.objects.count())
+        self.assertEqual(0, NewSong.objects.count())
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.MESSAGE_SONGS_APPROVED.format(3), str(messages[0]))
+        self.assertRedirects(response, reverse('screening_index'))

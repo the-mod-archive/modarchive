@@ -3,6 +3,7 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib import messages
+from django.db import transaction, Error
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.views import View
@@ -33,6 +34,10 @@ class ScreeningActionView(PermissionRequiredMixin, View):
 
         selected_songs = request.POST.getlist('selected_songs')
         songs = NewSong.objects.filter(id__in=selected_songs)
+
+        if len(songs) == 0:
+            messages.warning(request, constants.MESSAGE_NO_SONGS_SELECTED)
+            return redirect('screening_index')
 
         match action:
             case self.ScreeningAction.CLAIM:
@@ -106,8 +111,20 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         if len(songs) == 1 and not self.validate_single_approval(songs, request):
             return redirect('screen_song', pk=songs[0].id)
 
-        approved_song = songs[0]
+        pks = []
+        for approved_song in songs:
+            pk = self.finalize_approval(approved_song)
+            if pk:
+                pks.append(pk)
 
+        if len(pks) > 1:
+            messages.success(request, constants.MESSAGE_SONGS_APPROVED.format(len(pks)))
+            return redirect('screening_index')
+        elif len(pks) == 1:
+            return redirect('view_song', pk=pks[0])
+
+    @transaction.atomic
+    def finalize_approval(self, approved_song):
         # Folder is the capitalized first character of the filename. If it's a number, use '0_9'
         if approved_song.filename[0].isdigit():
             folder = '0_9'
@@ -117,44 +134,50 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         # Move file into the new directory
         current_location = os.path.join(settings.NEW_FILE_DIR, f'{approved_song.filename}.zip')
         new_location = os.path.join(settings.MAIN_ARCHIVE_DIR, folder, f'{approved_song.filename}.zip')
-        os.rename(current_location, new_location)
+        try:
+            os.rename(current_location, new_location)
+        except OSError:
+            return None
 
-        # If all looks okay, add the song to the archive
-        song = Song.objects.create(
-            filename=approved_song.filename,
-            filename_unzipped=approved_song.filename_unzipped,
-            title=approved_song.title,
-            format=approved_song.format.upper(),
-            file_size=approved_song.file_size,
-            channels=approved_song.channels,
-            instrument_text=approved_song.instrument_text,
-            comment_text=approved_song.comment_text,
-            hash=approved_song.hash,
-            pattern_hash=approved_song.pattern_hash,
-            folder=folder,
-            uploaded_by=approved_song.uploader_profile,
-        )
+        try:
+            # If all looks okay, add the song to the archive
+            song = Song.objects.create(
+                filename=approved_song.filename,
+                filename_unzipped=approved_song.filename_unzipped,
+                title=approved_song.title,
+                format=approved_song.format.upper(),
+                file_size=approved_song.file_size,
+                channels=approved_song.channels,
+                instrument_text=approved_song.instrument_text,
+                comment_text=approved_song.comment_text,
+                hash=approved_song.hash,
+                pattern_hash=approved_song.pattern_hash,
+                folder=folder,
+                uploaded_by=approved_song.uploader_profile,
+            )
 
-        # If uploaded by artist, add to artist's list of songs
-        if approved_song.is_by_uploader:
-            # Determine if the uploader profile has an artist
-            if not Artist.objects.filter(profile=approved_song.uploader_profile).exists():
-                # If not, create a new artist
-                artist = Artist.objects.create(
-                    user=approved_song.uploader_profile.user,
-                    profile=approved_song.uploader_profile,
-                    name=approved_song.uploader_profile.user.username
-                )
-            else:
-                # If so, use the existing one
-                artist = approved_song.uploader_profile.artist
+            # If uploaded by artist, add to artist's list of songs
+            if approved_song.is_by_uploader:
+                # Determine if the uploader profile has an artist
+                if not Artist.objects.filter(profile=approved_song.uploader_profile).exists():
+                    # If not, create a new artist
+                    artist = Artist.objects.create(
+                        user=approved_song.uploader_profile.user,
+                        profile=approved_song.uploader_profile,
+                        name=approved_song.uploader_profile.user.username
+                    )
+                else:
+                    # If so, use the existing one
+                    artist = approved_song.uploader_profile.artist
 
-            artist.songs.add(song)
+                artist.songs.add(song)
 
-        # Delete the NewSong record
-        approved_song.delete()
-
-        return redirect('view_song', pk=song.pk)
+            # Delete the NewSong record
+            approved_song.delete()
+            return song.pk
+        except Error:
+            os.rename(new_location, current_location)
+            return None
 
     def validate_bulk_approval(self, songs, request) -> bool:
         if songs.exclude(flag=NewSong.Flags.PRE_SCREENED).exists():
@@ -165,8 +188,6 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             messages.warning(request, constants.MESSAGE_ALL_SONGS_MUST_HAVE_UNIQUE_HASH_FOR_BULK_APPROVAL)
         elif songs.exclude(claimed_by=request.user.profile).filter(claimed_by__isnull=False).exists():
             messages.warning(request, constants.MESSAGE_ALL_SONGS_MUST_NOT_BE_CLAIMED_BY_OTHERS_FOR_BULK_APPROVAL)
-        else:
-            messages.warning(request, 'Approving multiple songs at once is not supported yet.')
 
         if messages.get_messages(request):
             return False
