@@ -7,7 +7,7 @@ from songs import constants
 from songs.models import NewSong
 from homepage.tests import factories
 
-class ScreenSongViewTests(TestCase):
+class ScreenSongAuthenticationTests(TestCase):
     def test_unauthenticated_user_is_redirected_to_login(self):
         # Arrange
         song = song_factories.NewSongFactory()
@@ -50,13 +50,16 @@ class ScreenSongViewTests(TestCase):
         self.assertIn('new_song', response.context)
         self.assertEqual(song, response.context['new_song'])
 
+class ScreenSongContextDataTests(TestCase):
+    def setUp(self):
+        self.user = factories.UserFactory()
+        self.permission = Permission.objects.get(codename='can_approve_songs')
+        self.user.user_permissions.add(self.permission)
+        self.client.force_login(self.user)
+
     def test_unclaimed_song_has_correct_context_data(self):
         # Arrange
-        user = factories.UserFactory()
-        permission = Permission.objects.get(codename='can_approve_songs')
-        user.user_permissions.add(permission)
         song = song_factories.NewSongFactory()
-        self.client.force_login(user)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
@@ -71,11 +74,7 @@ class ScreenSongViewTests(TestCase):
 
     def test_claimed_song_with_no_flags_has_correct_context_data(self):
         # Arrange
-        user = factories.UserFactory()
-        permission = Permission.objects.get(codename='can_approve_songs')
-        user.user_permissions.add(permission)
-        song = song_factories.NewSongFactory(claimed_by=user.profile)
-        self.client.force_login(user)
+        song = song_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
@@ -83,7 +82,7 @@ class ScreenSongViewTests(TestCase):
         # Assert
         self.assertIn('claimed_by_me', response.context)
         self.assertTrue(response.context['claimed_by_me'])
-        self.assertEqual(7, len(response.context['actions']))
+        self.assertEqual(8, len(response.context['actions']))
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
@@ -91,15 +90,12 @@ class ScreenSongViewTests(TestCase):
         self.assertIn(constants.UNDER_INVESTIGATION_ACTION, response.context['actions'])
         self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
         self.assertIn(constants.APPROVE_AND_FEATURE_ACTION, response.context['actions'])
+        self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
 
     def test_song_claimed_by_other_has_correct_context_data(self):
         # Arrange
-        user = factories.UserFactory()
         other_user = factories.UserFactory()
-        permission = Permission.objects.get(codename='can_approve_songs')
-        user.user_permissions.add(permission)
         song = song_factories.NewSongFactory(claimed_by=other_user.profile)
-        self.client.force_login(user)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
@@ -113,12 +109,7 @@ class ScreenSongViewTests(TestCase):
 
     def test_claimed_song_and_flagged_by_self_as_second_opinion_has_correct_context_data(self):
         # Arrange
-        user = factories.UserFactory()
-        permission = Permission.objects.get(codename='can_approve_songs')
-        user.user_permissions.add(permission)
-
-        song = song_factories.NewSongFactory(claimed_by=user.profile, flagged_by=user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
-        self.client.force_login(user)
+        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flagged_by=self.user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -128,16 +119,12 @@ class ScreenSongViewTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_SECOND_OPINION)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'warning')
-        self.assertEqual(0, len(response.context['actions']))
+        self.assertEqual(1, len(response.context['actions']))
+        self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
 
     def test_claimed_song_needing_second_opinion_has_correct_context_data(self):
         # Arrange
-        user = factories.UserFactory()
-        permission = Permission.objects.get(codename='can_approve_songs')
-        user.user_permissions.add(permission)
-
-        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
-        self.client.force_login(user)
+        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -147,22 +134,18 @@ class ScreenSongViewTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_SECOND_OPINION)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'warning')
-        self.assertEqual(6, len(response.context['actions']))
+        self.assertEqual(7, len(response.context['actions']))
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.POSSIBLE_DUPLICATE_ACTION, response.context['actions'])
         self.assertIn(constants.UNDER_INVESTIGATION_ACTION, response.context['actions'])
         self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
         self.assertIn(constants.APPROVE_AND_FEATURE_ACTION, response.context['actions'])
+        self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
 
     def test_claimed_song_possible_duplicate_has_correct_context_data(self):
         # Arrange
-        user = factories.UserFactory()
-        permission = Permission.objects.get(codename='can_approve_songs')
-        user.user_permissions.add(permission)
-
-        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE)
-        self.client.force_login(user)
+        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -172,20 +155,16 @@ class ScreenSongViewTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_POSSIBLE_DUPLICATE)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'warning')
-        self.assertEqual(4, len(response.context['actions']))
+        self.assertEqual(5, len(response.context['actions']))
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
         self.assertIn(constants.UNDER_INVESTIGATION_ACTION, response.context['actions'])
+        self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
 
     def test_song_under_investigation_has_correct_context_data(self):
         # Arrange
-        user = factories.UserFactory()
-        permission = Permission.objects.get(codename='can_approve_songs')
-        user.user_permissions.add(permission)
-
-        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.UNDER_INVESTIGATION)
-        self.client.force_login(user)
+        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.UNDER_INVESTIGATION)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -195,20 +174,16 @@ class ScreenSongViewTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_UNDER_INVESTIGATION)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'warning')
-        self.assertEqual(4, len(response.context['actions']))
+        self.assertEqual(5, len(response.context['actions']))
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
         self.assertIn(constants.POSSIBLE_DUPLICATE_ACTION, response.context['actions'])
+        self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
 
     def test_claimed_pre_screened_song_has_correct_context_data(self):
         # Arrange
-        user = factories.UserFactory()
-        permission = Permission.objects.get(codename='can_approve_songs')
-        user.user_permissions.add(permission)
-
-        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.PRE_SCREENED)
-        self.client.force_login(user)
+        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.PRE_SCREENED)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -218,18 +193,14 @@ class ScreenSongViewTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_PRE_SCREENED)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'success')
-        self.assertEqual(2, len(response.context['actions']))
+        self.assertEqual(3, len(response.context['actions']))
         self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
         self.assertIn(constants.APPROVE_AND_FEATURE_ACTION, response.context['actions'])
+        self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
 
     def test_claimed_pre_screened_and_recommended_song_has_correct_context_data(self):
         # Arrange
-        user = factories.UserFactory()
-        permission = Permission.objects.get(codename='can_approve_songs')
-        user.user_permissions.add(permission)
-
-        song = song_factories.NewSongFactory(claimed_by=user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
-        self.client.force_login(user)
+        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -239,6 +210,7 @@ class ScreenSongViewTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_PRE_SCREENED_AND_RECOMMENDED)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'success')
-        self.assertEqual(2, len(response.context['actions']))
+        self.assertEqual(3, len(response.context['actions']))
         self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
         self.assertIn(constants.APPROVE_AND_FEATURE_ACTION, response.context['actions'])
+        self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])

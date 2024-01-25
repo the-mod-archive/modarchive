@@ -76,12 +76,13 @@ class ScreeningIndexAvailableActionTests(TestCase):
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.MY_SCREENING_FILTER}")
 
         # Assert
-        self.assertEqual(len(response.context['actions']), 5)
+        self.assertEqual(len(response.context['actions']), 6)
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
         self.assertIn(constants.POSSIBLE_DUPLICATE_ACTION, response.context['actions'])
         self.assertIn(constants.UNDER_INVESTIGATION_ACTION, response.context['actions'])
+        self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
 
     def test_others_screening_filter_contains_no_actions(self):
         # Act

@@ -43,7 +43,8 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
                 constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
                 constants.NEEDS_SECOND_OPINION_ACTION,
                 constants.POSSIBLE_DUPLICATE_ACTION,
-                constants.UNDER_INVESTIGATION_ACTION
+                constants.UNDER_INVESTIGATION_ACTION,
+                constants.UNCLAIM_ACTION
             ]
         elif context['filter'] == constants.OTHERS_SCREENING_FILTER:
             context['actions'] = []

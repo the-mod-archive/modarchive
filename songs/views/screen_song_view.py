@@ -74,6 +74,7 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
                 context['actions'] = []
             else:
                 context['actions'] = self.flag_actions_mapping.get(self.object.flag, self.claimed_and_no_flag_actions)
+            context['actions'].append(constants.UNCLAIM_ACTION)
         elif self.object.claimed_by != self.request.user.profile:
             context['actions'] = []
 
