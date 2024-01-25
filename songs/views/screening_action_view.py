@@ -21,6 +21,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
 
     class ScreeningAction:
         CLAIM = constants.CLAIM_KEYWORD
+        UNCLAIM = constants.UNCLAIM_KEYWORD
         PRE_SCREEN = constants.PRE_SCREEN_KEYWORD
         PRE_SCREEN_AND_RECOMMEND = constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD
         NEEDS_SECOND_OPINION = constants.NEEDS_SECOND_OPINION_KEYWORD
@@ -51,6 +52,13 @@ class ScreeningActionView(PermissionRequiredMixin, View):
                 ).update(
                     claimed_by=request.user.profile,
                     claim_date=timezone.now()
+                )
+            case self.ScreeningAction.UNCLAIM:
+                songs.filter(
+                    claimed_by=request.user.profile
+                ).update(
+                    claimed_by=None,
+                    claim_date=None
                 )
             case self.ScreeningAction.PRE_SCREEN:
                 songs.filter(

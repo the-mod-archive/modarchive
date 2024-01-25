@@ -153,6 +153,32 @@ class ClaimingActionTests(TestCase):
         self.assertEqual(self.user.profile, song1.flagged_by)
         self.assertEqual(NewSong.Flags.UNDER_INVESTIGATION, song1.flag)
 
+    def test_cannot_unclaim_song_claimed_by_others(self):
+        # Arrange
+        other_user = factories.UserFactory()
+        song1 = song_factories.NewSongFactory(claimed_by=other_user.profile)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.UNCLAIM_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        self.assertEqual(other_user.profile, song1.claimed_by)
+
+    def test_can_unclaim_song_if_claimed_by_user(self):
+        # Arrange
+        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.UNCLAIM_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        self.assertIsNone(song1.claimed_by)
+        self.assertIsNone(song1.claim_date)
+
 class FlaggingActionTests(TestCase):
     def setUp(self):
         self.user = factories.UserFactory()
