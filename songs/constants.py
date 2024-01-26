@@ -80,3 +80,6 @@ FLAG_MESSAGE_POSSIBLE_DUPLICATE = 'This song may be a duplicate of another song 
 FLAG_MESSAGE_UNDER_INVESTIGATION = 'Do not approve. This song is under investigation. This flag must be cleared before song can be approved.'
 FLAG_MESSAGE_PRE_SCREENED = 'This song has been pre-screened and can be added to the archive.'
 FLAG_MESSAGE_PRE_SCREENED_AND_RECOMMENDED = 'This song has been pre-screened and is recommended to be a featured song. It can be added to the archive.'
+
+REJECTION_REQUIRES_IDS = 'You must specify at least one song to reject.'
+REJECTION_ALL_SONGS_MUST_BE_CLAIMED = 'You cannot reject a song that you have not claimed.'
