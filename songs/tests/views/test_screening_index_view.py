@@ -76,13 +76,14 @@ class ScreeningIndexAvailableActionTests(TestCase):
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.MY_SCREENING_FILTER}")
 
         # Assert
-        self.assertEqual(len(response.context['actions']), 6)
+        self.assertEqual(len(response.context['actions']), 7)
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
         self.assertIn(constants.POSSIBLE_DUPLICATE_ACTION, response.context['actions'])
         self.assertIn(constants.UNDER_INVESTIGATION_ACTION, response.context['actions'])
         self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
+        self.assertIn(constants.REJECT_ACTION, response.context['actions'])
 
     def test_others_screening_filter_contains_no_actions(self):
         # Act
@@ -96,18 +97,20 @@ class ScreeningIndexAvailableActionTests(TestCase):
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.PRE_SCREENED_FILTER}")
 
         # Assert
-        self.assertEqual(len(response.context['actions']), 2)
+        self.assertEqual(len(response.context['actions']), 3)
         self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
         self.assertIn(constants.APPROVE_AND_FEATURE_ACTION, response.context['actions'])
+        self.assertIn(constants.REJECT_ACTION, response.context['actions'])
 
     def test_prescreened_and_recommended_filter_shows_legal_actions(self):
         # Act
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.PRE_SCREENED_AND_RECOMMENDED_FILTER}")
 
         # Assert
-        self.assertEqual(len(response.context['actions']), 2)
+        self.assertEqual(len(response.context['actions']), 3)
         self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
         self.assertIn(constants.APPROVE_AND_FEATURE_ACTION, response.context['actions'])
+        self.assertIn(constants.REJECT_ACTION, response.context['actions'])
 
 class ScreeningIndexFilteringTests(TestCase):
     def setUp(self):

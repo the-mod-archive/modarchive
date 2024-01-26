@@ -15,13 +15,15 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
             constants.PRE_SCREEN_ACTION,
             constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
             constants.NEEDS_SECOND_OPINION_ACTION,
-            constants.UNDER_INVESTIGATION_ACTION
+            constants.UNDER_INVESTIGATION_ACTION,
+            constants.REJECT_ACTION
         ],
         NewSong.Flags.UNDER_INVESTIGATION: [
             constants.PRE_SCREEN_ACTION,
             constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
             constants.NEEDS_SECOND_OPINION_ACTION,
-            constants.POSSIBLE_DUPLICATE_ACTION
+            constants.POSSIBLE_DUPLICATE_ACTION,
+            constants.REJECT_ACTION
         ],
         NewSong.Flags.NEEDS_SECOND_OPINION: [
             constants.PRE_SCREEN_ACTION,
@@ -29,15 +31,18 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
             constants.POSSIBLE_DUPLICATE_ACTION,
             constants.UNDER_INVESTIGATION_ACTION,
             constants.APPROVE_ACTION,
-            constants.APPROVE_AND_FEATURE_ACTION
+            constants.APPROVE_AND_FEATURE_ACTION,
+            constants.REJECT_ACTION
         ],
         NewSong.Flags.PRE_SCREENED: [
             constants.APPROVE_ACTION,
-            constants.APPROVE_AND_FEATURE_ACTION
+            constants.APPROVE_AND_FEATURE_ACTION,
+            constants.REJECT_ACTION
         ],
         NewSong.Flags.PRE_SCREENED_PLUS: [
             constants.APPROVE_ACTION,
-            constants.APPROVE_AND_FEATURE_ACTION
+            constants.APPROVE_AND_FEATURE_ACTION,
+            constants.REJECT_ACTION
         ]
     }
 
@@ -48,7 +53,8 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
         constants.POSSIBLE_DUPLICATE_ACTION,
         constants.UNDER_INVESTIGATION_ACTION,
         constants.APPROVE_ACTION,
-        constants.APPROVE_AND_FEATURE_ACTION
+        constants.APPROVE_AND_FEATURE_ACTION,
+        constants.REJECT_ACTION
     ]
 
     flag_messages_mapping = {

@@ -44,14 +44,15 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
                 constants.NEEDS_SECOND_OPINION_ACTION,
                 constants.POSSIBLE_DUPLICATE_ACTION,
                 constants.UNDER_INVESTIGATION_ACTION,
+                constants.REJECT_ACTION,
                 constants.UNCLAIM_ACTION
             ]
         elif context['filter'] == constants.OTHERS_SCREENING_FILTER:
             context['actions'] = []
         elif context['filter'] == constants.PRE_SCREENED_FILTER:
-            context['actions'] = [constants.APPROVE_ACTION, constants.APPROVE_AND_FEATURE_ACTION]
+            context['actions'] = [constants.APPROVE_ACTION, constants.APPROVE_AND_FEATURE_ACTION, constants.REJECT_ACTION]
         elif context['filter'] == constants.PRE_SCREENED_AND_RECOMMENDED_FILTER:
-            context['actions'] = [constants.APPROVE_ACTION, constants.APPROVE_AND_FEATURE_ACTION]
+            context['actions'] = [constants.APPROVE_ACTION, constants.APPROVE_AND_FEATURE_ACTION, constants.REJECT_ACTION]
 
         context['form'] = ScreeningQueueFilterForm(initial={'filter': context['filter']})
 
