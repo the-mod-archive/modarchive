@@ -1,0 +1,26 @@
+{% extends 'base_page/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {{ block.super }}: Rejecting New Songs
+{% endblock %}
+
+{% block content %}
+
+    <div class="fs-4">Rejecting the Following Songs</div>
+    {% for song in songs %}
+        <div>
+            {% if song.title %} {{song.title}} - ({{song.filename}}) {% else %} {{song.filename}} {% endif %}
+        </div>
+    {% endfor %}
+
+    <hr>
+
+    <div>
+        <form action="{% url 'screening_reject' %}" method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" class='btn btn-primary mt-2' value="Reject Songs">
+    </div>
+
+{% endblock %}

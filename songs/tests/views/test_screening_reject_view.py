@@ -91,3 +91,13 @@ class ScreeningRejectValidationTests(TestCase):
         # Assert
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, "screening_reject.html")
+
+    def test_song_ids_param_must_be_in_correct_format(self):
+        # Act
+        response = self.client.get(f"{reverse('screening_reject')}?song_ids=a,2")
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.REJECTION_REQUIRES_IDS, str(messages[0]))

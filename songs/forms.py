@@ -143,3 +143,11 @@ class ScreeningQueueFilterForm(forms.Form):
 
     class Meta:
         required_css_class = None
+
+class RejectionForm(forms.Form):
+    is_temporary = forms.BooleanField(required=False, label='Temporary rejection?', widget=forms.CheckboxInput())
+    rejection_reason = forms.ChoiceField(choices=models.RejectedSong.Reasons.choices, required=True, label='Rejection reason')
+    message = forms.CharField(required=False, label='Message (optional)', widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}), max_length=1000)
+
+    class Meta:
+        required_css_class = None
