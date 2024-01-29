@@ -72,7 +72,7 @@ class ScreeningRejectValidationTests(TestCase):
         song_2 = songs_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
-        response = self.client.get(f"{reverse('screening_reject')}?song_ids={song.id}&song_ids={song_2.id}")
+        response = self.client.get(f"{reverse('screening_reject')}?song_ids={song.id},{song_2.id}")
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
@@ -86,7 +86,7 @@ class ScreeningRejectValidationTests(TestCase):
         song_2 = songs_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
-        response = self.client.get(f"{reverse('screening_reject')}?song_ids={song.id}&song_ids={song_2.id}")
+        response = self.client.get(f"{reverse('screening_reject')}?song_ids={song.id},{song_2.id}")
 
         # Assert
         self.assertEqual(200, response.status_code)

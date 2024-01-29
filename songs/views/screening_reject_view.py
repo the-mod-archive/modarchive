@@ -12,7 +12,9 @@ class ScreeningRejectView(PermissionRequiredMixin, View):
     permission_required = 'songs.can_approve_songs'
 
     def get(self, request, *args, **kwargs):
-        song_ids = request.GET.getlist('song_ids')
+        raw_song_ids = request.GET.get('song_ids', '')
+        song_ids = [id.strip() for id in raw_song_ids.split(',') if id.strip()]
+
         if len(song_ids) == 0:
             messages.error(request, constants.REJECTION_REQUIRES_IDS)
             return redirect('screening_index')

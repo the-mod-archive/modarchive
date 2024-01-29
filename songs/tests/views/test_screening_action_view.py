@@ -808,3 +808,31 @@ class ApprovalActionTests(TestCase):
         self.assertEqual(1, len(messages))
         self.assertEqual(constants.MESSAGE_SONGS_APPROVED.format(3), str(messages[0]))
         self.assertRedirects(response, reverse('screening_index'))
+
+class RejectActionTests(TestCase):
+    def setUp(self) -> None:
+        self.user = factories.UserFactory()
+        self.permission = Permission.objects.get(codename='can_approve_songs')
+        self.user.user_permissions.add(self.permission)
+        self.client.force_login(self.user)
+
+    def test_reject_one_song_redirects_to_rejection_page(self):
+        # Arrange
+        song1 = song_factories.NewSongFactory()
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.REJECT_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, f"{reverse('screening_reject')}?song_ids={song1.id}", target_status_code=302)
+
+    def test_reject_multiple_songs_redirects_to_rejection_page(self):
+        # Arrange
+        song1 = song_factories.NewSongFactory()
+        song2 = song_factories.NewSongFactory()
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.REJECT_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, f"{reverse('screening_reject')}?song_ids={song1.id},{song2.id}", target_status_code=302)
