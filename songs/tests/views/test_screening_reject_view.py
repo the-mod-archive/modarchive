@@ -46,7 +46,7 @@ class ScreeningRejectAuthenticationTests(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed(response, "screening_reject.html")
 
-class ScreeningRejectValidationTests(TestCase):
+class ScreeningRejectGetValidationTests(TestCase):
     def setUp(self):
         self.user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
@@ -54,11 +54,8 @@ class ScreeningRejectValidationTests(TestCase):
         self.client.force_login(self.user)
 
     def test_get_request_without_song_ids_redirects_to_screening_index(self):
-        # Arrange
-        screening_url = reverse('screening_reject')
-
         # Act
-        response = self.client.get(screening_url)
+        response = self.client.get(reverse('screening_reject'))
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
@@ -95,6 +92,68 @@ class ScreeningRejectValidationTests(TestCase):
     def test_song_ids_param_must_be_in_correct_format(self):
         # Act
         response = self.client.get(f"{reverse('screening_reject')}?song_ids=a,2")
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.REJECTION_REQUIRES_IDS, str(messages[0]))
+
+    def test_if_song_ids_do_not_exist_redirect_to_screening_index(self):
+        # Act
+        response = self.client.get(f"{reverse('screening_reject')}?song_ids=1,2")
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.REJECTION_REQUIRES_IDS, str(messages[0]))
+
+
+class ScreeningRejectPostValidationTests(TestCase):
+    def setUp(self):
+        self.user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_approve_songs')
+        self.user.user_permissions.add(permission)
+        self.client.force_login(self.user)
+
+    def test_post_request_without_song_ids_redirects_to_screening_index(self):
+        # Act
+        response = self.client.post(reverse('screening_reject'), data={})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.REJECTION_REQUIRES_IDS, str(messages[0]))
+
+    def test_song_ids_must_be_in_correct_format(self):
+        # Act
+        response = self.client.post(reverse('screening_reject'), data={'song_ids': 'a,2'})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.REJECTION_REQUIRES_IDS, str(messages[0]))
+
+    def test_songs_must_all_be_claimed_by_current_user(self):
+        # Arrange
+        song = songs_factories.NewSongFactory(claimed_by=None)
+        song_2 = songs_factories.NewSongFactory(claimed_by=self.user.profile)
+
+        # Act
+        response = self.client.post(reverse('screening_reject'), data={'song_ids': f"{song.id},{song_2.id}"})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.REJECTION_ALL_SONGS_MUST_BE_CLAIMED, str(messages[0]))
+
+    def test_if_song_ids_do_not_exist_redirect_to_screening_index(self):
+        # Act
+        response = self.client.post(reverse('screening_reject'), data={'song_ids': '1,2'})
 
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
