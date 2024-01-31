@@ -147,7 +147,12 @@ class ScreeningQueueFilterForm(forms.Form):
 class RejectionForm(forms.Form):
     is_temporary = forms.BooleanField(required=False, label='Temporary rejection?', widget=forms.CheckboxInput())
     rejection_reason = forms.ChoiceField(choices=models.RejectedSong.Reasons.choices, required=True, label='Rejection reason')
-    message = forms.CharField(required=False, label='Message (optional)', widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}), max_length=1000)
+    message = forms.CharField(required=False,
+        label='Message (optional)',
+        widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}),
+        max_length=1000,
+        help_text='Optional message to the uploader. If you do not enter a message, the uploader will see a default message for the rejection reason instead. Limit 1000 characters.'
+    )
 
     class Meta:
         required_css_class = None

@@ -424,7 +424,7 @@ class FlaggingActionTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse('screening_index'))
         song1.refresh_from_db()
-        song2.refresh_from_db()        
+        song2.refresh_from_db()
         self.assertIsNone(song1.flag)
         self.assertIsNone(song1.flagged_by)
         self.assertIsNone(song2.flag)

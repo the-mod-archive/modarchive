@@ -8,6 +8,9 @@
 {% block content %}
 
     <div class="fs-4">Rejecting the Following Songs</div>
+
+    <div class="fs-5 text-secondary"><em>Note that the rejection reason, message, and temporary flag will be applied to ALL songs rejected as part of this process.</em></div>
+
     {% for song in songs %}
         <div>
             {% if song.title %} {{song.title}} - ({{song.filename}}) {% else %} {{song.filename}} {% endif %}

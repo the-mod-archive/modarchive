@@ -1,6 +1,9 @@
+import os
 import re
 from typing import Any
 
+from django.conf import settings
+from django.db import transaction, Error
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import FormView
@@ -8,20 +11,67 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.forms import CharField, HiddenInput
+from django.urls import reverse_lazy
+from django.utils import timezone
 
 from songs import constants, forms
-from songs.models import NewSong
+from songs.models import NewSong, RejectedSong
 
 class ScreeningRejectView(PermissionRequiredMixin, FormView):
     template_name="screening_reject.html"
     permission_required = 'songs.can_approve_songs'
     form_class = forms.RejectionForm
+    success_url = reverse_lazy('screening_index')
 
-    def song_ids_valid(self, song_ids) -> bool:
-        return song_ids and re.match(r'^(\d+,)*\d+$', song_ids)
+    def form_valid(self, form):
+        song_ids = self.extra_context.get('song_ids', [])
+
+        for song_id in song_ids:
+            self.finalize_rejection(song_id, form)
+
+        return super().form_valid(form)
+
+    @transaction.atomic
+    def finalize_rejection(self, song_id, form):
+        new_song = NewSong.objects.get(pk=song_id)
+
+        previous_dir = os.path.join(settings.NEW_FILE_DIR, f'{new_song.filename}.zip')
+        new_dir = os.path.join(settings.REJECTED_FILE_DIR, f'{new_song.filename}.zip')
+        try:
+            os.rename(previous_dir, new_dir)
+        except OSError:
+            return
+
+        try:
+            RejectedSong.objects.create(
+                reason=form.cleaned_data['rejection_reason'],
+                message=form.cleaned_data['message'],
+                is_temporary=form.cleaned_data['is_temporary'],
+                rejected_by=self.request.user.profile,
+                rejected_date=timezone.now(),
+                filename=new_song.filename,
+                filename_unzipped=new_song.filename_unzipped,
+                title=new_song.title,
+                format=new_song.format,
+                file_size=new_song.file_size,
+                channels=new_song.channels,
+                instrument_text=new_song.instrument_text,
+                comment_text=new_song.comment_text,
+                hash=new_song.hash,
+                pattern_hash=new_song.pattern_hash,
+                artist_from_file=new_song.artist_from_file,
+                uploader_profile=new_song.uploader_profile,
+                uploader_ip_address=new_song.uploader_ip_address,
+                is_by_uploader=new_song.is_by_uploader,
+            )
+
+            new_song.delete()
+        except Error:
+            os.rename(new_dir, previous_dir)
+            transaction.set_rollback(True)
 
     def validate_song_ids(self, raw_song_ids, request):
-        if not self.song_ids_valid(raw_song_ids):
+        if not (raw_song_ids and re.match(r'^(\d+,)*\d+$', raw_song_ids)):
             messages.error(request, constants.REJECTION_REQUIRES_IDS)
             return False
 
@@ -49,6 +99,7 @@ class ScreeningRejectView(PermissionRequiredMixin, FormView):
         if claimed_queryset is False:
             return redirect('screening_index')
 
+        self.extra_context = {'song_ids': claimed_queryset.values_list('id', flat=True)}
         return super().post(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
