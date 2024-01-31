@@ -119,22 +119,22 @@ class ScreeningQueueFilterForm(forms.Form):
             (constants.HIGH_PRIORITY_FILTER, constants.HIGH_PRIORITY_FILTER_DESCRIPTION),
             (constants.LOW_PRIORITY_FILTER, constants.LOW_PRIORITY_FILTER_DESCRIPTION),
             (constants.BY_UPLOADER_FILTER, constants.BY_UPLOADER_FILTER_DESCRIPTION),
-            )
-        ),
-        (constants.CLAIMED_GROUP, (
-            (constants.MY_SCREENING_FILTER, constants.MY_SCREENING_FILTER_DESCRIPTION),
-            (constants.OTHERS_SCREENING_FILTER, constants.OTHERS_SCREENING_FILTER_DESCRIPTION),
-            )
-        ),
-        (constants.DONE_GROUP, (
-            (constants.PRE_SCREENED_FILTER, constants.PRE_SCREENED_FILTER_DESCRIPTION),
-            (constants.PRE_SCREENED_AND_RECOMMENDED_FILTER, constants.PRE_SCREENED_AND_RECOMMENDED_FILTER_DESCRIPTION),
-            )
-        ),
-        (constants.FLAGGED_GROUP, (
             (constants.NEEDS_SECOND_OPINION_FILTER, constants.NEEDS_SECOND_OPINION_FILTER_DESCRIPTION),
             (constants.POSSIBLE_DUPLICATE_FILTER, constants.POSSIBLE_DUPLICATE_FILTER_DESCRIPTION),
             (constants.UNDER_INVESTIGATION_FILTER, constants.UNDER_INVESTIGATION_FILTER_DESCRIPTION),
+            )
+        ),
+        (constants.YOUR_REVIEW_GROUP, (
+            (constants.MY_SCREENING_FILTER, constants.MY_SCREENING_FILTER_DESCRIPTION),
+            )
+        ),
+        (constants.NOT_YOUR_REVIEW_GROUP, (
+            (constants.OTHERS_SCREENING_FILTER, constants.OTHERS_SCREENING_FILTER_DESCRIPTION),
+        )
+        ),
+        (constants.READY_TO_BE_ADDED_GROUP, (
+            (constants.PRE_SCREENED_FILTER, constants.PRE_SCREENED_FILTER_DESCRIPTION),
+            (constants.PRE_SCREENED_AND_RECOMMENDED_FILTER, constants.PRE_SCREENED_AND_RECOMMENDED_FILTER_DESCRIPTION),
             )
         )
     )

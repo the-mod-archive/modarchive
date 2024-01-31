@@ -4,7 +4,6 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib import messages
 from django.db import transaction, Error
-from django.db.models import Q
 from django.shortcuts import redirect
 from django.views import View
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -42,18 +41,19 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             messages.warning(request, constants.MESSAGE_NO_SONGS_SELECTED)
             return redirect('screening_index')
 
+        my_claimed_songs_queryset = songs.filter(claimed_by=request.user.profile)
+
         match action:
             case self.ScreeningAction.CLAIM:
-                songs.filter(
-                    claimed_by=None
-                ).exclude(
-                    Q(flagged_by=request.user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION) |
-                    Q(flagged_by=request.user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE) |
-                    Q(flagged_by=request.user.profile, flag=NewSong.Flags.UNDER_INVESTIGATION)
-                ).update(
+                queryset = songs.filter(claimed_by=None)
+                if len(queryset) == 0:
+                    return redirect('screening_index')
+
+                queryset.update(
                     claimed_by=request.user.profile,
                     claim_date=timezone.now()
                 )
+                return redirect(f'{reverse('screening_index')}?filter={constants.MY_SCREENING_FILTER}')
             case self.ScreeningAction.UNCLAIM:
                 songs.filter(
                     claimed_by=request.user.profile
@@ -62,50 +62,60 @@ class ScreeningActionView(PermissionRequiredMixin, View):
                     claim_date=None
                 )
             case self.ScreeningAction.PRE_SCREEN:
-                songs.filter(
-                    claimed_by=request.user.profile
-                ).update(
+                if len(my_claimed_songs_queryset) == 0:
+                    return redirect('screening_index')
+
+                my_claimed_songs_queryset.update(
                     claimed_by=None,
                     claim_date=None,
                     flag=NewSong.Flags.PRE_SCREENED,
                     flagged_by=request.user.profile
                 )
+                return redirect(f'{reverse('screening_index')}?filter={constants.PRE_SCREENED_FILTER}')
             case self.ScreeningAction.PRE_SCREEN_AND_RECOMMEND:
-                songs.filter(
-                    claimed_by=request.user.profile
-                ).update(
+                if len(my_claimed_songs_queryset) == 0:
+                    return redirect('screening_index')
+
+                my_claimed_songs_queryset.update(
                     claimed_by=None,
                     claim_date=None,
                     flag=NewSong.Flags.PRE_SCREENED_PLUS,
                     flagged_by=request.user.profile
                 )
+                return redirect(f'{reverse('screening_index')}?filter={constants.PRE_SCREENED_AND_RECOMMENDED_FILTER}')
             case self.ScreeningAction.NEEDS_SECOND_OPINION:
-                songs.filter(
-                    claimed_by=request.user.profile
-                ).update(
+                if len(my_claimed_songs_queryset) == 0:
+                    return redirect('screening_index')
+
+                my_claimed_songs_queryset.update(
                     claimed_by=None,
                     claim_date=None,
                     flag=NewSong.Flags.NEEDS_SECOND_OPINION,
                     flagged_by=request.user.profile
                 )
+                return redirect(f'{reverse('screening_index')}?filter={constants.NEEDS_SECOND_OPINION_FILTER}')
             case self.ScreeningAction.POSSIBLE_DUPLICATE:
-                songs.filter(
-                    claimed_by=request.user.profile
-                ).update(
+                if len(my_claimed_songs_queryset) == 0:
+                    return redirect('screening_index')
+
+                my_claimed_songs_queryset.update(
                     claimed_by=None,
                     claim_date=None,
                     flag=NewSong.Flags.POSSIBLE_DUPLICATE,
                     flagged_by=request.user.profile
                 )
+                return redirect(f'{reverse('screening_index')}?filter={constants.POSSIBLE_DUPLICATE_FILTER}')
             case self.ScreeningAction.UNDER_INVESTIGATION:
-                songs.filter(
-                    claimed_by=request.user.profile
-                ).update(
+                if len(my_claimed_songs_queryset) == 0:
+                    return redirect('screening_index')
+
+                my_claimed_songs_queryset.update(
                     claimed_by=None,
                     claim_date=None,
                     flag=NewSong.Flags.UNDER_INVESTIGATION,
                     flagged_by=request.user.profile
                 )
+                return redirect(f'{reverse('screening_index')}?filter={constants.UNDER_INVESTIGATION_FILTER}')
             case self.ScreeningAction.APPROVE:
                 return self.approve_songs(songs, request)
             case self.ScreeningAction.APPROVE_AND_FEATURE:

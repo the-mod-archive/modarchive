@@ -39,9 +39,9 @@ REJECT_DESCRIPTION = 'Reject and Remove from Queue'
 REJECT_ACTION = (REJECT_KEYWORD, REJECT_DESCRIPTION)
 
 UNCLAIMED_GROUP = 'Unclaimed'
-CLAIMED_GROUP = 'Claimed'
-DONE_GROUP = 'Done'
-FLAGGED_GROUP = 'Flagged'
+YOUR_REVIEW_GROUP = 'Your Claimed Songs'
+NOT_YOUR_REVIEW_GROUP = 'Songs Claimed by Others'
+READY_TO_BE_ADDED_GROUP = 'Ready to be Added'
 HIGH_PRIORITY_FILTER = 'high_priority'
 HIGH_PRIORITY_FILTER_DESCRIPTION = 'High Priority'
 LOW_PRIORITY_FILTER = 'low_priority'

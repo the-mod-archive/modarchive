@@ -54,6 +54,8 @@ class ScreeningActionViewAuthenticationTests(TestCase):
         self.assertRedirects(response, reverse('screening_index'))
 
 class ClaimingActionTests(TestCase):
+    my_screening_index = f'{reverse("screening_index")}?filter={constants.MY_SCREENING_FILTER}'
+
     def setUp(self):
         self.user = factories.UserFactory()
         self.permission = Permission.objects.get(codename='can_approve_songs')
@@ -68,7 +70,7 @@ class ClaimingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.CLAIM_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, reverse('screening_index'))
+        self.assertRedirects(response, self.my_screening_index)
         song1.refresh_from_db()
         self.assertEqual(self.user.profile, song1.claimed_by)
         self.assertIsNotNone(song1.claim_date)
@@ -82,7 +84,7 @@ class ClaimingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.CLAIM_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, reverse('screening_index'))
+        self.assertRedirects(response, self.my_screening_index)
         song1.refresh_from_db()
         song2.refresh_from_db()
         self.assertEqual(self.user.profile, song1.claimed_by)
@@ -105,53 +107,6 @@ class ClaimingActionTests(TestCase):
         song2.refresh_from_db()
         self.assertEqual(other_user.profile, song1.claimed_by)
         self.assertEqual(other_user.profile, song2.claimed_by)
-
-    def test_cannot_claim_song_needing_second_opinion_when_flagged_by_self(self):
-        # Arrange
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.NEEDS_SECOND_OPINION, flagged_by=self.user.profile)
-        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.NEEDS_SECOND_OPINION, flagged_by=self.user.profile)
-
-        # Act
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.CLAIM_KEYWORD})
-
-        # Assert
-        self.assertRedirects(response, reverse('screening_index'))
-        song1.refresh_from_db()
-        song2.refresh_from_db()
-        self.assertIsNone(song1.claimed_by)
-        self.assertEqual(self.user.profile, song1.flagged_by)
-        self.assertEqual(NewSong.Flags.NEEDS_SECOND_OPINION, song1.flag)
-        self.assertIsNone(song2.claimed_by)
-        self.assertEqual(self.user.profile, song2.flagged_by)
-        self.assertEqual(NewSong.Flags.NEEDS_SECOND_OPINION, song2.flag)
-
-    def test_cannot_claim_song_flagged_as_possible_duplicate_by_self(self):
-        # Arrange
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.POSSIBLE_DUPLICATE, flagged_by=self.user.profile)
-
-        # Act
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.CLAIM_KEYWORD})
-
-        # Assert
-        self.assertRedirects(response, reverse('screening_index'))
-        song1.refresh_from_db()
-        self.assertIsNone(song1.claimed_by)
-        self.assertEqual(self.user.profile, song1.flagged_by)
-        self.assertEqual(NewSong.Flags.POSSIBLE_DUPLICATE, song1.flag)
-
-    def test_cannot_claim_song_flagged_as_under_investigation_by_self(self):
-        # Arrange
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.UNDER_INVESTIGATION, flagged_by=self.user.profile)
-
-        # Act
-        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.CLAIM_KEYWORD})
-
-        # Assert
-        self.assertRedirects(response, reverse('screening_index'))
-        song1.refresh_from_db()
-        self.assertIsNone(song1.claimed_by)
-        self.assertEqual(self.user.profile, song1.flagged_by)
-        self.assertEqual(NewSong.Flags.UNDER_INVESTIGATION, song1.flag)
 
     def test_cannot_unclaim_song_claimed_by_others(self):
         # Arrange
@@ -194,7 +149,7 @@ class FlaggingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.UNDER_INVESTIGATION_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, reverse('screening_index'))
+        self.assertRedirects(response, f'{reverse('screening_index')}?filter={constants.UNDER_INVESTIGATION_FILTER}')
         song1.refresh_from_db()
         self.assertEqual(NewSong.Flags.UNDER_INVESTIGATION, song1.flag)
         self.assertEqual(self.user.profile, song1.flagged_by)
@@ -237,7 +192,7 @@ class FlaggingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.POSSIBLE_DUPLICATE_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, reverse('screening_index'))
+        self.assertRedirects(response, f'{reverse('screening_index')}?filter={constants.POSSIBLE_DUPLICATE_FILTER}')
         song1.refresh_from_db()
         song2.refresh_from_db()
         song3.refresh_from_db()
@@ -284,7 +239,7 @@ class FlaggingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, reverse('screening_index'))
+        self.assertRedirects(response, f'{reverse('screening_index')}?filter={constants.PRE_SCREENED_FILTER}')
         song1.refresh_from_db()
         song2.refresh_from_db()
         self.assertIsNone(song1.claimed_by)
@@ -342,7 +297,7 @@ class FlaggingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, reverse('screening_index'))
+        self.assertRedirects(response, f'{reverse('screening_index')}?filter={constants.PRE_SCREENED_AND_RECOMMENDED_FILTER}')
         song1.refresh_from_db()
         song2.refresh_from_db()
         self.assertIsNone(song1.claimed_by)
@@ -401,7 +356,7 @@ class FlaggingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.NEEDS_SECOND_OPINION_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, reverse('screening_index'))
+        self.assertRedirects(response, f'{reverse('screening_index')}?filter={constants.NEEDS_SECOND_OPINION_FILTER}')
         song1.refresh_from_db()
         song2.refresh_from_db()
         song3.refresh_from_db()
