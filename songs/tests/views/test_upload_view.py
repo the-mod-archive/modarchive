@@ -13,6 +13,7 @@ from homepage.tests import factories
 from songs.models import Song, NewSong
 
 from songs import factories as song_factories
+from songs import constants
 
 OCTET_STREAM = 'application/octet-stream'
 SONG_TITLE = 'Test Song'
@@ -25,6 +26,30 @@ TEST_IT_FILENAME = 'test2.it'
 TEST_IT_ZIP_NAME = 'test2.it.zip'
 TEST_S3M_FILENAME = 'test3.s3m'
 TEST_S3M_ZIP_NAME = 'test3.s3m.zip'
+
+class UploadViewAuthTests(TestCase):
+    def test_upload_view_redirects_unauthenticated_user(self):
+        # Arrange
+        upload_url = reverse('upload_songs')
+        login_url = reverse('login')
+
+        # Act
+        response = self.client.get(upload_url)
+
+        # Assert
+        self.assertRedirects(response, f"{login_url}?next={upload_url}")
+
+    def test_upload_view_permits_authenticated_user(self):
+        # Arrange
+        user = factories.UserFactory()
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('upload_songs'))
+
+        # Assert
+        self.assertEqual(200, response.status_code)
+        self.assertTemplateUsed(response, "upload.html")
 
 class UploadViewTests(TestCase):
     test_mod_info = {
@@ -45,9 +70,12 @@ class UploadViewTests(TestCase):
         'name': IT_TITLE
     }
 
+    temp_upload_dir = settings.TEMP_UPLOAD_DIR
+    new_file_dir = settings.NEW_FILE_DIR
+
     def setUp(self):
-        self.temp_upload_dir = settings.TEMP_UPLOAD_DIR
-        self.new_file_dir = settings.NEW_FILE_DIR
+        self.user = factories.UserFactory()
+        self.client.force_login(self.user)
 
     def tearDown(self):
         # Cleanup new_file_dir after each test
@@ -88,44 +116,25 @@ class UploadViewTests(TestCase):
         # Check if the sets are equal, meaning the order doesn't matter
         self.assertEqual(expected_set, successful_set)
 
+    def create_file(self, filename, actual_filename=None):
+        if actual_filename:
+            file_path = self.get_file_path(actual_filename)
+        else:
+            file_path = self.get_file_path(filename)
+
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+
+        return SimpleUploadedFile(filename, file_data, content_type=OCTET_STREAM)
+
     def get_file_path(self, filename):
         return os.path.join(os.path.dirname(__file__), '../../testdata', filename)
-
-    def test_upload_view_redirects_unauthenticated_user(self):
-        # Arrange
-        upload_url = reverse('upload_songs')
-        login_url = reverse('login')
-
-        # Act
-        response = self.client.get(upload_url)
-
-        # Assert
-        self.assertRedirects(response, f"{login_url}?next={upload_url}")
-
-    def test_upload_view_permits_authenticated_user(self):
-        # Arrange
-        user = factories.UserFactory()
-        self.client.force_login(user)
-
-        # Act
-        response = self.client.get(reverse('upload_songs'))
-
-        # Assert
-        self.assertEqual(200, response.status_code)
-        self.assertTemplateUsed(response, "upload.html")
 
     @patch('songs.views.upload_view.get_mod_info')
     def test_upload_single_song(self, mock_mod_info):
         # Arrange
-        user = factories.UserFactory()
-        self.client.force_login(user)
-
-        file_path = self.get_file_path(TEST_MOD_FILENAME)
         mock_mod_info.return_value = self.test_mod_info
-
-        with open(file_path, 'rb') as f:
-            file_data = f.read()
-        uploaded_file = SimpleUploadedFile(TEST_MOD_FILENAME, file_data, content_type=OCTET_STREAM)
+        uploaded_file = self.create_file(TEST_MOD_FILENAME)
 
         # Act
         response = self.client.post(reverse('upload_songs'), {
@@ -136,15 +145,12 @@ class UploadViewTests(TestCase):
         # Assert
         self.assert_zipped_file(self.new_file_dir, TEST_MOD_ZIP_NAME, TEST_MOD_FILENAME)
         self.assertEqual(os.listdir(self.temp_upload_dir), [])
-        self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, user.profile, True)
+        self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, self.user.profile, True)
         self.assert_context_success(response.context, 1, [TEST_MOD_FILENAME], [SONG_TITLE], [Song.Formats.MOD])
 
     @patch('songs.views.upload_view.get_mod_info')
     def test_upload_multiple_songs(self, mock_mod_info):
         # Arrange
-        user = factories.UserFactory()
-        self.client.force_login(user)
-
         mod_path = self.get_file_path(TEST_MOD_FILENAME)
         it_path = self.get_file_path(TEST_IT_FILENAME)
         s3m_path = self.get_file_path(TEST_S3M_FILENAME)
@@ -176,26 +182,18 @@ class UploadViewTests(TestCase):
 
             self.assertEqual(len(os.listdir(self.temp_upload_dir)), 0)
 
-            self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, user.profile, False)
-            self.assert_song_in_database(TEST_IT_FILENAME, IT_TITLE, Song.Formats.IT, 32, user.profile, False)
-            self.assert_song_in_database(TEST_S3M_FILENAME, S3M_TITLE, Song.Formats.S3M, 16, user.profile, False)
+            self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, self.user.profile, False)
+            self.assert_song_in_database(TEST_IT_FILENAME, IT_TITLE, Song.Formats.IT, 32, self.user.profile, False)
+            self.assert_song_in_database(TEST_S3M_FILENAME, S3M_TITLE, Song.Formats.S3M, 16, self.user.profile, False)
 
             self.assert_context_success(response.context, 3, [TEST_MOD_FILENAME, TEST_IT_FILENAME, TEST_S3M_FILENAME], [SONG_TITLE, IT_TITLE, S3M_TITLE], [Song.Formats.MOD, Song.Formats.IT, Song.Formats.S3M])
 
     @patch('songs.views.upload_view.get_mod_info')
     def test_reject_files_already_in_screening(self, mock_mod_info):
         # Arrange
-        user = factories.UserFactory()
-        file_path = self.get_file_path(TEST_MOD_FILENAME)
         mock_mod_info.return_value = self.test_mod_info
-
-        song_factories.NewSongFactory(hash='47c9d81e6c4966913e068a84b1b340f6', uploader_profile=user.profile)
-
-        with open(file_path, 'rb') as f:
-            file_data = f.read()
-        uploaded_file = SimpleUploadedFile(TEST_MOD_FILENAME, file_data, content_type=OCTET_STREAM)
-
-        self.client.force_login(user)
+        song_factories.NewSongFactory(hash='47c9d81e6c4966913e068a84b1b340f6', uploader_profile=self.user.profile)
+        uploaded_file = self.create_file(TEST_MOD_FILENAME)
 
         # Act
         response = self.client.post(reverse('upload_songs'), {
@@ -215,22 +213,14 @@ class UploadViewTests(TestCase):
         self.assertEqual(len(failed_files), 1)
         failed_file = failed_files[0]
         self.assertEqual(failed_file['filename'], TEST_MOD_FILENAME)
-        self.assertEqual(failed_file['reason'], 'An identical song was already found in the upload processing queue.')
+        self.assertEqual(failed_file['reason'], constants.UPLOAD_DUPLICATE_SONG_IN_PROCESSING_QUEUE)
 
     @patch('songs.views.upload_view.get_mod_info')
     def test_reject_files_already_in_archive(self, mock_mod_info):
         # Arrange
-        user = factories.UserFactory()
-        file_path = self.get_file_path(TEST_MOD_FILENAME)
         mock_mod_info.return_value = self.test_mod_info
-
         song_factories.SongFactory(hash='47c9d81e6c4966913e068a84b1b340f6')
-
-        with open(file_path, 'rb') as f:
-            file_data = f.read()
-        uploaded_file = SimpleUploadedFile(TEST_MOD_FILENAME, file_data, content_type=OCTET_STREAM)
-
-        self.client.force_login(user)
+        uploaded_file = self.create_file(TEST_MOD_FILENAME)
 
         # Act
         response = self.client.post(reverse('upload_songs'), {
@@ -250,21 +240,14 @@ class UploadViewTests(TestCase):
         self.assertEqual(len(failed_files), 1)
         failed_file = failed_files[0]
         self.assertEqual(failed_file['filename'], TEST_MOD_FILENAME)
-        self.assertEqual(failed_file['reason'], 'An identical song was already found in the archive.')
+        self.assertEqual(failed_file['reason'], constants.UPLOAD_DUPLICATE_SONG_IN_ARCHIVE)
 
     @override_settings(MAXIMUM_UPLOAD_SIZE=1000)
     @patch('songs.views.upload_view.get_mod_info')
     def test_reject_files_that_are_too_large(self, mock_mod_info):
         # Arrange
-        user = factories.UserFactory()
-        file_path = self.get_file_path(TEST_MOD_FILENAME)
         mock_mod_info.return_value = self.test_mod_info
-
-        with open(file_path, 'rb') as f:
-            file_data = f.read()
-        uploaded_file = SimpleUploadedFile(TEST_MOD_FILENAME, file_data, content_type=OCTET_STREAM)
-
-        self.client.force_login(user)
+        uploaded_file = self.create_file(TEST_MOD_FILENAME)
 
         # Act
         response = self.client.post(reverse('upload_songs'), {
@@ -284,21 +267,14 @@ class UploadViewTests(TestCase):
         self.assertEqual(len(failed_files), 1)
         failed_file = failed_files[0]
         self.assertEqual(failed_file['filename'], TEST_MOD_FILENAME)
-        self.assertEqual(failed_file['reason'], f'The file was above the maximum allowed size of {settings.MAXIMUM_UPLOAD_SIZE} bytes.')
+        self.assertEqual(failed_file['reason'], constants.UPLOAD_TOO_LARGE%(settings.MAXIMUM_UPLOAD_SIZE))
 
     @override_settings(MAXIMUM_UPLOAD_FILENAME_LENGTH=4)
     @patch('songs.views.upload_view.get_mod_info')
     def test_reject_file_with_long_filename(self, mock_mod_info):
         # Arrange
-        user = factories.UserFactory()
-        file_path = self.get_file_path(TEST_MOD_FILENAME)
         mock_mod_info.return_value = self.test_mod_info
-
-        with open(file_path, 'rb') as f:
-            file_data = f.read()
-        uploaded_file = SimpleUploadedFile(TEST_MOD_FILENAME, file_data, content_type=OCTET_STREAM)
-
-        self.client.force_login(user)
+        uploaded_file = self.create_file(TEST_MOD_FILENAME)
 
         # Act
         response = self.client.post(reverse('upload_songs'), {
@@ -318,20 +294,13 @@ class UploadViewTests(TestCase):
         self.assertEqual(len(failed_files), 1)
         failed_file = failed_files[0]
         self.assertEqual(failed_file['filename'], TEST_MOD_FILENAME)
-        self.assertEqual(failed_file['reason'], f'The filename length was above the maximum allowed limit of {settings.MAXIMUM_UPLOAD_FILENAME_LENGTH} characters.')
+        self.assertEqual(failed_file['reason'], constants.UPLOAD_FILENAME_TOO_LONG%(settings.MAXIMUM_UPLOAD_FILENAME_LENGTH))
 
     @patch('songs.views.upload_view.get_mod_info')
     def test_reject_file_when_modinfo_fails(self, mock_mod_info):
         # Arrange
-        user = factories.UserFactory()
-        file_path = self.get_file_path(NOT_A_MOD_FILENAME)
         mock_mod_info.return_value = None
-
-        with open(file_path, 'rb') as f:
-            file_data = f.read()
-        uploaded_file = SimpleUploadedFile(NOT_A_MOD_FILENAME, file_data, content_type=OCTET_STREAM)
-
-        self.client.force_login(user)
+        uploaded_file = self.create_file(NOT_A_MOD_FILENAME)
 
         # Act
         response = self.client.post(reverse('upload_songs'), {
@@ -351,21 +320,14 @@ class UploadViewTests(TestCase):
         self.assertEqual(len(failed_files), 1)
         failed_file = failed_files[0]
         self.assertEqual(failed_file['filename'], NOT_A_MOD_FILENAME)
-        self.assertEqual(failed_file['reason'], 'The file was not recognized as a valid module file.')
+        self.assertEqual(failed_file['reason'], constants.UPLOAD_UNRECOGNIZED_FORMAT)
 
     @override_settings(UNSUPPORTED_FORMATS=['it'])
     @patch('songs.views.upload_view.get_mod_info')
     def test_reject_file_if_format_not_supported(self, mock_mod_info):
         # Arrange
-        user = factories.UserFactory()
-        file_path = self.get_file_path(TEST_IT_FILENAME)
         mock_mod_info.return_value = self.test_it_info
-
-        with open(file_path, 'rb') as f:
-            file_data = f.read()
-        uploaded_file = SimpleUploadedFile(TEST_IT_FILENAME, file_data, content_type=OCTET_STREAM)
-
-        self.client.force_login(user)
+        uploaded_file = self.create_file(TEST_IT_FILENAME)
 
         # Act
         response = self.client.post(reverse('upload_songs'), {
@@ -385,20 +347,13 @@ class UploadViewTests(TestCase):
         self.assertEqual(len(failed_files), 1)
         failed_file = failed_files[0]
         self.assertEqual(failed_file['filename'], TEST_IT_FILENAME)
-        self.assertEqual(failed_file['reason'], 'This format is not currently supported.')
+        self.assertEqual(failed_file['reason'], constants.UPLOAD_UNSUPPORTED_FORMAT)
 
     @patch('songs.views.upload_view.get_mod_info')
     def test_rename_file_extension_when_it_does_not_match_the_format(self, mock_mod_info):
         # Arrange
-        user = factories.UserFactory()
-        file_path = self.get_file_path(TEST_MOD_FILENAME)
         mock_mod_info.return_value = self.test_mod_info
-
-        with open(file_path, 'rb') as f:
-            file_data = f.read()
-        uploaded_file = SimpleUploadedFile('test1.xm', file_data, content_type=OCTET_STREAM)
-
-        self.client.force_login(user)
+        uploaded_file = self.create_file('test1.xm', TEST_MOD_FILENAME)
 
         # Act
         response = self.client.post(reverse('upload_songs'), {
@@ -409,21 +364,14 @@ class UploadViewTests(TestCase):
         # Assert
         self.assert_zipped_file(self.new_file_dir, TEST_MOD_ZIP_NAME, TEST_MOD_FILENAME)
         self.assertEqual(os.listdir(self.temp_upload_dir), [])
-        self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, user.profile, True)
+        self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, self.user.profile, True)
         self.assert_context_success(response.context, 1, [TEST_MOD_FILENAME], [SONG_TITLE], [Song.Formats.MOD])
 
     @patch('songs.views.upload_view.get_mod_info')
     def test_rename_file_to_remove_whitespace_and_uppercase_letters(self, mock_mod_info):
         # Arrange
-        user = factories.UserFactory()
-        file_path = self.get_file_path(TEST_MOD_FILENAME)
         mock_mod_info.return_value = self.test_mod_info
-
-        with open(file_path, 'rb') as f:
-            file_data = f.read()
-        uploaded_file = SimpleUploadedFile('Test  1.mod', file_data, content_type=OCTET_STREAM)
-
-        self.client.force_login(user)
+        uploaded_file = self.create_file('Test  1.mod', TEST_MOD_FILENAME)
 
         # Act
         response = self.client.post(reverse('upload_songs'), {
@@ -435,5 +383,51 @@ class UploadViewTests(TestCase):
         underscored_mod_filename = 'test_1.mod'
         self.assert_zipped_file(self.new_file_dir, 'test_1.mod.zip', underscored_mod_filename)
         self.assertEqual(os.listdir(self.temp_upload_dir), [])
-        self.assert_song_in_database(underscored_mod_filename, SONG_TITLE, Song.Formats.MOD, 4, user.profile, True)
+        self.assert_song_in_database(underscored_mod_filename, SONG_TITLE, Song.Formats.MOD, 4, self.user.profile, True)
         self.assert_context_success(response.context, 1, [underscored_mod_filename], [SONG_TITLE], [Song.Formats.MOD])
+
+    @patch('songs.views.upload_view.get_mod_info')
+    def test_reject_file_if_previously_rejected_by_screeners(self, mock_mod_info):
+        # Arrange
+        uploaded_file = self.create_file(TEST_MOD_FILENAME)
+        mock_mod_info.return_value = self.test_mod_info
+        song_factories.RejectedSongFactory(hash='47c9d81e6c4966913e068a84b1b340f6')
+
+        # Act
+        response = self.client.post(reverse('upload_songs'), {
+            'written_by_me': 'yes',
+            'song_file': uploaded_file
+        })
+
+        # Assert
+        self.assertFalse(os.path.isfile(os.path.join(self.new_file_dir, TEST_MOD_FILENAME)))
+
+        self.assertIn('successful_files', response.context)
+        successful_files = response.context['successful_files']
+        self.assertEqual(len(successful_files), 0)
+
+        self.assertIn('failed_files', response.context)
+        failed_files = response.context['failed_files']
+        self.assertEqual(len(failed_files), 1)
+        failed_file = failed_files[0]
+        self.assertEqual(failed_file['filename'], TEST_MOD_FILENAME)
+        self.assertEqual(failed_file['reason'], constants.UPLOAD_SONG_PREVIOUSLY_REJECTED)
+
+    @patch('songs.views.upload_view.get_mod_info')
+    def test_permit_file_temporarily_rejected_by_screeners(self, mock_mod_info):
+        # Arrange
+        uploaded_file = self.create_file(TEST_MOD_FILENAME)
+        mock_mod_info.return_value = self.test_mod_info
+        song_factories.RejectedSongFactory(hash='47c9d81e6c4966913e068a84b1b340f6', is_temporary=True)
+
+        # Act
+        response = self.client.post(reverse('upload_songs'), {
+            'written_by_me': 'yes',
+            'song_file': uploaded_file
+        })
+
+        # Assert
+        self.assert_zipped_file(self.new_file_dir, TEST_MOD_ZIP_NAME, TEST_MOD_FILENAME)
+        self.assertEqual(os.listdir(self.temp_upload_dir), [])
+        self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, self.user.profile, True)
+        self.assert_context_success(response.context, 1, [TEST_MOD_FILENAME], [SONG_TITLE], [Song.Formats.MOD])

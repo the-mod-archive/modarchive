@@ -7,20 +7,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 
 from modarchive import file_repository
-from songs import forms
-from songs.models import NewSong, Song
+from songs import forms, constants
+from songs.models import NewSong, Song, RejectedSong
 from songs.mod_info import get_mod_info
 
 class UploadView(LoginRequiredMixin, FormView):
     template_name="upload.html"
     form_class = forms.UploadForm
-
-    FILE_TOO_LARGE = 'The file was above the maximum allowed size of %s bytes.'
-    FILENAME_TOO_LONG = 'The filename length was above the maximum allowed limit of %s characters.'
-    UNRECOGNIZED_FORMAT = 'The file was not recognized as a valid module file.'
-    UNSUPPORTED_FORMAT = 'This format is not currently supported.'
-    DUPLICATE_SONG_IN_ARCHIVE = 'An identical song was already found in the archive.'
-    DUPLICATE_SONG_IN_PROCESSING_QUEUE = 'An identical song was already found in the upload processing queue.'
 
     def form_valid(self, form):
         # Handle the uploaded file and the radio button value here
@@ -38,7 +31,7 @@ class UploadView(LoginRequiredMixin, FormView):
             failed_files = []
 
             if song_file.size > settings.MAXIMUM_UPLOAD_SIZE:
-                self.add_failure(failed_files, file_name, self.FILE_TOO_LARGE%(settings.MAXIMUM_UPLOAD_SIZE))
+                self.add_failure(failed_files, file_name, constants.UPLOAD_TOO_LARGE%(settings.MAXIMUM_UPLOAD_SIZE))
             else:
                 self.process_files(upload_processor, failed_files, successful_files, written_by_me)
 
@@ -61,19 +54,19 @@ class UploadView(LoginRequiredMixin, FormView):
 
             # Ensure the song's filename length does not exceed the limit
             if len(file_name) > settings.MAXIMUM_UPLOAD_FILENAME_LENGTH:
-                self.add_failure(failed_files, file_name, self.FILENAME_TOO_LONG%(settings.MAXIMUM_UPLOAD_FILENAME_LENGTH))
+                self.add_failure(failed_files, file_name, constants.UPLOAD_FILENAME_TOO_LONG%(settings.MAXIMUM_UPLOAD_FILENAME_LENGTH))
                 continue
 
             modinfo = get_mod_info(file)
 
             if modinfo is None:
-                self.add_failure(failed_files, file_name, self.UNRECOGNIZED_FORMAT)
+                self.add_failure(failed_files, file_name, constants.UPLOAD_UNRECOGNIZED_FORMAT)
                 continue
 
             # Ensure the song is not in an unsupported format
             mod_format = modinfo.get('format', 'unknown').lower()
             if mod_format in settings.UNSUPPORTED_FORMATS:
-                self.add_failure(failed_files, file_name, self.UNSUPPORTED_FORMAT)
+                self.add_failure(failed_files, file_name, constants.UPLOAD_UNSUPPORTED_FORMAT)
                 continue
 
             file_name, file = self.rename_file(file, file_name, mod_format)
@@ -126,15 +119,18 @@ class UploadView(LoginRequiredMixin, FormView):
         """Returns True if the song already exists in the archive or upload processing 
         queue, and adds a failure message to the list of failed files."""
         # Ensure that the song is not already in the archive
-        songs_in_archive = Song.objects.filter(hash=md5hash)
-        if songs_in_archive.count() > 0:
-            self.add_failure(failed_files, file_name, self.DUPLICATE_SONG_IN_ARCHIVE)
+        if Song.objects.filter(hash=md5hash).exists():
+            self.add_failure(failed_files, file_name, constants.UPLOAD_DUPLICATE_SONG_IN_ARCHIVE)
             return True
 
         # Ensure that the song is not already in the processing queue
-        songs_in_processing_count = NewSong.objects.filter(hash=md5hash).count()
-        if songs_in_processing_count > 0:
-            self.add_failure(failed_files, file_name, self.DUPLICATE_SONG_IN_PROCESSING_QUEUE)
+        if NewSong.objects.filter(hash=md5hash).exists():
+            self.add_failure(failed_files, file_name, constants.UPLOAD_DUPLICATE_SONG_IN_PROCESSING_QUEUE)
+            return True
+
+        # Ensure that the song was not permanently rejected in the past
+        if RejectedSong.objects.filter(hash=md5hash, is_temporary=False).exists():
+            self.add_failure(failed_files, file_name, constants.UPLOAD_SONG_PREVIOUSLY_REJECTED)
             return True
 
         return False

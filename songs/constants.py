@@ -83,3 +83,11 @@ FLAG_MESSAGE_PRE_SCREENED_AND_RECOMMENDED = 'This song has been pre-screened and
 
 REJECTION_REQUIRES_IDS = 'You must specify at least one song to reject.'
 REJECTION_ALL_SONGS_MUST_BE_CLAIMED = 'You cannot reject a song that you have not claimed.'
+
+UPLOAD_TOO_LARGE = 'The file was above the maximum allowed size of %s bytes.'
+UPLOAD_FILENAME_TOO_LONG = 'The filename length was above the maximum allowed limit of %s characters.'
+UPLOAD_UNRECOGNIZED_FORMAT = 'The file was not recognized as a valid module file.'
+UPLOAD_UNSUPPORTED_FORMAT = 'This format is not currently supported.'
+UPLOAD_DUPLICATE_SONG_IN_ARCHIVE = 'An identical song was already found in the archive.'
+UPLOAD_DUPLICATE_SONG_IN_PROCESSING_QUEUE = 'An identical song was already found in the upload processing queue.'
+UPLOAD_SONG_PREVIOUSLY_REJECTED = 'This song was previously rejected by screeners.'

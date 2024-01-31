@@ -7,8 +7,8 @@ class SongFactory(factory.django.DjangoModelFactory):
         model = models.Song
 
     format = models.Song.Formats.S3M
-    filename = factory.Sequence(lambda n: 'song_%d.s3m' % n)
-    title = factory.Sequence(lambda n: 'Song %d' % n)
+    filename = factory.Sequence(lambda n: f'song_{n}.s3m')
+    title = factory.Sequence(lambda n: f'Song {n}')
     file_size = 200000
     channels = 16
     hash = "abcdef1234567890"
@@ -21,8 +21,8 @@ class NewSongFactory(factory.django.DjangoModelFactory):
         model = models.NewSong
 
     format = models.Song.Formats.S3M
-    filename = factory.Sequence(lambda n: 'song_%d.s3m' % n)
-    title = factory.Sequence(lambda n: 'Song %d' % n)
+    filename = factory.Sequence(lambda n: f'song_{n}.s3m')
+    title = factory.Sequence(lambda n: f'Song {n}')
     file_size = 200000
     channels = 16
     hash = "abcdef1234567890"
@@ -53,3 +53,10 @@ class FavoriteFactory(factory.django.DjangoModelFactory):
 class ArtistCommentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ArtistComment
+
+class RejectedSongFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.RejectedSong
+
+    is_by_uploader = False
+    reason = models.RejectedSong.Reasons.OTHER
