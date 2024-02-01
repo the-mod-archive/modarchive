@@ -33,7 +33,14 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
         context['filter_options'] = self.filter_options
         context['filter'] = self.request.GET.get('filter', 'all')
 
-        if context['filter'] in [constants.HIGH_PRIORITY_FILTER, constants.LOW_PRIORITY_FILTER, constants.BY_UPLOADER_FILTER]:
+        if context['filter'] in [
+            constants.HIGH_PRIORITY_FILTER,
+            constants.LOW_PRIORITY_FILTER,
+            constants.BY_UPLOADER_FILTER,
+            constants.NEEDS_SECOND_OPINION_FILTER,
+            constants.POSSIBLE_DUPLICATE_FILTER,
+            constants.UNDER_INVESTIGATION_FILTER
+        ]:
             context['actions'] = [
                 constants.CLAIM_ACTION
             ]
@@ -45,14 +52,15 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
                 constants.POSSIBLE_DUPLICATE_ACTION,
                 constants.UNDER_INVESTIGATION_ACTION,
                 constants.REJECT_ACTION,
-                constants.UNCLAIM_ACTION
+                constants.UNCLAIM_ACTION,
+                constants.CLEAR_FLAG_ACTION
             ]
         elif context['filter'] == constants.OTHERS_SCREENING_FILTER:
             context['actions'] = []
         elif context['filter'] == constants.PRE_SCREENED_FILTER:
-            context['actions'] = [constants.APPROVE_ACTION, constants.APPROVE_AND_FEATURE_ACTION, constants.REJECT_ACTION]
+            context['actions'] = [constants.APPROVE_ACTION, constants.APPROVE_AND_FEATURE_ACTION, constants.REJECT_ACTION, constants.CLEAR_FLAG_ACTION]
         elif context['filter'] == constants.PRE_SCREENED_AND_RECOMMENDED_FILTER:
-            context['actions'] = [constants.APPROVE_ACTION, constants.APPROVE_AND_FEATURE_ACTION, constants.REJECT_ACTION]
+            context['actions'] = [constants.APPROVE_ACTION, constants.APPROVE_AND_FEATURE_ACTION, constants.REJECT_ACTION, constants.CLEAR_FLAG_ACTION]
 
         context['form'] = ScreeningQueueFilterForm(initial={'filter': context['filter']})
 

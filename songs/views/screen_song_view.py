@@ -16,14 +16,16 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
             constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
             constants.NEEDS_SECOND_OPINION_ACTION,
             constants.UNDER_INVESTIGATION_ACTION,
-            constants.REJECT_ACTION
+            constants.REJECT_ACTION,
+            constants.CLEAR_FLAG_ACTION
         ],
         NewSong.Flags.UNDER_INVESTIGATION: [
             constants.PRE_SCREEN_ACTION,
             constants.PRE_SCREEN_AND_RECOMMEND_ACTION,
             constants.NEEDS_SECOND_OPINION_ACTION,
             constants.POSSIBLE_DUPLICATE_ACTION,
-            constants.REJECT_ACTION
+            constants.REJECT_ACTION,
+            constants.CLEAR_FLAG_ACTION
         ],
         NewSong.Flags.NEEDS_SECOND_OPINION: [
             constants.PRE_SCREEN_ACTION,
@@ -32,17 +34,20 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
             constants.UNDER_INVESTIGATION_ACTION,
             constants.APPROVE_ACTION,
             constants.APPROVE_AND_FEATURE_ACTION,
-            constants.REJECT_ACTION
+            constants.REJECT_ACTION,
+            constants.CLEAR_FLAG_ACTION
         ],
         NewSong.Flags.PRE_SCREENED: [
             constants.APPROVE_ACTION,
             constants.APPROVE_AND_FEATURE_ACTION,
-            constants.REJECT_ACTION
+            constants.REJECT_ACTION,
+            constants.CLEAR_FLAG_ACTION
         ],
         NewSong.Flags.PRE_SCREENED_PLUS: [
             constants.APPROVE_ACTION,
             constants.APPROVE_AND_FEATURE_ACTION,
-            constants.REJECT_ACTION
+            constants.REJECT_ACTION,
+            constants.CLEAR_FLAG_ACTION
         ]
     }
 
@@ -77,7 +82,7 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
             ]
         elif self.object.claimed_by == self.request.user.profile:
             if self.object.flagged_by == self.request.user.profile and self.object.flag in [NewSong.Flags.NEEDS_SECOND_OPINION]:
-                context['actions'] = []
+                context['actions'] = [constants.CLEAR_FLAG_ACTION]
             else:
                 context['actions'] = self.flag_actions_mapping.get(self.object.flag, self.claimed_and_no_flag_actions)
             context['actions'].append(constants.UNCLAIM_ACTION)

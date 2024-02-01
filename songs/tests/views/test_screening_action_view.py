@@ -385,6 +385,55 @@ class FlaggingActionTests(TestCase):
         self.assertIsNone(song2.flag)
         self.assertIsNone(song2.flagged_by)
 
+    def test_cannot_clear_flag_from_unclaimed_song(self):
+        # Arrange
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=self.user.profile)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.CLEAR_FLAG_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        self.assertEqual(NewSong.Flags.PRE_SCREENED, song1.flag)
+        self.assertEqual(self.user.profile, song1.flagged_by)
+
+    def test_cannot_clear_flags_from_songs_claimed_by_others(self):
+        # Arrange
+        other_user = factories.UserFactory()
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=self.user.profile, claimed_by=other_user.profile)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.CLEAR_FLAG_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        self.assertEqual(NewSong.Flags.PRE_SCREENED, song1.flag)
+        self.assertEqual(self.user.profile, song1.flagged_by)
+
+    def test_can_clear_flags_from_songs_claimed_by_user(self):
+        # Arrange
+        other_user = factories.UserFactory()
+        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=self.user.profile, claimed_by=self.user.profile)
+        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=other_user.profile, claimed_by=self.user.profile)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.CLEAR_FLAG_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screening_index'))
+        song1.refresh_from_db()
+        self.assertIsNone(song1.flag)
+        self.assertIsNone(song1.flagged_by)
+        self.assertIsNone(song1.claimed_by)
+        self.assertIsNone(song1.claim_date)
+        song2.refresh_from_db()
+        self.assertIsNone(song2.flag)
+        self.assertIsNone(song2.flagged_by)
+        self.assertIsNone(song2.claimed_by)
+        self.assertIsNone(song2.claim_date)
+
 class ApprovalActionValidationTests(TestCase):
     new_file_dir = settings.NEW_FILE_DIR
     main_archive_dir = settings.MAIN_ARCHIVE_DIR

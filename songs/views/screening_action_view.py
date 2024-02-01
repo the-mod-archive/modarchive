@@ -29,6 +29,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         APPROVE = constants.APPROVE_KEYWORD
         APPROVE_AND_FEATURE = constants.APPROVE_AND_FEATURE_KEYWORD
         REJECT = constants.REJECT_KEYWORD
+        CLEAR_FLAG = constants.CLEAR_FLAG_KEYWORD
 
     def post(self, request, *args, **kwargs):
         # Determine action from request, reject if not a valid action
@@ -124,6 +125,16 @@ class ScreeningActionView(PermissionRequiredMixin, View):
                 song_ids_str = ','.join(selected_songs)
                 query_string = urlencode({'song_ids': song_ids_str})
                 return redirect(f'{reverse('screening_reject')}?{query_string}')
+            case self.ScreeningAction.CLEAR_FLAG:
+                if len(my_claimed_songs_queryset) == 0:
+                    return redirect('screening_index')
+
+                my_claimed_songs_queryset.update(
+                    claimed_by=None,
+                    claim_date=None,
+                    flag=None,
+                    flagged_by=None
+                )
 
         # Redirect to screening view
         return redirect('screening_index')
