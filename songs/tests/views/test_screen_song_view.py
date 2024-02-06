@@ -82,7 +82,7 @@ class ScreenSongContextDataTests(TestCase):
         # Assert
         self.assertIn('claimed_by_me', response.context)
         self.assertTrue(response.context['claimed_by_me'])
-        self.assertEqual(9, len(response.context['actions']))
+        self.assertEqual(10, len(response.context['actions']))
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
@@ -92,6 +92,7 @@ class ScreenSongContextDataTests(TestCase):
         self.assertIn(constants.APPROVE_AND_FEATURE_ACTION, response.context['actions'])
         self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
         self.assertIn(constants.REJECT_ACTION, response.context['actions'])
+        self.assertIn(constants.RENAME_ACTION, response.context['actions'])
 
     def test_song_claimed_by_other_has_correct_context_data(self):
         # Arrange
@@ -120,9 +121,10 @@ class ScreenSongContextDataTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_SECOND_OPINION)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'warning')
-        self.assertEqual(2, len(response.context['actions']))
+        self.assertEqual(3, len(response.context['actions']))
         self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
         self.assertIn(constants.CLEAR_FLAG_ACTION, response.context['actions'])
+        self.assertIn(constants.RENAME_ACTION, response.context['actions'])
 
     def test_claimed_song_needing_second_opinion_has_correct_context_data(self):
         # Arrange
@@ -136,7 +138,7 @@ class ScreenSongContextDataTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_SECOND_OPINION)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'warning')
-        self.assertEqual(9, len(response.context['actions']))
+        self.assertEqual(10, len(response.context['actions']))
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.POSSIBLE_DUPLICATE_ACTION, response.context['actions'])
@@ -146,6 +148,7 @@ class ScreenSongContextDataTests(TestCase):
         self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
         self.assertIn(constants.REJECT_ACTION, response.context['actions'])
         self.assertIn(constants.CLEAR_FLAG_ACTION, response.context['actions'])
+        self.assertIn(constants.RENAME_ACTION, response.context['actions'])
 
     def test_claimed_song_possible_duplicate_has_correct_context_data(self):
         # Arrange
@@ -159,7 +162,7 @@ class ScreenSongContextDataTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_POSSIBLE_DUPLICATE)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'warning')
-        self.assertEqual(7, len(response.context['actions']))
+        self.assertEqual(8, len(response.context['actions']))
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
@@ -167,6 +170,7 @@ class ScreenSongContextDataTests(TestCase):
         self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
         self.assertIn(constants.REJECT_ACTION, response.context['actions'])
         self.assertIn(constants.CLEAR_FLAG_ACTION, response.context['actions'])
+        self.assertIn(constants.RENAME_ACTION, response.context['actions'])
 
     def test_song_under_investigation_has_correct_context_data(self):
         # Arrange
@@ -180,7 +184,7 @@ class ScreenSongContextDataTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_UNDER_INVESTIGATION)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'warning')
-        self.assertEqual(7, len(response.context['actions']))
+        self.assertEqual(8, len(response.context['actions']))
         self.assertIn(constants.PRE_SCREEN_ACTION, response.context['actions'])
         self.assertIn(constants.PRE_SCREEN_AND_RECOMMEND_ACTION, response.context['actions'])
         self.assertIn(constants.NEEDS_SECOND_OPINION_ACTION, response.context['actions'])
@@ -188,6 +192,7 @@ class ScreenSongContextDataTests(TestCase):
         self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
         self.assertIn(constants.REJECT_ACTION, response.context['actions'])
         self.assertIn(constants.CLEAR_FLAG_ACTION, response.context['actions'])
+        self.assertIn(constants.RENAME_ACTION, response.context['actions'])
 
     def test_claimed_pre_screened_song_has_correct_context_data(self):
         # Arrange
@@ -201,12 +206,13 @@ class ScreenSongContextDataTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_PRE_SCREENED)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'success')
-        self.assertEqual(5, len(response.context['actions']))
+        self.assertEqual(6, len(response.context['actions']))
         self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
         self.assertIn(constants.APPROVE_AND_FEATURE_ACTION, response.context['actions'])
         self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
         self.assertIn(constants.REJECT_ACTION, response.context['actions'])
         self.assertIn(constants.CLEAR_FLAG_ACTION, response.context['actions'])
+        self.assertIn(constants.RENAME_ACTION, response.context['actions'])
 
     def test_claimed_pre_screened_and_recommended_song_has_correct_context_data(self):
         # Arrange
@@ -220,9 +226,10 @@ class ScreenSongContextDataTests(TestCase):
         self.assertEqual(response.context['flag_message'], constants.FLAG_MESSAGE_PRE_SCREENED_AND_RECOMMENDED)
         self.assertIn('flag_message_class', response.context)
         self.assertEqual(response.context['flag_message_class'], 'success')
-        self.assertEqual(5, len(response.context['actions']))
+        self.assertEqual(6, len(response.context['actions']))
         self.assertIn(constants.APPROVE_ACTION, response.context['actions'])
         self.assertIn(constants.APPROVE_AND_FEATURE_ACTION, response.context['actions'])
         self.assertIn(constants.UNCLAIM_ACTION, response.context['actions'])
         self.assertIn(constants.REJECT_ACTION, response.context['actions'])
         self.assertIn(constants.CLEAR_FLAG_ACTION, response.context['actions'])
+        self.assertIn(constants.RENAME_ACTION, response.context['actions'])
