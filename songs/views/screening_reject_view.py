@@ -7,8 +7,7 @@ from django.db import transaction, Error
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import FormView
-from django.shortcuts import render
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.forms import CharField, HiddenInput
 from django.urls import reverse_lazy

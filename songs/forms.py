@@ -1,3 +1,6 @@
+import os
+import re
+
 from collections import OrderedDict
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -156,3 +159,41 @@ class RejectionForm(forms.Form):
 
     class Meta:
         required_css_class = None
+
+class RenameForm(forms.ModelForm):
+    new_filename = forms.CharField(required=True, label='New filename', max_length=59, help_text='The new filename for the song. Do not change the file extension.')
+
+    class Meta:
+        model = models.NewSong
+        fields = ('new_filename',)
+        required_css_class = None
+
+    def clean_new_filename(self):
+        new_filename = self.cleaned_data['new_filename']
+
+        # Validate that filename has changed
+        if new_filename.lower() == self.instance.filename.lower():
+            raise forms.ValidationError(constants.RENAME_MUST_BE_CHANGED)
+
+        # Validate that filename adheres to Unix filename conventions
+        if not re.match(r'^[a-zA-Z0-9._-]+$', new_filename):
+            raise forms.ValidationError(constants.RENAME_INVALID_FILENAME)
+
+        current_format = self.instance.format
+        _, extension = os.path.splitext(new_filename)
+
+        # Validate that file extension has not changed
+        if extension.lower() != f'.{current_format.lower()}':
+            raise forms.ValidationError(constants.RENAME_CANNOT_CHANGE_FILE_EXTENSION)
+
+        # Validate that filename is not already taken
+        if self.filename_not_unique(new_filename):
+            raise forms.ValidationError(constants.RENAME_FILENAME_TAKEN)
+
+        return new_filename
+
+    def filename_not_unique(self, new_filename):
+        return (models.NewSong.objects.filter(filename=new_filename).exists() or
+            models.Song.objects.filter(filename=new_filename).exists() or
+            models.RejectedSong.objects.filter(filename=new_filename).exists()
+        )

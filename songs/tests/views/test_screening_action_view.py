@@ -840,3 +840,47 @@ class RejectActionTests(TestCase):
 
         # Assert
         self.assertRedirects(response, f"{reverse('screening_reject')}?song_ids={song1.id},{song2.id}", target_status_code=302)
+
+class RenameActionTests(TestCase):
+    def setUp(self) -> None:
+        self.user = factories.UserFactory()
+        self.permission = Permission.objects.get(codename='can_approve_songs')
+        self.user.user_permissions.add(self.permission)
+        self.client.force_login(self.user)
+
+    def test_cannot_rename_unclaimed_song(self):
+        # Arrange
+        song1 = song_factories.NewSongFactory()
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.RENAME_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screen_song', kwargs={'pk': song1.id}))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.RENAME_SCREENING_REQUIRES_CLAIM, str(messages[0]))
+
+    def test_cannot_rename_multiple_songs(self):
+        # Arrange
+        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile)
+        song2 = song_factories.NewSongFactory(claimed_by=self.user.profile)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.RENAME_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, reverse('screen_song', kwargs={'pk': song1.id}))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(1, len(messages))
+        self.assertEqual(constants.RENAME_SCREENING_ONE_SONG_ONLY, str(messages[0]))
+
+    def test_rename_one_song_redirects_to_rename_page(self):
+        # Arrange
+        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.RENAME_KEYWORD})
+
+        # Assert
+        self.assertRedirects(response, f"{reverse('screening_rename', kwargs = {'pk': song1.id})}")

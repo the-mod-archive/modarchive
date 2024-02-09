@@ -92,6 +92,14 @@ FLAG_MESSAGE_PRE_SCREENED_AND_RECOMMENDED = 'This song has been pre-screened and
 REJECTION_REQUIRES_IDS = 'You must specify at least one song to reject.'
 REJECTION_ALL_SONGS_MUST_BE_CLAIMED = 'You cannot reject a song that you have not claimed.'
 
+RENAME_SCREENING_REQUIRES_CLAIM = 'You must claim a song before you can rename it.'
+RENAME_SCREENING_ONE_SONG_ONLY = 'You can only rename one song at a time.'
+RENAME_CANNOT_CHANGE_FILE_EXTENSION = 'You cannot change the file extension when renaming a song.'
+RENAME_MUST_BE_CHANGED = 'The new filename must be different from the old filename.'
+RENAME_INVALID_FILENAME = 'The new filename is invalid.'
+RENAME_FILENAME_TAKEN = 'The new filename is already taken by another song in the archive.'
+RENAME_FAILED = 'Something went wrong when renaming the file. Please try again. If failures continue, contact an administrator.'
+
 UPLOAD_TOO_LARGE = 'The file was above the maximum allowed size of %s bytes.'
 UPLOAD_FILENAME_TOO_LONG = 'The filename length was above the maximum allowed limit of %s characters.'
 UPLOAD_UNRECOGNIZED_FORMAT = 'The file was not recognized as a valid module file.'

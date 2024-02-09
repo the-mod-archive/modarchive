@@ -1,0 +1,18 @@
+{% extends 'base_page/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {{ block.super }}: Rename Song in Screening Queue
+{% endblock %}
+
+{% block content %}
+    <div class="fs-4">Rename {{song.filename}}</div>
+
+    <div>
+        <form action="{% url 'screening_rename' song.id %}" method="post" novalidate>
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" class='btn btn-primary mt-2' value="Rename Song">
+    </div>
+
+{% endblock %}
