@@ -1,9 +1,21 @@
 from django.views.generic import DetailView
-from songs.models import Song
+from django.http import Http404
+from django.shortcuts import redirect
+from songs.models import Song, SongRedirect
 
 class SongView(DetailView):
     template_name='song_bootstrap.html'
     model=Song
+
+    def get(self, request, *args, **kwargs):
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            if SongRedirect.objects.filter(old_song_id=self.kwargs['pk']).exists():
+                song_id = SongRedirect.objects.get(old_song_id=self.kwargs['pk']).song_id
+                return redirect('view_song', song_id, permanent=True)
+            else:
+                raise
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -183,3 +183,14 @@ class ViewSongTests(TestCase):
 
         # Assert
         self.assertFalse(hasattr(response.context, 'artist_can_comment'))
+
+    def test_uses_song_redirect_when_available(self):
+        # Arrange
+        song = song_factories.SongFactory()
+        song_factories.SongRedirectFactory(song=song, old_song_id=500)
+
+        # Act
+        response = self.client.get(reverse('view_song', kwargs = {'pk': 500}))
+
+        # Assert
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}), status_code=301)
