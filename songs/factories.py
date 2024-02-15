@@ -60,3 +60,9 @@ class RejectedSongFactory(factory.django.DjangoModelFactory):
 
     is_by_uploader = False
     reason = models.RejectedSong.Reasons.OTHER
+
+class SongRedirectFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.SongRedirect
+
+    song = factory.SubFactory(SongFactory)

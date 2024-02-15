@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.views.generic.base import RedirectView
 
-from songs.models import Song
+from songs.models import Song, SongRedirect
 
 class LegacyUrlRedirectionView(RedirectView):
     redirection_map = {
@@ -30,14 +30,19 @@ class LegacyUrlRedirectionView(RedirectView):
         redirect_target = self.redirection_map.get(php_reference).get(param, 'home')
 
         kwargs = {}
-        if (redirect_target == 'view_song'):
+        if redirect_target == 'view_song':
             legacy_module_id = self.request.GET.get('query')
-            
+
             try:
                 song = Song.objects.get(legacy_id = legacy_module_id)
                 if song:
                     kwargs['pk'] = song.id
-            except:
-                redirect_target = 'home'
+            except Song.DoesNotExist:
+                try:
+                    song_redirect = SongRedirect.objects.get(legacy_old_song_id = legacy_module_id)
+                    if song_redirect:
+                        kwargs['pk'] = song_redirect.song_id
+                except SongRedirect.DoesNotExist:
+                    redirect_target = 'home'
 
         return reverse(redirect_target, kwargs=kwargs)

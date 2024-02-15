@@ -1,15 +1,22 @@
-from django.contrib.auth.models import User
+from unittest.mock import patch
+
+from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase
 from django.urls.base import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from unittest.mock import patch
 
 from homepage.tokens import account_activation_token
 from homepage.tests import factories
 from artists import factories as artist_factories
 from songs import factories as song_factories
+
+User = get_user_model()
+
+MODARCHIVE_EMAIL = 'donotreply@modarchive.org'
+NEW_USER_EMAIL = 'newuser@test.com'
+PASSWORD = 'abcdef123!'
 
 class PasswordResetViewTests(TestCase):
     username = 'test_user'
@@ -62,14 +69,14 @@ class PasswordResetViewTests(TestCase):
         # Assert
         self.assertEqual(1, len(mail.outbox))
         self.assertEqual([self.email], mail.outbox[0].to)
-        self.assertEqual('donotreply@modarchive.org', mail.outbox[0].from_email)
+        self.assertEqual(MODARCHIVE_EMAIL, mail.outbox[0].from_email)
         self.assertEqual('Your ModArchive password has been reset', mail.outbox[0].subject)
         self.assertTrue('You have requested a password reset for your ModArchive account. To reset your password, please follow the link below.' in mail.outbox[0].body)
 
     def test_successful_post_with_email_not_in_database_does_not_send_email(self):
         # Act
         self.client.post(reverse('forgot_password'), {'email': 'notindatabase@test.com'})
-        
+
         # Assert
         self.assertEqual(0, len(mail.outbox))
 
@@ -133,7 +140,7 @@ class RegistrationTests(TestCase):
 
         # Assert
         self.assertRedirects(response, reverse('home'))
-    
+
     def test_renders_registration_form(self):
         # Act
         response = self.client.get(reverse('register'))
@@ -145,7 +152,7 @@ class RegistrationTests(TestCase):
     def test_renders_registration_form_if_submit_is_invalid(self):
         # Act
         response = self.client.post(reverse('register'), {})
-        
+
         # Assert
         self.assertEqual(200, response.status_code)
         self.assertTemplateUsed('templates/registration/register.html')
@@ -154,13 +161,13 @@ class RegistrationTests(TestCase):
     def test_sends_registration_email_with_completed_form(self, mock_recaptcha):
         # Act
         mock_recaptcha.return_value = True
-        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': 'newuser@test.com', 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
+        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': NEW_USER_EMAIL, 'password1': PASSWORD, 'password2': PASSWORD})
 
         # Assert
         self.assertRedirects(response, reverse('register_done'))
         self.assertEqual(1, len(mail.outbox))
-        self.assertEqual(['newuser@test.com'], mail.outbox[0].to)
-        self.assertEqual('donotreply@modarchive.org', mail.outbox[0].from_email)
+        self.assertEqual([NEW_USER_EMAIL], mail.outbox[0].to)
+        self.assertEqual(MODARCHIVE_EMAIL, mail.outbox[0].from_email)
         self.assertEqual("Active your ModArchive account", mail.outbox[0].subject)
         self.assertTrue("Thank you for registering an account with the Mod Archive. To complete your registration, please follow this link:" in mail.outbox[0].body)
         self.assertTrue("https://testserver/activate_account" in mail.outbox[0].body)
@@ -172,13 +179,13 @@ class RegistrationTests(TestCase):
         user = factories.UserFactory(email='testuser@test.com')
 
         # Act
-        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': user.email, 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
+        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': user.email, 'password1': PASSWORD, 'password2': PASSWORD})
 
         # Assert
         self.assertRedirects(response, reverse('register_done'))
         self.assertEqual(1, len(mail.outbox))
         self.assertEqual([user.email], mail.outbox[0].to)
-        self.assertEqual('donotreply@modarchive.org', mail.outbox[0].from_email)
+        self.assertEqual(MODARCHIVE_EMAIL, mail.outbox[0].from_email)
         self.assertEqual("ModArchive security warning", mail.outbox[0].subject)
         self.assertTrue("A user attempted to register a ModArchive account with your email address." in mail.outbox[0].body)
 
@@ -186,18 +193,18 @@ class RegistrationTests(TestCase):
     def test_redirects_to_register_fail_if_recaptcha_fails(self, mock_recaptcha):
         # Arrange
         mock_recaptcha.return_value = False
-        
-        # Act
-        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': 'newuser@test.com', 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
 
-        # Assert 
+        # Act
+        response = self.client.post(reverse('register'), {'username': 'new_user', 'email': NEW_USER_EMAIL, 'password1': PASSWORD, 'password2': PASSWORD})
+
+        # Assert
         self.assertRedirects(response, reverse('register_fail'))
 
     @patch("homepage.view.registration_views.is_recaptcha_success")
     def test_registration_creates_user_but_not_profile(self, mock_recaptcha):
         # Act
         mock_recaptcha.return_value = True
-        self.client.post(reverse('register'), {'username': 'new_user', 'email': 'newuser@test.com', 'password1': 'abcdef123!', 'password2': 'abcdef123!'})
+        self.client.post(reverse('register'), {'username': 'new_user', 'email': NEW_USER_EMAIL, 'password1': PASSWORD, 'password2': PASSWORD})
 
         # Assert
         user = User.objects.get(username = 'new_user')
@@ -276,7 +283,7 @@ class LegacyRedirectionViewTests(TestCase):
     def test_redirects_to_home_if_no_match_found(self):
         response = self.client.get('/login.php/?blarg=blag')
         self.assertRedirects(response, reverse('home'))
-    
+
     def test_mixed_case_query_param_still_redirects(self):
         response = self.client.get('/login.php/?request=lOg_iN')
         self.assertRedirects(response, reverse('login'))
@@ -307,13 +314,19 @@ class LegacyRedirectionViewTests(TestCase):
         response = self.client.get('/index.php/?request=view_by_moduleid&query=99999')
         self.assertRedirects(response, reverse('home'))
 
+    def test_old_module_url_redirects_to_song_if_song_redirect_exists(self):
+        song = song_factories.SongFactory()
+        song_factories.SongRedirectFactory(song=song, legacy_old_song_id=48553)
+        response = self.client.get('/index.php/?request=view_by_moduleid&query=48553')
+        self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
+
 class ProfileViewTests(TestCase):
     def test_profile_page_contains_requested_profile(self):
         # Arrange
         user = factories.UserFactory()
         user.profile.display_name = 'Arcturus'
         user.profile.save()
-        
+
         # Act
         response = self.client.get(reverse('view_profile', kwargs = {'pk': user.profile.id}))
 
@@ -346,7 +359,7 @@ class UpdateProfileViewTests(TestCase):
     def test_get_update_profile_redirects_unauthenticated_user(self):
         # Arrange
         update_profile_url = reverse('update_profile')
-        
+
         # Act
         response = self.client.get(reverse('update_profile'))
 
@@ -366,10 +379,10 @@ class UpdateProfileViewTests(TestCase):
         self.assertTrue('profile' in response.context)
         self.assertEqual(user.profile.display_name, response.context['profile'].display_name)
 
-    def test_post_update_profile_redirects_unauthenticated_user(self):  
+    def test_post_update_profile_redirects_unauthenticated_user(self):
         # Arrange
         update_profile_url = reverse('update_profile')
-        
+
         # Act
         response = self.client.post(reverse('update_profile'))
 

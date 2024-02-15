@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
+from django.core.exceptions import ValidationError
 
 from homepage.models import Profile
 
@@ -336,3 +337,22 @@ class RejectedSong(models.Model):
     is_by_uploader = models.BooleanField()
     create_date=models.DateTimeField(default=timezone.now)
     update_date=models.DateTimeField(auto_now=True)
+
+class SongRedirect(models.Model):
+    class Meta:
+        verbose_name_plural = 'song redirects'
+
+    legacy_old_song_id=models.IntegerField(null=True, db_index=True, blank=True)
+    old_song_id=models.IntegerField(null=True, db_index=True, blank=True)
+    song=models.ForeignKey(Song, on_delete=models.CASCADE)
+
+    def clean(self):
+        if self.legacy_old_song_id is None and self.old_song_id is None:
+            raise ValidationError("Either legacy_old_song_id or old_song_id must be set")
+
+        if self.legacy_old_song_id is not None and self.old_song_id is not None:
+            raise ValidationError("Only one of legacy_old_song_id or old_song_id can be set")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)

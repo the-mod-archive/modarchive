@@ -1,8 +1,9 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
 from artists import factories as artist_factories
 from homepage.tests import factories
-from songs.models import Song
+from songs.models import Song, SongRedirect
 from songs import factories as song_factories
 
 class SongModelTests(TestCase):
@@ -120,3 +121,28 @@ class CommentModelTests(TestCase):
 
         self.assertEqual(0, song.songstats.total_comments)
         self.assertEqual(0.0, song.songstats.average_comment_score)
+
+class SongRedirectModelTests(TestCase):
+    def test_redirect_is_invalid_if_both_old_id_fields_are_empty(self):
+        song = song_factories.SongFactory()
+
+        with self.assertRaises(ValidationError):
+            SongRedirect.objects.create(song=song)
+
+    def test_redirect_is_invalid_both_old_id_fields_have_values(self):
+        song = song_factories.SongFactory()
+
+        with self.assertRaises(ValidationError):
+            SongRedirect.objects.create(song=song, old_song_id=1, legacy_old_song_id=1)
+
+    def test_redirect_with_only_legacy_id_is_valid(self):
+        song = song_factories.SongFactory()
+
+        redirect = SongRedirect.objects.create(song=song, legacy_old_song_id=1)
+        self.assertEqual(1, redirect.legacy_old_song_id)
+
+    def test_redirect_with_only_new_id_is_valid(self):
+        song = song_factories.SongFactory()
+
+        redirect = SongRedirect.objects.create(song=song, old_song_id=1)
+        self.assertEqual(1, redirect.old_song_id)

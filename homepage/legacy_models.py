@@ -558,7 +558,7 @@ class TmaProfileComments(models.Model):
 
 
 class TmaRedirects(models.Model):
-    redirect_from = models.IntegerField(unique=True)
+    redirect_from = models.IntegerField(unique=True, primary_key=True)
     redirect_to = models.IntegerField()
 
     class Meta:
