@@ -38,6 +38,14 @@ class AdminSongForm(forms.ModelForm):
             'featured_by'
         )
 
+class MergeSongForm(forms.Form):
+    song_to_merge_into_id = forms.IntegerField(label='Song ID to Merge Into')
+    commit = forms.BooleanField(initial=False, widget=forms.HiddenInput(), required=False)
+
+class CommitMergeSongForm(forms.Form):
+    commit = forms.BooleanField(initial=True, widget=forms.HiddenInput(), required=True)
+    song_to_merge_into_id = forms.IntegerField(widget=forms.HiddenInput(), required=True)
+
 class AddCommentForm(forms.ModelForm):
     def is_valid(self) -> bool:
         for item in self.errors.as_data().items():

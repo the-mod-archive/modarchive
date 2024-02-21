@@ -1,0 +1,82 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <div id="content-main">
+    {% if song_to_merge_into %}
+      <div>
+        <h1>Merging {{song_to_merge_from.get_title}} into {{song_to_merge_into.get_title}}</h1>
+      </div>
+
+      <div>
+        <table>
+          <th>
+            <tr>
+              <td>Field</td>
+              <td>Old Song</td>
+              <td>New Song</td>
+            </tr>
+          </th>
+          <tbody>
+            <tr>
+              <td>Title</td>
+              <td>{{ song_to_merge_from.get_title }}</td>
+              <td>{{ song_to_merge_into.get_title }}</td>
+            </tr>
+            <tr>
+              <td>Filename</td>
+              <td>{{ song_to_merge_from.filename }}</td>
+              <td>{{ song_to_merge_into.filename }}</td>
+            </tr>
+            <tr>
+              <td>Format</td>
+              <td>{{ song_to_merge_from.format }}</td>
+              <td>{{ song_to_merge_into.format }}</td>
+            </tr>
+            <tr>
+              <td>File Size</td>
+              <td>{{ song_to_merge_from.file_size }}</td>
+              <td>{{ song_to_merge_into.file_size }}</td>
+            </tr>
+            <tr>
+              <td>Channels</td>
+              <td>{{ song_to_merge_from.channels }}</td>
+              <td>{{ song_to_merge_into.channels }}</td>
+            </tr>
+            <tr>
+              <td>Total Downloads</td>
+              <td>{{ song_to_merge_from.get_stats.downloads }}</td>
+              <td>{{ song_to_merge_into.get_stats.downloads }}</td>
+            </tr>
+            <tr>
+              <td>Total Comments</td>
+              <td>{{ song_to_merge_from.get_stats.total_comments }}</td>
+              <td>{{ song_to_merge_into.get_stats.total_comments }}</td>
+            </tr>
+            <tr>
+              <td>Average Comment Score</td>
+              <td>{{ song_to_merge_from.get_stats.average_comment_score }}</td>
+              <td>{{ song_to_merge_into.get_stats.average_comment_score }}</td>
+            </tr>
+            <tr>
+              <td>Total Favorites</td>
+              <td>{{ song_to_merge_from.get_stats.total_favorites }}</td>
+              <td>{{ song_to_merge_into.get_stats.total_favorites }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <p>Are you sure you want to merge this song into <a href="{% url 'admin:songs_song_change' object_id=song_to_merge_into.id %}">{{ song_to_merge_into }}</a>? This cannot be undone.</p>
+    {% else %}
+      <h1>Merging {{song_to_merge_from.get_title}} into another song</h1>
+      <p>Please enter the ID of the song you would like to merge into. You will see a confirmation page before the merge is complete.</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'admin:merge_song' object_id=object_id %}" novalidate>
+      {% csrf_token %}
+      {{ merge_song_form.as_table }}
+      <p/>
+      <input type="submit" name="_merge_songs" value="Merge Songs">
+      <a href="{% url 'admin:songs_song_change' object_id=object_id %}">Cancel</a>
+    </form>
+  </div>
+{% endblock %}
