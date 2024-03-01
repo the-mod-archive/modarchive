@@ -631,6 +631,7 @@ class ApprovalActionTests(TestCase):
         with open(f'{self.new_file_dir}/{song.filename}.zip', 'w', encoding='utf-8') as file:
             file.write('test')
 
+        # Create a target directory for the song in the main archive directory
         target_directory = f'{settings.MAIN_ARCHIVE_DIR}/{song.filename[0].upper()}'
         if not os.path.exists(target_directory):
             os.mkdir(target_directory)

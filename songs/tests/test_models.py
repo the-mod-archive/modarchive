@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from artists import factories as artist_factories
 from homepage.tests import factories
@@ -97,6 +98,17 @@ class SongModelTests(TestCase):
         self.assertEqual(0, stats.downloads)
         self.assertEqual(0, stats.total_comments)
         self.assertEqual(0.0, stats.average_comment_score)
+
+    def test_archive_path_is_correct(self):
+        # Arrange
+        song = song_factories.SongFactory(folder="T", filename="test.mod")
+
+        # Act
+        path = song.get_archive_path()
+
+        # Assert
+        self.assertEqual(f"{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip", path)
+
 class CommentModelTests(TestCase):
     def test_song_stats_updated_correctly_after_removing_comment(self):
         song = song_factories.SongFactory()

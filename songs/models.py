@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from homepage.models import Profile
 
@@ -192,6 +193,9 @@ class Song(models.Model):
             return self.songstats
 
         return SongStats.objects.create(song=self)
+
+    def get_archive_path(self):
+        return f"{settings.MAIN_ARCHIVE_DIR}/{self.folder}/{self.filename}.zip"
 
     class Meta:
         indexes = [

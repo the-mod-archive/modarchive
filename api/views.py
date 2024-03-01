@@ -78,6 +78,10 @@ class SongDownloadView(View):
                 with open(os.path.join(main_archive_dir, song.folder, f'{song.filename}.zip'), 'wb') as f:
                     f.write(response.content)
 
+        stats = song.get_stats()
+        stats.downloads = F('downloads') + 1
+        stats.save()
+
         # Serve the file as a response
         with open(local_file_path, 'rb') as file:
             response = HttpResponse(file.read(), content_type='application/zip')
