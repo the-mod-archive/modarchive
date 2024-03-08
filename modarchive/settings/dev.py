@@ -14,6 +14,7 @@ TEMP_UPLOAD_DIR = os.getenv('TEMP_UPLOAD_DIR', tempfile.mkdtemp(prefix='temp_upl
 NEW_FILE_DIR = os.getenv('NEW_FILE_DIR', tempfile.mkdtemp(prefix='new_files_'))
 MAIN_ARCHIVE_DIR = os.getenv('MAIN_ARCHIVE_DIR', tempfile.mkdtemp(prefix='main_archive_'))
 REJECTED_FILE_DIR = os.getenv('REJECTED_FILE_DIR', tempfile.mkdtemp(prefix='rejected_files_'))
+REMOVED_FILE_DIR = os.getenv('REMOVED_FILE_DIR', tempfile.mkdtemp(prefix='removed_files_'))
 
 DATABASES['legacy'] = {
     'ENGINE': 'django.db.backends.mysql',
@@ -23,3 +24,25 @@ DATABASES['legacy'] = {
     'PASSWORD': 'password23',
     'PORT': '3306'
 }
+
+# LOGGING = {
+#     'version': 1,
+#     'filters': {
+#         'require_debug_true': {
+#             '()': 'django.utils.log.RequireDebugTrue',
+#         }
+#     },
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'filters': ['require_debug_true'],
+#             'class': 'logging.StreamHandler',
+#         }
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['console'],
+#         }
+#     }
+# }
