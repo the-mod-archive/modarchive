@@ -24,44 +24,33 @@
 		<div class="nowrap container mx-0 h4">
 			<span id="title"></span> (<span id="modfilename"></span>)
 		</div>
+
         <!--Playback controls-->
         <div id="controls" class="container mx-0">
             <!-- Play/pause button-->
-            <span onclick="togglePause()" title="Play / Pause" id="playPause">
-                <button id="play-button" class="btn btn-success btn-lg">
-                    {% bs_icon 'play-fill' %}
-                </button>
-            </span>
+            <button id="playPause" class="btn btn-success btn-lg" onclick="togglePause()" title="Play/Pause">
+                {% bs_icon 'play-fill' %}
+            </button>
             <!--Next-->
-            <span onclick="nextSong()" title="Next random song">
-                <button id="play-button" class="btn btn-success btn-lg">
-                    {% bs_icon 'skip-end-fill' %}
-                </button>
-            </span>
+            <button id="play-button" class="btn btn-success btn-lg" onclick="nextSong()" title="Next random song">
+                {% bs_icon 'skip-end-fill' %}
+            </button>
             <!--Loop-->
-            <span onclick="toggleLoop()" id="autoplay" title="Single repeat">
-                <button id="play-button" class="btn btn-success btn-lg">
-                    {% bs_icon 'repeat' %}
-                </button>
-            </span>
+            <button class="btn btn-success btn-lg" onclick="toggleLoop()" id="autoplay" title="Single repeat">
+                {% bs_icon 'repeat' %}
+            </button>
             <!--Show Info-->
-            <span onclick="toggleInfo()" class="toggleButton" id="btnInfo" title="Song info">
-                <button id="play-button" class="btn btn-success btn-lg">
-                    {% bs_icon 'info-circle-fill' %}
-                </button>
-            </span>
+            <button class="btn btn-success btn-lg" id="btnInfo" title="Song info" onclick="toggleInfo()">
+                {% bs_icon 'info-circle-fill' %}
+            </button>
             <!--Add favorite-->
-            <span onclick="addFav()" title="Add to my favorites">
-                <button id="play-button" class="btn btn-success btn-lg">
-                    {% bs_icon 'star' %}
-                </button>
-            </span>
+            <button id="addFav" class="btn btn-success btn-lg">
+                {% bs_icon 'star' %}
+            </button>
             <!--Download-->
-            <span onclick="saveSong()" title="Download song">
-                <button id="play-button" class="btn btn-success btn-lg">
-                    {% bs_icon 'download' %}
-                </button>
-            </span>
+            <button id="play-button" class="btn btn-success btn-lg" onclick="saveSong()" title="Download song">
+                {% bs_icon 'download' %}
+            </button>
         </div>
         <!--Duration-->
 		<div class="nowrap container mx-0">
