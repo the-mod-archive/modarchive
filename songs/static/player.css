@@ -1,0 +1,93 @@
+body {
+	font: 12pt Arial, Helvetica, sans-serif;
+	user-select: none;
+	background-color: #BEBEBE;
+	color: #394646;
+	overflow: hidden;
+}
+table,
+input[type="range"]
+{
+	width: calc(100% - 20px);
+}
+
+#myInfo {
+	height: 200px;
+	overflow-y: scroll;
+}
+/*
+#myCanvas {
+	width: 100%;
+}
+*/
+#tracker table {
+	border-collapse: collapse;
+	width: unset;
+}
+#tracker table td {
+	padding-right: 8px;
+	white-space: nowrap;
+}
+#tracker {
+	font: xx-small monospace;
+	line-height: 0.6;
+	/*max-height: calc(100vh - 190px);*/
+	overflow: hidden;
+}
+#tracker .hidden {
+	display: none;
+}
+.rowIdx {
+	text-align: center;
+}
+#tracker .active,
+.orderPos.active
+{
+	background-color: #0005;
+}
+#orderList {
+	line-height: 0.1;
+	margin-bottom: 5px;
+	margin-left: 2px;
+}
+.orderPos {
+	border: 1px solid #394646;
+	font: medium monospace;
+	min-width: 12px;
+	display: inline-block;
+	text-align: center;
+}
+
+.toggleButton {
+	border: 1px solid transparent;
+}
+.toggleButton.active {
+	border: 1px solid #444;
+}
+[onclick],
+[oninput]{
+	cursor: pointer;
+}
+span[onclick] {
+	padding: 2px;
+}
+/* release hover for touch devices */
+@media(hover: hover) and (pointer: fine) {
+	span[onclick]:hover {
+		background-color: #0005;
+	}
+}
+.nowrap {
+	white-space: nowrap;
+}
+.hidden {
+	display: none;
+}
+.blink {
+	animation: blinker 1s linear infinite;
+}
+@keyframes blinker {
+	50% {
+		opacity: 0;
+	}
+}
