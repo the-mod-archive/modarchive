@@ -3,7 +3,7 @@ body {
 	user-select: none;
 	background-color: #BEBEBE;
 	color: #394646;
-	overflow: hidden;
+	/* overflow: hidden; */
 }
 table,
 input[type="range"]
@@ -44,6 +44,10 @@ input[type="range"]
 .orderPos.active
 {
 	background-color: #0005;
+}
+.activeOrder {
+    background-color: #ffc107;
+    color: #343a40;
 }
 #orderList {
 	line-height: 0.1;

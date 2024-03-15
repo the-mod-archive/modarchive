@@ -21,7 +21,7 @@
 <body>
     <div class="container-xs my-2 mx-1 py-2 bg-light rounded tma-standard" id="info">
         <!--Title-->
-		<div class="nowrap container mx-0 h4">
+		<div class="container mx-0 h4">
 			<span id="title"></span> (<span id="modfilename"></span>)
 		</div>
 
@@ -44,7 +44,7 @@
                 {% bs_icon 'info-circle-fill' %}
             </button>
             <!--Add favorite-->
-            <button id="addFav" class="btn btn-success btn-lg">
+            <button id="addFav" class="btn btn-success btn-lg disabled">
                 {% bs_icon 'star' %}
             </button>
             <!--Download-->
@@ -70,8 +70,17 @@
         <div id="orderList" class="container mx=0"></div>
         <div id="myInfo" class="hidden"></div>
     </div>
-    {% comment %} <div class="container-xs my-2 mx-1 py-2 bg-light rounded tma-standard" id="tracker"> {% endcomment %}
+    <div class="container-xs my-2 mx-1 py-2 bg-light rounded tma-standard row">
+        <div class="col-auto">
+            <div id="order_list" class="column text-warning bg-dark rounded p-3 font-monospace text-center">
+            </div>
+        </div>
+        <div class="col">
+            <div id="other-panel" class="column text-warning bg-dark rounded p-3 font-monospace">
+                <table id="patternView">
+                </table>
+            </div>
+        </div>
     </div>
-    <div id="tracker"></div>
 </body>
 </html>

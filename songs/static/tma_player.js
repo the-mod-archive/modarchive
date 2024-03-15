@@ -39,8 +39,9 @@ function initPlayer() {
 		lastPat = -1
 		lastRow = -1
 		lastOrder = -1
-		tracker.innerHTML = getTrackHTML(meta.song)
-		orderList.innerHTML = getOrderList(meta.song)
+		
+        renderPattern(meta.song)		
+        document.getElementById('order_list').innerHTML = getOrderList(meta.song)
 		doResize()
 
 		// MOD infos
@@ -67,39 +68,44 @@ function initPlayer() {
 	player.onProgress((dat) => {
 		document.getElementById('seekbar').value = dat.pos
 
-		// tracker things
-		if (lastPat == dat.pattern && lastRow == dat.row) return
-		// visibility by pattern
-		if (lastPat != dat.pattern) {
-			if (lastPat != -1)document.getElementById('pattern_'+lastPat).classList.add('hidden')
-			document.getElementById('pattern_'+dat.pattern).classList.remove('hidden')
-		}
-		// active row
-		if (lastPat != -1) document.getElementById('pattern_'+lastPat+'_'+lastRow).classList.remove('active')
-		document.getElementById('pattern_'+dat.pattern+'_'+dat.row).classList.add('active')
-		// better scroll to some rows above
-		// only when info is not opened
-		if (myInfo.classList.contains('hidden')) {
-			let scrollToRow = Math.max(0, dat.row - 5)
-			document.getElementById('pattern_'+dat.pattern+'_'+scrollToRow).scrollIntoView()
-		}
+        // Order list highlighting
+        if (lastOrder != dat.order) {
+            // Remove highlighting from last order
+            if (lastOrder != -1) document.getElementById(`order-${lastOrder}`).classList.remove('activeOrder')
 
-		// active order
-		if (dat.order != lastOrder) {
-			if (lastOrder != -1) orderList.getElementsByClassName('orderPos')[lastOrder].classList.remove('active')
-			orderList.getElementsByClassName('orderPos')[dat.order].classList.add('active')
-		}
+            // Highlight the new order
+            document.getElementById(`order-${dat.order}`).classList.add('activeOrder')
+            lastOrder = dat.order
+        }
 
-		lastPat = dat.pattern
-		lastRow = dat.row
-		lastOrder = dat.order
+        // re-render pattern if it changed
+        if (lastPat != dat.pattern) {
+            renderPattern(song, dat.pattern)
+            lastPat = dat.pattern
+            lastRow = -1
+        }
+
+        // Row highlighting
+        if (lastRow != dat.row) {
+            // Un-highlight the last row
+            if (lastRow != -1 && document.getElementById(`pattern_${lastPat}_row_${lastRow}`) != null) {
+                document.getElementById(`pattern_${lastPat}_row_${lastRow}`).classList.remove('activeOrder')
+            }
+
+            // Highlight the new row
+            if (document.getElementById(`pattern_${dat.pattern}_row_${dat.row}`) != null) {
+                document.getElementById(`pattern_${dat.pattern}_row_${dat.row}`).classList.add('activeOrder')
+            }
+
+            lastRow = dat.row
+        }
 	})
 	player.onError((err) => {
 		nextSong()
 	})
 }
 function doResize() {
-	tracker.style.height = window.innerHeight - tracker.offsetTop - 10 +'px'
+	// tracker.style.height = window.innerHeight - tracker.offsetTop - 10 +'px'
 }
 onresize = doResize
 function setMetadata() {
@@ -140,39 +146,48 @@ function updateDuration() {
 	if (seconds < 10) {seconds = '0' + seconds }
 	document.getElementById('duration').innerHTML = minutes + ':' + seconds
 }
-function getTrackHTML(dat) {
-	const html = []
-	const chNum = dat.channels.length
-	let i = 0 // for later scrolling show 5 above, 5 below + 1 active row
-	//for (let ordIdx = 0; ordIdx < dat.orders.length; ordIdx++) {
-		//const patIdx = dat.orders[ordIdx].pat
-	for (let patIdx = 0; patIdx < dat.patterns.length; patIdx++) { // todo: make this only for the pats used in orders
-		const rowNum = dat.patterns[patIdx].rows.length
-		
-		let tblCls = 'hidden'
-		if (i == dat.orders[0].pat) tblCls = ''
-		html.push('<table id="pattern_'+patIdx+'" class="'+tblCls+'">')
-		for (let rowIdx = 0; rowIdx < rowNum; rowIdx++) {
-			let clsName = ''
-			if (i == 0) clsName = 'active'
-			//if (i > 10) clsName = 'hidden'	// display 11 rows, 5above 5below
-			html.push('<tr id="pattern_'+patIdx+'_'+rowIdx+'" class="'+clsName+'">')
-			html.push('<td class="rowIdx">',rowIdx,'</td>')
-			for (let chIdx = 0; chIdx < chNum; chIdx++) {
-				html.push('<td>')
-					html.push( translate(dat.patterns[patIdx].rows[rowIdx][chIdx]) )
-				html.push('</td>')
-			}
-			html.push('</tr>')
-			i++
-		}
-		//html.push('<tr><td colspan="'+chNum+'" id="pattern_'+patIdx+'_'+rowNum+'" class="hidden"><hr/></td></tr>')	// mark end of pattern
-		html.push('</table>')	// now each pattern is a tale for more performance
-	}
-	html.push('</table>')
-	return html.join('')
 
-	function translate(arr) {
+function renderPattern(dat, pattern) {
+    const patternNum = (typeof pattern === 'undefined') ? dat.orders[0].pat : pattern
+
+    const patternTable = document.getElementById('patternView')
+    patternTable.innerHTML = ''
+
+    const totalChannels = dat.channels.length
+    const rowNumbers = dat.patterns[patternNum].rows.length
+
+    const headerRow = document.createElement('tr')
+    headerRow.id = `pattern_${patternNum}_header`
+    
+    const rowHeaderCell = document.createElement('td')
+    rowHeaderCell.innerText = 'Row'
+    headerRow.appendChild(rowHeaderCell)
+
+    for (let i = 0; i < totalChannels; i++) {
+        const headerCell = document.createElement('td')
+        headerCell.innerText = `Ch ${i}`
+        headerRow.appendChild(headerCell)
+    }
+    patternTable.appendChild(headerRow)
+
+    for (let i = 0; i < rowNumbers; i++) {
+        const tableRow = document.createElement('tr')
+        tableRow.id = `pattern_${patternNum}_row_${i}`
+
+        const rowCell = document.createElement('td')
+        rowCell.innerText = i
+        tableRow.appendChild(rowCell)
+
+        for (let j = 0; j < totalChannels; j++) {
+            const tableData = document.createElement('td')
+            tableData.innerText = translate(dat.patterns[patternNum].rows[i][j])
+            tableRow.appendChild(tableData)
+        }
+
+        patternTable.appendChild(tableRow)
+    }
+
+    function translate(arr) {
 		let ret = []
 		
 		const effects = '-0123456789ABCDEFFHEJKLMNOPQRSTUVWXYZ'
@@ -189,32 +204,21 @@ function getTrackHTML(dat) {
 			if (arr[0] == 254) notePart = '^^'
 			if (arr[0] == 255) notePart = '=='
 		}
-		ret.push(notePart)
-		//ret.push(' ')
-		/* like XMPlay just displays notes
-		ret.push(instrumentPart)
-		ret.push(' ')
-		//ret.push(arr[2])	// VOLUMEEFFECT
-		//ret.push(arr[4])	// VOLUME
-		if (arr[3] != 0) {
-			ret.push(effects[arr[3]])
-			ret.push(arr[5].toString(16).padStart(2,'0').toUpperCase())	// PARAMETER
-		} else {
-			ret.push('---')
-		}
-		*/
-		
+		ret.push(notePart)		
 		return ret.join('')
 	}
 }
+
 function getOrderList(dat) {
 	const html = []
 	for (let i = 0; i < dat.orders.length; i++) {
-		const cls = (i==0) ? 'orderPos active' : 'orderPos'
+		// const cls = (i==0) ? 'orderPos active' : 'orderPos'
+        const cls = (i==0) ? 'activeOrder' : ''
 		let orderName = dat.orders[i].pat // dat.orders[i].name ? dat.orders[i].name : dat.orders[i].pat
 		if (dat.orders[i].pat == 65534) orderName = '+++'	// named! = +++ skip
 		if (dat.orders[i].pat == 65535) orderName = '---'	// named! = -- stop
-		html.push('<span onclick="player.setOrderRow(',i,',0)" class="',cls,'">',orderName,'</span>')
+		// html.push('<span onclick="player.setOrderRow(',i,',0)" class="',cls,'">',orderName,'</span>')
+        html.push(`<div id="order-${i}" class="${cls}">${orderName}</div>`)
 	}
 	return html.join('')
 }
