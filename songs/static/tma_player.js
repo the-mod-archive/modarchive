@@ -6,11 +6,6 @@ let songBuf = false	// for later reuse of buffer, e.g. download
 init()
 function init() {
 	initPlayer()
-
-	oncontextmenu = (ev) => {
-		nextSong()
-		ev.preventDefault()
-	}
 }
 
 // init ChiptunePlayer
@@ -67,6 +62,9 @@ function initPlayer() {
 	})
 	player.onProgress((dat) => {
 		document.getElementById('seekbar').value = dat.pos
+
+        // Return early if nothing needs to change
+        if (lastOrder == dat.order && lastRow == dat.row && lastPat == dat.pattern) return
 
         // Order list highlighting
         if (lastOrder != dat.order) {
@@ -161,10 +159,12 @@ function renderPattern(dat, pattern) {
     
     const rowHeaderCell = document.createElement('td')
     rowHeaderCell.innerText = 'Row'
+	rowHeaderCell.classList.add('row-num-col', 'fixed-col')
     headerRow.appendChild(rowHeaderCell)
 
     for (let i = 0; i < totalChannels; i++) {
         const headerCell = document.createElement('td')
+		headerCell.classList.add('tracker-col', 'fixed-col')
         headerCell.innerText = `Ch ${i}`
         headerRow.appendChild(headerCell)
     }
@@ -175,11 +175,13 @@ function renderPattern(dat, pattern) {
         tableRow.id = `pattern_${patternNum}_row_${i}`
 
         const rowCell = document.createElement('td')
+		rowCell.classList.add('row-num-col', 'fixed-col')
         rowCell.innerText = i
         tableRow.appendChild(rowCell)
 
         for (let j = 0; j < totalChannels; j++) {
             const tableData = document.createElement('td')
+			tableData.classList.add('tracker-col', 'fixed-col')
             tableData.innerText = translate(dat.patterns[patternNum].rows[i][j])
             tableRow.appendChild(tableData)
         }
@@ -212,13 +214,12 @@ function renderPattern(dat, pattern) {
 function getOrderList(dat) {
 	const html = []
 	for (let i = 0; i < dat.orders.length; i++) {
-		// const cls = (i==0) ? 'orderPos active' : 'orderPos'
         const cls = (i==0) ? 'activeOrder' : ''
 		let orderName = dat.orders[i].pat // dat.orders[i].name ? dat.orders[i].name : dat.orders[i].pat
 		if (dat.orders[i].pat == 65534) orderName = '+++'	// named! = +++ skip
 		if (dat.orders[i].pat == 65535) orderName = '---'	// named! = -- stop
-		// html.push('<span onclick="player.setOrderRow(',i,',0)" class="',cls,'">',orderName,'</span>')
-        html.push(`<div id="order-${i}" class="${cls}">${orderName}</div>`)
+		
+        html.push(`<div id="order-${i}" class="${cls}" onclick="player.setOrderRow(${i},0)">${orderName}</div>`)
 	}
 	return html.join('')
 }

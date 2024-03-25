@@ -8,7 +8,7 @@ body {
 table,
 input[type="range"]
 {
-	width: calc(100% - 20px);
+	display: inline-block;
 }
 
 #myInfo {
@@ -94,4 +94,18 @@ span[onclick] {
 	50% {
 		opacity: 0;
 	}
+}
+
+td.fixed-col {
+	overflow: hidden;
+	display: inline-block;
+	white-space: nowrap;
+}
+
+td.row-num-col {
+	width: 3em;
+}
+
+td.tracker-col {
+	width: 4em;
 }
