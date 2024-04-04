@@ -111,30 +111,25 @@ function setMetadata() {
 	if(!metadata) return
 	document.getElementById('title').innerHTML = metadata['title']
 
-	var subsongs = player.meta.songs
-	document.getElementById('subsongs').style.display = (subsongs.length > 1) ? 'block' : 'none'
-	if(subsongs.length > 1) {
+	const subSongs = player.meta.songs
+	document.getElementById('subsongs').style.display = (subSongs.length > 1) ? 'block' : 'none'
+	if(subSongs.length > 1) {
 		var select = document.getElementById('subsong')
 		// remove old
 		for (let i = select.options.length-1; i > -1; i--) select.removeChild(select.options[i])
-		var elt = document.createElement('option')
-		elt.textContent = 'Play all subsongs'
-		elt.value = -1
-		select.appendChild(elt)
-		for(var i = 0; i < subsongs.length; i++) {
+
+		for(var i = 0; i < subSongs.length; i++) {
 			var elt = document.createElement('option')
-			elt.textContent = subsongs[i]
+			elt.textContent = subSongs[i]
 			elt.value = i
 			select.appendChild(elt)
 		}
 		select.selectedIndex = 0
-		player.selectSubsong(-1)
+		player.selectSubsong(0)
 	}
 
 	document.getElementById('seekbar').value = 0
 	updateDuration()
-
-	//document.getElementById('library-version').innerHTML = 'Version: '+ player.meta.libopenmptVersion +' ('+ player.meta.libopenmptBuild +')'
 }
 function updateDuration() {
 	//var sec_num = player.duration()

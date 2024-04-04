@@ -64,7 +64,10 @@
         <div class="nowrap container mx-0">
             <input class="form-range" id="seekbar" title="Position" type="range" min="0" max="100" value="0" oninput="player.setPos(this.value)" /> <!-- 📍 -->
         </div>
-        <div id="subsongs" class="nowrap" style="display:none">💿<select id="subsong" onchange="player.selectSubsong(this.value)"></select></div> <!-- 📀 -->
+        <div id="subsongs" class="nowrap" style="display:none">
+            <select class="form-select" id="subsong" onchange="player.selectSubsong(this.value)">
+            </select>
+        </div>
 
         <!--Order list-->
         <div id="orderList" class="container mx=0"></div>
