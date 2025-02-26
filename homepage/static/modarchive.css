@@ -27,12 +27,3 @@ body {
         max-width: 970px;
     }
 }
-
-.form-group {
-    display: flex;
-    align-items: center;
-  }
-
-label.form-group-label {
-    margin-right: 1rem;
-}
