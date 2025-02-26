@@ -70,7 +70,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             case self.ScreeningAction.REJECT:
                 song_ids_str = ','.join(selected_songs)
                 query_string = urlencode({'song_ids': song_ids_str})
-                return redirect(f'{reverse('screening_reject')}?{query_string}')
+                return redirect(f'{reverse("screening_reject")}?{query_string}')
             case self.ScreeningAction.CLEAR_FLAG:
                 if len(my_claimed_songs_queryset) == 0:
                     return redirect('screening_index')
@@ -104,7 +104,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             claimed_by=request.user.profile,
             claim_date=timezone.now()
         )
-        return redirect(f'{reverse('screening_index')}?filter={constants.MY_SCREENING_FILTER}')
+        return redirect(f'{reverse("screening_index")}?filter={constants.MY_SCREENING_FILTER}')
 
     def apply_flag(self, my_claimed_songs_queryset, request, flag, return_filter):
         if len(my_claimed_songs_queryset) == 0:
@@ -116,13 +116,13 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             flag=flag,
             flagged_by=request.user.profile
         )
-        return redirect(f'{reverse('screening_index')}?filter={return_filter}')
+        return redirect(f'{reverse("screening_index")}?filter={return_filter}')
 
     def approve_songs(self, songs, request, feature=False):
         # Bulk approval has different validation rules from single approval
         # In particular, bulk approval requires that all songs be pre-screened
         if len(songs) > 1 and not self.validate_bulk_approval(songs, request):
-            base_url = reverse('screening_index')
+            base_url = reverse("screening_index")
             query_string = urlencode({'filter': constants.PRE_SCREENED_FILTER})
             return redirect(f'{base_url}?{query_string}')
 
