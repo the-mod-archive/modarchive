@@ -149,7 +149,7 @@ class FlaggingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.UNDER_INVESTIGATION_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, f'{reverse('screening_index')}?filter={constants.UNDER_INVESTIGATION_FILTER}')
+        self.assertRedirects(response, f'{reverse("screening_index")}?filter={constants.UNDER_INVESTIGATION_FILTER}')
         song1.refresh_from_db()
         self.assertEqual(NewSong.Flags.UNDER_INVESTIGATION, song1.flag)
         self.assertEqual(self.user.profile, song1.flagged_by)
@@ -192,7 +192,7 @@ class FlaggingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.POSSIBLE_DUPLICATE_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, f'{reverse('screening_index')}?filter={constants.POSSIBLE_DUPLICATE_FILTER}')
+        self.assertRedirects(response, f'{reverse("screening_index")}?filter={constants.POSSIBLE_DUPLICATE_FILTER}')
         song1.refresh_from_db()
         song2.refresh_from_db()
         song3.refresh_from_db()
@@ -239,7 +239,7 @@ class FlaggingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, f'{reverse('screening_index')}?filter={constants.PRE_SCREENED_FILTER}')
+        self.assertRedirects(response, f'{reverse("screening_index")}?filter={constants.PRE_SCREENED_FILTER}')
         song1.refresh_from_db()
         song2.refresh_from_db()
         self.assertIsNone(song1.claimed_by)
@@ -297,7 +297,7 @@ class FlaggingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, f'{reverse('screening_index')}?filter={constants.PRE_SCREENED_AND_RECOMMENDED_FILTER}')
+        self.assertRedirects(response, f'{reverse("screening_index")}?filter={constants.PRE_SCREENED_AND_RECOMMENDED_FILTER}')
         song1.refresh_from_db()
         song2.refresh_from_db()
         self.assertIsNone(song1.claimed_by)
@@ -356,7 +356,7 @@ class FlaggingActionTests(TestCase):
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.NEEDS_SECOND_OPINION_KEYWORD})
 
         # Assert
-        self.assertRedirects(response, f'{reverse('screening_index')}?filter={constants.NEEDS_SECOND_OPINION_FILTER}')
+        self.assertRedirects(response, f'{reverse("screening_index")}?filter={constants.NEEDS_SECOND_OPINION_FILTER}')
         song1.refresh_from_db()
         song2.refresh_from_db()
         song3.refresh_from_db()
