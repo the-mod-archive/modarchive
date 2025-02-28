@@ -30,7 +30,7 @@ class Artist(models.Model):
     )
     legacy_id=models.IntegerField(null=True, blank=True, help_text="User ID from the legacy Mod Archive site", db_index=True)
     key=models.CharField(max_length=32, db_index=True, blank=True)
-    name=CICharField(max_length=64)
+    name=models.CharField(max_length=64)
     random_token=models.PositiveIntegerField(null=True, blank=True, help_text="Used for differentiating artists with the same name")
     songs=models.ManyToManyField(Song, blank=True)
     search_document=SearchVectorField(null=True)
