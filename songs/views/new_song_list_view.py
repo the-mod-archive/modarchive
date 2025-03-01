@@ -9,3 +9,4 @@ class NewSongListView(PermissionRequiredMixin, PageNavigationListView):
     context_object_name = 'new_songs'
     permission_required = 'songs.can_approve_songs'
     paginate_by = 40
+    ordering = ['create_date']
