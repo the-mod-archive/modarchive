@@ -3,7 +3,6 @@ import os
 from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings
-from django.utils import timezone
 
 from homepage.tests import factories
 from songs import factories as song_factories
@@ -308,7 +307,7 @@ class MergeSongTests(TestCase):
     def test_make_featured_if_song_merged_from_was_featured(self):
         # Arrange
         featuring_profile = factories.UserFactory().profile
-        song_to_be_merged = self.create_song_to_be_merged(featured_by=featuring_profile, featured_date=datetime.datetime(2020, 1, 1, tzinfo=timezone.utc))
+        song_to_be_merged = self.create_song_to_be_merged(featured_by=featuring_profile, featured_date=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc))
         song_to_merge_into = song_factories.SongFactory()
 
         # Act
@@ -328,8 +327,8 @@ class MergeSongTests(TestCase):
         # Arrange
         featuring_profile = factories.UserFactory().profile
         second_featuring_profile = factories.UserFactory().profile
-        song_to_be_merged = self.create_song_to_be_merged(featured_by=featuring_profile, featured_date=datetime.datetime(2020, 1, 1, tzinfo=timezone.utc))
-        song_to_merge_into = song_factories.SongFactory(featured_by=second_featuring_profile, featured_date=datetime.datetime(2020, 1, 2, tzinfo=timezone.utc))
+        song_to_be_merged = self.create_song_to_be_merged(featured_by=featuring_profile, featured_date=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc))
+        song_to_merge_into = song_factories.SongFactory(featured_by=second_featuring_profile, featured_date=datetime.datetime(2020, 1, 2, tzinfo=datetime.timezone.utc))
 
         # Act
         self.client.post(
@@ -348,8 +347,8 @@ class MergeSongTests(TestCase):
         # Arrange
         featuring_profile = factories.UserFactory().profile
         second_featuring_profile = factories.UserFactory().profile
-        song_to_be_merged = self.create_song_to_be_merged(featured_by=featuring_profile, featured_date=datetime.datetime(2020, 1, 2, tzinfo=timezone.utc))
-        song_to_merge_into = song_factories.SongFactory(is_featured=True, featured_by=second_featuring_profile, featured_date=datetime.datetime(2020, 1, 1, tzinfo=timezone.utc))
+        song_to_be_merged = self.create_song_to_be_merged(featured_by=featuring_profile, featured_date=datetime.datetime(2020, 1, 2, tzinfo=datetime.timezone.utc))
+        song_to_merge_into = song_factories.SongFactory(is_featured=True, featured_by=second_featuring_profile, featured_date=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc))
 
         # Act
         self.client.post(

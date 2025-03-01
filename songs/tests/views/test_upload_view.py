@@ -156,9 +156,9 @@ class UploadViewTests(TestCase):
         s3m_path = self.get_file_path(TEST_S3M_FILENAME)
 
         responses = [
-            self.test_s3m_info,
+            self.test_mod_info,
             self.test_it_info,
-            self.test_mod_info
+            self.test_s3m_info,
         ]
 
         mock_mod_info.side_effect = responses

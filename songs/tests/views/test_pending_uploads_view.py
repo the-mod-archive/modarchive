@@ -44,9 +44,9 @@ class PendingUploadsViewTest(TestCase):
         # Assert
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'pending_uploads.html')
-        self.assertQuerysetEqual(
+        self.assertQuerySetEqual(
             response.context['pending_uploads'],
-            [repr(song_1), repr(song_2)],
+            [song_1, song_2],
             ordered=False
         )
         self.assertNotIn(repr(song_3), response.content.decode())

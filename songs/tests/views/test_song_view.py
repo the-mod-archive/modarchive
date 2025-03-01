@@ -33,8 +33,7 @@ class ViewSongTests(TestCase):
         # Arrange
         song = song_factories.SongFactory(
             filename=self.FILE_2_FILENAME,
-            title="File 2",
-            songstats=song_factories.SongStatsFactory()
+            title="File 2"
         )
 
         # Act
