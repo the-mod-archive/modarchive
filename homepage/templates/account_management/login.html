@@ -1,7 +1,7 @@
 {% extends 'base_page/base.html' %}
 {% load crispy_forms_tags %}
 
-{% load sceneid_tags %}
+{% comment %} {% load sceneid_tags %} {% endcomment %}
 
 {% block title %}
     {{ block.super }}: Log in
@@ -19,7 +19,7 @@
 
         <div class="align-middle">
             <input type="submit" value="Log In" class='btn btn-primary mt-2'>
-            {% sceneid_login_button_large %}
+            {% comment %} {% sceneid_login_button_large %} {% endcomment %}
         </div>
 
         {% if next %}

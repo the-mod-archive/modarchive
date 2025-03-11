@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm, UsernameField, UserCreationForm
 from django.contrib.auth.models import User
 from django.forms.widgets import EmailInput
-from sceneid.forms import UserCreationForm as BaseUserCreationForm
+# from sceneid.forms import UserCreationForm as BaseUserCreationForm
 
 from homepage.models import Profile
 from homepage.fields import BlacklistProtectedEmailField
@@ -54,5 +54,5 @@ class UpdateProfileForm(forms.ModelForm):
         model = Profile
         fields = ("blurb",)
 
-class SceneIDUserCreationForm(BaseUserCreationForm):
-    username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'placeholder': 'Username'}))
+# class SceneIDUserCreationForm(BaseUserCreationForm):
+#     username = UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control', 'placeholder': 'Username'}))

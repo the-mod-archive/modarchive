@@ -1,4 +1,4 @@
-{% load sceneid_tags %}
+{% comment %} {% load sceneid_tags %} {% endcomment %}
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">The Mod Archive</a>
@@ -58,7 +58,7 @@
                     <li class="nav-item">
                         <a class="btn btn-primary" href="{% url 'register' %}"><strong>Sign up</strong></a>
                         <a class="btn btn-light" href="{% url 'login' %}?next={{request.path}}">Log in</a>
-                        {% sceneid_login_button_small %}
+                        {% comment %} {% sceneid_login_button_small %} {% endcomment %}
                     </li>
                 {% endif %}
             </ul>

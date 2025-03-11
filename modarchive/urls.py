@@ -24,5 +24,5 @@ urlpatterns = [
     path('api/v1/', include('api.urls')),
     path('artists/', include('artists.urls')),
     path('search/', include('search.urls')),
-    path('account/sceneid/', include('sceneid.urls')),
+    # path('account/sceneid/', include('sceneid.urls')),
 ]
