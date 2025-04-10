@@ -6,7 +6,7 @@ from django.contrib.postgres.search import SearchVector, SearchQuery
 from django.db.models import F
 from django.views import View
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 
 from songs.models import Song
 from artists.models import Artist
@@ -64,19 +64,22 @@ class SongDownloadView(View):
         pk = kwargs.get('pk')
         song = Song.objects.get(pk=pk)
         main_archive_dir = settings.MAIN_ARCHIVE_DIR
-        local_file_path = os.path.join(main_archive_dir, song.folder, f'{song.filename}.zip')
+        local_file_path = os.path.join(main_archive_dir, song.format, song.folder, f'{song.filename}.zip')
 
-        # check to see if the song file is present in the main archive
         if not os.path.exists(local_file_path):
-            # Note: This download strategy must be removed before going live
-            remote_url = f'https://api.modarchive.org/downloads.php?moduleid={song.legacy_id}&zip=1'
+            raise Http404("File not found")
 
-            # Retrieve the file from new_path and place it in the main archive
-            response = requests.get(remote_url, timeout=10)
+        # # check to see if the song file is present in the main archive
+        # if not os.path.exists(local_file_path):
+        #     # Note: This download strategy must be removed before going live
+        #     remote_url = f'https://api.modarchive.org/downloads.php?moduleid={song.legacy_id}&zip=1'
 
-            if response.status_code == 200:
-                with open(os.path.join(main_archive_dir, song.folder, f'{song.filename}.zip'), 'wb') as f:
-                    f.write(response.content)
+        #     # Retrieve the file from new_path and place it in the main archive
+        #     response = requests.get(remote_url, timeout=10)
+
+        #     if response.status_code == 200:
+        #         with open(os.path.join(main_archive_dir, song.folder, f'{song.filename}.zip'), 'wb') as f:
+        #             f.write(response.content)
 
         stats = song.get_stats()
         stats.downloads = F('downloads') + 1

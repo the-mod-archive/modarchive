@@ -14,6 +14,7 @@ DATABASES['legacy'] = {
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+MAIN_ARCHIVE_DIR = os.getenv('MAIN_ARCHIVE_DIR')
 
 LOGGING = {
     "version": 1,
