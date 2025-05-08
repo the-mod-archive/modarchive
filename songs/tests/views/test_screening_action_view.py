@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from django.conf import settings
 from django.contrib.messages import get_messages
@@ -609,12 +610,12 @@ class ApprovalActionTests(TestCase):
             os.remove(file_path)
 
         # Empty all subdirectories of main_archive_dir and then delete them
-        for directory in os.listdir(self.main_archive_dir):
-            directory_path = os.path.join(self.main_archive_dir, directory)
-            for filename in os.listdir(directory_path):
-                file_path = os.path.join(directory_path, filename)
-                os.remove(file_path)
-            os.rmdir(directory_path)
+        for entry in os.listdir(self.main_archive_dir):
+            entry_path = os.path.join(self.main_archive_dir, entry)
+            if os.path.isdir(entry_path):
+                shutil.rmtree(entry_path)
+            else:
+                os.remove(entry_path)
 
     def make_song(self, claimed_by, song_hash, filename, song_format, uploader_profile, is_by_uploader=False, flag=None):
         song = song_factories.NewSongFactory(
@@ -632,7 +633,10 @@ class ApprovalActionTests(TestCase):
             file.write('test')
 
         # Create a target directory for the song in the main archive directory
-        target_directory = f'{settings.MAIN_ARCHIVE_DIR}/{song.filename[0].upper()}'
+        base_target_directory = f'{settings.MAIN_ARCHIVE_DIR}/{song.format.upper()}'
+        if not os.path.exists(base_target_directory):
+            os.mkdir(base_target_directory)
+        target_directory = f'{settings.MAIN_ARCHIVE_DIR}/{song.format.upper()}/{song.filename[0].upper()}'
         if not os.path.exists(target_directory):
             os.mkdir(target_directory)
 
@@ -660,7 +664,7 @@ class ApprovalActionTests(TestCase):
         else:
             self.assertIsNone(song.featured_by)
 
-        file_location = f'{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip'
+        file_location = f'{settings.MAIN_ARCHIVE_DIR}/{song.format.upper()}/{song.folder}/{song.filename}.zip'
         self.assertTrue(os.path.isfile(file_location))
         previous_location = f'{settings.NEW_FILE_DIR}/{song.filename}.zip'
         self.assertFalse(os.path.exists(previous_location))

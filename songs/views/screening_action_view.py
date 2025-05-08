@@ -142,16 +142,16 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             return redirect('view_song', pk=pks[0])
 
     @transaction.atomic
-    def finalize_approval(self, approved_song, feature=False, approver=None):
-        # Folder is the capitalized first character of the filename. If it's a number, use '0_9'
+    def finalize_approval(self, approved_song: NewSong, feature=False, approver=None):
+        # Folder is the capitalized first character of the filename. If it's a number, use '1_9'
         if approved_song.filename[0].isdigit():
-            folder = '0_9'
+            folder = '1_9'
         else:
             folder = approved_song.filename[0].upper()
 
         # Move file into the new directory
         current_location = os.path.join(settings.NEW_FILE_DIR, f'{approved_song.filename}.zip')
-        new_location = os.path.join(settings.MAIN_ARCHIVE_DIR, folder, f'{approved_song.filename}.zip')
+        new_location = os.path.join(settings.MAIN_ARCHIVE_DIR, approved_song.format.upper(), folder, f'{approved_song.filename}.zip')
         try:
             os.rename(current_location, new_location)
         except OSError:
