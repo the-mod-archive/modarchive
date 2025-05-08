@@ -1,6 +1,7 @@
 import os
 import tempfile
 import zipfile
+import shutil
 
 from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
@@ -43,7 +44,7 @@ class UploadProcessor:
 
         # Move the zip file to the new files directory
         final_file_path = os.path.join(settings.NEW_FILE_DIR, f"{os.path.basename(file)}.zip")
-        os.rename(zip_filename, final_file_path)
+        shutil.move(zip_filename, final_file_path)
 
     def remove_processing_directory(self):
         if os.path.exists(self.unique_temp_dir_path):
