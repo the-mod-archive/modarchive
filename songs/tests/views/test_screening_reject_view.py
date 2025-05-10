@@ -1,4 +1,5 @@
 import os
+from datetime import date
 
 from django.test import TestCase
 from django.urls.base import reverse
@@ -201,7 +202,8 @@ class FinalizeRejectionTests(TestCase):
         self.assertEqual(rejected_song.filename, song.filename)
         previous_location = f'{self.new_file_dir}/{song.filename}.zip'
         self.assertFalse(os.path.exists(previous_location))
-        new_location = f'{settings.REJECTED_FILE_DIR}/{song.filename}.zip'
+        today = date.today().strftime('%Y%m%d')
+        new_location = f'{settings.REJECTED_FILE_DIR}/{today}-{song.filename}.zip'
         self.assertTrue(os.path.exists(new_location))
 
     def test_rejecting_a_song_removes_it_from_the_screening_queue(self):

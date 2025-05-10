@@ -1,6 +1,7 @@
 import os
 import re
 from typing import Any
+from datetime import date
 
 from django.conf import settings
 from django.db import transaction, Error
@@ -35,7 +36,7 @@ class ScreeningRejectView(PermissionRequiredMixin, FormView):
         new_song = NewSong.objects.get(pk=song_id)
 
         previous_dir = os.path.join(settings.NEW_FILE_DIR, f'{new_song.filename}.zip')
-        new_dir = os.path.join(settings.REJECTED_FILE_DIR, f'{new_song.filename}.zip')
+        new_dir = os.path.join(settings.REJECTED_FILE_DIR, f'{date.today().strftime('%Y%m%d')}-{new_song.filename}.zip')
         try:
             os.rename(previous_dir, new_dir)
         except OSError:
