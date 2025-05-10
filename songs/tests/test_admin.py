@@ -80,7 +80,10 @@ class MergeSongTests(TestCase):
         song = song_factories.SongFactory(folder="T", filename="test.mod", hash="123", is_featured=is_featured, featured_date=featured_date, featured_by=featured_by)
 
         # Create a dummy file to represent the uploaded file
-        file_directory = f'{settings.MAIN_ARCHIVE_DIR}/{song.folder}'
+        format_directory = f'{settings.MAIN_ARCHIVE_DIR}/{song.format.upper()}'
+        if not os.path.exists(format_directory):
+            os.mkdir(format_directory)
+        file_directory = f'{format_directory}/{song.folder}'
         if not os.path.exists(file_directory):
             os.mkdir(file_directory)
         file_path = f'{file_directory}/{song.filename}.zip'
