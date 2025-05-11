@@ -72,9 +72,9 @@ class SongAdmin(admin.ModelAdmin):
         stats.downloads=F('downloads') + downloads
         stats.save()
 
-    def finalize_merge(self, song_to_merge_from, song_to_merge_into):
+    def finalize_merge(self, song_to_merge_from: models.Song, song_to_merge_into):
         # Move the file to the removed files folder
-        source_path = os.path.join(settings.MAIN_ARCHIVE_DIR, song_to_merge_from.format.upper(), song_to_merge_from.folder, f'{song_to_merge_from.filename}.zip')
+        source_path = song_to_merge_from.get_archive_path()
         destination_path = os.path.join(settings.REMOVED_FILE_DIR, f'{song_to_merge_from.filename}.zip')
         os.rename(source_path, destination_path)
 

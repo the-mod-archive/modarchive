@@ -230,7 +230,6 @@ window.nextSong = (song_id) => {
 	fetch(url)
 	.then(r => r.arrayBuffer())
     .then(zipArrayBuffer => {
-        // Use JSZip to unzip the array buffer
         return JSZip.loadAsync(zipArrayBuffer);
     })
     .then(zip => {

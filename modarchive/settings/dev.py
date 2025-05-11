@@ -25,6 +25,8 @@ DATABASES['legacy'] = {
     'PORT': '3306'
 }
 
+DOWNLOAD_STRATEGY = 'redirect'
+
 # LOGGING = {
 #     'version': 1,
 #     'filters': {

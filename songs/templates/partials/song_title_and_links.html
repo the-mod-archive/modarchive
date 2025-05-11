@@ -24,7 +24,7 @@
 
     <div class="row justify-content-between">
         <div class="col-sm my-1">
-            <a class="btn btn-success" href="{% url 'download_song' song.id %}">{% bs_icon 'download' %} Download</button></a>
+            <a class="btn btn-success" href="{% url 'song_download' song.id %}">{% bs_icon 'download' %} Download</button></a>
             <a class="btn btn-success" href="#" onclick="window.open('{% url 'player' %}?song_id={{song.id}}', 'keep');">{% bs_icon 'headphones' %} Listen</button></a>
         </div>
 

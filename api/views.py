@@ -6,7 +6,7 @@ from django.contrib.postgres.search import SearchVector, SearchQuery
 from django.db.models import F
 from django.views import View
 from django.conf import settings
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, StreamingHttpResponse
 
 from songs.models import Song
 from artists.models import Artist
@@ -63,23 +63,29 @@ class SongDownloadView(View):
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
         song = Song.objects.get(pk=pk)
-        main_archive_dir = settings.MAIN_ARCHIVE_DIR
-        local_file_path = os.path.join(main_archive_dir, song.format, song.folder, f'{song.filename}.zip')
+        
+        download_strategy = settings.DOWNLOAD_STRATEGY
+
+        # This is only useful for local development when you don't have the song stored
+        # It redirects to the live server: we will eventually remove this path
+        if download_strategy == 'redirect':
+            remote_url = f'https://api.modarchive.org/downloads.php?moduleid={song.legacy_id}&zip=1'
+            remote_response = requests.get(remote_url, timeout=10)
+
+            if remote_response.status_code != 200:
+                raise Http404("Remote file not found")
+
+            response = StreamingHttpResponse(
+                remote_response.iter_content(chunk_size=8192),
+                content_type='application/zip'
+            )
+            response['Content-Disposition'] = f'attachment; filename="{song.filename}.zip"'
+            return response
+        
+        local_file_path = song.get_archive_path()
 
         if not os.path.exists(local_file_path):
             raise Http404("File not found")
-
-        # # check to see if the song file is present in the main archive
-        # if not os.path.exists(local_file_path):
-        #     # Note: This download strategy must be removed before going live
-        #     remote_url = f'https://api.modarchive.org/downloads.php?moduleid={song.legacy_id}&zip=1'
-
-        #     # Retrieve the file from new_path and place it in the main archive
-        #     response = requests.get(remote_url, timeout=10)
-
-        #     if response.status_code == 200:
-        #         with open(os.path.join(main_archive_dir, song.folder, f'{song.filename}.zip'), 'wb') as f:
-        #             f.write(response.content)
 
         stats = song.get_stats()
         stats.downloads = F('downloads') + 1

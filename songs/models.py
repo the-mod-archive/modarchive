@@ -195,7 +195,8 @@ class Song(models.Model):
         return SongStats.objects.create(song=self)
 
     def get_archive_path(self):
-        return f"{settings.MAIN_ARCHIVE_DIR}/{self.folder}/{self.filename}.zip"
+        folder = '1_9' if self.folder == '0_9' else self.folder
+        return f"{settings.MAIN_ARCHIVE_DIR}/{self.format.upper()}/{folder}/{self.filename}.zip"
 
     class Meta:
         indexes = [

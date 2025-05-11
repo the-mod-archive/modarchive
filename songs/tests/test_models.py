@@ -101,13 +101,23 @@ class SongModelTests(TestCase):
 
     def test_archive_path_is_correct(self):
         # Arrange
-        song = song_factories.SongFactory(folder="T", filename="test.mod")
+        song = song_factories.SongFactory(folder="T", filename="test.s3m")
 
         # Act
         path = song.get_archive_path()
 
         # Assert
-        self.assertEqual(f"{settings.MAIN_ARCHIVE_DIR}/{song.folder}/{song.filename}.zip", path)
+        self.assertEqual(f"{settings.MAIN_ARCHIVE_DIR}/S3M/T/test.s3m.zip", path)
+
+    def test_archive_path_is_correct_for_numerical_song(self):
+        # Arrange
+        song = song_factories.SongFactory(folder="0_9", filename="0test.s3m")
+
+        # Act
+        path = song.get_archive_path()
+
+        # Assert
+        self.assertEqual(f"{settings.MAIN_ARCHIVE_DIR}/S3M/1_9/0test.s3m.zip", path)
 
 class CommentModelTests(TestCase):
     def test_song_stats_updated_correctly_after_removing_comment(self):

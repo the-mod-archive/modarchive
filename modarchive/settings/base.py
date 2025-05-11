@@ -213,3 +213,5 @@ MAXIMUM_UPLOAD_FILENAME_LENGTH = 59
 UNSUPPORTED_FORMATS = []
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+DOWNLOAD_STRATEGY = 'server'
