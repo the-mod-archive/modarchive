@@ -25,5 +25,10 @@ class LegacyModArchivePasswordHasher(BasePasswordHasher):
 
         return constant_time_compare(decoded['hash'], encoded_2)
 
-    def safe_summary(self, encoded: str) -> Any:
-        return super().safe_summary(encoded)
+    def safe_summary(self, encoded: str) -> dict:
+        decoded = self.decode(encoded)
+        return {
+            ('Algorithm'): self.algorithm,
+            ('Hash'): decoded['hash'][:6] + '...' + decoded['hash'][-6:],
+            ('Salt'): decoded['salt'][:6] + '...' + decoded['salt'][-6:],
+        }
