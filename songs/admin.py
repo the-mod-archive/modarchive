@@ -18,7 +18,7 @@ class SongAdmin(admin.ModelAdmin):
     search_fields = ("title__startswith", )
     exclude = ("search_document",)
     form = forms.AdminSongForm
-    inlines = [ArtistInline]
+    # inlines = [ArtistInline]
 
     def get_urls(self):
         urls = super().get_urls()

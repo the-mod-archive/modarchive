@@ -6,6 +6,6 @@ from songs.admin import ArtistInline
 class ArtistAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name')
     fields = ('name', 'legacy_id')
-    inlines = (ArtistInline,)
+    # inlines = (ArtistInline,)
     exclude = ('search_document', 'user', 'profile', 'key')
     search_fields = ['name']
