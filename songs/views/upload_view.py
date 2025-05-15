@@ -84,7 +84,7 @@ class UploadView(LoginRequiredMixin, FormView):
                 'instrument_text': modinfo.get('instruments', ''),
                 'comment_text': modinfo.get('comment', ''),
                 'hash': md5hash,
-                'pattern_hash': modinfo.get('patterns', ''),
+                'pattern_hash': modinfo.get('pattern_hash', ''),
                 'artist_from_file': modinfo.get('artist', ''),
                 'uploader_profile': self.request.user.profile,
                 'uploader_ip_address': self.request.META.get('REMOTE_ADDR'),
