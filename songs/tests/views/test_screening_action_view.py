@@ -633,19 +633,24 @@ class ApprovalActionTests(TestCase):
             file.write('test')
 
         # Create a target directory for the song in the main archive directory
-        base_target_directory = f'{settings.MAIN_ARCHIVE_DIR}/{song.format.upper()}'
-        if not os.path.exists(base_target_directory):
-            os.mkdir(base_target_directory)
-        target_directory = f'{settings.MAIN_ARCHIVE_DIR}/{song.format.upper()}/{song.filename[0].upper()}'
-        if not os.path.exists(target_directory):
-            os.mkdir(target_directory)
+        subfolder = song.filename[0].upper()
+        if subfolder.isdigit():
+            subfolder = '1_9'
+
+        target_directory = os.path.join(
+            settings.MAIN_ARCHIVE_DIR,
+            song.format.upper(),
+            subfolder
+        )
+        os.makedirs(target_directory, exist_ok=True)
 
         return song
 
     def assert_song_added_to_archive(self, screened_song, expected_artists=None, featured=False):
         song = Song.objects.get(hash=screened_song.hash)
         self.assertEqual(screened_song.filename, song.filename)
-        self.assertEqual(screened_song.filename[0].upper(), song.folder)
+        expected_folder = '0_9' if screened_song.filename[0].isdigit() else screened_song.filename[0].upper()
+        self.assertEqual(expected_folder, song.folder)
         self.assertEqual(screened_song.format.upper(), song.format)
         self.assertEqual(screened_song.title, song.title)
         self.assertEqual(screened_song.uploader_profile, song.uploaded_by)
@@ -664,8 +669,7 @@ class ApprovalActionTests(TestCase):
         else:
             self.assertIsNone(song.featured_by)
 
-        file_location = f'{settings.MAIN_ARCHIVE_DIR}/{song.format.upper()}/{song.folder}/{song.filename}.zip'
-        self.assertTrue(os.path.isfile(file_location))
+        self.assertTrue(os.path.isfile(song.get_archive_path()))
         previous_location = f'{settings.NEW_FILE_DIR}/{song.filename}.zip'
         self.assertFalse(os.path.exists(previous_location))
 
@@ -673,6 +677,18 @@ class ApprovalActionTests(TestCase):
         # Arrange
         uploader = factories.UserFactory()
         song1 = self.make_song(self.user.profile, '0987654321', SONG_1_FILENAME, Song.Formats.MOD, uploader.profile)
+
+        # Act
+        response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assert_song_added_to_archive(song1)
+        self.assertRedirects(response, reverse('view_song', kwargs={'pk': Song.objects.get(hash=song1.hash).id}))
+    
+    def test_single_song_with_numercal_filename_is_added_to_archive_when_approved(self):
+        # Arrange
+        uploader = factories.UserFactory()
+        song1 = self.make_song(self.user.profile, '0987654321', '1.mod', Song.Formats.MOD, uploader.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})

@@ -145,35 +145,37 @@ class ScreeningActionView(PermissionRequiredMixin, View):
     def finalize_approval(self, approved_song: NewSong, feature=False, approver=None):
         # Folder is the capitalized first character of the filename. If it's a number, use '1_9'
         if approved_song.filename[0].isdigit():
-            folder = '1_9'
+            folder = '0_9'
         else:
             folder = approved_song.filename[0].upper()
 
+        song = Song(
+            filename=approved_song.filename,
+            filename_unzipped=approved_song.filename_unzipped,
+            title=approved_song.title,
+            format=approved_song.format.upper(),
+            file_size=approved_song.file_size,
+            channels=approved_song.channels,
+            instrument_text=approved_song.instrument_text,
+            comment_text=approved_song.comment_text,
+            hash=approved_song.hash,
+            pattern_hash=approved_song.pattern_hash,
+            folder=folder,
+            uploaded_by=approved_song.uploader_profile,
+            featured_by=approver if feature else None,
+            featured_date=timezone.now() if feature else None,
+        )
+
         # Move file into the new directory
         current_location = os.path.join(settings.NEW_FILE_DIR, f'{approved_song.filename}.zip')
-        new_location = os.path.join(settings.MAIN_ARCHIVE_DIR, approved_song.format.upper(), folder, f'{approved_song.filename}.zip')
+        new_location = song.get_archive_path()
         try:
             os.rename(current_location, new_location)
         except OSError:
             return None
 
         try:
-            song = Song.objects.create(
-                filename=approved_song.filename,
-                filename_unzipped=approved_song.filename_unzipped,
-                title=approved_song.title,
-                format=approved_song.format.upper(),
-                file_size=approved_song.file_size,
-                channels=approved_song.channels,
-                instrument_text=approved_song.instrument_text,
-                comment_text=approved_song.comment_text,
-                hash=approved_song.hash,
-                pattern_hash=approved_song.pattern_hash,
-                folder=folder,
-                uploaded_by=approved_song.uploader_profile,
-                featured_by=approver if feature else None,
-                featured_date=timezone.now() if feature else None,
-            )
+            song.save()
 
             # If uploaded by artist, add to artist's list of songs
             if approved_song.is_by_uploader:
