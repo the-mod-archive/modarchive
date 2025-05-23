@@ -49,11 +49,6 @@ input[type="range"]
     background-color: #ffc107;
     color: #343a40;
 }
-#orderList {
-	line-height: 0.1;
-	margin-bottom: 5px;
-	margin-left: 2px;
-}
 .orderPos {
 	border: 1px solid #394646;
 	font: medium monospace;
