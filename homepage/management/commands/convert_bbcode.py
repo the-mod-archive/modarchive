@@ -73,6 +73,10 @@ class Command(BaseCommand):
             counter += 1
 
             text = profile.blurb
+
+            if text == None:
+                continue
+
             text = self.convert_bold(text)
             text = self.convert_italic(text)
             text = self.convert_url(text)
