@@ -1,0 +1,29 @@
+name: Report a bug
+description: Report a bug on the Mod Archive to help us improve the site
+title: "Bug: "
+labels: "Bug"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug. In order to help us fix the issue, please be as detailed as possible with what you were doing.
+  - type: textarea
+    id: reprosteps
+    attributes:
+      label: Steps to Reproduce
+      description: |
+        Please describe what you were doing when you encountered the bug, step by step. Be as detailed as you reasonably can.
+      placeholder: |
+        1. Step 1
+        2. Step 2
+        3. Step 3
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behaviour
+      description: |
+        Tell us what should have happened.
+    validations:
+      required: true

@@ -1,0 +1,17 @@
+name: Report a Missing Feature
+description: Report a feature that exists on the old Mod Archive but isn't available on the new site yet.
+title: "Missing Feature: "
+labels: ["Missing Feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The Mod Archive has a lot of features and it is easy to miss a few as we develop the new site. If you are aware of any old features that are missing, please report them here.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of the Feature
+      description: |
+        Please describe how this feature is used on the old site.
+    validations:
+      required: true

@@ -1,0 +1,19 @@
+name: Request a New Feature
+description: Have a great idea for the Mod Archive? Request it here.
+title: "Feature Request: "
+labels: ["New Feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Request an idea for the Mod Archive here. We'll take a look at it and consider it, but keep in mind that we will not
+        implement most new features until after the new site rolls out, and we are not going to implement every suggested
+        new feature.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of the Feature
+      description: |
+        Please describe the feature you would like implemented.
+    validations:
+      required: true
