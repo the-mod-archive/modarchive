@@ -130,7 +130,7 @@ class UploadViewTests(TestCase):
     def get_file_path(self, filename):
         return os.path.join(os.path.dirname(__file__), '../../testdata', filename)
 
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_upload_single_song(self, mock_mod_info):
         # Arrange
         mock_mod_info.return_value = self.test_mod_info
@@ -148,7 +148,7 @@ class UploadViewTests(TestCase):
         self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, self.user.profile, True)
         self.assert_context_success(response.context, 1, [TEST_MOD_FILENAME], [SONG_TITLE], [Song.Formats.MOD])
 
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_upload_multiple_songs(self, mock_mod_info):
         # Arrange
         mod_path = self.get_file_path(TEST_MOD_FILENAME)
@@ -188,7 +188,7 @@ class UploadViewTests(TestCase):
 
             self.assert_context_success(response.context, 3, [TEST_MOD_FILENAME, TEST_IT_FILENAME, TEST_S3M_FILENAME], [SONG_TITLE, IT_TITLE, S3M_TITLE], [Song.Formats.MOD, Song.Formats.IT, Song.Formats.S3M])
 
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_reject_files_already_in_screening(self, mock_mod_info):
         # Arrange
         mock_mod_info.return_value = self.test_mod_info
@@ -215,7 +215,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['filename'], TEST_MOD_FILENAME)
         self.assertEqual(failed_file['reason'], constants.UPLOAD_DUPLICATE_SONG_IN_PROCESSING_QUEUE)
 
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_reject_files_already_in_archive(self, mock_mod_info):
         # Arrange
         mock_mod_info.return_value = self.test_mod_info
@@ -243,7 +243,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['reason'], constants.UPLOAD_DUPLICATE_SONG_IN_ARCHIVE)
 
     @override_settings(MAXIMUM_UPLOAD_SIZE=1000)
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_reject_files_that_are_too_large(self, mock_mod_info):
         # Arrange
         mock_mod_info.return_value = self.test_mod_info
@@ -270,7 +270,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['reason'], constants.UPLOAD_TOO_LARGE%(settings.MAXIMUM_UPLOAD_SIZE))
 
     @override_settings(MAXIMUM_UPLOAD_FILENAME_LENGTH=4)
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_reject_file_with_long_filename(self, mock_mod_info):
         # Arrange
         mock_mod_info.return_value = self.test_mod_info
@@ -296,7 +296,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['filename'], TEST_MOD_FILENAME)
         self.assertEqual(failed_file['reason'], constants.UPLOAD_FILENAME_TOO_LONG%(settings.MAXIMUM_UPLOAD_FILENAME_LENGTH))
 
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_reject_file_when_modinfo_fails(self, mock_mod_info):
         # Arrange
         mock_mod_info.return_value = None
@@ -323,7 +323,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['reason'], constants.UPLOAD_UNRECOGNIZED_FORMAT)
 
     @override_settings(UNSUPPORTED_FORMATS=['it'])
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_reject_file_if_format_not_supported(self, mock_mod_info):
         # Arrange
         mock_mod_info.return_value = self.test_it_info
@@ -349,7 +349,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['filename'], TEST_IT_FILENAME)
         self.assertEqual(failed_file['reason'], constants.UPLOAD_UNSUPPORTED_FORMAT)
 
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_rename_file_extension_when_it_does_not_match_the_format(self, mock_mod_info):
         # Arrange
         mock_mod_info.return_value = self.test_mod_info
@@ -367,7 +367,7 @@ class UploadViewTests(TestCase):
         self.assert_song_in_database(TEST_MOD_FILENAME, SONG_TITLE, Song.Formats.MOD, 4, self.user.profile, True)
         self.assert_context_success(response.context, 1, [TEST_MOD_FILENAME], [SONG_TITLE], [Song.Formats.MOD])
 
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_rename_file_to_remove_whitespace_and_uppercase_letters(self, mock_mod_info):
         # Arrange
         mock_mod_info.return_value = self.test_mod_info
@@ -386,7 +386,7 @@ class UploadViewTests(TestCase):
         self.assert_song_in_database(underscored_mod_filename, SONG_TITLE, Song.Formats.MOD, 4, self.user.profile, True)
         self.assert_context_success(response.context, 1, [underscored_mod_filename], [SONG_TITLE], [Song.Formats.MOD])
 
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_reject_file_if_previously_rejected_by_screeners(self, mock_mod_info):
         # Arrange
         uploaded_file = self.create_file(TEST_MOD_FILENAME)
@@ -413,7 +413,7 @@ class UploadViewTests(TestCase):
         self.assertEqual(failed_file['filename'], TEST_MOD_FILENAME)
         self.assertEqual(failed_file['reason'], constants.UPLOAD_SONG_PREVIOUSLY_REJECTED)
 
-    @patch('songs.views.upload_view.get_mod_info')
+    @patch('uploads.views.upload_view.get_mod_info')
     def test_permit_file_temporarily_rejected_by_screeners(self, mock_mod_info):
         # Arrange
         uploaded_file = self.create_file(TEST_MOD_FILENAME)

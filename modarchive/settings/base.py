@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'artists',
     'search',
     'songs',
+    'uploads',
     # 'homepage.apps.DemositeSceneIDConfig',
     'markdownify.apps.MarkdownifyConfig',
     'django_bootstrap_icons',
