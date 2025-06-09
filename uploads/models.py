@@ -9,6 +9,7 @@ class NewSong(models.Model):
     class Meta:
         permissions = (
             ('can_approve_songs', "Can approve songs"),
+            ('can_upload_songs', 'Can upload songs')
         )
         db_table = 'uploads_newsong'
         app_label = 'uploads'

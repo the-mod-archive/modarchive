@@ -5,6 +5,7 @@ import zipfile
 from unittest.mock import patch
 from django.conf import settings
 
+from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls.base import reverse
@@ -41,9 +42,23 @@ class UploadViewAuthTests(TestCase):
         # Assert
         self.assertRedirects(response, f"{login_url}?next={upload_url}")
 
-    def test_upload_view_permits_authenticated_user(self):
+    def test_upload_view_rejects_user_with_insufficient_permissions(self):
         # Arrange
         user = factories.UserFactory()
+        self.client.force_login(user)
+        upload_url = reverse('upload_songs')
+
+        # Act
+        response = self.client.get(upload_url)
+
+        # Assert
+        self.assertEqual(403, response.status_code)
+
+    def test_upload_view_permits_authenticated_user(self):
+        # Arrange
+        permission = Permission.objects.get(codename='can_upload_songs')
+        user = factories.UserFactory()
+        user.user_permissions.add(permission)
         self.client.force_login(user)
 
         # Act
@@ -77,6 +92,8 @@ class UploadViewTests(TestCase):
 
     def setUp(self):
         self.user = factories.UserFactory()
+        permission = Permission.objects.get(codename='can_upload_songs')
+        self.user.user_permissions.add(permission)
         self.client.force_login(self.user)
 
     def tearDown(self):
