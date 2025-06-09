@@ -8,9 +8,11 @@ from django.contrib.messages import get_messages
 from django.conf import settings
 
 from homepage.tests import factories
-from songs import factories as songs_factories
-from songs import constants, forms
-from songs.models import NewSong
+from songs import factories as song_factories
+from uploads import factories as upload_factories
+from uploads import forms
+from uploads.models import NewSong
+from uploads import constants
 
 SCREENING_TEMPLATE = "screening_rename.html"
 OLD_FILENAME = 'old_filename.mod'
@@ -49,7 +51,7 @@ class ScreeningRenameGetTests(TestCase):
 
     def test_does_not_permit_user_to_rename_unclaimed_song(self):
         # Arrange
-        song = songs_factories.NewSongFactory()
+        song = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.get(reverse('screening_rename', kwargs={'pk': song.id}))
@@ -62,7 +64,7 @@ class ScreeningRenameGetTests(TestCase):
 
     def test_renders_screening_rename_template(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.get(reverse('screening_rename', kwargs={'pk': song.id}))
@@ -84,7 +86,7 @@ class ScreeningRenamePostTests(TestCase):
 
     def test_does_not_permit_user_to_rename_unclaimed_song(self):
         # Arrange
-        song = songs_factories.NewSongFactory()
+        song = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.post(reverse('screening_rename', kwargs={'pk': song.id}), data={'new_filename': 'new_filename'})
@@ -97,7 +99,7 @@ class ScreeningRenamePostTests(TestCase):
 
     def test_new_filename_cannot_be_blank(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_rename', kwargs={'pk': song.id}), data={'new_filename': ''})
@@ -112,7 +114,7 @@ class ScreeningRenamePostTests(TestCase):
 
     def test_cannot_change_file_extension(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
 
         # Act
         response = self.client.post(reverse('screening_rename', kwargs={'pk': song.id}), data={'new_filename': 'new_filename.s3m'})
@@ -128,7 +130,7 @@ class ScreeningRenamePostTests(TestCase):
 
     def test_filename_must_be_changed(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
 
         # Act
         response = self.client.post(reverse('screening_rename', kwargs={'pk': song.id}), data={'new_filename': song.filename})
@@ -144,7 +146,7 @@ class ScreeningRenamePostTests(TestCase):
 
     def test_filename_must_adhere_to_unix_filename_conventions(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
 
         # Act
         response = self.client.post(reverse('screening_rename', kwargs={'pk': song.id}), data={'new_filename': 'new_filename/.mod'})
@@ -160,8 +162,8 @@ class ScreeningRenamePostTests(TestCase):
 
     def test_filename_cannot_be_identical_to_another_song_in_screening_queue(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
-        songs_factories.NewSongFactory(filename=NEW_FILENAME, format='mod')
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
+        upload_factories.NewSongFactory(filename=NEW_FILENAME, format='mod')
 
         # Act
         response = self.client.post(reverse('screening_rename', kwargs={'pk': song.id}), data={'new_filename': NEW_FILENAME})
@@ -177,8 +179,8 @@ class ScreeningRenamePostTests(TestCase):
 
     def test_filename_cannot_be_identical_to_another_song_in_archive(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
-        songs_factories.SongFactory(filename=NEW_FILENAME, format='mod')
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
+        song_factories.SongFactory(filename=NEW_FILENAME, format='mod')
 
         # Act
         response = self.client.post(reverse('screening_rename', kwargs={'pk': song.id}), data={'new_filename': NEW_FILENAME})
@@ -194,8 +196,8 @@ class ScreeningRenamePostTests(TestCase):
 
     def test_filename_cannot_be_identical_to_song_in_rejected_queue(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
-        songs_factories.RejectedSongFactory(filename=NEW_FILENAME, format='mod')
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
+        upload_factories.RejectedSongFactory(filename=NEW_FILENAME, format='mod')
 
         # Act
         response = self.client.post(reverse('screening_rename', kwargs={'pk': song.id}), data={'new_filename': NEW_FILENAME})
@@ -211,7 +213,7 @@ class ScreeningRenamePostTests(TestCase):
 
     def test_filename_cannot_exceed_59_characters(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
 
         # Act
         response = self.client.post(reverse('screening_rename', kwargs={'pk': song.id}), data={'new_filename': 'a' * 60})
@@ -228,7 +230,7 @@ class ScreeningRenamePostTests(TestCase):
     def test_rename_is_successful(self):
         # Arrange
         new_file_dir = settings.NEW_FILE_DIR
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, filename=OLD_FILENAME, format='mod')
 
         # Create a zip file called old_filename.mod.zip with a file called old_filename.mod
         old_file_path = os.path.join(new_file_dir, OLD_FILENAME)

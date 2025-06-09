@@ -1,7 +1,7 @@
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from songs.models import NewSong
+from uploads.models import NewSong
 
 class PendingUploadsView(LoginRequiredMixin, ListView):
     model = NewSong

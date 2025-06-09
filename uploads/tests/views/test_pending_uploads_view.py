@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from songs import factories as song_factories
+from uploads import factories as upload_factories
 from homepage.tests import factories
 
 class PendingUploadsViewTest(TestCase):
@@ -34,9 +35,9 @@ class PendingUploadsViewTest(TestCase):
         user_2 = factories.UserFactory()
         self.client.force_login(user)
 
-        song_1 = song_factories.NewSongFactory(filename='song1.mod', uploader_profile=user.profile)
-        song_2 = song_factories.NewSongFactory(filename='song2.mod', uploader_profile=user.profile)
-        song_3 = song_factories.NewSongFactory(filename='song3.mod', uploader_profile=user_2.profile)
+        song_1 = upload_factories.NewSongFactory(filename='song1.mod', uploader_profile=user.profile)
+        song_2 = upload_factories.NewSongFactory(filename='song2.mod', uploader_profile=user.profile)
+        song_3 = upload_factories.NewSongFactory(filename='song3.mod', uploader_profile=user_2.profile)
 
         # Act
         response = self.client.get(reverse('pending_uploads'))

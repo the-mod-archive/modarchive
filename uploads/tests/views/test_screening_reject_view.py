@@ -8,9 +8,9 @@ from django.contrib.messages import get_messages
 from django.conf import settings
 
 from homepage.tests import factories
-from songs import factories as songs_factories
-from songs import constants
-from songs.models import NewSong, RejectedSong
+from uploads import factories as upload_factories
+from uploads import constants
+from uploads.models import NewSong, RejectedSong
 
 class ScreeningRejectAuthenticationTests(TestCase):
     def test_unauthenticated_user_is_redirected_to_login(self):
@@ -42,7 +42,7 @@ class ScreeningRejectAuthenticationTests(TestCase):
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
         self.client.force_login(user)
-        song = songs_factories.NewSongFactory(claimed_by=user.profile)
+        song = upload_factories.NewSongFactory(claimed_by=user.profile)
 
         # Act
         response = self.client.get(f"{reverse('screening_reject')}?song_ids={song.id}")
@@ -70,8 +70,8 @@ class ScreeningRejectGetValidationTests(TestCase):
 
     def test_songs_must_all_be_claimed_by_current_user(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=None)
-        song_2 = songs_factories.NewSongFactory(claimed_by=self.user.profile)
+        song = upload_factories.NewSongFactory(claimed_by=None)
+        song_2 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.get(f"{reverse('screening_reject')}?song_ids={song.id},{song_2.id}")
@@ -84,8 +84,8 @@ class ScreeningRejectGetValidationTests(TestCase):
 
     def test_renders_template_if_all_songs_are_claimed(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile)
-        song_2 = songs_factories.NewSongFactory(claimed_by=self.user.profile)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile)
+        song_2 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.get(f"{reverse('screening_reject')}?song_ids={song.id},{song_2.id}")
@@ -144,8 +144,8 @@ class ScreeningRejectPostValidationTests(TestCase):
 
     def test_songs_must_all_be_claimed_by_current_user(self):
         # Arrange
-        song = songs_factories.NewSongFactory(claimed_by=None)
-        song_2 = songs_factories.NewSongFactory(claimed_by=self.user.profile)
+        song = upload_factories.NewSongFactory(claimed_by=None)
+        song_2 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_reject'), data={'song_ids': f"{song.id},{song_2.id}"})
@@ -187,7 +187,7 @@ class FinalizeRejectionTests(TestCase):
             os.remove(file_path)
 
     def create_song(self, hash_code='123'):
-        song = songs_factories.NewSongFactory(claimed_by=self.user.profile, hash=hash_code)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, hash=hash_code)
         # Create a dummy file to represent the uploaded file
         with open(f'{self.new_file_dir}/{song.filename}.zip', 'w', encoding='utf-8') as file:
             file.write('test')

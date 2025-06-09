@@ -4,12 +4,12 @@ from django.test import TestCase
 from django.urls.base import reverse
 
 from homepage.tests import factories
-from songs import factories as song_factories
+from uploads import factories as upload_factories
 
 class ScreeningDownloadViewTests(TestCase):
     def test_screening_download_view_requires_authentication(self):
         # Arrange
-        song = song_factories.NewSongFactory()
+        song = upload_factories.NewSongFactory()
         login_url = reverse('login')
         screening_url = reverse('screening_download', kwargs = {'pk': song.id})
 
@@ -23,7 +23,7 @@ class ScreeningDownloadViewTests(TestCase):
     def test_screening_download_view_requires_permission(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.NewSongFactory()
+        song = upload_factories.NewSongFactory()
         self.client.force_login(user)
 
         # Act
@@ -37,7 +37,7 @@ class ScreeningDownloadViewTests(TestCase):
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song = song_factories.NewSongFactory()
+        song = upload_factories.NewSongFactory()
         self.client.force_login(user)
 
         # Act
@@ -51,7 +51,7 @@ class ScreeningDownloadViewTests(TestCase):
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song = song_factories.NewSongFactory(filename='test.mod')
+        song = upload_factories.NewSongFactory(filename='test.mod')
         self.client.force_login(user)
 
         new_file_dir = settings.NEW_FILE_DIR

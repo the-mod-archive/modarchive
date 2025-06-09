@@ -3,17 +3,19 @@ import os
 
 from django.conf import settings
 from django.views.generic import FormView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 
 from modarchive import file_repository
-from songs import forms, constants
-from songs.models import NewSong, Song, RejectedSong
-from songs.mod_info import get_mod_info
+from songs.models import Song
+from uploads.models import NewSong, RejectedSong
+from uploads.mod_info import get_mod_info
+from uploads import constants, forms
 
-class UploadView(LoginRequiredMixin, FormView):
+class UploadView(PermissionRequiredMixin, FormView):
     template_name="upload.html"
     form_class = forms.UploadForm
+    permission_required = 'uploads.can_upload_songs'
 
     def form_valid(self, form):
         # Handle the uploaded file and the radio button value here

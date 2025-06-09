@@ -5,14 +5,14 @@ from django.db.models.query import QuerySet
 from django.utils import timezone
 
 from homepage.view.common_views import PageNavigationListView
-from songs.forms import ScreeningQueueFilterForm
-from songs.models import NewSong
-from songs import constants
+from uploads.forms import ScreeningQueueFilterForm
+from uploads.models import NewSong
+from uploads import constants
 
 class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
     model = NewSong
     template_name="screening_index.html"
-    permission_required = 'songs.can_approve_songs'
+    permission_required = 'uploads.can_approve_songs'
     context_object_name = 'new_songs'
     paginate_by = 25
     filter_options = {

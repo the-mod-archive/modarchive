@@ -15,16 +15,6 @@ from songs.views.browse_songs_views import (
     BrowseSongsByGenreView,
     BrowseSongsByRatingView
 )
-from songs.views.upload_view import UploadView
-from songs.views.upload_report_view import UploadReportView
-from songs.views.pending_uploads_view import PendingUploadsView
-from songs.views.new_song_list_view import NewSongListView
-from songs.views.screening_index_view import ScreeningIndexView
-from songs.views.screening_action_view import ScreeningActionView
-from songs.views.screen_song_view import ScreenSongView
-from songs.views.screening_download_view import ScreeningDownloadView
-from songs.views.screening_reject_view import ScreeningRejectView
-from songs.views.screening_rename_view import ScreeningRenameView
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='song_list.html'), name='songs'),
@@ -40,14 +30,4 @@ urlpatterns = [
     path('browse/filename/<str:query>/', BrowseSongsByFilenameView.as_view(), name='browse_by_filename'),
     path('browse/genre/<str:query>/', BrowseSongsByGenreView.as_view(), name='browse_by_genre'),
     path('browse/rating/<int:query>/', BrowseSongsByRatingView.as_view(), name='browse_by_rating'),
-    path('upload', UploadView.as_view(), name='upload_songs'),
-    path('upload_report', UploadReportView.as_view(), name='upload_report'),
-    path('pending_uploads', PendingUploadsView.as_view(), name='pending_uploads'),
-    path('view_new_songs', NewSongListView.as_view(), name='view_new_songs'),
-    path('screen_songs', ScreeningIndexView.as_view(), name='screening_index'),
-    path('screen_songs/action', ScreeningActionView.as_view(), name='screening_action'),
-    path('screen_song/<int:pk>/', ScreenSongView.as_view(), name='screen_song'),
-    path('screen_song/<int:pk>/download', ScreeningDownloadView.as_view(), name='screening_download'),
-    path('screen_songs/reject', ScreeningRejectView.as_view(), name='screening_reject'),
-    path('screen_song/<int:pk>/rename', ScreeningRenameView.as_view(), name='screening_rename'),
 ]

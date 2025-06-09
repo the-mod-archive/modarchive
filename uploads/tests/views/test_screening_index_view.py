@@ -5,9 +5,9 @@ from django.urls.base import reverse
 from django.utils import timezone
 
 from homepage.tests import factories
-from songs import factories as song_factories
-from songs.models import NewSong
-from songs import constants
+from uploads import factories as upload_factories
+from uploads.models import NewSong
+from uploads import constants
 
 class ScreeningIndexAuthTests(TestCase):
     def test_screening_view_permits_access_to_authenticated_users(self):
@@ -147,7 +147,7 @@ class ScreeningIndexFilteringTests(TestCase):
         self.client.force_login(self.user)
 
     def test_screening_view_contains_new_songs(self):
-        song = song_factories.NewSongFactory(filename='song1.mod', uploader_profile=self.user.profile)
+        song = upload_factories.NewSongFactory(filename='song1.mod', uploader_profile=self.user.profile)
 
         response = self.client.get(reverse('screening_index'))
 
@@ -158,11 +158,11 @@ class ScreeningIndexFilteringTests(TestCase):
     def test_screening_view_filters_high_priority_songs(self):
         uploading_user = factories.UserFactory()
 
-        high_priority_song_1 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        high_priority_song_2 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        low_priority_song_1 = song_factories.NewSongFactory(uploader_profile=None)
-        low_priority_song_2 = song_factories.NewSongFactory(uploader_profile=None)
-        claimed_high_priority_song = song_factories.NewSongFactory(uploader_profile=uploading_user.profile, claimed_by=self.user.profile)
+        high_priority_song_1 = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        high_priority_song_2 = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        low_priority_song_1 = upload_factories.NewSongFactory(uploader_profile=None)
+        low_priority_song_2 = upload_factories.NewSongFactory(uploader_profile=None)
+        claimed_high_priority_song = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile, claimed_by=self.user.profile)
 
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.HIGH_PRIORITY_FILTER}")
 
@@ -177,11 +177,11 @@ class ScreeningIndexFilteringTests(TestCase):
     def test_screening_view_filters_low_priority_songs(self):
         uploading_user = factories.UserFactory()
 
-        high_priority_song_1 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        high_priority_song_2 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        low_priority_song_1 = song_factories.NewSongFactory(uploader_profile=None)
-        low_priority_song_2 = song_factories.NewSongFactory(uploader_profile=None)
-        claimed_song = song_factories.NewSongFactory(uploader_profile=None, claimed_by=self.user.profile)
+        high_priority_song_1 = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        high_priority_song_2 = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        low_priority_song_1 = upload_factories.NewSongFactory(uploader_profile=None)
+        low_priority_song_2 = upload_factories.NewSongFactory(uploader_profile=None)
+        claimed_song = upload_factories.NewSongFactory(uploader_profile=None, claimed_by=self.user.profile)
 
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.LOW_PRIORITY_FILTER}")
 
@@ -196,11 +196,11 @@ class ScreeningIndexFilteringTests(TestCase):
     def test_screening_view_filters_songs_by_uploader(self):
         uploading_user = factories.UserFactory()
 
-        song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        high_priority_song_2 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile, is_by_uploader=True)
-        song_factories.NewSongFactory(uploader_profile=None)
-        song_factories.NewSongFactory(uploader_profile=None)
-        song_that_should_be_excluded = song_factories.NewSongFactory(uploader_profile=uploading_user.profile, is_by_uploader=True, claimed_by=self.user.profile)
+        upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        high_priority_song_2 = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile, is_by_uploader=True)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        song_that_should_be_excluded = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile, is_by_uploader=True, claimed_by=self.user.profile)
 
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.BY_UPLOADER_FILTER}")
 
@@ -212,11 +212,11 @@ class ScreeningIndexFilteringTests(TestCase):
     def test_screening_view_shows_high_priority_songs_by_default(self):
         uploading_user = factories.UserFactory()
 
-        high_priority_song_1 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        high_priority_song_2 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        low_priority_song_1 = song_factories.NewSongFactory(uploader_profile=None)
-        low_priority_song_2 = song_factories.NewSongFactory(uploader_profile=None)
-        song_that_should_be_excluded = song_factories.NewSongFactory(uploader_profile=uploading_user.profile, claimed_by=self.user.profile)
+        high_priority_song_1 = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        high_priority_song_2 = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        low_priority_song_1 = upload_factories.NewSongFactory(uploader_profile=None)
+        low_priority_song_2 = upload_factories.NewSongFactory(uploader_profile=None)
+        song_that_should_be_excluded = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile, claimed_by=self.user.profile)
 
         response = self.client.get(f"{reverse('screening_index')}")
 
@@ -231,11 +231,11 @@ class ScreeningIndexFilteringTests(TestCase):
     def test_screening_view_shows_songs_claimed_by_current_user(self):
         uploading_user = factories.UserFactory()
 
-        song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        song_factories.NewSongFactory(uploader_profile=None)
-        song_factories.NewSongFactory(uploader_profile=None)
-        user_screening_song = song_factories.NewSongFactory(uploader_profile=None, claimed_by=self.user.profile)
+        upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        user_screening_song = upload_factories.NewSongFactory(uploader_profile=None, claimed_by=self.user.profile)
 
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.MY_SCREENING_FILTER}")
 
@@ -247,11 +247,11 @@ class ScreeningIndexFilteringTests(TestCase):
         uploading_user = factories.UserFactory()
         other_user = factories.UserFactory()
 
-        song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        song_factories.NewSongFactory(uploader_profile=None)
-        song_factories.NewSongFactory(uploader_profile=None)
-        user_screening_song = song_factories.NewSongFactory(uploader_profile=None, claimed_by=other_user.profile)
+        upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        user_screening_song = upload_factories.NewSongFactory(uploader_profile=None, claimed_by=other_user.profile)
 
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.OTHERS_SCREENING_FILTER}")
 
@@ -264,11 +264,11 @@ class ScreeningIndexFilteringTests(TestCase):
         other_user = factories.UserFactory()
 
         # Claimed more than 48 hours ago
-        song_factories.NewSongFactory(uploader_profile=uploading_user.profile, claimed_by=other_user.profile, claim_date=timezone.now() - timedelta(hours=49))
-        song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        song_factories.NewSongFactory(uploader_profile=None)
-        song_factories.NewSongFactory(uploader_profile=None)
-        user_screening_song = song_factories.NewSongFactory(uploader_profile=None, claimed_by=other_user.profile, claim_date=timezone.now())
+        upload_factories.NewSongFactory(uploader_profile=uploading_user.profile, claimed_by=other_user.profile, claim_date=timezone.now() - timedelta(hours=49))
+        upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        user_screening_song = upload_factories.NewSongFactory(uploader_profile=None, claimed_by=other_user.profile, claim_date=timezone.now())
 
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.OTHERS_SCREENING_FILTER}")
 
@@ -279,11 +279,11 @@ class ScreeningIndexFilteringTests(TestCase):
     def test_screening_view_shows_prescreened_songs(self):
         uploading_user = factories.UserFactory()
 
-        pre_screened_song_1 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile, flag=NewSong.Flags.PRE_SCREENED)
-        song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        song_factories.NewSongFactory(uploader_profile=None)
-        song_factories.NewSongFactory(uploader_profile=None)
-        pre_screened_song_2 = song_factories.NewSongFactory(uploader_profile=None, flag=NewSong.Flags.PRE_SCREENED)
+        pre_screened_song_1 = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile, flag=NewSong.Flags.PRE_SCREENED)
+        upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        pre_screened_song_2 = upload_factories.NewSongFactory(uploader_profile=None, flag=NewSong.Flags.PRE_SCREENED)
 
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.PRE_SCREENED_FILTER}")
 
@@ -295,11 +295,11 @@ class ScreeningIndexFilteringTests(TestCase):
     def test_screening_view_shows_prescreened_and_recommended_songs(self):
         uploading_user = factories.UserFactory()
 
-        pre_screened_song_1 = song_factories.NewSongFactory(uploader_profile=uploading_user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
-        song_factories.NewSongFactory(uploader_profile=uploading_user.profile)
-        song_factories.NewSongFactory(uploader_profile=None)
-        song_factories.NewSongFactory(uploader_profile=None)
-        pre_screened_song_2 = song_factories.NewSongFactory(uploader_profile=None, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        pre_screened_song_1 = upload_factories.NewSongFactory(uploader_profile=uploading_user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        upload_factories.NewSongFactory(uploader_profile=uploading_user.profile)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        upload_factories.NewSongFactory(uploader_profile=None)
+        pre_screened_song_2 = upload_factories.NewSongFactory(uploader_profile=None, flag=NewSong.Flags.PRE_SCREENED_PLUS)
 
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.PRE_SCREENED_AND_RECOMMENDED_FILTER}")
 
@@ -310,9 +310,9 @@ class ScreeningIndexFilteringTests(TestCase):
 
     def test_high_priority_filter_does_not_show_prescreened_songs(self):
         # Arrange
-        song_factories.NewSongFactory(uploader_profile=self.user.profile, flag=NewSong.Flags.PRE_SCREENED)
-        song_factories.NewSongFactory(uploader_profile=self.user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
-        high_priority_song_1 = song_factories.NewSongFactory(uploader_profile=self.user.profile)
+        upload_factories.NewSongFactory(uploader_profile=self.user.profile, flag=NewSong.Flags.PRE_SCREENED)
+        upload_factories.NewSongFactory(uploader_profile=self.user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        high_priority_song_1 = upload_factories.NewSongFactory(uploader_profile=self.user.profile)
 
         # Act
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.HIGH_PRIORITY_FILTER}")
@@ -323,9 +323,9 @@ class ScreeningIndexFilteringTests(TestCase):
 
     def test_low_priority_filter_does_not_show_prescreened_songs(self):
         # Arrange
-        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
-        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS)
-        low_priority_song_1 = song_factories.NewSongFactory()
+        upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        low_priority_song_1 = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.LOW_PRIORITY_FILTER}")
@@ -336,9 +336,9 @@ class ScreeningIndexFilteringTests(TestCase):
 
     def test_uploaded_by_artist_filter_does_not_show_prescreened_songs(self):
         # Arrange
-        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, is_by_uploader=True)
-        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS, is_by_uploader=True)
-        by_uploader_song_1 = song_factories.NewSongFactory(is_by_uploader=True)
+        upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, is_by_uploader=True)
+        upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS, is_by_uploader=True)
+        by_uploader_song_1 = upload_factories.NewSongFactory(is_by_uploader=True)
 
         # Act
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.BY_UPLOADER_FILTER}")
@@ -349,10 +349,10 @@ class ScreeningIndexFilteringTests(TestCase):
 
     def test_second_opinion_filter_only_shows_songs_with_second_opinion_flag(self):
         # Arrange
-        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
-        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS)
-        second_opinion_song_1 = song_factories.NewSongFactory(flag=NewSong.Flags.NEEDS_SECOND_OPINION)
-        second_opinion_song_2 = song_factories.NewSongFactory(flag=NewSong.Flags.NEEDS_SECOND_OPINION)
+        upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        second_opinion_song_1 = upload_factories.NewSongFactory(flag=NewSong.Flags.NEEDS_SECOND_OPINION)
+        second_opinion_song_2 = upload_factories.NewSongFactory(flag=NewSong.Flags.NEEDS_SECOND_OPINION)
 
         # Act
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.NEEDS_SECOND_OPINION_FILTER}")
@@ -364,10 +364,10 @@ class ScreeningIndexFilteringTests(TestCase):
 
     def test_possible_duplicate_filter_only_shows_songs_with_possible_duplicate_flag(self):
         # Arrange
-        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
-        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS)
-        possible_duplicate_song_1 = song_factories.NewSongFactory(flag=NewSong.Flags.POSSIBLE_DUPLICATE)
-        possible_duplicate_song_2 = song_factories.NewSongFactory(flag=NewSong.Flags.POSSIBLE_DUPLICATE)
+        upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        possible_duplicate_song_1 = upload_factories.NewSongFactory(flag=NewSong.Flags.POSSIBLE_DUPLICATE)
+        possible_duplicate_song_2 = upload_factories.NewSongFactory(flag=NewSong.Flags.POSSIBLE_DUPLICATE)
 
         # Act
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.POSSIBLE_DUPLICATE_FILTER}")
@@ -379,10 +379,10 @@ class ScreeningIndexFilteringTests(TestCase):
 
     def test_under_investigation_filter_only_shows_songs_with_under_investigation_flag(self):
         # Arrange
-        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
-        song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS)
-        under_investigation_song_1 = song_factories.NewSongFactory(flag=NewSong.Flags.UNDER_INVESTIGATION)
-        under_investigation_song_2 = song_factories.NewSongFactory(flag=NewSong.Flags.UNDER_INVESTIGATION)
+        upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        under_investigation_song_1 = upload_factories.NewSongFactory(flag=NewSong.Flags.UNDER_INVESTIGATION)
+        under_investigation_song_2 = upload_factories.NewSongFactory(flag=NewSong.Flags.UNDER_INVESTIGATION)
 
         # Act
         response = self.client.get(f"{reverse('screening_index')}?filter={constants.UNDER_INVESTIGATION_FILTER}")

@@ -27,10 +27,12 @@
             </ul>
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
+                    {% if perms.uploads.can_upload_songs %}    
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'upload_songs' %}">Upload Songs</a>
                     </li>
-                    {% if perms.songs.can_approve_songs %}
+                    {% endif %}
+                    {% if perms.uploads.can_approve_songs %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'screening_index' %}">Screen Songs</a>
                         </li>

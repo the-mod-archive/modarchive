@@ -90,3 +90,10 @@ class Command(BaseCommand):
                         f'Make sure migrations are applied.'
                     )
                 )
+        
+        if group_name == 'Standard':
+            permission = Permission.objects.get(
+                codename='can_upload_songs',
+                content_type__app_label='uploads',
+            )
+            group.permissions.add(permission)
