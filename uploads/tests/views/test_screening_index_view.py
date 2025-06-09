@@ -138,6 +138,14 @@ class ScreeningIndexAvailableActionTests(TestCase):
         # Assert
         self.assertEqual(len(response.context['actions']), 1)
         self.assertIn(constants.CLAIM_ACTION, response.context['actions'])
+    
+    def test_default_options_selected(self):
+        # Act
+        response = self.client.get(f"{reverse('screening_index')}")
+
+        # Assert
+        self.assertEqual(len(response.context['actions']), 1)
+        self.assertIn(constants.CLAIM_ACTION, response.context['actions'])
 
 class ScreeningIndexFilteringTests(TestCase):
     def setUp(self):
