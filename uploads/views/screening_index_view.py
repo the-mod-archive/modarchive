@@ -31,7 +31,7 @@ class ScreeningIndexView(PermissionRequiredMixin, PageNavigationListView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['filter_options'] = self.filter_options
-        context['filter'] = self.request.GET.get('filter', 'all')
+        context['filter'] = self.request.GET.get('filter', constants.HIGH_PRIORITY_FILTER)
 
         if context['filter'] in [
             constants.HIGH_PRIORITY_FILTER,
