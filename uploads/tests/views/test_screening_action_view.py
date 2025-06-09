@@ -9,8 +9,10 @@ from django.urls.base import reverse
 
 from homepage.tests import factories
 from songs import factories as song_factories
-from songs.models import NewSong, Song
-from songs import constants
+from uploads import factories as upload_factories
+from songs.models import Song
+from uploads.models import NewSong
+from uploads import constants
 from artists.factories import ArtistFactory
 
 SONG_1_FILENAME = 'song1.mod'
@@ -65,7 +67,7 @@ class ClaimingActionTests(TestCase):
 
     def test_screener_can_claim_single_unclaimed_song(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME)
+        song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.CLAIM_KEYWORD})
@@ -78,8 +80,8 @@ class ClaimingActionTests(TestCase):
 
     def test_screener_can_claim_multiple_unclaimed_songs(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME)
-        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME)
+        song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME)
+        song2 = upload_factories.NewSongFactory(filename=SONG_2_FILENAME)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.CLAIM_KEYWORD})
@@ -96,8 +98,8 @@ class ClaimingActionTests(TestCase):
     def test_cannot_claim_songs_already_claimed_by_others(self):
         # Arrange
         other_user = factories.UserFactory()
-        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=other_user.profile)
-        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=other_user.profile)
+        song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=other_user.profile)
+        song2 = upload_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=other_user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.CLAIM_KEYWORD})
@@ -112,7 +114,7 @@ class ClaimingActionTests(TestCase):
     def test_cannot_unclaim_song_claimed_by_others(self):
         # Arrange
         other_user = factories.UserFactory()
-        song1 = song_factories.NewSongFactory(claimed_by=other_user.profile)
+        song1 = upload_factories.NewSongFactory(claimed_by=other_user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.UNCLAIM_KEYWORD})
@@ -124,7 +126,7 @@ class ClaimingActionTests(TestCase):
 
     def test_can_unclaim_song_if_claimed_by_user(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile)
+        song1 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.UNCLAIM_KEYWORD})
@@ -144,7 +146,7 @@ class FlaggingActionTests(TestCase):
 
     def test_can_flag_claimed_song_as_under_investigation(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile)
+        song1 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.UNDER_INVESTIGATION_KEYWORD})
@@ -157,7 +159,7 @@ class FlaggingActionTests(TestCase):
 
     def test_cannot_flag_unclaimed_song_as_under_investigation(self):
         # Arrange
-        song1 = song_factories.NewSongFactory()
+        song1 = upload_factories.NewSongFactory()
 
         # Act
         self.client.force_login(self.user)
@@ -172,7 +174,7 @@ class FlaggingActionTests(TestCase):
     def test_cannot_flag_song_claimed_by_others_as_under_investigation(self):
         # Arrange
         other_user = factories.UserFactory()
-        song1 = song_factories.NewSongFactory(claimed_by=other_user.profile)
+        song1 = upload_factories.NewSongFactory(claimed_by=other_user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.UNDER_INVESTIGATION_KEYWORD})
@@ -185,9 +187,9 @@ class FlaggingActionTests(TestCase):
 
     def test_can_flag_claimed_song_as_possible_duplicate(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile)
-        song2 = song_factories.NewSongFactory(claimed_by=self.user.profile)
-        song3 = song_factories.NewSongFactory(claimed_by=self.user.profile)
+        song1 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
+        song2 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
+        song3 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.POSSIBLE_DUPLICATE_KEYWORD})
@@ -206,7 +208,7 @@ class FlaggingActionTests(TestCase):
 
     def test_cannot_flag_unclaimed_song_as_possible_duplicate(self):
         # Arrange
-        song1 = song_factories.NewSongFactory()
+        song1 = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.POSSIBLE_DUPLICATE_KEYWORD})
@@ -220,7 +222,7 @@ class FlaggingActionTests(TestCase):
     def test_cannot_flag_song_claimed_by_others_as_possible_duplicate(self):
         # Arrange
         other_user = factories.UserFactory()
-        song1 = song_factories.NewSongFactory(claimed_by=other_user.profile)
+        song1 = upload_factories.NewSongFactory(claimed_by=other_user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.POSSIBLE_DUPLICATE_KEYWORD})
@@ -233,8 +235,8 @@ class FlaggingActionTests(TestCase):
 
     def test_can_prescreen_claimed_songs(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=self.user.profile)
-        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=self.user.profile)
+        song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=self.user.profile)
+        song2 = upload_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_KEYWORD})
@@ -254,8 +256,8 @@ class FlaggingActionTests(TestCase):
 
     def test_cannot_prescreen_unclaimed_songs(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME)
-        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME)
+        song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME)
+        song2 = upload_factories.NewSongFactory(filename=SONG_2_FILENAME)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_KEYWORD})
@@ -274,8 +276,8 @@ class FlaggingActionTests(TestCase):
     def test_cannot_prescreen_songs_claimed_by_others(self):
         # Arrange
         other_user = factories.UserFactory()
-        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=other_user.profile)
-        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=other_user.profile)
+        song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=other_user.profile)
+        song2 = upload_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=other_user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_KEYWORD})
@@ -291,8 +293,8 @@ class FlaggingActionTests(TestCase):
 
     def test_can_prescreen_and_recommend_claimed_songs(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=self.user.profile)
-        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=self.user.profile)
+        song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=self.user.profile)
+        song2 = upload_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD})
@@ -312,8 +314,8 @@ class FlaggingActionTests(TestCase):
 
     def test_cannot_prescreen_and_recommend_unclaimed_songs(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME)
-        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME)
+        song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME)
+        song2 = upload_factories.NewSongFactory(filename=SONG_2_FILENAME)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD})
@@ -332,8 +334,8 @@ class FlaggingActionTests(TestCase):
     def test_cannot_prescreen_and_recommend_songs_claimed_by_others(self):
         # Arrange
         other_user = factories.UserFactory()
-        song1 = song_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=other_user.profile)
-        song2 = song_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=other_user.profile)
+        song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME, claimed_by=other_user.profile)
+        song2 = upload_factories.NewSongFactory(filename=SONG_2_FILENAME, claimed_by=other_user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.PRE_SCREEN_AND_RECOMMEND_KEYWORD})
@@ -349,9 +351,9 @@ class FlaggingActionTests(TestCase):
 
     def test_can_flag_claimed_song_as_needing_second_opinion(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile)
-        song2 = song_factories.NewSongFactory(claimed_by=self.user.profile)
-        song3 = song_factories.NewSongFactory(claimed_by=self.user.profile)
+        song1 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
+        song2 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
+        song3 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.NEEDS_SECOND_OPINION_KEYWORD})
@@ -371,8 +373,8 @@ class FlaggingActionTests(TestCase):
     def test_cannot_flag_unclaimed_song_as_needing_second_opinion(self):
         # Arrange
         other_user = factories.UserFactory()
-        song1 = song_factories.NewSongFactory(claimed_by=other_user.profile)
-        song2 = song_factories.NewSongFactory()
+        song1 = upload_factories.NewSongFactory(claimed_by=other_user.profile)
+        song2 = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.NEEDS_SECOND_OPINION_KEYWORD})
@@ -388,7 +390,7 @@ class FlaggingActionTests(TestCase):
 
     def test_cannot_clear_flag_from_unclaimed_song(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=self.user.profile)
+        song1 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.CLEAR_FLAG_KEYWORD})
@@ -402,7 +404,7 @@ class FlaggingActionTests(TestCase):
     def test_cannot_clear_flags_from_songs_claimed_by_others(self):
         # Arrange
         other_user = factories.UserFactory()
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=self.user.profile, claimed_by=other_user.profile)
+        song1 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=self.user.profile, claimed_by=other_user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.CLEAR_FLAG_KEYWORD})
@@ -416,8 +418,8 @@ class FlaggingActionTests(TestCase):
     def test_can_clear_flags_from_songs_claimed_by_user(self):
         # Arrange
         other_user = factories.UserFactory()
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=self.user.profile, claimed_by=self.user.profile)
-        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=other_user.profile, claimed_by=self.user.profile)
+        song1 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=self.user.profile, claimed_by=self.user.profile)
+        song2 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, flagged_by=other_user.profile, claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.CLEAR_FLAG_KEYWORD})
@@ -447,7 +449,7 @@ class ApprovalActionValidationTests(TestCase):
 
     def test_cannot_approve_single_unclaimed_song(self):
         # Arrange
-        song1 = song_factories.NewSongFactory()
+        song1 = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
@@ -460,7 +462,7 @@ class ApprovalActionValidationTests(TestCase):
 
     def test_cannot_approve_song_under_investigation(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.UNDER_INVESTIGATION)
+        song1 = upload_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.UNDER_INVESTIGATION)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
@@ -473,7 +475,7 @@ class ApprovalActionValidationTests(TestCase):
 
     def test_cannot_approve_possible_duplicate_song(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE)
+        song1 = upload_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
@@ -487,7 +489,7 @@ class ApprovalActionValidationTests(TestCase):
     def test_song_with_duplicate_filename_in_main_archive_cannot_be_approved(self):
         # Arrange
         song_factories.SongFactory(filename=SONG_1_FILENAME, hash='1234567890')
-        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile, filename=SONG_1_FILENAME, hash='0987654321')
+        song1 = upload_factories.NewSongFactory(claimed_by=self.user.profile, filename=SONG_1_FILENAME, hash='0987654321')
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
@@ -501,7 +503,7 @@ class ApprovalActionValidationTests(TestCase):
     def test_song_with_duplicate_hash_in_main_archive_cannot_be_approved(self):
         # Arrange
         song_factories.SongFactory(hash='1234567890', filename='song2.mod')
-        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile, hash='1234567890', filename=SONG_1_FILENAME)
+        song1 = upload_factories.NewSongFactory(claimed_by=self.user.profile, hash='1234567890', filename=SONG_1_FILENAME)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
@@ -514,9 +516,9 @@ class ApprovalActionValidationTests(TestCase):
 
     def test_cannot_bulk_approve_unless_all_songs_are_prescreened(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
-        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
-        song3 = song_factories.NewSongFactory()
+        song1 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song2 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song3 = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_KEYWORD})
@@ -529,9 +531,9 @@ class ApprovalActionValidationTests(TestCase):
 
     def test_cannot_bulk_approve_and_feature_unless_all_songs_are_prescreened(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
-        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
-        song3 = song_factories.NewSongFactory()
+        song1 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song2 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song3 = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id, song3.id], 'action': constants.APPROVE_AND_FEATURE_KEYWORD})
@@ -545,8 +547,8 @@ class ApprovalActionValidationTests(TestCase):
     def test_cannot_bulk_approve_if_any_song_has_duplicate_filename(self):
         # Arrange
         song_factories.SongFactory(filename=SONG_1_FILENAME)
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_1_FILENAME, hash='0987654321')
-        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_2_FILENAME, hash='1234567890')
+        song1 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_1_FILENAME, hash='0987654321')
+        song2 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_2_FILENAME, hash='1234567890')
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.APPROVE_KEYWORD})
@@ -560,8 +562,8 @@ class ApprovalActionValidationTests(TestCase):
     def test_cannot_bulk_approve_if_any_song_has_duplicate_hash(self):
         # Arrange
         song_factories.SongFactory(hash='1234567890')
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_1_FILENAME, hash='0987654321')
-        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_2_FILENAME, hash='1234567890')
+        song1 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_1_FILENAME, hash='0987654321')
+        song2 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, filename=SONG_2_FILENAME, hash='1234567890')
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.APPROVE_KEYWORD})
@@ -579,9 +581,9 @@ class ApprovalActionValidationTests(TestCase):
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
 
-        song1 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, claimed_by=other_user.profile)
-        song2 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
-        song3 = song_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song1 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED, claimed_by=other_user.profile)
+        song2 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
+        song3 = upload_factories.NewSongFactory(flag=NewSong.Flags.PRE_SCREENED)
 
         # Act
         self.client.force_login(user)
@@ -618,7 +620,7 @@ class ApprovalActionTests(TestCase):
                 os.remove(entry_path)
 
     def make_song(self, claimed_by, song_hash, filename, song_format, uploader_profile, is_by_uploader=False, flag=None):
-        song = song_factories.NewSongFactory(
+        song = upload_factories.NewSongFactory(
             claimed_by=claimed_by,
             hash=song_hash,
             filename=filename,
@@ -843,7 +845,7 @@ class RejectActionTests(TestCase):
 
     def test_reject_one_song_redirects_to_rejection_page(self):
         # Arrange
-        song1 = song_factories.NewSongFactory()
+        song1 = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.REJECT_KEYWORD})
@@ -853,8 +855,8 @@ class RejectActionTests(TestCase):
 
     def test_reject_multiple_songs_redirects_to_rejection_page(self):
         # Arrange
-        song1 = song_factories.NewSongFactory()
-        song2 = song_factories.NewSongFactory()
+        song1 = upload_factories.NewSongFactory()
+        song2 = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.REJECT_KEYWORD})
@@ -871,7 +873,7 @@ class RenameActionTests(TestCase):
 
     def test_cannot_rename_unclaimed_song(self):
         # Arrange
-        song1 = song_factories.NewSongFactory()
+        song1 = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.RENAME_KEYWORD})
@@ -884,8 +886,8 @@ class RenameActionTests(TestCase):
 
     def test_cannot_rename_multiple_songs(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile)
-        song2 = song_factories.NewSongFactory(claimed_by=self.user.profile)
+        song1 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
+        song2 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id, song2.id], 'action': constants.RENAME_KEYWORD})
@@ -898,7 +900,7 @@ class RenameActionTests(TestCase):
 
     def test_rename_one_song_redirects_to_rename_page(self):
         # Arrange
-        song1 = song_factories.NewSongFactory(claimed_by=self.user.profile)
+        song1 = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.RENAME_KEYWORD})

@@ -8,14 +8,15 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.conf import settings
 
-from songs import constants, forms
-from songs.models import NewSong
+from uploads import forms
+from uploads.models import NewSong
+from uploads import constants
 
 
 class ScreeningRenameView(PermissionRequiredMixin, FormView):
     template_name="screening_rename.html"
     form_class = forms.RenameForm
-    permission_required = 'songs.can_approve_songs'
+    permission_required = 'uploads.can_approve_songs'
     model = NewSong
 
     def form_invalid(self, form):

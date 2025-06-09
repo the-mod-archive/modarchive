@@ -14,12 +14,12 @@ from django.forms import CharField, HiddenInput
 from django.urls import reverse_lazy
 from django.utils import timezone
 
-from songs import constants, forms
-from songs.models import NewSong, RejectedSong
+from uploads import forms, constants
+from uploads.models import NewSong, RejectedSong
 
 class ScreeningRejectView(PermissionRequiredMixin, FormView):
     template_name="screening_reject.html"
-    permission_required = 'songs.can_approve_songs'
+    permission_required = 'uploads.can_approve_songs'
     form_class = forms.RejectionForm
     success_url = reverse_lazy('screening_index')
 

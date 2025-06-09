@@ -10,13 +10,14 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.utils import timezone
 from django.urls.base import reverse
 
-from songs.models import NewSong, Song
-from songs import constants
+from songs.models import Song
+from uploads.models import NewSong
+from uploads import constants
 from artists.models import Artist
 
 class ScreeningActionView(PermissionRequiredMixin, View):
     template_name = 'screening_action_result.html'
-    permission_required = 'songs.can_approve_songs'
+    permission_required = 'uploads.can_approve_songs'
 
     class ScreeningAction:
         CLAIM = constants.CLAIM_KEYWORD

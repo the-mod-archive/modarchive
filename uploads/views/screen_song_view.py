@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import DetailView
 
-from songs.models import NewSong
-from songs import constants
+from uploads.models import NewSong
+from uploads import constants
 
 class ScreenSongView(PermissionRequiredMixin, DetailView):
-    permission_required = 'songs.can_approve_songs'
+    permission_required = 'uploads.can_approve_songs'
     model = NewSong
     template_name = 'screen_song.html'
     context_object_name = 'new_song'

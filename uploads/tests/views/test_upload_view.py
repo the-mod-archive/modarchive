@@ -10,10 +10,12 @@ from django.test import TestCase, override_settings
 from django.urls.base import reverse
 
 from homepage.tests import factories
-from songs.models import Song, NewSong
+from songs.models import Song
+from uploads.models import NewSong
 
 from songs import factories as song_factories
-from songs import constants
+from uploads import factories as upload_factories
+from uploads import constants
 
 OCTET_STREAM = 'application/octet-stream'
 SONG_TITLE = 'Test Song'
@@ -192,7 +194,7 @@ class UploadViewTests(TestCase):
     def test_reject_files_already_in_screening(self, mock_mod_info):
         # Arrange
         mock_mod_info.return_value = self.test_mod_info
-        song_factories.NewSongFactory(hash='47c9d81e6c4966913e068a84b1b340f6', uploader_profile=self.user.profile)
+        upload_factories.NewSongFactory(hash='47c9d81e6c4966913e068a84b1b340f6', uploader_profile=self.user.profile)
         uploaded_file = self.create_file(TEST_MOD_FILENAME)
 
         # Act
@@ -391,7 +393,7 @@ class UploadViewTests(TestCase):
         # Arrange
         uploaded_file = self.create_file(TEST_MOD_FILENAME)
         mock_mod_info.return_value = self.test_mod_info
-        song_factories.RejectedSongFactory(hash='47c9d81e6c4966913e068a84b1b340f6')
+        upload_factories.RejectedSongFactory(hash='47c9d81e6c4966913e068a84b1b340f6')
 
         # Act
         response = self.client.post(reverse('upload_songs'), {
@@ -418,7 +420,7 @@ class UploadViewTests(TestCase):
         # Arrange
         uploaded_file = self.create_file(TEST_MOD_FILENAME)
         mock_mod_info.return_value = self.test_mod_info
-        song_factories.RejectedSongFactory(hash='47c9d81e6c4966913e068a84b1b340f6', is_temporary=True)
+        upload_factories.RejectedSongFactory(hash='47c9d81e6c4966913e068a84b1b340f6', is_temporary=True)
 
         # Act
         response = self.client.post(reverse('upload_songs'), {

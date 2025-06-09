@@ -3,14 +3,15 @@ from django.urls.base import reverse
 from django.contrib.auth.models import Permission
 
 from songs import factories as song_factories
-from songs import constants
-from songs.models import NewSong
+from uploads import factories as upload_factories
+from uploads import constants
+from uploads.models import NewSong
 from homepage.tests import factories
 
 class ScreenSongAuthenticationTests(TestCase):
     def test_unauthenticated_user_is_redirected_to_login(self):
         # Arrange
-        song = song_factories.NewSongFactory()
+        song = upload_factories.NewSongFactory()
         login_url = reverse('login')
         screening_url = reverse('screen_song', kwargs = {'pk': song.id})
 
@@ -24,7 +25,7 @@ class ScreenSongAuthenticationTests(TestCase):
     def test_authenticated_user_without_permission_is_forbidden(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.NewSongFactory()
+        song = upload_factories.NewSongFactory()
         self.client.force_login(user)
 
         # Act
@@ -38,7 +39,7 @@ class ScreenSongAuthenticationTests(TestCase):
         user = factories.UserFactory()
         permission = Permission.objects.get(codename='can_approve_songs')
         user.user_permissions.add(permission)
-        song = song_factories.NewSongFactory()
+        song = upload_factories.NewSongFactory()
         self.client.force_login(user)
 
         # Act
@@ -59,7 +60,7 @@ class ScreenSongContextDataTests(TestCase):
 
     def test_unclaimed_song_has_correct_context_data(self):
         # Arrange
-        song = song_factories.NewSongFactory()
+        song = upload_factories.NewSongFactory()
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
@@ -74,7 +75,7 @@ class ScreenSongContextDataTests(TestCase):
 
     def test_claimed_song_with_no_flags_has_correct_context_data(self):
         # Arrange
-        song = song_factories.NewSongFactory(claimed_by=self.user.profile)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
@@ -97,7 +98,7 @@ class ScreenSongContextDataTests(TestCase):
     def test_song_claimed_by_other_has_correct_context_data(self):
         # Arrange
         other_user = factories.UserFactory()
-        song = song_factories.NewSongFactory(claimed_by=other_user.profile)
+        song = upload_factories.NewSongFactory(claimed_by=other_user.profile)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs = {'pk': song.id}))
@@ -111,7 +112,7 @@ class ScreenSongContextDataTests(TestCase):
 
     def test_claimed_song_and_flagged_by_self_as_second_opinion_has_correct_context_data(self):
         # Arrange
-        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flagged_by=self.user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, flagged_by=self.user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -128,7 +129,7 @@ class ScreenSongContextDataTests(TestCase):
 
     def test_claimed_song_needing_second_opinion_has_correct_context_data(self):
         # Arrange
-        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.NEEDS_SECOND_OPINION)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -152,7 +153,7 @@ class ScreenSongContextDataTests(TestCase):
 
     def test_claimed_song_possible_duplicate_has_correct_context_data(self):
         # Arrange
-        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.POSSIBLE_DUPLICATE)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -174,7 +175,7 @@ class ScreenSongContextDataTests(TestCase):
 
     def test_song_under_investigation_has_correct_context_data(self):
         # Arrange
-        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.UNDER_INVESTIGATION)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.UNDER_INVESTIGATION)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -196,7 +197,7 @@ class ScreenSongContextDataTests(TestCase):
 
     def test_claimed_pre_screened_song_has_correct_context_data(self):
         # Arrange
-        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.PRE_SCREENED)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.PRE_SCREENED)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))
@@ -216,7 +217,7 @@ class ScreenSongContextDataTests(TestCase):
 
     def test_claimed_pre_screened_and_recommended_song_has_correct_context_data(self):
         # Arrange
-        song = song_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
+        song = upload_factories.NewSongFactory(claimed_by=self.user.profile, flag=NewSong.Flags.PRE_SCREENED_PLUS)
 
         # Act
         response = self.client.get(reverse('screen_song', kwargs={'pk': song.id}))

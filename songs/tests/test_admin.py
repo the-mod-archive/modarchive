@@ -7,6 +7,7 @@ from django.conf import settings
 from homepage.tests import factories
 from songs import factories as song_factories
 from songs import models
+from uploads import models as upload_models
 from artists import factories as artist_factories
 
 class MergeSongValidationTests(TestCase):
@@ -115,9 +116,9 @@ class MergeSongTests(TestCase):
         self.assertFalse(os.path.exists(song_to_be_merged.get_archive_path()))
         self.assertTrue(os.path.exists(f'{settings.REMOVED_FILE_DIR}/{song_to_be_merged.filename}.zip'))
         self.assertFalse(song_to_be_merged.artist_set.exists())
-        self.assertTrue(models.RejectedSong.objects.filter(hash=song_to_be_merged.hash).exists())
-        rejected = models.RejectedSong.objects.get(hash=song_to_be_merged.hash)
-        self.assertEqual(rejected.reason, models.RejectedSong.Reasons.ALREADY_EXISTS)
+        self.assertTrue(upload_models.RejectedSong.objects.filter(hash=song_to_be_merged.hash).exists())
+        rejected = upload_models.RejectedSong.objects.get(hash=song_to_be_merged.hash)
+        self.assertEqual(rejected.reason, upload_models.RejectedSong.Reasons.ALREADY_EXISTS)
         self.assertEqual(rejected.message, f'TIDY-UP MERGED. {song_to_be_merged.filename} already exists as {song_to_merge_into.filename} on the archive.')
         self.assertEqual(rejected.filename, song_to_be_merged.filename)
         self.assertEqual(rejected.hash, song_to_be_merged.hash)

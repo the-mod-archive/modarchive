@@ -7,9 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 
 from modarchive import file_repository
-from songs import forms, constants
-from songs.models import NewSong, Song, RejectedSong
-from songs.mod_info import get_mod_info
+from songs.models import Song
+from uploads.models import NewSong, RejectedSong
+from uploads.mod_info import get_mod_info
+from uploads import constants, forms
 
 class UploadView(LoginRequiredMixin, FormView):
     template_name="upload.html"

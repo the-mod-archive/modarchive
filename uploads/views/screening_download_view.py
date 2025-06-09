@@ -5,10 +5,10 @@ from django.http import HttpResponse
 from django.views.generic.base import View
 from django.shortcuts import get_object_or_404
 
-from songs.models import NewSong
+from uploads.models import NewSong
 
 class ScreeningDownloadView(PermissionRequiredMixin, View):
-    permission_required = 'songs.can_approve_songs'
+    permission_required = 'uploads.can_approve_songs'
 
     def get(self, request, pk):
         song = get_object_or_404(NewSong, id=pk)
