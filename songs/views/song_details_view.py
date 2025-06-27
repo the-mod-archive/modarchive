@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from django.views.generic.base import ContextMixin, View
@@ -9,7 +9,9 @@ from interactions.models import ArtistComment
 from songs.models import Song
 from songs import forms
 
-class SongDetailsView(LoginRequiredMixin, ContextMixin, View):
+class SongDetailsView(PermissionRequiredMixin, ContextMixin, View):
+    permission_required = 'interactions.add_artistcomment'
+
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)

@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.views.generic.base import ContextMixin
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import View
 from django.shortcuts import redirect, render
 from django.http import Http404
@@ -10,7 +10,9 @@ from interactions.forms import AddCommentForm
 from songs.forms import SongGenreForm
 from songs.models import Song
 
-class CommentView(LoginRequiredMixin, ContextMixin, View):
+class CommentView(PermissionRequiredMixin, ContextMixin, View):
+    permission_required = 'interactions.add_comment'
+
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)

@@ -6,12 +6,20 @@ DEBUG = False
 
 DATABASES['legacy'] = {
     'ENGINE': 'django.db.backends.mysql',
-    'HOST': os.getenv('MYSQL_HOST', 'localhost'),
-    'NAME': os.getenv('MYSQL_DATABASE_NAME', 'tma'),
+    'HOST': os.getenv('MYSQL_HOST'),
+    'NAME': os.getenv('MYSQL_DATABASE_NAME'),
     'USER': os.getenv('MYSQL_USERNAME'),
     'PASSWORD': os.getenv('MYSQL_PASSWORD'),
     'PORT': os.getenv('MYSQL_PORT', '3306')
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")

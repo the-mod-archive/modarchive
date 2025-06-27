@@ -2,12 +2,14 @@ from django.db.models import F
 from django.shortcuts import redirect, get_object_or_404
 
 from django.views.generic import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from interactions.models import Favorite
 from songs.models import Song
 
-class AddFavoriteView(LoginRequiredMixin, View):
+class AddFavoriteView(PermissionRequiredMixin, View):
+    permission_required = 'interactions.add_favorite'
+
     def is_own_song(self, profile, song_id):
         return hasattr(profile, 'artist') and profile.artist.songs.filter(id=song_id).count() > 0
 

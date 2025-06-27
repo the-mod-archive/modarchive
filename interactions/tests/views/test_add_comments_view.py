@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from django.contrib.auth.models import Permission
 from artists.factories import ArtistFactory
 from homepage.tests.factories import UserFactory
 from interactions.factories import CommentFactory
@@ -12,7 +13,7 @@ class AddCommentTests(TestCase):
 
     def test_get_add_comment_page_happy_path(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         self.client.force_login(user)
 
@@ -27,7 +28,7 @@ class AddCommentTests(TestCase):
 
     def test_post_add_comment_happy_path(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         self.client.force_login(user)
 
@@ -40,9 +41,35 @@ class AddCommentTests(TestCase):
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
         self.assertEqual(1, len(song.comment_set.all()))
 
-    def test_post_add_comment_calculates_stats_correctly(self):
+    def test_cannot_get_comment_page_without_permission(self):
         # Arrange
         user = UserFactory()
+        self.client.force_login(user)
+        song = SongFactory()
+
+        # Act
+        response = self.client.get(reverse('add_comment', kwargs={'pk': song.id}))
+
+        # Assert
+        self.assertEqual(403, response.status_code)
+
+    def test_cannot_post_comment_without_permission(self):
+        # Arrange
+        user = UserFactory()
+        self.client.force_login(user)
+        song = SongFactory()
+
+        # Act
+        response = self.client.post(
+            reverse('add_comment', kwargs={'pk': song.id}), {'rating': 10, 'text': self.REVIEW_TEXT}
+        )
+
+        # Assert
+        self.assertEqual(403, response.status_code)
+
+    def test_post_add_comment_calculates_stats_correctly(self):
+        # Arrange
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         SongStatsFactory(song=song)
         self.client.force_login(user)
@@ -60,7 +87,7 @@ class AddCommentTests(TestCase):
 
     def test_post_add_comment_calculates_stats_correctly_with_existing_comments(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         SongStatsFactory(song=song)
         CommentFactory(song=song, rating=5, text='some review')
@@ -79,7 +106,7 @@ class AddCommentTests(TestCase):
 
     def test_post_add_comment_calculates_stats_correctly_when_stats_object_not_created_yet(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         self.client.force_login(user)
 
@@ -96,7 +123,7 @@ class AddCommentTests(TestCase):
 
     def test_get_user_redirected_for_own_song(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         ArtistFactory(user=user, profile=user.profile, songs=(song,))
         self.client.force_login(user)
@@ -109,7 +136,7 @@ class AddCommentTests(TestCase):
 
     def test_post_user_redirected_for_own_song(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         ArtistFactory(user=user, profile=user.profile, songs=(song,))
         self.client.force_login(user)
@@ -125,7 +152,7 @@ class AddCommentTests(TestCase):
 
     def test_get_user_redirected_when_already_commented(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         CommentFactory(profile=user.profile, song=song)
         self.client.force_login(user)
@@ -138,7 +165,7 @@ class AddCommentTests(TestCase):
 
     def test_post_user_redirected_when_already_commented(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         CommentFactory(profile=user.profile, song=song)
         self.client.force_login(user)
@@ -176,7 +203,7 @@ class AddCommentTests(TestCase):
 
     def test_genre_form_available_when_song_has_no_genre(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         self.client.force_login(user)
 
@@ -189,7 +216,7 @@ class AddCommentTests(TestCase):
 
     def test_genre_form_not_available_when_song_has_genre(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory(genre=Song.Genres.ELECTRONIC_GENERAL)
         self.client.force_login(user)
 
@@ -201,7 +228,7 @@ class AddCommentTests(TestCase):
 
     def test_post_genre_adds_genre_to_song_when_not_already_set(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
         self.client.force_login(user)
 
@@ -220,7 +247,7 @@ class AddCommentTests(TestCase):
 
     def test_post_cannot_change_genre_if_already_set_in_song(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory(genre=Song.Genres.ELECTRONIC_GENERAL)
         self.client.force_login(user)
 
@@ -239,7 +266,7 @@ class AddCommentTests(TestCase):
 
     def test_post_leaving_genre_blank_does_not_set_genre_to_blank(self):
         # Arrange
-        user = UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory(genre=Song.Genres.ELECTRONIC_GENERAL)
         self.client.force_login(user)
 
