@@ -1,8 +1,9 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from songs import factories as song_factories
-from artists.tests import factories as artist_factories
+from songs.factories import SongFactory, SongStatsFactory, SongRedirectFactory
+from artists.factories import ArtistFactory
+from interactions.factories import CommentFactory, FavoriteFactory, ArtistCommentFactory
 from homepage.tests import factories
 
 class ViewSongTests(TestCase):
@@ -13,11 +14,11 @@ class ViewSongTests(TestCase):
     COMMENT_TEXT_2 = "I disagree, this was not a song."
 
     def test_context_contains_song_and_comments(self):
-        song = song_factories.SongFactory(filename=self.FILE_2_FILENAME, title=self.FILE_2_TITLE)
-        song_factories.SongStatsFactory(song=song)
+        song = SongFactory(filename=self.FILE_2_FILENAME, title=self.FILE_2_TITLE)
+        SongStatsFactory(song=song)
         response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
-        song_factories.CommentFactory(song=song, rating=10, text=self.COMMENT_TEXT_1)
-        song_factories.CommentFactory(song=song, rating=5, text=self.COMMENT_TEXT_2)
+        CommentFactory(song=song, rating=10, text=self.COMMENT_TEXT_1)
+        CommentFactory(song=song, rating=5, text=self.COMMENT_TEXT_2)
 
         self.assertTrue('song' in response.context)
         song = response.context['song']
@@ -31,7 +32,7 @@ class ViewSongTests(TestCase):
 
     def test_unauthenticated_user_cannot_comment(self):
         # Arrange
-        song = song_factories.SongFactory(
+        song = SongFactory(
             filename=self.FILE_2_FILENAME,
             title="File 2"
         )
@@ -45,7 +46,7 @@ class ViewSongTests(TestCase):
     def test_user_can_comment_if_has_not_commented(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory()
+        song = SongFactory()
         self.client.force_login(user)
 
         # Act
@@ -57,8 +58,8 @@ class ViewSongTests(TestCase):
     def test_user_cannot_comment_if_has_already_commented(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory()
-        song_factories.CommentFactory(
+        song = SongFactory()
+        CommentFactory(
             song=song,
             profile=user.profile,
             rating=10,
@@ -75,8 +76,8 @@ class ViewSongTests(TestCase):
     def test_user_can_comment_when_not_the_song_composer(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory()
-        artist_factories.ArtistFactory(songs=(song,))
+        song = SongFactory()
+        ArtistFactory(songs=(song,))
         self.client.force_login(user)
 
         # Act
@@ -88,8 +89,8 @@ class ViewSongTests(TestCase):
     def test_user_cannot_comment_if_is_song_composer(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory()
-        artist_factories.ArtistFactory(songs=(song,), profile=user.profile)
+        song = SongFactory()
+        ArtistFactory(songs=(song,), profile=user.profile)
         self.client.force_login(user)
 
         # Act
@@ -100,7 +101,7 @@ class ViewSongTests(TestCase):
 
     def test_is_favorite_is_not_present_when_not_authenticated(self):
         # Arrange
-        song = song_factories.SongFactory()
+        song = SongFactory()
 
         # Act
         response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
@@ -110,7 +111,7 @@ class ViewSongTests(TestCase):
 
     def test_is_favorite_is_false_when_not_favorited(self):
         # Arrange
-        song = song_factories.SongFactory()
+        song = SongFactory()
         user = factories.UserFactory()
         self.client.force_login(user)
 
@@ -122,10 +123,10 @@ class ViewSongTests(TestCase):
 
     def test_is_favorite_is_true_when_favorited(self):
         # Arrange
-        song = song_factories.SongFactory()
+        song = SongFactory()
         user = factories.UserFactory()
         self.client.force_login(user)
-        song_factories.FavoriteFactory(profile=user.profile, song=song)
+        FavoriteFactory(profile=user.profile, song=song)
 
         # Act
         response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
@@ -136,9 +137,9 @@ class ViewSongTests(TestCase):
     def test_artist_can_comment_is_false_when_own_song_and_has_commented(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory()
-        artist_factories.ArtistFactory(songs=[song], user=user, profile=user.profile)
-        song_factories.ArtistCommentFactory(song=song, profile=user.profile, text="hi")
+        song = SongFactory()
+        ArtistFactory(songs=[song], user=user, profile=user.profile)
+        ArtistCommentFactory(song=song, profile=user.profile, text="hi")
         self.client.force_login(user)
 
         # Act
@@ -150,8 +151,8 @@ class ViewSongTests(TestCase):
     def test_artist_can_comment_is_true_when_own_song_and_has_not_commented(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory()
-        artist_factories.ArtistFactory(songs=[song], user=user, profile=user.profile)
+        song = SongFactory()
+        ArtistFactory(songs=[song], user=user, profile=user.profile)
         self.client.force_login(user)
 
         # Act
@@ -163,8 +164,8 @@ class ViewSongTests(TestCase):
     def test_artist_can_comment_is_false_when_not_own_song(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory()
-        artist_factories.ArtistFactory(songs=[], user=user, profile=user.profile)
+        song = SongFactory()
+        ArtistFactory(songs=[], user=user, profile=user.profile)
         self.client.force_login(user)
 
         # Act
@@ -175,7 +176,7 @@ class ViewSongTests(TestCase):
 
     def test_artist_can_comment_is_not_present_when_not_authenticated(self):
         # Arrange
-        song = song_factories.SongFactory()
+        song = SongFactory()
 
         # Act
         response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
@@ -185,8 +186,8 @@ class ViewSongTests(TestCase):
 
     def test_uses_song_redirect_when_available(self):
         # Arrange
-        song = song_factories.SongFactory()
-        song_factories.SongRedirectFactory(song=song, old_song_id=500)
+        song = SongFactory()
+        SongRedirectFactory(song=song, old_song_id=500)
 
         # Act
         response = self.client.get(reverse('view_song', kwargs = {'pk': 500}))

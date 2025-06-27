@@ -1,15 +1,18 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from django.contrib.auth.models import Permission
 from artists.tests import factories as artist_factories
+from interactions.models import Favorite
+from interactions.factories import FavoriteFactory
 from songs import factories as song_factories
-from songs.models import SongStats, Favorite
-from homepage.tests import factories
+from songs.models import SongStats
+from homepage.tests.factories import UserFactory
 
 class AddFavoriteTests(TestCase):
     def test_adds_favorite(self):
         song = song_factories.SongFactory()
-        user = factories.UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_favorite')])
         song_factories.SongStatsFactory(song=song, total_favorites=5)
         self.client.force_login(user)
 
@@ -27,9 +30,9 @@ class AddFavoriteTests(TestCase):
     def test_does_not_add_favorite_when_already_added_as_favorite(self):
         # Arrange
         song = song_factories.SongFactory()
-        user = factories.UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_favorite')])
         self.client.force_login(user)
-        song_factories.FavoriteFactory(profile=user.profile, song=song)
+        FavoriteFactory(profile=user.profile, song=song)
 
         # Act
         response = self.client.get(reverse('add_favorite', kwargs = {'pk': song.id}))
@@ -56,7 +59,7 @@ class AddFavoriteTests(TestCase):
 
     def test_does_not_add_artists_own_song_as_favorite(self):
         # Arrange
-        user = factories.UserFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_favorite')])
         song = song_factories.SongFactory()
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         self.client.force_login(user)
@@ -66,3 +69,15 @@ class AddFavoriteTests(TestCase):
 
         # Assert
         self.assertEqual(0, Favorite.objects.filter(song_id=song.id).count())
+
+    def test_cannot_add_favorite_without_permission(self):
+        # Arrange
+        user = UserFactory()
+        song = song_factories.SongFactory()
+        self.client.force_login(user)
+
+        # Act
+        response = self.client.get(reverse('add_favorite', kwargs = {'pk': song.id}))
+
+        # Assert
+        self.assertEqual(403, response.status_code)

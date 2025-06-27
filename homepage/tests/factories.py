@@ -8,8 +8,17 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = auth_models.User
 
-    username = factory.Sequence(lambda n: 'test_user_%d' % n)
-    email = factory.LazyAttribute(lambda o: '%s@example.org' % o.username)
+    username = factory.Sequence(lambda n: f'test_user_{n}')
+    email = factory.LazyAttribute(lambda o: f'{o.username}@example.org')
+
+    @factory.post_generation
+    def permissions(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for perm in extracted:
+                self.user_permissions.add(perm)
 
 class BlacklistedDomainFactory(factory.django.DjangoModelFactory):
     class Meta:

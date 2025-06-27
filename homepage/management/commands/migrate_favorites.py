@@ -3,10 +3,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.db.models import F
 
-from .disable_signals import DisableSignals
 from homepage import legacy_models
 from homepage.models import Profile
-from songs.models import Song, Favorite
+from interactions.models import Favorite
+from songs.models import Song
+from .disable_signals import DisableSignals
 
 class Command(BaseCommand):
     help = "Migrate the legacy favorites table"
@@ -21,7 +22,7 @@ class Command(BaseCommand):
 
             for fave in favorites:
                 counter += 1
-                if (counter % 1000 == 0):
+                if counter % 1000 == 0:
                     print(f"Generated {counter} out of {total} favorites.")
 
                 # Get the profile

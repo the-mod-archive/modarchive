@@ -2,12 +2,9 @@ from django.urls import path
 from django.views.generic import TemplateView
 
 from songs.views.song_view import SongView
-from songs.views.add_favorite_view import AddFavoriteView
-from songs.views.comment_view import CommentView
 from songs.views.download_song_view import DownloadSongView
 from songs.views.player_view import PlayerView
 from songs.views.song_details_view import SongDetailsView
-from songs.views.remove_favorite_view import RemoveFavoriteView
 from songs.views.random_song_view import RandomSongView
 from songs.views.browse_songs_views import (
     BrowseSongsByLicenseView,
@@ -19,10 +16,7 @@ from songs.views.browse_songs_views import (
 urlpatterns = [
     path('', TemplateView.as_view(template_name='song_list.html'), name='songs'),
     path('<int:pk>/', SongView.as_view(), {}, 'view_song'),
-    path('<int:pk>/comment', CommentView.as_view(), {}, 'add_comment'),
     path('<int:pk>/download', DownloadSongView.as_view(), name='download_song'),
-    path('<int:pk>/add_favorite', AddFavoriteView.as_view(), {}, 'add_favorite'),
-    path('<int:pk>/remove_favorite', RemoveFavoriteView.as_view(), {}, 'remove_favorite'),
     path('<int:pk>/song_details', SongDetailsView.as_view(), {}, 'song_details'),
     path('random/', RandomSongView.as_view(), {}, 'random_song'),
     path('player/', PlayerView.as_view(), {}, 'player'),

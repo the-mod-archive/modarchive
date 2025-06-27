@@ -2,11 +2,14 @@ from django.db.models import F
 from django.shortcuts import redirect, get_object_or_404
 
 from django.views.generic import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
-from songs.models import Song, Favorite
+from interactions.models import Favorite
+from songs.models import Song
 
-class RemoveFavoriteView(LoginRequiredMixin, View):
+class RemoveFavoriteView(PermissionRequiredMixin, View):
+    permission_required = 'interactions.delete_favorite'
+
     def get(self, request, *args, **kwargs):
         if Favorite.objects.filter(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).count() > 0:
             Favorite.objects.get(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).delete()

@@ -1,10 +1,12 @@
 from django.test import TestCase
 from django.urls import reverse
-
+from django.contrib.auth.models import Permission
 from artists.tests import factories as artist_factories
-from homepage.tests import factories
-from songs import factories as song_factories
-from songs.models import Song, ArtistComment
+from homepage.tests.factories import UserFactory
+from songs.factories import SongFactory
+from songs.models import Song
+from interactions.factories import ArtistCommentFactory
+from interactions.models import ArtistComment
 
 class SongDetailsTests(TestCase):
     OLD_TITLE = "Old title"
@@ -14,8 +16,8 @@ class SongDetailsTests(TestCase):
 
     def test_requires_authentication(self):
         # Arrange
-        user = factories.UserFactory()
-        song = song_factories.SongFactory()
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_artistcomment')])
+        song = SongFactory()
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
 
         update_song_details_url = reverse('song_details', kwargs={'pk': song.id})
@@ -29,11 +31,24 @@ class SongDetailsTests(TestCase):
         response=self.client.post(update_song_details_url, {'genre': Song.Genres.ELECTRONIC_GENERAL})
         self.assertRedirects(response, f"{login_url}?next={update_song_details_url}")
 
+    def test_requires_permission(self):
+        # Arrange
+        user = UserFactory()
+        song = SongFactory(clean_title=self.OLD_TITLE)
+        artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
+        self.client.force_login(user)
+
+        # Act
+        response=self.client.post(reverse('song_details', kwargs={'pk': song.id}), {'genre': Song.Genres.ELECTRONIC_GENERAL, 'text': self.NEW_TEXT})
+
+        # Assert
+        self.assertEqual(403, response.status_code)
+
     def test_cannot_update_details_of_somebody_elses_song(self):
         # Arrange
-        user = factories.UserFactory()
-        user_2 = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_artistcomment')])
+        user_2 = UserFactory()
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile)
         artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
         self.client.force_login(user)
@@ -51,10 +66,10 @@ class SongDetailsTests(TestCase):
 
     def test_happy_path_updates_all_fields(self):
         # Arrange
-        user = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE, genre=Song.Genres.ALTERNATIVE)
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_artistcomment')])
+        song = SongFactory(clean_title=self.OLD_TITLE, genre=Song.Genres.ALTERNATIVE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
-        comment = song_factories.ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
+        comment = ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
         self.client.force_login(user)
 
         # GET test
@@ -73,8 +88,8 @@ class SongDetailsTests(TestCase):
 
     def test_adding_text_creates_new_artist_comment(self):
         # Arrange
-        user = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_artistcomment')])
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         self.client.force_login(user)
 
@@ -91,10 +106,10 @@ class SongDetailsTests(TestCase):
 
     def test_removing_text_deletes_artist_comment(self):
         # Arrange
-        user = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_artistcomment')])
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
-        song_factories.ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
+        ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
         self.client.force_login(user)
 
         # Act
@@ -107,8 +122,8 @@ class SongDetailsTests(TestCase):
 
     def test_leaving_text_blank_does_not_create_new_artist_comment(self):
         # Arrange
-        user = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_artistcomment')])
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         self.client.force_login(user)
 
@@ -122,9 +137,9 @@ class SongDetailsTests(TestCase):
 
     def test_artist_only_creates_their_own_comment_to_song(self):
         # Arrange
-        user = factories.UserFactory()
-        user_2 = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_artistcomment')])
+        user_2 = UserFactory()
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
         self.client.force_login(user)
@@ -139,13 +154,13 @@ class SongDetailsTests(TestCase):
 
     def test_artist_only_modifies_their_own_comment_to_song(self):
         # Arrange
-        user = factories.UserFactory()
-        user_2 = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_artistcomment')])
+        user_2 = UserFactory()
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
-        song_factories.ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
-        song_factories.ArtistCommentFactory(profile=user_2.profile, song=song, text=self.OLD_TEXT)
+        ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
+        ArtistCommentFactory(profile=user_2.profile, song=song, text=self.OLD_TEXT)
         self.client.force_login(user)
 
         # Act
@@ -162,13 +177,13 @@ class SongDetailsTests(TestCase):
 
     def test_artist_only_deletes_their_own_comment_to_song(self):
         # Arrange
-        user = factories.UserFactory()
-        user_2 = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        user = UserFactory(permissions=[Permission.objects.get(codename='add_artistcomment')])
+        user_2 = UserFactory()
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
-        song_factories.ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
-        song_factories.ArtistCommentFactory(profile=user_2.profile, song=song, text=self.OLD_TEXT)
+        ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
+        ArtistCommentFactory(profile=user_2.profile, song=song, text=self.OLD_TEXT)
         self.client.force_login(user)
 
         # Act

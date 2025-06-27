@@ -7,10 +7,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         admin_models = [
-            ('songs', 'comment'),
             ('songs', 'song'),
-            ('songs', 'favorite'),
-            ('songs', 'artistcomment'),
+            ('interactions', 'comment'),
+            ('interactions', 'favorite'),
+            ('interactions', 'artistcomment'),
             ('homepage', 'blacklisteddomain'),
             ('homepage', 'news'),
             ('homepage', 'profile'),
@@ -20,15 +20,15 @@ class Command(BaseCommand):
         ]
 
         standard_models = [
-            ('songs', 'comment'),
-            ('songs', 'favorite'),
+            ('interactions', 'comment'),
+            ('interactions', 'favorite'),
             ('homepage', 'profile'),
         ]
 
         artist_models = [
-            ('songs', 'comment'),
-            ('songs', 'favorite'),
-            ('songs', 'artistcomment'),
+            ('interactions', 'comment'),
+            ('interactions', 'favorite'),
+            ('interactions', 'artistcomment'),
             ('homepage', 'profile'),
             ('artists', 'artist'),
         ]
@@ -90,7 +90,7 @@ class Command(BaseCommand):
                         f'Make sure migrations are applied.'
                     )
                 )
-        
+
         if group_name == 'Standard':
             permission = Permission.objects.get(
                 codename='can_upload_songs',
