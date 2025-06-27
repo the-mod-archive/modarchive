@@ -2,8 +2,10 @@ from django.test import TestCase
 from django.urls import reverse
 
 from artists.tests import factories as artist_factories
+from interactions.models import Favorite
+from interactions.factories import FavoriteFactory
 from songs import factories as song_factories
-from songs.models import SongStats, Favorite
+from songs.models import SongStats
 from homepage.tests import factories
 
 class AddFavoriteTests(TestCase):
@@ -29,7 +31,7 @@ class AddFavoriteTests(TestCase):
         song = song_factories.SongFactory()
         user = factories.UserFactory()
         self.client.force_login(user)
-        song_factories.FavoriteFactory(profile=user.profile, song=song)
+        FavoriteFactory(profile=user.profile, song=song)
 
         # Act
         response = self.client.get(reverse('add_favorite', kwargs = {'pk': song.id}))

@@ -4,7 +4,8 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from songs.models import Song, Favorite
+from interactions.models import Favorite
+from songs.models import Song
 
 class RemoveFavoriteView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):

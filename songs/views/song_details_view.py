@@ -4,7 +4,9 @@ from django.shortcuts import redirect, render
 from django.views.generic.base import ContextMixin, View
 from django.http import Http404
 
-from songs.models import ArtistComment, Song
+from interactions.forms import AddArtistCommentForm
+from interactions.models import ArtistComment
+from songs.models import Song
 from songs import forms
 
 class SongDetailsView(LoginRequiredMixin, ContextMixin, View):
@@ -33,7 +35,7 @@ class SongDetailsView(LoginRequiredMixin, ContextMixin, View):
         comment = self.extra_context['comment']
         song_form = forms.SongDetailsForm(instance=song)
 
-        comment_form = forms.AddArtistCommentForm(instance=comment)
+        comment_form = AddArtistCommentForm(instance=comment)
 
         return render(request, 'update_song_details.html', {'object': song, 'form': song_form, 'comment_form': comment_form})
 
@@ -45,7 +47,7 @@ class SongDetailsView(LoginRequiredMixin, ContextMixin, View):
 
         # Only create a comment form if text is present in the payload
         if request.POST['text']:
-            comment_form = forms.AddArtistCommentForm(request.POST, instance=comment)
+            comment_form = AddArtistCommentForm(request.POST, instance=comment)
         else:
             comment_form = None
 

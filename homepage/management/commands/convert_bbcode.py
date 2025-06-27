@@ -1,7 +1,8 @@
 import re
 
 from django.core.management.base import BaseCommand
-from songs.models import Comment, Song, ArtistComment
+from interactions.models import Comment, ArtistComment
+from songs.models import Song
 from homepage.models import Profile
 
 class Command(BaseCommand):
@@ -14,7 +15,7 @@ class Command(BaseCommand):
                             help='Convert bbcode to markdown for artist comments')
         parser.add_argument('--profile_blurbs', action='store_true',
                             help='Convert bbcode to markdown for profile blurbs')
-        
+
     def handle(self, *args, **options):
         if options['comments']:
             self.convert_comments()
@@ -36,7 +37,7 @@ class Command(BaseCommand):
             text = self.convert_italic(text)
             text = self.convert_modpage(text)
 
-            if (counter % 1000 == 0):
+            if counter % 1000 == 0:
                 print(f"Converted {counter} comments.")
 
             if comment.text != text:
@@ -57,7 +58,7 @@ class Command(BaseCommand):
             text = self.convert_url(text)
             text = self.convert_modpage(text)
 
-            if (counter % 1000 == 0):
+            if counter % 1000 == 0:
                 print(f"Converted {counter} comments.")
 
             if comment.text != text:
@@ -74,7 +75,7 @@ class Command(BaseCommand):
 
             text = profile.blurb
 
-            if text == None:
+            if text is None:
                 continue
 
             text = self.convert_bold(text)
@@ -85,7 +86,7 @@ class Command(BaseCommand):
             text = self.convert_head(text)
             text = self.convert_hr(text)
 
-            if (counter % 1000 == 0):
+            if counter % 1000 == 0:
                 print(f"Converted {counter} profiles.")
 
             if profile.blurb != text:
@@ -94,22 +95,22 @@ class Command(BaseCommand):
 
     def convert_bold(self, text):
         return re.sub(r'\[b\](.*?)\[/b\]', r'**\1**', text, flags=re.IGNORECASE)
-    
+
     def convert_italic(self, text):
         return re.sub(r'\[i\](.*?)\[/i\]', r'*\1*', text, flags=re.IGNORECASE)
-    
+
     def convert_head(self, text):
         return re.sub(r'\[head\](.*?)\[/head\]',r'### \1', text, flags=re.IGNORECASE)
-    
+
     def convert_hr(self, text):
         return re.sub(r'\[hr\]', r'***', text, flags=re.IGNORECASE)
-    
+
     def convert_url(self, text):
         return re.sub(r'\[url=(.*?)\](.*?)\[/url\]', r'[\2](\1)', text, flags=re.IGNORECASE)
-    
+
     def convert_modpage(self, text):
         return re.sub(r'\[modpage\](\d+)\[/modpage\]', self.replace_modpage, text, flags=re.IGNORECASE)
-    
+
     def convert_modlinks(self, text):
         return re.sub(r'\[modlinks\](\d+)\[/modlinks\]', self.replace_modlinks, text, flags=re.IGNORECASE)
 
@@ -122,7 +123,7 @@ class Command(BaseCommand):
             return f'[modpage]{song.id}[/modpage]'
         except Song.DoesNotExist:
             return match.group(0)
-        
+
     def replace_modlinks(self, match):
         legacy_id = int(match.group(1))
         try:

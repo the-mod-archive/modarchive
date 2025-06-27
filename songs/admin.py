@@ -6,8 +6,10 @@ from django.urls import path
 from django.db.models import F
 from django.conf import settings
 from django.utils import timezone
+from interactions.models import Favorite
 from songs import models, forms
 from uploads import models as upload_models
+from interactions import models as interaction_models
 from artists.models import Artist
 
 class ArtistInline(admin.TabularInline):
@@ -34,7 +36,7 @@ class SongAdmin(admin.ModelAdmin):
     def merge_favorites(self, song_to_merge_from, song_to_merge_into):
         for favorite in song_to_merge_from.favorite_set.all():
             if self.should_create_new_favorite(song_to_merge_into, favorite):
-                models.Favorite.objects.create(
+                Favorite.objects.create(
                     song=song_to_merge_into,
                     profile=favorite.profile
                 )
@@ -46,7 +48,7 @@ class SongAdmin(admin.ModelAdmin):
     def merge_comments(self, song_to_merge_from, song_to_merge_into):
         for comment in song_to_merge_from.comment_set.all():
             if self.should_create_comment(song_to_merge_into, comment):
-                models.Comment.objects.create(
+                interaction_models.Comment.objects.create(
                     text=comment.text,
                     rating=comment.rating,
                     profile=comment.profile,
@@ -167,15 +169,3 @@ class SongAdmin(admin.ModelAdmin):
             merge_song_template,
             {'object_id': object_id, 'merge_song_form': merge_song_form, 'song_to_merge_from': song_to_merge_from},
         )
-
-@admin.register(models.Comment)
-class CommentAdmin(admin.ModelAdmin):
-    list_display = ("pk", "text", "rating")
-
-@admin.register(models.Favorite)
-class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ("song", "profile")
-
-@admin.register(models.ArtistComment)
-class ArtistCommentAdmin(admin.ModelAdmin):
-    list_display = ["song", "profile"]

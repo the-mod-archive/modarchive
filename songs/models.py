@@ -196,7 +196,7 @@ class Song(models.Model):
 
     def get_archive_path(self):
         folder = '1_9' if self.folder == '0_9' else self.folder
-        return f"{settings.MAIN_ARCHIVE_DIR}/{self.format.upper()}/{folder}/{self.filename}.zip"
+        return f"{settings.MAIN_ARCHIVE_DIR}/{self.format.upper()}/{folder}/{self.filename}.zip"  # pylint: disable=no-member
 
     class Meta:
         indexes = [
@@ -218,45 +218,6 @@ class SongStats(models.Model):
     total_reviews=models.PositiveSmallIntegerField(default=0)
     average_review_score=models.DecimalField(default=0.0, decimal_places=1, max_digits=3)
     total_favorites=models.PositiveIntegerField(default=0)
-
-class Comment(models.Model):
-    class Ratings(models.IntegerChoices):
-        _1 = 1, _("1: Very poor")
-        _2 = 2, _("2: Poor")
-        _3 = 3, _("3: Listenable")
-        _4 = 4, _("4: Good attempt")
-        _5 = 5, _("5: Average")
-        _6 = 6, _("6: Above average")
-        _7 = 7, _("7: Enjoyable")
-        _8 = 8, _("8: Very good")
-        _9 = 9, _("9: Excellent")
-        _10 = 10, _("10: Awesome")
-
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
-    song = models.ForeignKey(Song, on_delete=models.CASCADE)
-    text = models.TextField(max_length=5000)
-    rating = models.PositiveSmallIntegerField(choices=Ratings.choices)
-    create_date = models.DateTimeField(default=timezone.now)
-
-class ArtistComment(models.Model):
-    class Meta:
-        unique_together = ('profile', 'song')
-        verbose_name_plural = 'artist comments'
-        db_table = 'songs_artist_comments'
-
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    song = models.ForeignKey(Song, on_delete=models.CASCADE)
-    text = models.TextField(max_length=5000)
-    create_date = models.DateTimeField(default=timezone.now)
-    update_date=models.DateTimeField(auto_now=True)
-
-class Favorite(models.Model):
-    class Meta:
-        unique_together = ('profile', 'song')
-
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    song = models.ForeignKey(Song, on_delete=models.CASCADE)
-    create_date = models.DateTimeField(auto_now_add=True)
 
 class SongRedirect(models.Model):
     class Meta:

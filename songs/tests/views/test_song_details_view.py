@@ -3,8 +3,10 @@ from django.urls import reverse
 
 from artists.tests import factories as artist_factories
 from homepage.tests import factories
-from songs import factories as song_factories
-from songs.models import Song, ArtistComment
+from songs.factories import SongFactory
+from songs.models import Song
+from interactions.factories import ArtistCommentFactory
+from interactions.models import ArtistComment
 
 class SongDetailsTests(TestCase):
     OLD_TITLE = "Old title"
@@ -15,7 +17,7 @@ class SongDetailsTests(TestCase):
     def test_requires_authentication(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory()
+        song = SongFactory()
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
 
         update_song_details_url = reverse('song_details', kwargs={'pk': song.id})
@@ -33,7 +35,7 @@ class SongDetailsTests(TestCase):
         # Arrange
         user = factories.UserFactory()
         user_2 = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile)
         artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
         self.client.force_login(user)
@@ -52,9 +54,9 @@ class SongDetailsTests(TestCase):
     def test_happy_path_updates_all_fields(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE, genre=Song.Genres.ALTERNATIVE)
+        song = SongFactory(clean_title=self.OLD_TITLE, genre=Song.Genres.ALTERNATIVE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
-        comment = song_factories.ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
+        comment = ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
         self.client.force_login(user)
 
         # GET test
@@ -74,7 +76,7 @@ class SongDetailsTests(TestCase):
     def test_adding_text_creates_new_artist_comment(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         self.client.force_login(user)
 
@@ -92,9 +94,9 @@ class SongDetailsTests(TestCase):
     def test_removing_text_deletes_artist_comment(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
-        song_factories.ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
+        ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
         self.client.force_login(user)
 
         # Act
@@ -108,7 +110,7 @@ class SongDetailsTests(TestCase):
     def test_leaving_text_blank_does_not_create_new_artist_comment(self):
         # Arrange
         user = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         self.client.force_login(user)
 
@@ -124,7 +126,7 @@ class SongDetailsTests(TestCase):
         # Arrange
         user = factories.UserFactory()
         user_2 = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
         self.client.force_login(user)
@@ -141,11 +143,11 @@ class SongDetailsTests(TestCase):
         # Arrange
         user = factories.UserFactory()
         user_2 = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
-        song_factories.ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
-        song_factories.ArtistCommentFactory(profile=user_2.profile, song=song, text=self.OLD_TEXT)
+        ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
+        ArtistCommentFactory(profile=user_2.profile, song=song, text=self.OLD_TEXT)
         self.client.force_login(user)
 
         # Act
@@ -164,11 +166,11 @@ class SongDetailsTests(TestCase):
         # Arrange
         user = factories.UserFactory()
         user_2 = factories.UserFactory()
-        song = song_factories.SongFactory(clean_title=self.OLD_TITLE)
+        song = SongFactory(clean_title=self.OLD_TITLE)
         artist_factories.ArtistFactory(user=user, profile=user.profile, songs=(song,))
         artist_factories.ArtistFactory(user=user_2, profile=user_2.profile, songs=(song,))
-        song_factories.ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
-        song_factories.ArtistCommentFactory(profile=user_2.profile, song=song, text=self.OLD_TEXT)
+        ArtistCommentFactory(profile=user.profile, song=song, text=self.OLD_TEXT)
+        ArtistCommentFactory(profile=user_2.profile, song=song, text=self.OLD_TEXT)
         self.client.force_login(user)
 
         # Act

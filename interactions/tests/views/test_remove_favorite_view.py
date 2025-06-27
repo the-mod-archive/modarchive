@@ -1,8 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from interactions.models import Favorite
+from interactions.factories import FavoriteFactory
 from songs import factories as song_factories
-from songs.models import SongStats, Favorite
+from songs.models import SongStats
 from homepage.tests import factories
 
 class RemoveFavoriteTests(TestCase):
@@ -12,7 +14,7 @@ class RemoveFavoriteTests(TestCase):
         song_factories.SongStatsFactory(song=song, total_favorites=5)
         user = factories.UserFactory()
         self.client.force_login(user)
-        song_factories.FavoriteFactory(profile=user.profile, song=song)
+        FavoriteFactory(profile=user.profile, song=song)
 
         # Act
         response = self.client.get(reverse('remove_favorite', kwargs = {'pk': song.id}))
@@ -47,7 +49,7 @@ class RemoveFavoriteTests(TestCase):
         user = factories.UserFactory()
         login_url = reverse('login')
         remove_favorite_url = reverse('remove_favorite', kwargs = {'pk': song.id})
-        song_factories.FavoriteFactory(profile=user.profile, song=song)
+        FavoriteFactory(profile=user.profile, song=song)
 
         # Act
         response = self.client.get(remove_favorite_url)

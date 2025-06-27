@@ -2,12 +2,11 @@ from django.core.management.base import BaseCommand
 from django.core.management import CommandError
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
-
+from django.contrib.auth.models import Group
 from homepage import legacy_models
 from homepage.models import Profile
 from artists.models import Artist
 from .disable_signals import DisableSignals
-from django.contrib.auth.models import Group
 
 User = get_user_model()
 
@@ -42,7 +41,7 @@ class Command(BaseCommand):
                 artist_group = Group.objects.get(name='Artists')
                 admin_group = Group.objects.get(name='Admins')
             except Group.DoesNotExist as e:
-                raise CommandError(f"Missing required group: {e}")
+                raise CommandError(f"Missing required group: {e}") from e
 
             print(f"Starting migrations of {total} users. This process will create all user, profile, and artist objects.")
             counter = 0

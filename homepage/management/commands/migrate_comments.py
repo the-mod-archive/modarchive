@@ -4,7 +4,8 @@ from django.db import IntegrityError
 
 from homepage import legacy_models
 from homepage.models import Profile
-from songs.models import Song, Comment
+from interactions.models import Comment
+from songs.models import Song
 from .disable_signals import DisableSignals
 
 class Command(BaseCommand):

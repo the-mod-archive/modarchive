@@ -1,14 +1,15 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 
-from songs.models import Comment, Song
+from interactions.models import Comment
+from songs.models import Song
 
 @receiver(post_save, sender=Comment)
-def update_song_stats_after_save(sender, instance, **kwargs):
+def update_song_stats_after_save(_sender=None, instance=None, **kwargs):
     update_song_stats(instance.song)
 
 @receiver(post_delete, sender=Comment)
-def update_song_stats_after_delete(sender, instance, **kwargs):
+def update_song_stats_after_delete(_sender=None, instance=None, **kwargs):
     update_song_stats(instance.song)
 
 def update_song_stats(song):

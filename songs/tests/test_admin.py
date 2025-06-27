@@ -4,20 +4,21 @@ from django.test import TestCase
 from django.urls import reverse
 from django.conf import settings
 
-from homepage.tests import factories
-from songs import factories as song_factories
+from artists.factories import ArtistFactory
+from homepage.tests.factories import UserFactory
+from interactions.factories import FavoriteFactory, CommentFactory
+from songs.factories import SongFactory, SongStatsFactory
 from songs import models
 from uploads import models as upload_models
-from artists import factories as artist_factories
 
 class MergeSongValidationTests(TestCase):
     def setUp(self):
-        self.user = factories.UserFactory(is_staff=True, is_superuser=True)
+        self.user = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
 
     def test_is_invalid_if_song_to_merge_into_does_not_exist(self):
         # Arrange
-        song_to_be_merged = song_factories.SongFactory()
+        song_to_be_merged = SongFactory()
 
         # Act
         response = self.client.post(
@@ -31,7 +32,7 @@ class MergeSongValidationTests(TestCase):
 
     def test_is_invalid_if_song_to_merge_into_is_same_as_song_to_merge_from(self):
         # Arrange
-        song_to_be_merged = song_factories.SongFactory()
+        song_to_be_merged = SongFactory()
 
         # Act
         response = self.client.post(
@@ -46,8 +47,8 @@ class MergeSongValidationTests(TestCase):
 
     def test_renders_finalize_details_when_form_is_valid(self):
         # Arrange
-        song_to_be_merged = song_factories.SongFactory()
-        song_to_merge_into = song_factories.SongFactory()
+        song_to_be_merged = SongFactory()
+        song_to_merge_into = SongFactory()
 
         # Act
         response = self.client.post(
@@ -67,7 +68,7 @@ class MergeSongTests(TestCase):
     change_song_page = "admin:songs_song_change"
 
     def setUp(self):
-        self.user = factories.UserFactory(is_staff=True, is_superuser=True)
+        self.user = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
 
     def tearDown(self):
@@ -78,7 +79,7 @@ class MergeSongTests(TestCase):
 
     def create_song_to_be_merged(self, featured_date=None, featured_by=None):
         is_featured = featured_date is not None and featured_by is not None
-        song = song_factories.SongFactory(folder="T", filename="test.mod", hash="123", is_featured=is_featured, featured_date=featured_date, featured_by=featured_by)
+        song = SongFactory(folder="T", filename="test.mod", hash="123", is_featured=is_featured, featured_date=featured_date, featured_by=featured_by)
 
         # Create a dummy file to represent the uploaded file
         format_directory = f'{settings.MAIN_ARCHIVE_DIR}/{song.format.upper()}'
@@ -96,9 +97,9 @@ class MergeSongTests(TestCase):
     def test_performs_basic_merge(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        song_factories.SongStatsFactory(song=song_to_be_merged, downloads=30)
-        song_to_merge_into = song_factories.SongFactory()
-        song_factories.SongStatsFactory(song=song_to_merge_into, downloads=20)
+        SongStatsFactory(song=song_to_be_merged, downloads=30)
+        song_to_merge_into = SongFactory()
+        SongStatsFactory(song=song_to_merge_into, downloads=20)
 
         # Act
         response = self.client.post(
@@ -127,8 +128,8 @@ class MergeSongTests(TestCase):
     def test_merges_artists_from_old_song_into_merged_song(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        song_to_merge_into = song_factories.SongFactory()
-        artist = artist_factories.ArtistFactory(songs=(song_to_be_merged,))
+        song_to_merge_into = SongFactory()
+        artist = ArtistFactory(songs=(song_to_be_merged,))
 
         # Act
         response = self.client.post(
@@ -145,8 +146,8 @@ class MergeSongTests(TestCase):
     def test_artists_in_existing_song_are_unaffected(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        song_to_merge_into = song_factories.SongFactory()
-        artist = artist_factories.ArtistFactory(songs=(song_to_merge_into,))
+        song_to_merge_into = SongFactory()
+        artist = ArtistFactory(songs=(song_to_merge_into,))
 
         # Act
         response = self.client.post(
@@ -163,9 +164,9 @@ class MergeSongTests(TestCase):
     def test_merges_artists_from_both_songs(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        song_to_merge_into = song_factories.SongFactory()
-        artist = artist_factories.ArtistFactory(songs=(song_to_be_merged,))
-        artist_2 = artist_factories.ArtistFactory(songs=(song_to_merge_into,))
+        song_to_merge_into = SongFactory()
+        artist = ArtistFactory(songs=(song_to_be_merged,))
+        artist_2 = ArtistFactory(songs=(song_to_merge_into,))
 
         # Act
         response = self.client.post(
@@ -183,8 +184,8 @@ class MergeSongTests(TestCase):
     def test_merge_does_not_duplicate_artists(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        song_to_merge_into = song_factories.SongFactory()
-        artist = artist_factories.ArtistFactory(songs=(song_to_be_merged, song_to_merge_into))
+        song_to_merge_into = SongFactory()
+        artist = ArtistFactory(songs=(song_to_be_merged, song_to_merge_into))
 
         # Act
         response = self.client.post(
@@ -202,14 +203,14 @@ class MergeSongTests(TestCase):
     def test_merges_favorites(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        song_to_merge_into = song_factories.SongFactory()
-        profile_1 = factories.UserFactory().profile
-        profile_2 = factories.UserFactory().profile
-        profile_3 = factories.UserFactory().profile
-        song_factories.FavoriteFactory(profile=profile_1, song=song_to_be_merged)
-        song_factories.FavoriteFactory(profile=profile_2, song=song_to_merge_into)
-        song_factories.FavoriteFactory(profile=profile_3, song=song_to_be_merged)
-        song_factories.FavoriteFactory(profile=profile_3, song=song_to_merge_into)
+        song_to_merge_into = SongFactory()
+        profile_1 = UserFactory().profile
+        profile_2 = UserFactory().profile
+        profile_3 = UserFactory().profile
+        FavoriteFactory(profile=profile_1, song=song_to_be_merged)
+        FavoriteFactory(profile=profile_2, song=song_to_merge_into)
+        FavoriteFactory(profile=profile_3, song=song_to_be_merged)
+        FavoriteFactory(profile=profile_3, song=song_to_merge_into)
 
         # Act
         response = self.client.post(
@@ -229,10 +230,10 @@ class MergeSongTests(TestCase):
     def test_does_not_create_favorite_for_own_song(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        song_to_merge_into = song_factories.SongFactory()
-        profile = factories.UserFactory().profile
-        artist_factories.ArtistFactory(user=profile.user, profile=profile, songs=(song_to_merge_into,))
-        song_factories.FavoriteFactory(profile=profile, song=song_to_be_merged)
+        song_to_merge_into = SongFactory()
+        profile = UserFactory().profile
+        ArtistFactory(user=profile.user, profile=profile, songs=(song_to_merge_into,))
+        FavoriteFactory(profile=profile, song=song_to_be_merged)
 
         # Act
         response = self.client.post(
@@ -248,11 +249,11 @@ class MergeSongTests(TestCase):
     def test_merges_comments(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        song_to_merge_into = song_factories.SongFactory()
-        profile_1 = factories.UserFactory().profile
-        profile_2 = factories.UserFactory().profile
-        comment = song_factories.CommentFactory(song=song_to_be_merged, profile=profile_1, rating=5, text="Hi")
-        song_factories.CommentFactory(song=song_to_merge_into, profile=profile_2, rating=3, text="Hello")
+        song_to_merge_into = SongFactory()
+        profile_1 = UserFactory().profile
+        profile_2 = UserFactory().profile
+        comment = CommentFactory(song=song_to_be_merged, profile=profile_1, rating=5, text="Hi")
+        CommentFactory(song=song_to_merge_into, profile=profile_2, rating=3, text="Hello")
 
         # Act
         response = self.client.post(
@@ -272,10 +273,10 @@ class MergeSongTests(TestCase):
     def test_does_not_merge_comments_for_own_song(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        song_to_merge_into = song_factories.SongFactory()
-        profile = factories.UserFactory().profile
-        song_factories.CommentFactory(song=song_to_be_merged, profile=profile)
-        artist_factories.ArtistFactory(user=profile.user, profile=profile, songs=(song_to_merge_into,))
+        song_to_merge_into = SongFactory()
+        profile = UserFactory().profile
+        CommentFactory(song=song_to_be_merged, profile=profile)
+        ArtistFactory(user=profile.user, profile=profile, songs=(song_to_merge_into,))
 
         # Act
         response = self.client.post(
@@ -291,10 +292,10 @@ class MergeSongTests(TestCase):
     def test_does_not_merge_comment_if_already_commented(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        song_to_merge_into = song_factories.SongFactory()
-        profile = factories.UserFactory().profile
-        song_factories.CommentFactory(song=song_to_be_merged, profile=profile, rating=5, text="Hi")
-        comment = song_factories.CommentFactory(song=song_to_merge_into, profile=profile, rating=3, text="Hello")
+        song_to_merge_into = SongFactory()
+        profile = UserFactory().profile
+        CommentFactory(song=song_to_be_merged, profile=profile, rating=5, text="Hi")
+        comment = CommentFactory(song=song_to_merge_into, profile=profile, rating=3, text="Hello")
 
         # Act
         response = self.client.post(
@@ -310,9 +311,9 @@ class MergeSongTests(TestCase):
 
     def test_make_featured_if_song_merged_from_was_featured(self):
         # Arrange
-        featuring_profile = factories.UserFactory().profile
+        featuring_profile = UserFactory().profile
         song_to_be_merged = self.create_song_to_be_merged(featured_by=featuring_profile, featured_date=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc))
-        song_to_merge_into = song_factories.SongFactory()
+        song_to_merge_into = SongFactory()
 
         # Act
         self.client.post(
@@ -329,10 +330,10 @@ class MergeSongTests(TestCase):
 
     def test_select_nomination_info_from_first_song_if_featured_earlier(self):
         # Arrange
-        featuring_profile = factories.UserFactory().profile
-        second_featuring_profile = factories.UserFactory().profile
+        featuring_profile = UserFactory().profile
+        second_featuring_profile = UserFactory().profile
         song_to_be_merged = self.create_song_to_be_merged(featured_by=featuring_profile, featured_date=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc))
-        song_to_merge_into = song_factories.SongFactory(featured_by=second_featuring_profile, featured_date=datetime.datetime(2020, 1, 2, tzinfo=datetime.timezone.utc))
+        song_to_merge_into = SongFactory(featured_by=second_featuring_profile, featured_date=datetime.datetime(2020, 1, 2, tzinfo=datetime.timezone.utc))
 
         # Act
         self.client.post(
@@ -349,10 +350,10 @@ class MergeSongTests(TestCase):
 
     def test_select_nomination_info_from_second_song_if_featured_earlier(self):
         # Arrange
-        featuring_profile = factories.UserFactory().profile
-        second_featuring_profile = factories.UserFactory().profile
+        featuring_profile = UserFactory().profile
+        second_featuring_profile = UserFactory().profile
         song_to_be_merged = self.create_song_to_be_merged(featured_by=featuring_profile, featured_date=datetime.datetime(2020, 1, 2, tzinfo=datetime.timezone.utc))
-        song_to_merge_into = song_factories.SongFactory(is_featured=True, featured_by=second_featuring_profile, featured_date=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc))
+        song_to_merge_into = SongFactory(is_featured=True, featured_by=second_featuring_profile, featured_date=datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc))
 
         # Act
         self.client.post(

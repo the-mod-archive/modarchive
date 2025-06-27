@@ -25,5 +25,6 @@ urlpatterns = [
     path('artists/', include('artists.urls')),
     path('search/', include('search.urls')),
     path('uploads/', include('uploads.urls')),
+    path('interactions/', include('interactions.urls')),
     # path('account/sceneid/', include('sceneid.urls')),
 ]

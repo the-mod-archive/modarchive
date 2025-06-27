@@ -1,5 +1,6 @@
-from modarchive.settings.base import *
 from datetime import datetime
+
+from modarchive.settings.base import *
 
 DEBUG = False
 

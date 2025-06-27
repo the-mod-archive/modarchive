@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from songs.models import Song, Favorite
+from interactions.models import Favorite
+from songs.models import Song
 
 class Command(BaseCommand):
     help = 'Recalculate the total number of favorites for each song and update SongStats.'
