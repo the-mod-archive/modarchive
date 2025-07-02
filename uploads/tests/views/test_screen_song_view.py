@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.urls.base import reverse
 from django.contrib.auth.models import Permission
 
-from songs import factories as song_factories
 from uploads import factories as upload_factories
 from uploads import constants
 from uploads.models import NewSong

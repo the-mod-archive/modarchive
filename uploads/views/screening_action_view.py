@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.urls.base import reverse
 
 from songs.models import Song
-from uploads.models import NewSong
+from uploads.models import NewSong, ScreeningEvent
 from uploads import constants
 from artists.models import Artist
 
@@ -50,10 +50,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             case self.ScreeningAction.CLAIM:
                 return self.claim(songs, request)
             case self.ScreeningAction.UNCLAIM:
-                my_claimed_songs_queryset.update(
-                    claimed_by=None,
-                    claim_date=None
-                )
+                return self.unclaim(my_claimed_songs_queryset, request)
             case self.ScreeningAction.PRE_SCREEN:
                 return self.apply_flag(my_claimed_songs_queryset, request, NewSong.Flags.PRE_SCREENED, constants.PRE_SCREENED_FILTER)
             case self.ScreeningAction.PRE_SCREEN_AND_RECOMMEND:
@@ -73,15 +70,7 @@ class ScreeningActionView(PermissionRequiredMixin, View):
                 query_string = urlencode({'song_ids': song_ids_str})
                 return redirect(f'{reverse("screening_reject")}?{query_string}')
             case self.ScreeningAction.CLEAR_FLAG:
-                if len(my_claimed_songs_queryset) == 0:
-                    return redirect('screening_index')
-
-                my_claimed_songs_queryset.update(
-                    claimed_by=None,
-                    claim_date=None,
-                    flag=None,
-                    flagged_by=None
-                )
+                return self.clear_flag(my_claimed_songs_queryset, request)
             case self.ScreeningAction.RENAME:
                 if len(songs) > 1:
                     messages.warning(request, constants.RENAME_SCREENING_ONE_SONG_ONLY)
@@ -101,15 +90,51 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         if len(queryset) == 0:
             return redirect('screening_index')
 
+        songs_to_update = list(queryset)
+
         queryset.update(
             claimed_by=request.user.profile,
             claim_date=timezone.now()
         )
+
+        screening_events = [
+            ScreeningEvent(
+                new_song=song,
+                profile=request.user.profile,
+                type=ScreeningEvent.Types.CLAIM,
+                content=f'Claimed by {request.user.profile.display_name}'
+            )
+            for song in songs_to_update
+        ]
+        ScreeningEvent.objects.bulk_create(screening_events)
         return redirect(f'{reverse("screening_index")}?filter={constants.MY_SCREENING_FILTER}')
+
+    def unclaim(self, queryset, request):
+        songs_to_update = list(queryset)
+
+        queryset.update(
+            claimed_by=None,
+            claim_date=None
+        )
+
+        screening_events = [
+            ScreeningEvent(
+                new_song=song,
+                profile=request.user.profile,
+                type=ScreeningEvent.Types.UNCLAIM,
+                content=f'Unclaimed by {request.user.profile.display_name}'
+            )
+            for song in songs_to_update
+        ]
+        ScreeningEvent.objects.bulk_create(screening_events)
+
+        return redirect('screening_index')
 
     def apply_flag(self, my_claimed_songs_queryset, request, flag, return_filter):
         if len(my_claimed_songs_queryset) == 0:
             return redirect('screening_index')
+
+        songs_to_update = list(my_claimed_songs_queryset)
 
         my_claimed_songs_queryset.update(
             claimed_by=None,
@@ -117,7 +142,44 @@ class ScreeningActionView(PermissionRequiredMixin, View):
             flag=flag,
             flagged_by=request.user.profile
         )
+
+        screening_events = [
+            ScreeningEvent(
+                new_song=song,
+                profile=request.user.profile,
+                type=ScreeningEvent.Types.APPLY_FLAG,
+                content=f'Flag set to {flag} by {request.user.profile.display_name} (was {song.flag})'
+            )
+            for song in songs_to_update
+        ]
+        ScreeningEvent.objects.bulk_create(screening_events)
+
         return redirect(f'{reverse("screening_index")}?filter={return_filter}')
+
+    def clear_flag(self, queryset, request):
+        if len(queryset) == 0:
+            return redirect('screening_index')
+
+        songs_to_update = list(queryset)
+
+        queryset.update(
+            claimed_by=None,
+            claim_date=None,
+            flag=None,
+            flagged_by=None
+        )
+
+        screening_events = [
+            ScreeningEvent(
+                new_song=song,
+                profile=request.user.profile,
+                type=ScreeningEvent.Types.CLEAR_FLAG,
+                content=f'Flag cleared by {request.user.profile.display_name} (previously set to {song.flag})'
+            )
+            for song in songs_to_update
+        ]
+        ScreeningEvent.objects.bulk_create(screening_events)
+        return redirect('screening_index')
 
     def approve_songs(self, songs, request, feature=False):
         # Bulk approval has different validation rules from single approval

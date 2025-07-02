@@ -96,3 +96,20 @@ class RejectedSong(models.Model):
     is_by_uploader = models.BooleanField()
     create_date=models.DateTimeField(default=timezone.now)
     update_date=models.DateTimeField(auto_now=True)
+
+class ScreeningEvent(models.Model):
+    class Meta:
+        db_table = 'uploads_screening_event'
+
+    class Types(models.TextChoices):
+        CLAIM = 'claim', _('Claim')
+        UNCLAIM = 'unclaim', _('Unclaim')
+        APPLY_FLAG = 'apply_flag', _('Apply Flag')
+        CLEAR_FLAG = 'clear_flag', _('Clear Flag')
+        RENAME = 'rename', _('Rename')
+
+    new_song = models.ForeignKey(NewSong, on_delete=models.CASCADE, related_name='screening_events')
+    profile = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, related_name='screening_events')
+    type = models.CharField(max_length=32, choices=Types.choices)
+    content = models.CharField(max_length=500)
+    create_date = models.DateTimeField(default=timezone.now)

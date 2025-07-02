@@ -82,6 +82,7 @@ class ScreenSongView(PermissionRequiredMixin, DetailView):
         context['claimed_by_other_user'] = self.object.claimed_by is not None and self.request.user.profile != self.object.claimed_by
         context['flag_message'] = self.flag_messages_mapping.get(self.object.flag, None)
         context['flag_message_class'] = 'success' if self.object.flag in [NewSong.Flags.PRE_SCREENED, NewSong.Flags.PRE_SCREENED_PLUS] else 'warning'
+        context['screening_events'] = self.object.screening_events.all()
         if self.object.claimed_by is None:
             context['actions'] = [
                 constants.CLAIM_ACTION
