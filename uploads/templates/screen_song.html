@@ -79,6 +79,20 @@
         </div>
     {% endif %}
 
+    {% if screening_events %}
+        <div class="my-2 alert alert-info" role="alert">
+            <h5 class="alert-heading">Screening History</h5>
+            <ul class="mb-0">
+            {% for event in screening_events %}
+                <li>
+                {{ event.content }} 
+                <small class="text-muted">({{ event.create_date|date:"M d, Y H:i" }} UTC)</small>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
     {% if actions %}
     <form method="post" action="{% url 'screening_action' %}">
         {% csrf_token %}

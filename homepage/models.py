@@ -1,6 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils import timezone
+
+User = get_user_model()
 
 class Profile(models.Model):
     user = models.OneToOneField(
@@ -16,7 +18,7 @@ class Profile(models.Model):
     update_date=models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return self.display_name
+        return str(self.display_name)
 
     def has_comments(self):
         return self.comment_set.all().count() > 0

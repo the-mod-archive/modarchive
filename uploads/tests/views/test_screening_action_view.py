@@ -2,18 +2,18 @@ import os
 import shutil
 
 from django.conf import settings
-from django.contrib.messages import get_messages
 from django.contrib.auth.models import Permission
+from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls.base import reverse
 
+from artists.factories import ArtistFactory
 from homepage.tests import factories
 from songs import factories as song_factories
-from uploads import factories as upload_factories
 from songs.models import Song
-from uploads.models import NewSong
 from uploads import constants
-from artists.factories import ArtistFactory
+from uploads import factories as upload_factories
+from uploads.models import NewSong, ScreeningEvent
 
 SONG_1_FILENAME = 'song1.mod'
 SONG_2_FILENAME = 'song2.mod'
@@ -78,6 +78,13 @@ class ClaimingActionTests(TestCase):
         self.assertEqual(self.user.profile, song1.claimed_by)
         self.assertIsNotNone(song1.claim_date)
 
+        events = ScreeningEvent.objects.filter(new_song=song1)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.CLAIM)
+        self.assertEqual(f'Claimed by {self.user.profile.display_name}', event.content)
+
     def test_screener_can_claim_multiple_unclaimed_songs(self):
         # Arrange
         song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME)
@@ -94,6 +101,20 @@ class ClaimingActionTests(TestCase):
         self.assertIsNotNone(song1.claim_date)
         self.assertEqual(self.user.profile, song2.claimed_by)
         self.assertIsNotNone(song2.claim_date)
+
+        events = ScreeningEvent.objects.filter(new_song=song1)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.CLAIM)
+        self.assertEqual(f'Claimed by {self.user.profile.display_name}', event.content)
+
+        events = ScreeningEvent.objects.filter(new_song=song2)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.CLAIM)
+        self.assertEqual(f'Claimed by {self.user.profile.display_name}', event.content)
 
     def test_cannot_claim_songs_already_claimed_by_others(self):
         # Arrange
@@ -137,6 +158,13 @@ class ClaimingActionTests(TestCase):
         self.assertIsNone(song1.claimed_by)
         self.assertIsNone(song1.claim_date)
 
+        events = ScreeningEvent.objects.filter(new_song=song1)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.UNCLAIM)
+        self.assertEqual(f'Unclaimed by {self.user.profile.display_name}', event.content)
+
 class FlaggingActionTests(TestCase):
     def setUp(self):
         self.user = factories.UserFactory()
@@ -156,6 +184,13 @@ class FlaggingActionTests(TestCase):
         song1.refresh_from_db()
         self.assertEqual(NewSong.Flags.UNDER_INVESTIGATION, song1.flag)
         self.assertEqual(self.user.profile, song1.flagged_by)
+
+        events = ScreeningEvent.objects.filter(new_song=song1)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.APPLY_FLAG)
+        self.assertEqual(f'Flag set to {NewSong.Flags.UNDER_INVESTIGATION} by {self.user.profile.display_name} (was None)', event.content)
 
     def test_cannot_flag_unclaimed_song_as_under_investigation(self):
         # Arrange
@@ -206,6 +241,19 @@ class FlaggingActionTests(TestCase):
         self.assertIsNone(song3.flag)
         self.assertIsNone(song3.flagged_by)
 
+        events = ScreeningEvent.objects.filter(new_song=song1)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.APPLY_FLAG)
+        self.assertEqual(f'Flag set to {NewSong.Flags.POSSIBLE_DUPLICATE} by {self.user.profile.display_name} (was None)', event.content)
+
+        events = ScreeningEvent.objects.filter(new_song=song2)
+        self.assertEqual(events.count(), 0)
+
+        events = ScreeningEvent.objects.filter(new_song=song3)
+        self.assertEqual(events.count(), 0)
+
     def test_cannot_flag_unclaimed_song_as_possible_duplicate(self):
         # Arrange
         song1 = upload_factories.NewSongFactory()
@@ -253,6 +301,20 @@ class FlaggingActionTests(TestCase):
         self.assertEqual(NewSong.Flags.PRE_SCREENED, song2.flag)
         self.assertEqual(self.user.profile, song1.flagged_by)
         self.assertEqual(self.user.profile, song2.flagged_by)
+
+        events = ScreeningEvent.objects.filter(new_song=song1)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.APPLY_FLAG)
+        self.assertEqual(f'Flag set to {NewSong.Flags.PRE_SCREENED} by {self.user.profile.display_name} (was None)', event.content)
+
+        events = ScreeningEvent.objects.filter(new_song=song2)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.APPLY_FLAG)
+        self.assertEqual(f'Flag set to {NewSong.Flags.PRE_SCREENED} by {self.user.profile.display_name} (was None)', event.content)
 
     def test_cannot_prescreen_unclaimed_songs(self):
         # Arrange
@@ -312,6 +374,20 @@ class FlaggingActionTests(TestCase):
         self.assertEqual(self.user.profile, song1.flagged_by)
         self.assertEqual(self.user.profile, song2.flagged_by)
 
+        events = ScreeningEvent.objects.filter(new_song=song1)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.APPLY_FLAG)
+        self.assertEqual(f'Flag set to {NewSong.Flags.PRE_SCREENED_PLUS} by {self.user.profile.display_name} (was None)', event.content)
+
+        events = ScreeningEvent.objects.filter(new_song=song2)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.APPLY_FLAG)
+        self.assertEqual(f'Flag set to {NewSong.Flags.PRE_SCREENED_PLUS} by {self.user.profile.display_name} (was None)', event.content)
+
     def test_cannot_prescreen_and_recommend_unclaimed_songs(self):
         # Arrange
         song1 = upload_factories.NewSongFactory(filename=SONG_1_FILENAME)
@@ -369,6 +445,23 @@ class FlaggingActionTests(TestCase):
         self.assertEqual(self.user.profile, song2.flagged_by)
         self.assertIsNone(song3.flag)
         self.assertIsNone(song3.flagged_by)
+
+        events = ScreeningEvent.objects.filter(new_song=song1)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.APPLY_FLAG)
+        self.assertEqual(f'Flag set to {NewSong.Flags.NEEDS_SECOND_OPINION} by {self.user.profile.display_name} (was None)', event.content)
+
+        events = ScreeningEvent.objects.filter(new_song=song2)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.APPLY_FLAG)
+        self.assertEqual(f'Flag set to {NewSong.Flags.NEEDS_SECOND_OPINION} by {self.user.profile.display_name} (was None)', event.content)
+
+        events = ScreeningEvent.objects.filter(new_song=song3)
+        self.assertEqual(events.count(), 0)
 
     def test_cannot_flag_unclaimed_song_as_needing_second_opinion(self):
         # Arrange
@@ -436,6 +529,20 @@ class FlaggingActionTests(TestCase):
         self.assertIsNone(song2.flagged_by)
         self.assertIsNone(song2.claimed_by)
         self.assertIsNone(song2.claim_date)
+
+        events = ScreeningEvent.objects.filter(new_song=song1)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.CLEAR_FLAG)
+        self.assertEqual(f'Flag cleared by {self.user.profile.display_name} (previously set to {NewSong.Flags.PRE_SCREENED})', event.content)
+
+        events = ScreeningEvent.objects.filter(new_song=song2)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.CLEAR_FLAG)
+        self.assertEqual(f'Flag cleared by {self.user.profile.display_name} (previously set to {NewSong.Flags.PRE_SCREENED})', event.content)
 
 class ApprovalActionValidationTests(TestCase):
     new_file_dir = settings.NEW_FILE_DIR

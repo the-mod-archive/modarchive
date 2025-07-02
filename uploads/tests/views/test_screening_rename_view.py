@@ -11,7 +11,7 @@ from homepage.tests import factories
 from songs import factories as song_factories
 from uploads import factories as upload_factories
 from uploads import forms
-from uploads.models import NewSong
+from uploads.models import NewSong, ScreeningEvent
 from uploads import constants
 
 SCREENING_TEMPLATE = "screening_rename.html"
@@ -262,3 +262,11 @@ class ScreeningRenamePostTests(TestCase):
             # Check that the content of new_filename.mod is the same as the original file
             with open(os.path.join(new_file_dir, NEW_FILENAME), 'r', encoding='utf-8') as new_file:
                 self.assertEqual(new_file.read(), 'This is the content of the original file.')
+
+        # Check that screening event was created
+        events = ScreeningEvent.objects.filter(new_song=song)
+        self.assertEqual(events.count(), 1)
+        event = events.first()
+        self.assertEqual(event.profile, self.user.profile)
+        self.assertEqual(event.type, ScreeningEvent.Types.RENAME)
+        self.assertEqual(f'Filename changed by {self.user.profile.display_name} from {OLD_FILENAME} to {NEW_FILENAME})', event.content)

@@ -9,7 +9,7 @@ from django.urls import reverse_lazy
 from django.conf import settings
 
 from uploads import forms
-from uploads.models import NewSong
+from uploads.models import NewSong, ScreeningEvent
 from uploads import constants
 
 
@@ -27,11 +27,22 @@ class ScreeningRenameView(PermissionRequiredMixin, FormView):
         song = self.extra_context['song']
 
         if self.rename(song.filename, form.cleaned_data['new_filename']):
+            old_filename = song.filename
+            new_filename = form.cleaned_data['new_filename']
             # Remove the old file
-            os.remove(os.path.join(settings.NEW_FILE_DIR, f'{song.filename}.zip'))
+            os.remove(os.path.join(settings.NEW_FILE_DIR, f'{old_filename}.zip'))
             # Update the database record
-            song.filename = form.cleaned_data['new_filename']
+            song.filename = new_filename
             song.save()
+
+            # Log a screening event
+            profile = self.request.user.profile
+            ScreeningEvent.objects.create(
+                new_song=song,
+                profile=profile,
+                type=ScreeningEvent.Types.RENAME,
+                content=f'Filename changed by {profile.display_name} from {old_filename} to {new_filename})'
+            )
         else:
             # This will only happen if there is a technical issue during the rename.
             messages.error(self.request, constants.RENAME_FAILED)
