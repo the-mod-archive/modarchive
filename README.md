@@ -4,24 +4,15 @@ Site code for the new, updated Mod Archive. Not currently live in production env
 
 ## Visual Studio Code setup instructions
 
-Create a virtual environment
-Python: Create Environment
-Venv
-Install requirements.txt - pip install -r requirements.txt
-Create a launch.json (make sure to include the settings bit)
-Generate a secret key and put it in your launch.json
+The following instructions are how to set the application up using Visual Studio Code.
 
-## How to run the dev environment
-
-To run on a local environment, you will need to install dependencies.
+If you want to use a different IDE such as Pycharm, feel free, but you will be on your own for its specifics.
 
 ### Install dependencies
 
-You will need to have Python version 3.10 or higher, and pip to install required libraries.
+The application currently runs on Python 3.13. Please ensure that this is installed on your system. This setup also requires Docker to be installed, as it will use docker-compose for the database.
 
 ### Set up virtual environment in VS Code
-
-Note: These instructions will be different if you are using a different IDE.
 
 1. Open the project folder in Visual Studio Code
 2. From the Command Palette, select Python: Create Environment
@@ -37,7 +28,6 @@ Note: These instructions will be different if you are using a different IDE.
 `invoke psql` will open an interactive psql shell in the database container.
 See `inv psql --help` for more options.
 
-
 ### Set configs
 
 Under args in `launch.json`, make sure to include the following:
@@ -47,9 +37,15 @@ Under args in `launch.json`, make sure to include the following:
         "--settings=modarchive.settings.dev"
     ],
 
-You should also make the following change to `manage.py` (but don't commit it):
+Create a `settings.json` in the `.vscode` directory that contains the following:
 
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'modarchive.settings.dev')
+    {
+        "terminal.integrated.env.windows": {
+            "DJANGO_SETTINGS_MODULE": "modarchive.settings.dev"
+        }
+    }
+
+This will make settings available in the terminal (you will probably need to open a new terminal in VS code for this to take effect).
 
 Django requires a secret key to run. Invoke `python manage.py shell` and do the following:
 
@@ -62,21 +58,53 @@ Put the value of the secret key into `launch.json`:
         "MODARCHIVE_SECRET_KEY": "secret_key_goes_here"
     }
 
-### Execute
+### Run database migrations
 
-## Setting up testing in local environment
+In the VS code terminal, run:
 
-The following instructions are relevant for use with Visual Studio Code. Please note that every directory with tests will need to have `__init__.py` in the directory.
+    python manage.py migrate
 
-First, do pip install pytest-django.
+This will run migrations against the database, which creates the necessary schema.
 
-Second, in Visual Studio Code, click on "Testing" and select pytest as your testing framework.
+### Create a superuser
 
-You will need to create a pytest.ini with the following content:
+From your terminal, execute:
+
+    python manage.py createsuperuser
+
+Follow the prompts to create your user. You can use this to log in to the application when it runs.
+
+## Run tests
+
+You don't need to run tests to run the application, but if you plan to do any amount of development, you will need tests.
+
+In the repository root directory, create file pytest.ini with the following content:
 
     [pytest]
     DJANGO_SETTINGS_MODULE = modarchive.settings.unittest
     python_files = tests.py test_*.py *_tests.py
 
     env =
-        MODARCHIVE_SECRET_KEY=(generate a new secret key here)
+        MODARCHIVE_SECRET_KEY=(secret key, the one you generated earlier will work fine)
+
+In Visual Studio Code, click on "Testing" and select pytest as your testing framework. Once tests are discovered, run them and verify that they work.
+
+## Run the application
+
+Your launch.json needs a configuration that looks something like this (you may already have this if you followed earlier steps):
+
+    {
+      "name": "Python Debugger: Django",
+      "type": "debugpy",
+      "request": "launch",
+      "args": ["runserver", "--settings=modarchive.settings.dev"],
+      "django": true,
+      "autoStartBrowser": false,
+      "program": "${workspaceFolder}\\manage.py",
+      "env": {
+        "DJANGO_SETTINGS_MODULE": "modarchive.settings.dev",
+        "MODARCHIVE_SECRET_KEY": "your secret key value goes here"
+      }
+    }
+
+You will now be able to click "Python Debugger: Django" to run the application. Point your browser to localhost:8000 to visit the site.
