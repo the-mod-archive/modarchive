@@ -8,6 +8,7 @@ cffi==1.17.1
 charset-normalizer==2.0.12
 colorama==0.4.4
 crispy-bootstrap5==0.7
+defusedxml==0.7.1
 dj-database-url==0.5.0
 Django==5.1.6
 django-bootstrap-icons==0.9.0
@@ -23,14 +24,16 @@ iniconfig==1.1.1
 Markdown==3.4.1
 mysqlclient==2.2.7
 packaging==21.3
-pluggy==1.0.0
+pluggy==1.6.0
 psycopg2-binary==2.9.10
 py==1.11.0
 pycparser==2.22
+Pygments==2.19.2
 pymdown-extensions==9.5
 pyparsing==3.0.7
-pytest==7.0.1
+pytest==8.4.1
 pytest-django==4.5.2
+pytest-env==1.1.5
 python-dateutil==2.8.2
 pytz==2021.3
 requests==2.27.1
