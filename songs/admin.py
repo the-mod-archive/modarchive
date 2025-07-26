@@ -10,10 +10,12 @@ from interactions.models import Favorite
 from songs import models, forms
 from uploads import models as upload_models
 from interactions import models as interaction_models
-from artists.models import Artist
+from artists.models import ArtistSong
 
-class ArtistInline(admin.TabularInline):
-    model = Artist.songs.through
+class ArtistSongInlineForSong(admin.TabularInline):
+    model = ArtistSong
+    extra = 1
+    autocomplete_fields = ['artist']
 
 @admin.register(models.Song)
 class SongAdmin(admin.ModelAdmin):
@@ -21,7 +23,8 @@ class SongAdmin(admin.ModelAdmin):
     search_fields = ("title__startswith", )
     exclude = ("search_document",)
     form = forms.AdminSongForm
-    # inlines = [ArtistInline]
+    inlines = [ArtistSongInlineForSong]
+    search_fields = ['title']
 
     def get_urls(self):
         urls = super().get_urls()

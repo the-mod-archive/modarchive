@@ -31,7 +31,7 @@ class Artist(models.Model):
     key=models.CharField(max_length=32, db_index=True, blank=True)
     name=models.CharField(max_length=64)
     random_token=models.PositiveIntegerField(null=True, blank=True, help_text="Used for differentiating artists with the same name")
-    songs=models.ManyToManyField(Song, blank=True)
+    songs=models.ManyToManyField(Song, through='ArtistSong', blank=True)
     search_document=SearchVectorField(null=True)
     create_date=models.DateTimeField(default=timezone.now)
     update_date=models.DateTimeField(auto_now=True)
@@ -51,6 +51,13 @@ class Artist(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+class ArtistSong(models.Model):
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('artist', 'song')
 
 @receiver(pre_save, sender=Artist)
 def set_random_number(sender, instance, **kwargs):
