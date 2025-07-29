@@ -1,12 +1,12 @@
 {% load filters %}
 
-{% if song.clean_title and song.clean_title != song.title %}
+{% if song.title_from_file and song.title_from_file != song.title %}
     <div class="fs-5 my-1">
         Original Title
     </div>
 
     <div class="text-warning bg-dark rounded px-3 py-1 font-monospace internal-comment">
-        {{ song.title|spaces|escape }}
+        {{ song.title_from_file|spaces|escape }}
     </div>
 {% endif  %}
 

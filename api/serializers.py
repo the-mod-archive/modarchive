@@ -29,7 +29,7 @@ class SongSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'title',
-            'clean_title',
+            'title_from_file',
             'filename',
             'file_size',
             'channels',
@@ -50,7 +50,7 @@ class LimitedSongSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'title',
-            'clean_title',
+            'title_from_file',
             'filename',
             'file_size',
             'channels',
@@ -78,7 +78,7 @@ class SongSearchResultSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'title',
-            'clean_title',
+            'title_from_file',
             'filename',
             'file_size',
             'channels',

@@ -141,7 +141,7 @@ class Song(models.Model):
     filename=models.CharField(max_length=120, db_index=True)
     filename_unzipped = models.CharField(max_length=120, blank=True)
     title=models.CharField(max_length=120, db_index=True)
-    clean_title=models.CharField(max_length=120, null=True, db_index=True, blank=True, help_text="Cleaned-up version of the title for better display and search")
+    title_from_file = models.CharField(max_length=120, blank=True)
     format=models.CharField(max_length=6, choices=Formats.choices, db_index=True)
     file_size=models.PositiveIntegerField()
     channels=models.PositiveSmallIntegerField()
@@ -164,8 +164,8 @@ class Song(models.Model):
     update_date=models.DateTimeField(auto_now=True)
 
     def get_title(self) -> str:
-        title = str(self.clean_title) if self.clean_title else str(self.title)
-        return str(self.filename) if not title.strip() else title.strip()
+        title = str(self.title).strip()
+        return str(self.filename) if not title else title
 
     def is_own_song(self, profile_id):
         return self.artist_set.all().filter(profile_id=profile_id).exists()
@@ -204,7 +204,7 @@ class Song(models.Model):
         ]
 
     def __str__(self) -> str:
-        return self.get_title()
+        return f"{self.get_title()} [id: {self.pk}]"
 
 class SongStats(models.Model):
     song = models.OneToOneField(

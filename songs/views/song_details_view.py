@@ -48,7 +48,7 @@ class SongDetailsView(PermissionRequiredMixin, ContextMixin, View):
         song_form = forms.SongDetailsForm(request.POST, instance=song)
 
         # Only create a comment form if text is present in the payload
-        if request.POST['text']:
+        if request.POST.get('text'):
             comment_form = AddArtistCommentForm(request.POST, instance=comment)
         else:
             comment_form = None

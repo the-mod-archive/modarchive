@@ -19,12 +19,11 @@ class ArtistSongInlineForSong(admin.TabularInline):
 
 @admin.register(models.Song)
 class SongAdmin(admin.ModelAdmin):
-    list_display = ("pk", "title", "clean_title", "filename")
-    search_fields = ("title__startswith", )
-    exclude = ("search_document",)
-    form = forms.AdminSongForm
+    list_display = ("pk", "title",)
+    search_fields = ("title__startswith",)
+    fields = ('title', 'legacy_id', 'is_featured', 'featured_date', 'featured_by', 'uploaded_by')
+    autocomplete_fields = ('featured_by', 'uploaded_by')
     inlines = [ArtistSongInlineForSong]
-    search_fields = ['title']
 
     def get_urls(self):
         urls = super().get_urls()

@@ -27,11 +27,17 @@ class Command(BaseCommand):
         # Generate song
         create_date = legacy_file.date if legacy_file.date else legacy_file.timestamp
 
+        if not str(legacy_file.songtitle).strip():
+            title = legacy_file.filename
+        else:
+            title = legacy_file.songtitle
+
         song = Song.objects.create(
             legacy_id = legacy_file.id,
             filename = legacy_file.filename,
             filename_unzipped = legacy_file.filename_unzipped,
-            title = legacy_file.songtitle,
+            title = title,
+            title_from_file = legacy_file.songtitle,
             format = self.get_format(legacy_file.format),
             file_size = legacy_file.filesize,
             channels = legacy_file.channels,

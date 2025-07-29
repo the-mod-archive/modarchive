@@ -212,10 +212,16 @@ class ScreeningActionView(PermissionRequiredMixin, View):
         else:
             folder = approved_song.filename[0].upper()
 
+        if approved_song.title.strip():
+            title = approved_song.title
+        else:
+            title = approved_song.filename
+
         song = Song(
             filename=approved_song.filename,
             filename_unzipped=approved_song.filename_unzipped,
-            title=approved_song.title,
+            title=title,
+            title_from_file=approved_song.title,
             format=approved_song.format.upper(),
             file_size=approved_song.file_size,
             channels=approved_song.channels,

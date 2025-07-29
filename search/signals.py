@@ -12,13 +12,8 @@ from songs.models import Song
 @receiver(post_save, sender=Song)
 def index_song(sender, **kwargs):
     song = kwargs['instance']
-
-    if (song.clean_title):
-        title_field = 'clean_title'
-    else:
-        title_field = 'title'
     
-    title_vector=reduce(operator.add, [SearchVector(title_field)])
+    title_vector=reduce(operator.add, [SearchVector('title')])
     instrument_text_vector=reduce(operator.add, [SearchVector('instrument_text')])
     comment_text_vector=reduce(operator.add, [SearchVector('comment_text')])
     
