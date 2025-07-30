@@ -726,16 +726,28 @@ class ApprovalActionTests(TestCase):
             else:
                 os.remove(entry_path)
 
-    def make_song(self, claimed_by, song_hash, filename, song_format, uploader_profile, is_by_uploader=False, flag=None):
-        song = upload_factories.NewSongFactory(
-            claimed_by=claimed_by,
-            hash=song_hash,
-            filename=filename,
-            format=song_format,
-            uploader_profile=uploader_profile,
-            is_by_uploader=is_by_uploader,
-            flag=flag
-        )
+    def make_song(self, claimed_by, song_hash, filename, song_format, uploader_profile, is_by_uploader=False, flag=None, title=None):
+        if title is not None and title.strip() == "":
+            song = upload_factories.NewSongFactory(
+                title=title,
+                claimed_by=claimed_by,
+                hash=song_hash,
+                filename=filename,
+                format=song_format,
+                uploader_profile=uploader_profile,
+                is_by_uploader=is_by_uploader,
+                flag=flag
+            )
+        else:
+            song = upload_factories.NewSongFactory(
+                claimed_by=claimed_by,
+                hash=song_hash,
+                filename=filename,
+                format=song_format,
+                uploader_profile=uploader_profile,
+                is_by_uploader=is_by_uploader,
+                flag=flag
+            )
 
         # Create a dummy file to represent the uploaded file
         with open(f'{self.new_file_dir}/{song.filename}.zip', 'w', encoding='utf-8') as file:
@@ -755,13 +767,16 @@ class ApprovalActionTests(TestCase):
 
         return song
 
-    def assert_song_added_to_archive(self, screened_song, expected_artists=None, featured=False):
+    def assert_song_added_to_archive(self, screened_song, expected_artists=None, featured=False, use_filename_as_title=False):
         song = Song.objects.get(hash=screened_song.hash)
         self.assertEqual(screened_song.filename, song.filename)
         expected_folder = '0_9' if screened_song.filename[0].isdigit() else screened_song.filename[0].upper()
         self.assertEqual(expected_folder, song.folder)
         self.assertEqual(screened_song.format.upper(), song.format)
-        self.assertEqual(screened_song.title, song.title)
+        if use_filename_as_title:
+            self.assertEqual(screened_song.filename, song.title)
+        else:
+            self.assertEqual(screened_song.title, song.title)
         self.assertEqual(screened_song.uploader_profile, song.uploaded_by)
 
         if expected_artists is None:
@@ -942,6 +957,18 @@ class ApprovalActionTests(TestCase):
         self.assertEqual(1, len(messages))
         self.assertEqual(constants.MESSAGE_SONGS_APPROVED.format(3), str(messages[0]))
         self.assertRedirects(response, reverse('screening_index'))
+    
+    def test_approved_song_with_blank_title_gets_filename_as_title(self):
+        # Arrange
+        uploader = factories.UserFactory()
+        song1 = self.make_song(self.user.profile, '0987654321', SONG_1_FILENAME, Song.Formats.MOD, uploader.profile, title="")
+
+        # Act
+        self.client.force_login(self.user)
+        self.client.post(reverse('screening_action'), {'selected_songs': [song1.id], 'action': constants.APPROVE_KEYWORD})
+
+        # Assert
+        self.assert_song_added_to_archive(song1, featured=False, use_filename_as_title=True)
 
 class RejectActionTests(TestCase):
     def setUp(self) -> None:

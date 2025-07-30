@@ -43,7 +43,7 @@ class QuickSearchTests(TestCase):
         song_factories.SongFactory(title='Atomic 2 theme')
         song_factories.SongFactory(title='Before dark')
         song_factories.SongFactory(title='doubt[stereomix]')
-        self.song_outcast = song_factories.SongFactory(title='Unclean', clean_title='Outcast')
+        self.song_outcast = song_factories.SongFactory(title='Outcast', title_from_file='Unclean')
         self.song_subliminal_messages = song_factories.SongFactory(title='Subliminal Messages')
         
         # 3 artists
@@ -80,7 +80,7 @@ class QuickSearchTests(TestCase):
         self.assertEqual(1, len(response.context['search_results']))
         self.assertEqual(self.artist_wurkir, response.context['search_results'][0]['item'])
 
-    def test_quick_search_gets_song_by_clean_title(self):
+    def test_quick_search_gets_song_by_when_title_different_from_title_from_file(self):
         # Act
         response = self.client.get('/search/?query=outcast&songs=on&artists=on')
 
@@ -88,7 +88,7 @@ class QuickSearchTests(TestCase):
         self.assertEqual(1, len(response.context['search_results']))
         self.assertEqual(self.song_outcast, response.context['search_results'][0]['item'])
 
-    def test_quick_search_does_not_search_title_when_clean_title_is_set(self):
+    def test_quick_search_does_not_search_for_title_from_file(self):
         # Act
         response = self.client.get('/search/?query=unclean&songs=on&artists=on')
 

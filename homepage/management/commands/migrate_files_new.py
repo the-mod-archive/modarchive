@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from homepage import legacy_models
 from homepage.models import Profile
-from songs.models import NewSong
+from uploads.models import NewSong
 from .disable_signals import DisableSignals
 
 class Command(BaseCommand):

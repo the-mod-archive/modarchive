@@ -3,35 +3,6 @@ from django import forms
 
 from songs import models
 
-class AdminSongForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(AdminSongForm, self).__init__(*args, **kwargs)
-        self.fields['comment_text'].strip = False
-        self.fields['instrument_text'].strip = False
-
-    class Meta:
-        model = models.Song
-        fields = (
-            'legacy_id',
-            'filename',
-            'filename_unzipped',
-            'title',
-            'clean_title',
-            'format',
-            'file_size',
-            'channels',
-            'comment_text',
-            'instrument_text',
-            'hash',
-            'pattern_hash',
-            'license',
-            'genre',
-            'folder',
-            'is_featured',
-            'featured_date',
-            'featured_by'
-        )
-
 class MergeSongForm(forms.Form):
     song_to_merge_into_id = forms.IntegerField(label='Song ID to Merge Into')
     commit = forms.BooleanField(initial=False, widget=forms.HiddenInput(), required=False)
@@ -64,11 +35,11 @@ class SongGenreForm(GenreMixin, forms.ModelForm):
 class SongDetailsForm(GenreMixin, forms.ModelForm):
     class Meta:
         model = models.Song
-        fields = ("clean_title", "genre")
+        fields = ("title", "genre")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['clean_title'].help_text = '''
-        Cleaned up version of title for display and search purposes. Use this to remove unwanted characters, artist name, etc. Does not change the title in the file itself.
-        If left blank, the original title will display instead.
+        self.fields['title'].help_text = '''
+        Clean title for search and display purposes. Use this to remove unwanted characters, artist name, etc. Does not change the title in the file itself.
+        If not sure what to set this to, use the filename.
         '''

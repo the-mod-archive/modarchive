@@ -12,14 +12,6 @@ class SongModelTests(TestCase):
     LOWERCASE_TITLE = "song title"
     MOD_FILE = "file.mod"
 
-    def test_gets_clean_title_when_available(self):
-        song = Song(title=self.LOWERCASE_TITLE, clean_title="Song Title")
-        self.assertEqual("Song Title", song.get_title())
-
-    def test_gets_original_title_when_no_clean_title_available(self):
-        song = Song(title=self.LOWERCASE_TITLE)
-        self.assertEqual(self.LOWERCASE_TITLE, song.get_title())
-
     def test_shows_filename_when_title_is_empty(self):
         song = Song(title="", filename=self.MOD_FILE)
         self.assertEqual(self.MOD_FILE, song.get_title())

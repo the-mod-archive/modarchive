@@ -3,8 +3,9 @@ from django.contrib import admin
 from . import models
 
 @admin.register(models.Profile)
-class SongAdmin(admin.ModelAdmin):
+class ProfileAdmin(admin.ModelAdmin):
     list_display = ("pk", "display_name")
+    search_fields = ("display_name", )
 
 @admin.register(models.News)
 class NewsAdmin(admin.ModelAdmin):
