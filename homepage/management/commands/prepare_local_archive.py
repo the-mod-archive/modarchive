@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 import logging
 from pathlib import Path
+import re
 import requests
 import sys
 
@@ -34,10 +35,21 @@ class Command(BaseCommand):
                 self.get_song(song, main_dir, base_url)
     
     def get_song(self, song: Song, main_dir: Path, base_url: str):
-        format_dir = main_dir / song.format.upper()
+        # Validate format before using in path
+        valid_formats = {choice[0].upper() for choice in Song.Formats.choices}
+        format_name = song.format.upper()
+        if format_name not in valid_formats:
+            print(f"Invalid format '{song.format}' for song '{song.title}'. Skipping.")
+            return
+        format_dir = main_dir / format_name
         if not format_dir.exists():
             print(f"Creating format directory: {format_dir}")
             format_dir.mkdir()
+        
+        # Validate that song.folder is a single uppercase letter or '0_9'
+        if not re.match(r"^[A-Z]$|^[0-1]_9$", str(song.folder)):
+            logger.error(f"Invalid folder name '{song.folder}' for song ID {song.id}. Skipping.")
+            return
 
         song_folder = format_dir / song.folder
         if not song_folder.exists():
