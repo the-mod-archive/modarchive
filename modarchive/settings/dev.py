@@ -18,14 +18,15 @@ REMOVED_FILE_DIR = os.getenv('REMOVED_FILE_DIR', tempfile.mkdtemp(prefix='remove
 
 DATABASES['legacy'] = {
     'ENGINE': 'django.db.backends.mysql',
-    'HOST': '127.0.0.1',
-    'NAME': 'mods_tma',
-    'USER': 'modarchive_local',
-    'PASSWORD': 'password23',
+    'HOST': os.getenv('MYSQL_HOST', ''),
+    'NAME': os.getenv('MYSQL_DATABASE_NAME', ''),
+    'USER': os.getenv('MYSQL_USERNAME', ''),
+    'PASSWORD': os.getenv('MYSQL_PASSWORD', ''),
     'PORT': '3306'
 }
 
-DOWNLOAD_STRATEGY = 'redirect'
+# This is only used in dev environment to populate your local archive
+SONG_SOURCE = 'https://api.modarchive.org/downloads.php'
 
 # LOGGING = {
 #     'version': 1,

@@ -37,7 +37,7 @@ Under args in `launch.json`, make sure to include the following:
         "--settings=modarchive.settings.dev"
     ],
 
-Create a `settings.json` in the `.vscode` directory that contains the following:
+Create a `settings.json` in the `.vscode` directory that contains the following. You will need a different key if you are not in a Windows environment.
 
     {
         "terminal.integrated.env.windows": {
@@ -89,9 +89,36 @@ In the repository root directory, create file pytest.ini with the following cont
 
 In Visual Studio Code, click on "Testing" and select pytest as your testing framework. Once tests are discovered, run them and verify that they work.
 
+## Set up your local data and files
+
+You can load some seed data into your local database with the following commands:
+
+    python manage.py loaddata ./songs/fixtures/songs.json
+    python manage.py loaddata ./artists/fixtures/artists.json
+
+### Set up a local archive
+
+You can skip this step if you don't plan on testing downloads or the player on your local system. However, downloads will not work without doing this.
+
+Choose a directory on your system to host the archive. I recommend using a directory called `.archive` in the project root folder. Then, in your `settings.json` and `launch.json` files, set the environment variable `MAIN_ARCHIVE_DIR` to that directory.
+
+    "MAIN_ARCHIVE_DIR": "your directory goes here",
+
+You will need to restart your terminal for these to take effect. Once that's done, run this command:
+
+    python manage.py prepare_local_archive
+
+This will retrieve the first 50 songs in your database and download them.
+
+If you want to retrieve just a single song, provide the id at the prompt. For example, if your song id is 801, use:
+
+    python manage.py prepare_local_archive 801
+
+This will create your archive directories and download the songs from the song source. Note: the application will attempt to create directories in `MAIN_ARCHIVE_DIR` - if it does not have access to create directories there, this step will not work.
+
 ## Run the application
 
-Your launch.json needs a configuration that looks something like this (you may already have this if you followed earlier steps):
+Your launch.json probably looks something like this if you've followed the steps up to this point:
 
     {
       "name": "Python Debugger: Django",

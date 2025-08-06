@@ -64,24 +64,6 @@ class SongDownloadView(View):
         pk = kwargs.get('pk')
         song = Song.objects.get(pk=pk)
         
-        download_strategy = settings.DOWNLOAD_STRATEGY
-
-        # This is only useful for local development when you don't have the song stored
-        # It redirects to the live server: we will eventually remove this path
-        if download_strategy == 'redirect':
-            remote_url = f'https://api.modarchive.org/downloads.php?moduleid={song.legacy_id}&zip=1'
-            remote_response = requests.get(remote_url, timeout=10)
-
-            if remote_response.status_code != 200:
-                raise Http404("Remote file not found")
-
-            response = StreamingHttpResponse(
-                remote_response.iter_content(chunk_size=8192),
-                content_type='application/zip'
-            )
-            response['Content-Disposition'] = f'attachment; filename="{song.filename}.zip"'
-            return response
-        
         local_file_path = song.get_archive_path()
 
         if not os.path.exists(local_file_path):

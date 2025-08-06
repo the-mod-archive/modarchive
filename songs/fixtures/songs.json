@@ -1,103 +1,13 @@
 [
     {
         "model": "songs.song",
-        "pk": 1,
-        "fields": {
-            "legacy_id": 48552,
-            "filename": "m4v-fasc.it",
-            "title": "tangerine fascination",
-            "clean_title": "Tangerine Fascination",
-            "format": "IT",
-            "file_size": 709340,
-            "channels": 18,
-            "instrument_text": "",
-            "comment_text": "",
-            "hash": "dfd1ce2cbbc762b2454d8a74c5244067",
-            "pattern_hash": "7a4bed390126a9af",
-            "create_date": "1998-12-09 03:20:24+00:00",
-            "update_date": "2022-01-21 20:33:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 1,
-        "fields": {
-            "downloads": 7612,
-            "total_comments": 1,
-            "average_comment_score": 8.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
-        }
-    },
-    {
-        "model": "songs.song",
-        "pk": 2,
-        "fields": {
-            "legacy_id": "34073",
-            "filename": "ascent.s3m",
-            "title": "\"Ascent of the Cloud Eagle\"",
-            "clean_title": "Ascent of the Cloud Eagle",
-            "format": "s3m",
-            "file_size": 819762,
-            "channels": 9,
-            "instrument_text": "-=-=-=-=-=-=-=-=-=-=-=-=-=-\n Ascent of the Cloud Eagle\n-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\n   Sequenced \/ Tracked\n\n            by\n\n      \u00b7 \u25a0 Necros \u25a0 \u00b7\n\n (FM \/ Legend Design \/ PM)\n\n for the NAID Music Compo\n\n\n         net-mail:\n    asega@ic.sunysb.edu",
-            "comment_text": "",
-            "hash": "3e72d1e6ac8dc36acde62bb2403925c0",
-            "pattern_hash": "81662584cb5545dc",
-            "license": "",
-            "create_date": "1997-01-01 03:39:36+00:00",
-            "update_date": "2022-01-22 08:22:21+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 2,
-        "fields": {
-            "downloads": 30729,
-            "total_comments": 9,
-            "average_comment_score": 9.6,
-            "total_reviews": 0,
-            "average_review_score": 0.0
-        }
-    },
-    {
-        "model": "songs.song",
-        "pk": 3,
-        "fields": {
-            "legacy_id": "191120",
-            "filename": "arc-indefinite.it",
-            "title": "Indefinite Radiant",
-            "clean_title": "Indefinite Radiant",
-            "format": "it",
-            "file_size": 433947,
-            "channels": 17,
-            "instrument_text": "Siner\nVoice Mantra\nChurch Organ\nAtmospheric Sound\nTom Drum\nBass Drum\nSnare Drum\nTambourine\nCymbal\nBreakbeat\n\nBass\nGuitar Riff\nPalm Mute\nFlange Reverse Cymbal\nFlangenoise\nDistorted Bass 1\nDistorted Bass 2\nDistorted Bass 3\n\nSlapbass\n\n\n\nThis is the only unripped\nsample. Ain't I pathetic?\n\n:)\n\nHit shift and F9 for more\ninfo.",
-            "comment_text": "Indefinite Radiant\nby Arcturus\n\na Shattered Fixtures Release\n\nTime:  3:42\n\nWell, another song by me, and this one I pumped out in a relatively short\namount of time.  I finished about two weeks after I started, when normally\nI spend a month or more without finishing a song!  How odd.  I've been\ntracking with a fury recently.  I guess it may be because I don't know if\nI'll be able to track much in college, so I'd like to get as much done\nhere as possible.  Anywho, enjoy the song.\n\n-Arcturus\n\nContact Info\n\nMy homepage:  http:\/\/members.tripod.com\/~arcmeister\nMy e-mail:  arcmeister@pemail.net\nThe Shattered Fixtures homepage:  http:\/\/www.aspects.net\/~sf\/index2.html",
-            "hash": "ebb99f21e445a40e6a99799abdd4b794",
-            "pattern_hash": "c313e9643fddde3b",
-            "create_date": "2021-01-23 00:59:32+00:00",
-            "update_date": "2022-01-20 01:06:32+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 3,
-        "fields": {
-            "downloads": 265,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
-        }
-    },
-    {
-        "model": "songs.song",
-        "pk": 4,
+        "pk": 801,
         "fields": {
             "legacy_id": "801",
             "filename": "k_univ.it",
+            "filename_unzipped": "k_univ.it",
             "title": "Universe Electric",
-            "clean_title": "Universe Electric",
+            "title_from_file": "Universe Electric",
             "format": "it",
             "file_size": 998472,
             "channels": 32,
@@ -105,15 +15,19 @@
             "comment_text": "Hi there,\n\nFirst there was Chromatic Dragon, then there was Siren of Kosmic, now\nthere's Sandman. Why the change? Chromatic Dragon was a mouthful, and\nSiren wasn't me. It just wasn't. After reading a DC Comics series called\n\"The Sandman\" I realized that I'd rather influence people's dreams than\nlure them into jagged rocks with my alluring song. :)\n\nBelieve me, this is the LAST time the name will change. It is Sandman, and\nin future will probably just be Alex to my friends. I do apologize for the\nchange, but it had to be done. See you in '97! As my pal basehead would\nsay, \"peace\"...\n\n\n                                -Sandman\/KFMF\n                                  (Alexander Brandon)",
             "hash": "921a7f65a8107252abc1b79880e829be",
             "pattern_hash": "3409b04ae6f6aae1",
+            "license": "",
+            "genre": "",
+            "is_featured": false,
+            "folder": "K",
             "create_date": "1998-06-27 19:00:00+00:00",
-            "update_date": "2022-01-22 09:39:10+00:00"
+            "update_date": "1998-06-27 19:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 4,
+        "pk": 801,
         "fields": {
-            "downloads": 3634,
+            "downloads": 4497,
             "total_comments": 0,
             "average_comment_score": 0.0,
             "total_reviews": 0,
@@ -122,12 +36,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 5,
+        "pk": 32385,
         "fields": {
             "legacy_id": "32385",
             "filename": "ASTRAY.S3M",
+            "filename_unzipped": "ASTRAY.S3M",
             "title": "Astraying Voyages",
-            "clean_title": "Astraying Voyages",
+            "title_from_file": "Astraying Voyages",
             "format": "s3m",
             "file_size": 719904,
             "channels": 25,
@@ -135,15 +50,20 @@
             "comment_text": "",
             "hash": "830afd83a66db263e15d412f9bdae62d",
             "pattern_hash": "8005f94c16ae922d",
+            "license": "",
+            "genre": "trance-goa",
+            "is_featured": true,
+            "featured_date": "2016-06-14 14:59:53+00:00",
+            "folder": "A",
             "create_date": "1997-01-01 03:37:50+00:00",
-            "update_date": "2022-01-21 17:05:51+00:00"
+            "update_date": "1997-01-01 03:37:50+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 5,
+        "pk": 32385,
         "fields": {
-            "downloads": 31988,
+            "downloads": 34601,
             "total_comments": 3,
             "average_comment_score": 9.3,
             "total_reviews": 0,
@@ -152,12 +72,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 6,
+        "pk": 32496,
         "fields": {
             "legacy_id": "32496",
             "filename": "a-liab.it",
+            "filename_unzipped": "a-liab.it",
             "title": "Leaving it All Behind",
-            "clean_title": "Leaving it All Behind",
+            "title_from_file": "Leaving it All Behind",
             "format": "it",
             "file_size": 4781883,
             "channels": 13,
@@ -165,15 +86,19 @@
             "comment_text": "Leaving it All Behind\n4:36\n\nby Arcturus\n\nI've been home from Argentina for four months now, and this is the first\nsong that I've released.  Since I'm not a very well known trakcer in the\nscene, few people know that I was gone.  Well, I was a missionary in\nArgentina for two years.  I must say that the song turned out quite\nnicely. It gets a little crowded at times, but I'm too lazy to take care\nof it :)\n\nI apologize for the file size, for a mod, this is pretty big, but the\nsound quality more than makes up for it.  For me, it sounds really bad in\nImpulse Tracker, but it sounds great in WinAmp.  Modplug does a good job\nof playing it as well, not quite as good as WinAmp, but very close.\n\nPeople who have heard this have commented that it sounds a lot like the\nopening theme of The Legend of Zelda:  Ocarina of Time.  After comparing the\ntwo, I noticed that there are quite a few similarities, however, when I wrote\nthis, I hadn't played that game in about three years.  Maybe I was subconsciousl\ninfluenced by the music, but I think the parts that sound similar to that aren't\nthe best moments in this tune.\n\nSo, what's the significance of the title?  Not much, really.  When I\nlistened to it, it just reminded me of someone being on a bus, or train,\nor plane, leaving some place behind them, never to return.  Perhaps I\nunconsciously wrote a song about my departure from Argentina, although I\nmay return there some day.\n\nAnyway, I hope you enjoy this.  Here's my contact information.\n\nArcturus (Mark Abersold)\nhttp:\/\/arcturus.rooms.rubberrooms.net\/\nICQ:  6570208\nemail:  mabersold@yahoo.com\n\nCopyright (C) 2001 by Mark Abersold.  All rights reserved.",
             "hash": "d61adf22920ab2b2808dee0ffbdeee7d",
             "pattern_hash": "dd21a5e0a0c207ef",
+            "license": "",
+            "genre": "piano",
+            "is_featured": false,
+            "folder": "A",
             "create_date": "2002-06-01 15:35:16+00:00",
-            "update_date": "2022-01-21 23:20:45+00:00"
+            "update_date": "2002-06-01 15:35:16+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 6,
+        "pk": 32496,
         "fields": {
-            "downloads": 5293,
+            "downloads": 5993,
             "total_comments": 0,
             "average_comment_score": 0.0,
             "total_reviews": 0,
@@ -182,12 +107,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 7,
+        "pk": 33907,
         "fields": {
             "legacy_id": "33907",
             "filename": "arc-solitude.it",
+            "filename_unzipped": "arc-solitude.it",
             "title": "Solitude",
-            "clean_title": "Solitude",
+            "title_from_file": "Solitude",
             "format": "it",
             "file_size": 602820,
             "channels": 11,
@@ -195,15 +121,19 @@
             "comment_text": "Solitude\nby Arcturus\n\nWhat is it with me and short songs as of late?  This one is just over 3\nminutes.  Ah, who cares?  I guess \"An Arcturus Christmas\" was a pretty\ngood length.  Here is some contact info:\n\nMy web page:  http:\/\/members.tripod.com\/~arcmeister\nShattered Fixtures:  http:\/\/members.aol.com\/Flaschberg\nMy email adress:  arcmeister@pemail.net\n\nGreets go out to:  Me.  And a few other people.  :)\n\n-Arcturus of Shattered Fixtures",
             "hash": "85968f7fc0fc04c3a71681cac46db4dd",
             "pattern_hash": "b234cafc758e1543",
+            "license": "",
+            "genre": "pop-synth",
+            "is_featured": false,
+            "folder": "A",
             "create_date": "2002-06-09 22:13:54+00:00",
-            "update_date": "2022-01-20 09:36:47+00:00"
+            "update_date": "2002-06-09 22:13:54+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 7,
+        "pk": 33907,
         "fields": {
-            "downloads": 2050,
+            "downloads": 2532,
             "total_comments": 0,
             "average_comment_score": 0.0,
             "total_reviews": 0,
@@ -212,12 +142,49 @@
     },
     {
         "model": "songs.song",
-        "pk": 8,
+        "pk": 34073,
+        "fields": {
+            "legacy_id": "34073",
+            "filename": "ascent.s3m",
+            "filename_unzipped": "ascent.s3m",
+            "title": "\"Ascent of the Cloud Eagle\"",
+            "title_from_file": "Ascent of the Cloud Eagle",
+            "format": "s3m",
+            "file_size": 819762,
+            "channels": 9,
+            "instrument_text": "-=-=-=-=-=-=-=-=-=-=-=-=-=-\n Ascent of the Cloud Eagle\n-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\n   Sequenced \/ Tracked\n\n            by\n\n      \u00b7 \u25a0 Necros \u25a0 \u00b7\n\n (FM \/ Legend Design \/ PM)\n\n for the NAID Music Compo\n\n\n         net-mail:\n    asega@ic.sunysb.edu",
+            "comment_text": "",
+            "hash": "3e72d1e6ac8dc36acde62bb2403925c0",
+            "pattern_hash": "81662584cb5545dc",
+            "license": "",
+            "genre": "electronic-ambient",
+            "is_featured": true,
+            "featured_date": "2010-12-09 22:47:12+00:00",
+            "folder": "A",
+            "create_date": "1997-01-01 03:39:36+00:00",
+            "update_date": "1997-01-01 03:39:36+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 34073,
+        "fields": {
+            "downloads": 35464,
+            "total_comments": 10,
+            "average_comment_score": 9.6,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 34654,
         "fields": {
             "legacy_id": "34654",
             "filename": "CTGOBLIN.S3M",
+            "filename_unzipped": "CTGOBLIN.S3M",
             "title": "Catch that goblin!!",
-            "clean_title": "Catch That Goblin!",
+            "title_from_file": "Catch That Goblin!",
             "format": "s3m",
             "file_size": 481939,
             "channels": 12,
@@ -225,16 +192,21 @@
             "comment_text": "",
             "hash": "d4534b812dbc92848c1e1e7b65375402",
             "pattern_hash": "8ee94391288263a7",
+            "license": "",
+            "genre": "comedy",
+            "is_featured": true,
+            "featured_date": "2009-02-13 14:50:24+00:00",
+            "folder": "C",
             "create_date": "1997-01-01 03:47:20+00:00",
-            "update_date": "2022-01-22 15:06:02+00:00"
+            "update_date": "1997-01-01 03:47:20+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 8,
+        "pk": 34654,
         "fields": {
-            "downloads": 76049,
-            "total_comments": 15,
+            "downloads": 83781,
+            "total_comments": 20,
             "average_comment_score": 9.2,
             "total_reviews": 0,
             "average_review_score": 0.0
@@ -242,12 +214,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 9,
+        "pk": 39954,
         "fields": {
             "legacy_id": "39954",
             "filename": "crys_klf.s3m",
+            "filename_unzipped": "crys_klf.s3m",
             "title": "Crystalline Tears",
-            "clean_title": "Crystalline Tears",
+            "title_from_file": "Crystalline Tears",
             "format": "s3m",
             "file_size": 211136,
             "channels": 11,
@@ -255,15 +228,19 @@
             "comment_text": "",
             "hash": "9e06bd75b89a55833a05956cfc18f7c1",
             "pattern_hash": "a2398d6749bf7b9d",
+            "license": "",
+            "genre": "electronic-dance",
+            "is_featured": false,
+            "folder": "C",
             "create_date": "2001-09-26 16:08:48+00:00",
-            "update_date": "2022-01-22 13:37:27+00:00"
+            "update_date": "2001-09-26 16:08:48+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 9,
+        "pk": 39954,
         "fields": {
-            "downloads": 1813,
+            "downloads": 2613,
             "total_comments": 1,
             "average_comment_score": 8.0,
             "total_reviews": 0,
@@ -272,12 +249,49 @@
     },
     {
         "model": "songs.song",
-        "pk": 10,
+        "pk": 41770,
+        "fields": {
+            "legacy_id": 41770,
+            "filename": "dusk.s3m",
+            "filename_unzipped": "dusk.s3m",
+            "title": "Dusk Horizon",
+            "title_from_file": "Dusk Horizon",
+            "format": "s3m",
+            "file_size": 589550,
+            "channels": 16,
+            "instrument_text": "\"Dusk Horizon\"\n\n  a piece for\n  Epic Megagames'\n    \"Unreal\"\n\n\n  by Alexander Brandon",
+            "comment_text": "",
+            "hash": "4e5093f9959fc09ac746e033e981f2e6",
+            "pattern_hash": "e7f00a379367ef9a",
+            "license": "",
+            "genre": "video-game",
+            "is_featured": true,
+            "featured_date": "2009-03-05 21:46:03+00:00",
+            "folder": "D",
+            "create_date": "2002-11-15 03:20:24+00:00",
+            "update_date": "2002-11-15 03:20:24+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 41770,
+        "fields": {
+            "downloads": 7312,
+            "total_comments": 1,
+            "average_comment_score": 10.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 42654,
         "fields": {
             "legacy_id": "42654",
             "filename": "flowers.it",
+            "filename_unzipped": "flowers.it",
             "title": "flowers in the abyss",
-            "clean_title": "Flowers in the Abyss",
+            "title_from_file": "Flowers in the Abyss",
             "format": "it",
             "file_size": 1226736,
             "channels": 38,
@@ -285,15 +299,20 @@
             "comment_text": "",
             "hash": "32b3865bfe407f77ab68c2249444f3a0",
             "pattern_hash": "8bcd4fad14e90665",
+            "license": "",
+            "genre": "electronic-ambient",
+            "is_featured": true,
+            "featured_date": "2009-12-11 00:00:00+00:00",
+            "folder": "F",            
             "create_date": "2000-12-11 14:54:36+00:00",
-            "update_date": "2022-01-21 07:01:01+00:00"
+            "update_date": "2000-12-11 14:54:36+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 10,
+        "pk": 42654,
         "fields": {
-            "downloads": 4684,
+            "downloads": 5278,
             "total_comments": 1,
             "average_comment_score": 9.0,
             "total_reviews": 0,
@@ -302,12 +321,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 11,
+        "pk": 43791,
         "fields": {
             "legacy_id": "43791",
             "filename": "glowbug.s3m",
+            "filename_unzipped": "glowbug.s3m",
             "title": "glow bug",
-            "clean_title": "Glow Bug",
+            "title_from_file": "Glow Bug",
             "format": "s3m",
             "file_size": 490688,
             "channels": 16,
@@ -315,15 +335,20 @@
             "comment_text": "",
             "hash": "d3c704eb8fd81c5db695151c93ac6232",
             "pattern_hash": "a3ae8bfedbd1dc70",
+            "license": "",
+            "genre": "electronic-ambient",
+            "is_featured": true,
+            "featured_date": "2019-05-06 21:46:03+00:00",
+            "folder": "G",
             "create_date": "1997-01-01 04:11:23+00:00",
-            "update_date": "2022-01-22 16:14:45+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 11,
+        "pk": 43791,
         "fields": {
-            "downloads": 8839,
+            "downloads": 10106,
             "total_comments": 2,
             "average_comment_score": 9.5,
             "total_reviews": 0,
@@ -332,12 +357,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 12,
+        "pk": 44366,
         "fields": {
             "legacy_id": "44366",
             "filename": "ICEFRONT.S3M",
+            "filename_unzipped": "ICEFRONT.S3M",
             "title": "Ice Frontier",
-            "clean_title": "",
+            "title_from_file": "",
             "format": "s3m",
             "file_size": 235521,
             "channels": 8,
@@ -345,29 +371,69 @@
             "comment_text": "",
             "hash": "e0597bb0db35e9734cf6b6f5d262aa0a",
             "pattern_hash": "391aff43c17fe1a5",
+            "license": "",
+            "genre": "electronic-ambient",
+            "is_featured": true,
+            "featured_date": "2016-12-13 23:58:16+00:00",
+            "folder": "I",            
             "create_date": "2000-07-28 12:56:55+00:00",
-            "update_date": "2022-01-22 05:50:50+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 12,
+        "pk": 44366,
         "fields": {
-            "downloads": 18022,
-            "total_comments": 8,
-            "average_comment_score": 8.8,
+            "downloads": 21451,
+            "total_comments": 9,
+            "average_comment_score": 8.9,
             "total_reviews": 0,
             "average_review_score": 0.0
         }
     },
     {
         "model": "songs.song",
-        "pk": 13,
+        "pk": 44424,
+        "fields": {
+            "legacy_id": 44424,
+            "filename": "JUPITER.S3M",
+            "filename_unzipped": "JUPITER.S3M",
+            "title": "Jupiter",
+            "title_from_file": "Jupiter",
+            "format": "s3m",
+            "file_size": 266805,
+            "channels": 16,
+            "instrument_text": "VFX\/1.The.VFX.Bow\nOctave.Cat.Pussy.Strings\n\nSY55\/2.Sequential\nVFX\/1.System.100M\nVFX\/2.Agressive.String\n\n\nSY55\/2.Wooden.Xylo\n\nM1\/1.Yebo.Bass\nSY55\/2.S&D.Bass\nVFX\/1.Syn.Pluck\nVFX\/2.Sequenzline\n\nWS\/1.CM.Chord =->\nWS\/1.CM.Chord ==->\nWS\/1.CM.Chord ===->\n\nVFX\/2.Mirage.Orch.Hit\n\nT-1.Self.Destruct\nSY35.Tom.Reverb\nripped.tekno bd from ???\nVFX\/1.Snare\nripped.halldrum from skav\nSY35.Brass.Lead\n\n___________________________\n\n  Jupiter\n  by tR\/\\Sh \/ ENiGMA\n\n  Samples and song (C)1994\n  2nd release\n___________________________\n\n  Originally released thru\n  the Damage music disk\n  in July 1994.\n___________________________\n\n  All my samples smpled by\n  me from smpcd's & synths\n___________________________\n\n  Modifications:\n  - changed some porta\n  values so they play ok\n  under DMP..\n  - cut out repeat of first\n  subject in the first half\n  - a little different\n  ending..\n___________________________\n\n  Quik greets:\n  JsNOFLNecGHBHCBMASLOHSO\n  adb3SCMunchPMRCMrlSETML\n  StxJediDavNocValMaelKhy\n  NemMadKTDandeveryonelse\n___________________________",
+            "comment_text": "",
+            "hash": "fba3c00d576d37d08c2558e4215b54ca",
+            "pattern_hash": "6687e02cba868f8b",
+            "license": "",
+            "genre": "electronic-techno",
+            "is_featured": false,
+            "folder": "J",
+            "create_date": "2000-07-28 11:29:50+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 44424,
+        "fields": {
+            "downloads": 6225,
+            "total_comments": 2,
+            "average_comment_score": 9.5,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 45655,
         "fields": {
             "legacy_id": "45655",
             "filename": "infinity.s3m",
             "title": "'infinity' - necros\/khyron",
-            "clean_title": "Infinity",
+            "title_from_file": "Infinity",
             "format": "s3m",
             "file_size": 470144,
             "channels": 9,
@@ -375,15 +441,19 @@
             "comment_text": "",
             "hash": "95090e47f5f23096fda59f34f63dcdee",
             "pattern_hash": "36073b0002f82740",
+            "license": "",
+            "genre": "",
+            "is_featured": false,
+            "folder": "I",
             "create_date": "2000-07-28 12:56:56+00:00",
-            "update_date": "2022-01-22 07:00:38+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 13,
+        "pk": 45655,
         "fields": {
-            "downloads": 13606,
+            "downloads": 15279,
             "total_comments": 1,
             "average_comment_score": 8.0,
             "total_reviews": 0,
@@ -392,12 +462,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 14,
+        "pk": 46469,
         "fields": {
             "legacy_id": "46469",
             "filename": "jt_911.xm",
+            "filename_unzipped": "jt_911.xm",
             "title": "Nine One One",
-            "clean_title": "",
+            "title_from_file": "Nine One One",
             "format": "xm",
             "file_size": 973769,
             "channels": 28,
@@ -405,15 +476,20 @@
             "comment_text": "",
             "hash": "38a55733e653064021577a0edf85cc7b",
             "pattern_hash": "d8c0db028fee0183",
+            "license": "",
+            "genre": "funk",
+            "is_featured": true,
+            "featured_date":"2012-10-19 16:10:41+00:00",
+            "folder": "J",
             "create_date": "2000-07-28 11:30:27+00:00",
-            "update_date": "2022-01-21 07:06:54+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 14,
+        "pk": 46469,
         "fields": {
-            "downloads": 26304,
+            "downloads": 31087,
             "total_comments": 9,
             "average_comment_score": 9.8,
             "total_reviews": 0,
@@ -422,12 +498,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 15,
+        "pk": 46472,
         "fields": {
             "legacy_id": "46472",
             "filename": "jt_breez.xm",
+            "filename_unzipped": "jt_breez.xm",
             "title": "Mountain Breeze",
-            "clean_title": "",
+            "title_from_file": "",
             "format": "xm",
             "file_size": 629641,
             "channels": 24,
@@ -435,15 +512,19 @@
             "comment_text": "",
             "hash": "807f5aa5452e9395f7284ae7a17a0d59",
             "pattern_hash": "cee76c4fde8c1497",
+            "license": "",
+            "genre": "trance-acid",
+            "is_featured": false,
+            "folder": "J",            
             "create_date": "2000-07-28 11:30:27+00:00",
-            "update_date": "2022-01-21 02:58:02+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 15,
+        "pk": 46472,
         "fields": {
-            "downloads": 5648,
+            "downloads": 7123,
             "total_comments": 3,
             "average_comment_score": 9.0,
             "total_reviews": 0,
@@ -452,12 +533,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 16,
+        "pk": 46502,
         "fields": {
             "legacy_id": "46502",
             "filename": "jt_pools.xm",
+            "filename_unzipped": "jt_pools.xm",
             "title": "Pools of Poison",
-            "clean_title": "",
+            "title_from_file": "Pools of Poison",
             "format": "xm",
             "file_size": 700000,
             "channels": 22,
@@ -465,15 +547,20 @@
             "comment_text": "",
             "hash": "ea293797dc3f04bdd5ba4269909736f3",
             "pattern_hash": "e2f1a76831946796",
+            "license": "",
+            "genre": "electronic-house",
+            "is_featured": true,
+            "featured_date": "2008-02-27 10:28:36+00:00",
+            "folder": "J",            
             "create_date": "2000-07-28 11:30:26+00:00",
-            "update_date": "2022-01-22 06:04:36+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 16,
+        "pk": 46502,
         "fields": {
-            "downloads": 10545,
+            "downloads": 13191,
             "total_comments": 5,
             "average_comment_score": 10.0,
             "total_reviews": 0,
@@ -482,12 +569,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 17,
+        "pk": 47034,
         "fields": {
             "legacy_id": "47034",
             "filename": "K-dust.s3m",
-            "title": "Dust to Dust - by Leviathan",
-            "clean_title": "Dust to Dust",
+            "filename_unzipped": "K-dust.s3m",
+            "title": "Dust to Dust",
+            "title_from_file": "Dust to Dust - by Leviathan",
             "format": "s3m",
             "file_size": 404628,
             "channels": 16,
@@ -495,15 +583,19 @@
             "comment_text": "",
             "hash": "679b850d4e5f2f53c699ef140ce7d0c7",
             "pattern_hash": "38c35d4a34e385ec",
+            "license": "",
+            "genre": "pop-rock-soft",
+            "is_featured": false,
+            "folder": "K",
             "create_date": "1997-01-01 04:21:01+00:00",
-            "update_date": "2022-01-22 16:18:47+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 17,
+        "pk": 47034,
         "fields": {
-            "downloads": 12616,
+            "downloads": 13544,
             "total_comments": 2,
             "average_comment_score": 8.5,
             "total_reviews": 0,
@@ -512,12 +604,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 18,
+        "pk": 47092,
         "fields": {
             "legacy_id": "47092",
             "filename": "K_emerld.s3m",
-            "title": "Emerald Visions - Leviathan",
-            "clean_title": "Emerald Visions",
+            "filename_unzipped": "K_emerld.s3m",
+            "title": "Emerald Visions",
+            "title_from_file": "Emerald Visions - Leviathan",
             "format": "s3m",
             "file_size": 672678,
             "channels": 14,
@@ -525,15 +618,19 @@
             "comment_text": "",
             "hash": "990d5e8effd939a54292cf4d89e69dfa",
             "pattern_hash": "d2d81ebc04d6e7cd",
+            "license": "",
+            "genre": "rock-general",
+            "is_featured": false,
+            "folder": "K",            
             "create_date": "1997-01-01 04:21:41+00:00",
-            "update_date": "2022-01-22 16:18:35+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 18,
+        "pk": 47092,
         "fields": {
-            "downloads": 7457,
+            "downloads": 8163,
             "total_comments": 2,
             "average_comment_score": 8.5,
             "total_reviews": 0,
@@ -542,12 +639,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 19,
+        "pk": 47267,
         "fields": {
             "legacy_id": "47267",
             "filename": "k_mercy.s3m",
+            "filename_unzipped": "k_mercy.s3m",
             "title": "Merciful Lie",
-            "clean_title": "",
+            "title_from_file": "",
             "format": "s3m",
             "file_size": 862908,
             "channels": 16,
@@ -555,15 +653,19 @@
             "comment_text": "",
             "hash": "5861121c704c4af28298bd3e627d4a38",
             "pattern_hash": "980703c3003f10ff",
+            "license": "",
+            "genre": "rock-general",
+            "is_featured": false,
+            "folder": "K",
             "create_date": "1997-01-01 04:22:10+00:00",
-            "update_date": "2022-01-21 15:05:16+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 19,
+        "pk": 47267,
         "fields": {
-            "downloads": 5892,
+            "downloads": 6792,
             "total_comments": 1,
             "average_comment_score": 8.0,
             "total_reviews": 0,
@@ -572,12 +674,83 @@
     },
     {
         "model": "songs.song",
-        "pk": 20,
+        "pk": 47555,
+        "fields": {
+            "legacy_id": 47555,
+            "filename": "kbostel.xm",
+            "filename_unzipped": "kbostel.xm",
+            "title": "Xtr33m Bostelfalling",
+            "title_from_file": "Xtr33m Bostelfalling",
+            "format": "xm",
+            "file_size": 524288,
+            "channels": 20,
+            "instrument_text": "kb\nthe obsessed maniacs\npurge\n\nextreme bostelfalling\n\nback from mekka\nficken\n\nlength:    4' sonstwas\nstyle:       demo shit\n\nsamples:   91% trinity\n           9% cdr's i3\n\n\nJa, ich STEHE dazu!\nDieses Stuck ist purer\nverhaBter DEMOSTYLE\nund ich LIEBE es!\nLang leben AKKORDE!\nLang leben TERZEN!\nLang leben MELODIEN!\n... usw\nich gruesse meine oma,\nmama, papa, gunnar\nund den rest des la-\nmerhaufens, poeatsch,\ntom und vor allem mei-\nnen freund aetsch\/SD,\nder mich das weekend\nso nett genervt hat...\n\ndie linke box meiner\nanlage ist fast tot.\ndas nervt mich.\n\n\n\nkb, sonntag nachmittag\n\nto quote my group-\nmate cdr:\n\ndon't rip my samples,\nor i'll rip yours!\nDrub Square\n(Korg Trinity)\nSpace Wing\n(Korg I3)\nHallucinating\n(Korg Trinity)\nPWM Rezbass\n(Korg Trinity)\nCl HH 3\n(Korg Trinity)\n909 BD 4\n(Korg Trinity)\n909 snare 2\n(Korg Trinity)\n909 HH 1\n(Korg Trinity)\ncrashride 2\n(Korg Trinity)\nJacobass\n(Korg Trinity)\nJ'stickmorf Lead\n(Korg Trinity)",
+            "comment_text": "",
+            "hash": "3acd42e935fbe1fed10b8ad87e864cba",
+            "pattern_hash": "1d50eed6be4d1d49",
+            "license": "",
+            "genre": "pop-synth",
+            "is_featured": false,
+            "folder": "K",            
+            "create_date": "2001-06-14 22:23:44+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 47555,
+        "fields": {
+            "downloads": 3071,
+            "total_comments": 1,
+            "average_comment_score": 9.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 48552,
+        "fields": {
+            "legacy_id": 48552,
+            "filename": "m4v-fasc.it",
+            "filename_unzipped": "m4v-fasc.it",
+            "title": "Tangerine Fascination",
+            "title_from_file": "tangerine fascination",
+            "format": "it",
+            "file_size": 709340,
+            "channels": 18,
+            "instrument_text": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\"TangerineFascination\"\nby Necros\n\nAn MC4 veteran entry\n\nPlace: 2",
+            "comment_text": "",
+            "hash": "dfd1ce2cbbc762b2454d8a74c5244067",
+            "pattern_hash": "7a4bed390126a9af",
+            "license": "",
+            "genre": "electronic-techno",
+            "is_featured": false,
+            "folder": "M",
+            "create_date": "1998-12-09 03:20:24+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 48552,
+        "fields": {
+            "downloads": 9527,
+            "total_comments": 2,
+            "average_comment_score": 8.5,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 48952,
         "fields": {
             "legacy_id": "48952",
             "filename": "NOFACE.S3M",
+            "filename_unzipped": "NOFACE.S3M",
             "title": "He Has No Face",
-            "clean_title": "",
+            "title_from_file": "He Has No Face",
             "format": "s3m",
             "file_size": 201643,
             "channels": 12,
@@ -585,29 +758,34 @@
             "comment_text": "",
             "hash": "aa8175a6cb039128babae8d0883f7cac",
             "pattern_hash": "9fb1165fa01f4cb6",
+            "license": "",
+            "genre": "pop-synth",
+            "is_featured": false,
+            "folder": "N",
             "create_date": "1997-01-01 04:29:44+00:00",
-            "update_date": "2022-01-22 06:22:54+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 20,
+        "pk": 48952,
         "fields": {
-            "downloads": 11053,
-            "total_comments": 5,
-            "average_comment_score": 8.4,
+            "downloads": 12603,
+            "total_comments": 6,
+            "average_comment_score": 8.7,
             "total_reviews": 0,
             "average_review_score": 0.0
         }
     },
     {
         "model": "songs.song",
-        "pk": 21,
+        "pk": 49040,
         "fields": {
             "legacy_id": "49040",
             "filename": "n-drift.it",
-            "title": "drift v1.1",
-            "clean_title": "Drift v1.1",
+            "filename_unzipped": "n-drift.it",
+            "title": "Drift v1.1",
+            "title_from_file": "drift v1.1",
             "format": "it",
             "file_size": 329069,
             "channels": 11,
@@ -615,15 +793,19 @@
             "comment_text": "hmm, I still think the bass is a little too wild in the verse part.  it\nsounds a bit screwy, like I had drank too much caffine or something.\nthere are a few changes in this little update.  the sinebass is a bit\nsofter now, since before it was definetly too loud. :P  also, I added some\nvariation to the drum tracks.  before it was just repeating the same thing\nover and over every pattern, haha. :P  I tried to pan some parts, but\nsomehow it got fucked up... its a good idea just to play it in mono. :)\n\n - Andy",
             "hash": "ff445aca7c5c12200a04f7afe42a9d67",
             "pattern_hash": "a0a97d92811d681e",
+            "license": "",
+            "genre": "pop-synth",
+            "is_featured": false,
+            "folder": "N",
             "create_date": "2001-08-20 16:28:18+00:00",
-            "update_date": "2022-01-21 15:39:05+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 21,
+        "pk": 49040,
         "fields": {
-            "downloads": 1946,
+            "downloads": 2514,
             "total_comments": 1,
             "average_comment_score": 7.0,
             "total_reviews": 0,
@@ -632,12 +814,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 22,
+        "pk": 49136,
         "fields": {
             "legacy_id": "49136",
             "filename": "n-twi.it",
-            "title": "twilight groove",
-            "clean_title": "Twilight Groove",
+            "filename_unzipped": "n-twi.it",
+            "title": "Twilight Groove",
+            "title_from_file": "twilight groove",
             "format": "it",
             "file_size": 1000000,
             "channels": 26,
@@ -645,15 +828,19 @@
             "comment_text": "",
             "hash": "1e02799dc32c61ae536a3ad4a5d07156",
             "pattern_hash": "2ac48594f0b4590d",
+            "license": "",
+            "genre": "",
+            "is_featured": false,
+            "folder": "N",
             "create_date": "2001-08-20 16:04:30+00:00",
-            "update_date": "2022-01-21 04:29:30+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 22,
+        "pk": 49136,
         "fields": {
-            "downloads": 1273,
+            "downloads": 1574,
             "total_comments": 0,
             "average_comment_score": 0.0,
             "total_reviews": 0,
@@ -662,12 +849,13 @@
     },
     {
         "model": "songs.song",
-        "pk": 23,
+        "pk": 49619,
         "fields": {
             "legacy_id": "49619",
             "filename": "lv-sojrn.it",
-            "title": "Sojourn - Leviathan",
-            "clean_title": "Sojourn",
+            "filename_unzipped": "lv-sojrn.it",
+            "title": "Sojourn",
+            "title_from_file": "Sojourn - Leviathan",
             "format": "it",
             "file_size": 469894,
             "channels": 25,
@@ -675,13 +863,17 @@
             "comment_text": "Well, here's your brief song message:\n\n        I'd like to thank everyone who encouraged me to come back into the\ntracking scene, and everyone who listened to all my betas of this tune\nwith helpful comments and suggestions.  It's undeniably better because of\nyou guys.  I'm hoping to track quite a bit in this upcoming year, and look\nforward to many projects with Analogue.\n\n        You can find me on the web at www.cen.uiuc.edu\/~ajcarlso, or via\nemail at ac@interaccess.com.  Feel free to let me know what you think;\nfeedback is greatly appreciated.\n\n        Thanks, and here's to a good 1998.\n\n        Andrew Carlson\n\n        Leviathan \/ Analogue",
             "hash": "af849a5a107145564ac146dde386ab27",
             "pattern_hash": "b2d59b6eda041b19",
+            "license": "",
+            "genre": "easy-listening",
+            "is_featured": false,
+            "folder": "L",
             "create_date": "1998-12-09 03:11:02+00:00",
-            "update_date": "2022-01-22 16:18:49+00:00"
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 23,
+        "pk": 49619,
         "fields": {
             "downloads": 3285,
             "total_comments": 1,
@@ -692,208 +884,33 @@
     },
     {
         "model": "songs.song",
-        "pk": 24,
+        "pk": 54332,
         "fields": {
-            "legacy_id": "57604",
-            "filename": "snowdanc.s3m",
-            "title": "snow dancing",
-            "clean_title": "Snow Dancing",
+            "legacy_id": "54332",
+            "filename": "SNOWD.S3M",
+            "filename_unzipped": "SNOWD.S3M",
+            "title": "Snowdrift",
+            "title_from_file": "Snowdrift",
             "format": "s3m",
-            "file_size": 244834,
-            "channels": 8,
-            "instrument_text": "\n    *   composed by:  *\n   ***    basehead   ***\n  *****      of     *****\n *******     fm    *******\n*********         *********\n    *                 *\n       length - 5:32\n\n - -- --- ------- --- -- -\n     Merry Christmas!\n - -- --- ------- --- -- -\n\n this was originally done\n    in december '94 for\n imphobia magazine -- but\n since their music system\ndidn't support s3ms then, i\nhave had it sitting around\nhere.. and decided to give\nit to this disk almost a\nYEAR later (phew!).. but i\nhope you enjoy it anyway...\n\n(strange that i had x-mas\n greets and everything for\n x-mas '94 .. and now it's\n already past x-mas '95..\n ah well)\n\nps-this song was done when\n  i was in imphobia\/cascada\n\n\ncontact: bh@axs.net",
-            "comment_text": "",
-            "hash": "490399d66d5d73308cb1f2e7e86c1cf3",
-            "pattern_hash": "f9761c6ec651596c",
-            "create_date": "2002-11-12 17:38:55+00:00",
-            "update_date": "2022-01-22 16:16:22+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 24,
-        "fields": {
-            "downloads": 1373,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
-        }
-    },
-    {
-        "model": "songs.song",
-        "pk": 25,
-        "fields": {
-            "legacy_id": "57925",
-            "filename": "space_debris.mod",
-            "title": "space_debris",
-            "clean_title": "Space Debris",
-            "format": "mod",
-            "file_size": 347582,
-            "channels": 4,
-            "instrument_text": "SuperHyperBass\nBD1\nSD1\nZoh2.Minor\nChord1.Minor\nChord1.Major\nHup\nSoftShake\nChoir\nChord1.Arrested\n\nRezonatix3\nSawSynth.Major\nSawSynth.Minor\nSawSynth.Arrested1\nSawSynth.Arrested2\nSawSynth\nSynBrass",
-            "comment_text": "",
-            "hash": "d0e61283309c5d72a050d14fcb2e6704",
-            "pattern_hash": "4b6fe82b2f2d91d0",
-            "create_date": "1997-01-01 04:41:47+00:00",
-            "update_date": "2022-01-22 14:28:28+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 25,
-        "fields": {
-            "downloads": 147478,
-            "total_comments": 45,
-            "average_comment_score": 9.4,
-            "total_reviews": 0,
-            "average_review_score": 0.0
-        }
-    },
-    {
-        "model": "songs.song",
-        "pk": 26,
-        "fields": {
-            "legacy_id": "59344",
-            "filename": "stardstm.mod",
-            "title": "stardust memories",
-            "clean_title": "Stardust Memories",
-            "format": "mod",
-            "file_size": 153676,
-            "channels": 4,
-            "instrument_text": "composed & sampled by\n<+> jester\/sanity <+>\n^ all samples by me ^\nexcept #10 by ff\/pha.\nfor commercial musics\nwrite to this address\n<+> volker  tripp <+>\nin der ziegelheide 15\n429 bocholt - germany\n or dial this number\n* +49-(0)2871-14692 *\n\n\n\n\n\ntaken from the\nworld of commodore 92\ndemo by sanity.\nripped by\nmnemotron\/spt.\n\n\n\n\n\n\n\n\n\n(c) volker tripp 1992",
-            "comment_text": "",
-            "hash": "3e2716df273cddc097b28d5f1ffceef8",
-            "pattern_hash": "1f58e13c51ea86e9",
-            "create_date": "1997-01-01 04:42:05+00:00",
-            "update_date": "2022-01-22 17:14:47+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 26,
-        "fields": {
-            "downloads": 43788,
-            "total_comments": 13,
-            "average_comment_score": 9.6,
-            "total_reviews": 0,
-            "average_review_score": 0.0
-        }
-    },
-    {
-        "model": "songs.song",
-        "pk": 27,
-        "fields": {
-            "legacy_id": "59854",
-            "filename": "WHEN.S3M",
-            "title": "When the heavens fall",
-            "clean_title": "When the Heavens Fall",
-            "format": "s3m",
-            "file_size": 846302,
-            "channels": 13,
-            "instrument_text": "(c) Purple Motion \/ 1994\n     Future Crew\n\nthis is my contribution\nsong for the A94 multichnl\ncompo..\n13 channels used - 5.36min\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nUse ST3 to play this song.\n96% of the samples by me\nand Edge (used his Korg 03R\nsynthesizer)",
-            "comment_text": "",
-            "hash": "268feb71a291c15f3079761b5395a193",
-            "pattern_hash": "ec9405790a1c8e32",
-            "create_date": "1997-01-01 04:48:47+00:00",
-            "update_date": "2022-01-22 14:57:34+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 27,
-        "fields": {
-            "downloads": 25214,
-            "total_comments": 7,
-            "average_comment_score": 8.9,
-            "total_reviews": 0,
-            "average_review_score": 0.0
-        }
-    },
-    {
-        "model": "songs.song",
-        "pk": 28,
-        "fields": {
-            "legacy_id": "60395",
-            "filename": "2ND_PM.S3M",
-            "title": "UnreaL ][ \/ PM",
-            "clean_title": "Unreal II: 2nd Reality",
-            "format": "s3m",
-            "file_size": 600860,
-            "channels": 8,
-            "instrument_text": "By Purple Motion of\nFuture Crew 1993\nBig thanx to Skaven \/ FC\n\n\n\nGreeting : ----->\nKwisatzHaderachPurpleBandit\nLouisCrespoGreenJester\/S!P\nNicolasAymeTonedeaf\/Extreme\nLizardking&Vogue\/Triton\nToniVuoristo(CDs\/Samples)\nTimoFlinkDruid\/EMF\nALLMEMBERSOFTHEFUTURECREW\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nblank",
-            "comment_text": "",
-            "hash": "8a19a2cebf0e7ae3dcae38a6633bebb6",
-            "pattern_hash": "dbc7ec43d5ea59a2",
-            "create_date": "2000-12-24 02:06:42+00:00",
-            "update_date": "2022-01-22 17:06:12+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 28,
-        "fields": {
-            "downloads": 285312,
-            "total_comments": 47,
-            "average_comment_score": 9.7,
-            "total_reviews": 1,
-            "average_review_score": 8.0
-        }
-    },
-    {
-        "model": "songs.song",
-        "pk": 29,
-        "fields": {
-            "legacy_id": "63700",
-            "filename": "zengardn.s3m",
-            "title": "the zen garden",
-            "clean_title": "The Zen Garden",
-            "format": "s3m",
-            "file_size": 561394,
+            "file_size": 630712,
             "channels": 16,
-            "instrument_text": "(c) basehead \/ fm 1996 (c)\n\n composed for tran's demo\n        \"luminati\"\n\n         (09:16)",
+            "instrument_text": "\n  |- S n o w D r i f t -|\n\n            b y\n\n        s i r r u s\n\n       [independent] :)\n\n\n inspired by a week of\n boredom and the 80 million\n feet of snow surrounding\n my life :-!\n\n\n im not TOO sure how this\n tune is grabbing me as of\n yet, but i guess i kinda\n like it :)\n\n   <mail me , im a jerk>\n\n   pbr@ns1.infocomm.net\n\n\n\n         greetings\n siren, necros, n\u00e9ro, dan,\n basehead, uncleEd, ms,\n iv, flozz, gd, and uh...\n huhuhuuhhu.. beetlo :)\n\n samples from siren, nec,\n soundwave, myself, and\n one of 273654234 shitty\n archives that ive used :I\n\n\n (c) 1995 Bryan Rudge\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n           go\n          rape\n           a\n          goat\nsubliminal messages rule!!",
             "comment_text": "",
-            "hash": "eef764b00ed3272af92e1a32d631c873",
-            "pattern_hash": "13d4381b12bc800d",
-            "create_date": "1997-01-01 04:51:15+00:00",
-            "update_date": "2022-01-22 17:35:08+00:00"
+            "hash": "badd59d3ee242e27e929b6b893619449",
+            "pattern_hash": "2c502f97d8c4f458",
+            "license": "",
+            "genre": "electronic-dance",
+            "is_featured": false,
+            "folder": "S",
+            "create_date": "1997-01-01 04:39:41+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 29,
+        "pk": 54332,
         "fields": {
-            "downloads": 11778,
-            "total_comments": 4,
-            "average_comment_score": 8.8,
-            "total_reviews": 0,
-            "average_review_score": 0.0
-        }
-    },
-    {
-        "model": "songs.song",
-        "pk": 30,
-        "fields": {
-            "legacy_id": "170384",
-            "filename": "siren_-_incubuss.it",
-            "title": "Incubuss",
-            "clean_title": "",
-            "format": "it",
-            "file_size": 887615,
-            "channels": 35,
-            "instrument_text": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\"the expansion widens\nand floating becomes\na sensation, riding on\nthe red manes of fury's\nsteed, the deep forest\nhues of emerald temples,\nand the fading volumes\nof reality, captured\nin bubbles so frail\nthey might split with\nthe blink of an eye...\"\n\na wandering bewilderment\ncalled a dream can carry\nthe mind beyond every\npossible imagination.\n\n     =-=-Incubus=-=-=-=\n\n Alexander Brandon, 1997\n\n another journey from\n Juni Digital Music\n\n www.junimusic.com\n\n email:\n   alex@annapolis.net\n   rudgep@rpi.edu\n\n   samples from myself,\n   necros, sirrus,\n   basehead, WAVE, and\n   others",
-            "comment_text": "",
-            "hash": "a72026f4210fec5ee9df7a7a9b772d28",
-            "pattern_hash": "9aa012483ec950bc",
-            "create_date": "2011-02-21 13:34:24+00:00",
-            "update_date": "2022-01-22 16:57:20+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 30,
-        "fields": {
-            "downloads": 2342,
+            "downloads": 4433,
             "total_comments": 1,
             "average_comment_score": 9.0,
             "total_reviews": 0,
@@ -902,28 +919,33 @@
     },
     {
         "model": "songs.song",
-        "pk": 31,
+        "pk": 57604,
         "fields": {
-            "legacy_id": "190946",
-            "filename": "basehead_and_hunz_-_digital_ritual.it",
-            "title": "digital ritual",
-            "clean_title": "Digital Ritual",
-            "format": "it",
-            "file_size": 871637,
-            "channels": 64,
-            "instrument_text": "\n\"Digital Ritual\"\n\n  by\n\nBasehead + Hunz\n(Dan Grandpre +\nHans Van Vliet)\n\n\nA Music Contest 5\nveteran entry.\n5th place!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n     \u2219 PutInst 4.0 \u2219",
+            "legacy_id": "57604",
+            "filename": "snowdanc.s3m",
+            "filename_unzipped": "snowdanc.s3m",
+            "title": "Snow Dancing",
+            "title_from_file": "snow dancing",
+            "format": "s3m",
+            "file_size": 244834,
+            "channels": 8,
+            "instrument_text": "\n    *   composed by:  *\n   ***    basehead   ***\n  *****      of     *****\n *******     fm    *******\n*********         *********\n    *                 *\n       length - 5:32\n\n - -- --- ------- --- -- -\n     Merry Christmas!\n - -- --- ------- --- -- -\n\n this was originally done\n    in december '94 for\n imphobia magazine -- but\n since their music system\ndidn't support s3ms then, i\nhave had it sitting around\nhere.. and decided to give\nit to this disk almost a\nYEAR later (phew!).. but i\nhope you enjoy it anyway...\n\n(strange that i had x-mas\n greets and everything for\n x-mas '94 .. and now it's\n already past x-mas '95..\n ah well)\n\nps-this song was done when\n  i was in imphobia\/cascada\n\n\ncontact: bh@axs.net",
             "comment_text": "",
-            "hash": "def80ccbec8107eaf198746e729b8854",
-            "pattern_hash": "274ab957d27da3b0",
-            "create_date": "2020-12-29 22:36:34+00:00",
-            "update_date": "2022-01-22 16:13:53+00:00"
+            "hash": "490399d66d5d73308cb1f2e7e86c1cf3",
+            "pattern_hash": "f9761c6ec651596c",
+            "license": "",
+            "genre": "",
+            "is_featured": false,
+            "folder": "S",
+            "create_date": "2002-11-12 17:38:55+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 31,
+        "pk": 57604,
         "fields": {
-            "downloads": 421,
+            "downloads": 1817,
             "total_comments": 0,
             "average_comment_score": 0.0,
             "total_reviews": 0,
@@ -932,28 +954,354 @@
     },
     {
         "model": "songs.song",
-        "pk": 32,
+        "pk": 57925,
         "fields": {
-            "legacy_id": "191103",
-            "filename": "k_sgroov.it",
-            "title": "\"Spacegroove\"-lev&mickrip",
-            "clean_title": "Spacegroove",
-            "format": "it",
-            "file_size": 828323,
-            "channels": 28,
-            "instrument_text": "      \"Spacegroove\"\n\n       Written by\n Leviathan & Mick Rippon\n\n     a kosmic release\n\n           --\n\nemail mick at\n  rip@hunterlink.net.au\n\nemail lev at\n  ac@interaccess.com",
-            "comment_text": "*tap* *tap*   Hello, is the microphone working, Hello? Hello?",
-            "hash": "5ba76817eb51eb7a1ae6c6c0ef7667ef",
-            "pattern_hash": "0efc49d0e50f3c36",
-            "create_date": "2021-01-23 00:51:06+00:00",
-            "update_date": "2022-01-22 05:36:28+00:00"
+            "legacy_id": "57925",
+            "filename": "space_debris.mod",
+            "filename_unzipped": "space_debris.mod",
+            "title": "Space Debris",
+            "title_from_file": "space_debris",
+            "format": "mod",
+            "file_size": 347582,
+            "channels": 4,
+            "instrument_text": "SuperHyperBass\nBD1\nSD1\nZoh2.Minor\nChord1.Minor\nChord1.Major\nHup\nSoftShake\nChoir\nChord1.Arrested\n\nRezonatix3\nSawSynth.Major\nSawSynth.Minor\nSawSynth.Arrested1\nSawSynth.Arrested2\nSawSynth\nSynBrass",
+            "comment_text": "",
+            "hash": "d0e61283309c5d72a050d14fcb2e6704",
+            "pattern_hash": "4b6fe82b2f2d91d0",
+            "license": "",
+            "genre": "pop-synth",
+            "is_featured": true,
+            "featured_date": "2014-05-01 13:55:55+00:00",
+            "folder": "S",
+            "create_date": "1997-01-01 04:41:47+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 32,
+        "pk": 57925,
         "fields": {
-            "downloads": 509,
+            "downloads": 174507,
+            "total_comments": 54,
+            "average_comment_score": 9.5,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 59344,
+        "fields": {
+            "legacy_id": "59344",
+            "filename": "stardstm.mod",
+            "filename_unzipped": "stardstm.mod",
+            "title": "Stardust Memories",
+            "title_from_file": "stardust memories",
+            "format": "mod",
+            "file_size": 153676,
+            "channels": 4,
+            "instrument_text": "composed & sampled by\n<+> jester\/sanity <+>\n^ all samples by me ^\nexcept #10 by ff\/pha.\nfor commercial musics\nwrite to this address\n<+> volker  tripp <+>\nin der ziegelheide 15\n429 bocholt - germany\n or dial this number\n* +49-(0)2871-14692 *\n\n\n\n\n\ntaken from the\nworld of commodore 92\ndemo by sanity.\nripped by\nmnemotron\/spt.\n\n\n\n\n\n\n\n\n\n(c) volker tripp 1992",
+            "comment_text": "",
+            "hash": "3e2716df273cddc097b28d5f1ffceef8",
+            "pattern_hash": "1f58e13c51ea86e9",
+            "license": "by-nc-sa",
+            "genre": "demostyle",
+            "is_featured": true,
+            "featured_date": "2008-02-27 12:18:49+00:00",
+            "folder": "S",
+            "create_date": "1997-01-01 04:42:05+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 59344,
+        "fields": {
+            "downloads": 56223,
+            "total_comments": 14,
+            "average_comment_score": 9.6,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 59854,
+        "fields": {
+            "legacy_id": "59854",
+            "filename": "WHEN.S3M",
+            "filename_unzipped": "WHEN.S3M",
+            "title": "When the Heavens Fall",
+            "title_from_file": "When the heavens fall",
+            "format": "s3m",
+            "file_size": 846302,
+            "channels": 13,
+            "instrument_text": "(c) Purple Motion \/ 1994\n     Future Crew\n\nthis is my contribution\nsong for the A94 multichnl\ncompo..\n13 channels used - 5.36min\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nUse ST3 to play this song.\n96% of the samples by me\nand Edge (used his Korg 03R\nsynthesizer)",
+            "comment_text": "",
+            "hash": "268feb71a291c15f3079761b5395a193",
+            "pattern_hash": "ec9405790a1c8e32",
+            "license": "",
+            "genre": "electronic-ambient",
+            "is_featured": true,
+            "featured_date": "2015-10-24 16:31:32+00:00",
+            "folder": "W",
+            "create_date": "1997-01-01 04:48:47+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 59854,
+        "fields": {
+            "downloads": 28841,
+            "total_comments": 8,
+            "average_comment_score": 9.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 60395,
+        "fields": {
+            "legacy_id": "60395",
+            "filename": "2ND_PM.S3M",
+            "filename_unzipped": "2ND_PM.S3M",
+            "title_from_file": "UnreaL ][ \/ PM",
+            "title": "Unreal II: 2nd Reality",
+            "format": "s3m",
+            "file_size": 600860,
+            "channels": 8,
+            "instrument_text": "By Purple Motion of\nFuture Crew 1993\nBig thanx to Skaven \/ FC\n\n\n\nGreeting : ----->\nKwisatzHaderachPurpleBandit\nLouisCrespoGreenJester\/S!P\nNicolasAymeTonedeaf\/Extreme\nLizardking&Vogue\/Triton\nToniVuoristo(CDs\/Samples)\nTimoFlinkDruid\/EMF\nALLMEMBERSOFTHEFUTURECREW\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nblank",
+            "comment_text": "",
+            "hash": "8a19a2cebf0e7ae3dcae38a6633bebb6",
+            "pattern_hash": "dbc7ec43d5ea59a2",
+            "license": "",
+            "genre": "electronic-techno",
+            "is_featured": true,
+            "featured_date": "2009-09-07 21:55:22+00:00",
+            "folder": "1_9",
+            "create_date": "2000-12-24 02:06:42+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 60395,
+        "fields": {
+            "downloads": 324611,
+            "total_comments": 59,
+            "average_comment_score": 9.6,
+            "total_reviews": 1,
+            "average_review_score": 8.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 63700,
+        "fields": {
+            "legacy_id": "63700",
+            "filename": "zengardn.s3m",
+            "filename_unzipped": "zengardn.s3m",
+            "title": "The Zen Garden",
+            "title_from_file": "the zen garden",
+            "format": "s3m",
+            "file_size": 561394,
+            "channels": 16,
+            "instrument_text": "(c) basehead \/ fm 1996 (c)\n\n composed for tran's demo\n        \"luminati\"\n\n         (09:16)",
+            "comment_text": "",
+            "hash": "eef764b00ed3272af92e1a32d631c873",
+            "pattern_hash": "13d4381b12bc800d",
+            "license": "",
+            "genre": "fantasy",
+            "is_featured": false,
+            "folder": "Z",
+            "create_date": "1997-01-01 04:51:15+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 63700,
+        "fields": {
+            "downloads": 12921,
+            "total_comments": 5,
+            "average_comment_score": 8.8,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 69570,
+        "fields": {
+            "legacy_id": "69570",
+            "filename": "banished.s3m",
+            "filename_unzipped": "banished.s3m",
+            "title": "Banished",
+            "title_from_file": "Banished",
+            "format": "s3m",
+            "file_size": 621762,
+            "channels": 16,
+            "instrument_text": ".\n. b a n i s h e d\n.\n. x (ACiD\/pHluid)\n.\n. e 1 9 9 6 \u00b7 \u00b7 \u00b7\n.\n. n\n.\n. o\n.\n. c\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.           -zat-\n.\n.\n.\n.        b a n i s h e d\n.\n.\n.\n.\n.\n.\n...........................\nBanished: 5 min 04 sec    :\n...........................\nby Xenoc[ACiD\/pHluid]     .\n                          .\nHmm.  Something's ALWAYS  ;\nwrong, you know?  THIS \/~~\ntime my gripe is:      `.hi\nTOO MANY SAMPLES!!!!!!   ~.\n                          :\nThis song got so BIG!! agh:\n                          .\nOtherwise, I'm happy. ;)  :\n                          .\n         -Xenoc           :\n                        _.'\n~~~~~~~~~~~~~~~~~~~~~~~~\nNo greets this time. :(\n.,,.,,.,,..,,,.,,.,,.,,._\n                         ~.\n                          :\n                          :\n                          .\n                          .\n                          :\n                          .\n                          .\n                          :\n  This box is dedicated   .\n  to.. well, nothing!     .\n                          :\n                          :\n                          .\n                          :\n                          .\n                          .\n                          :\n                         \u2591;\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n\n\n\n\n\n\n\n\nMay 24th, 1996 . . . . . .\n\n(c) 1996 ACiD productions\n\n\n                       \/\\\n                      \/\/\\\\\n                     \/\/^ \\\\\n        \/\\          \/\/    \\\n       \/\/\\\\        \/\/\n      \/\/^ \\\\      \/\/\n     \/\/    \\\\    \/\/\n    \/\/      \\\\  \/\/\n   \/\/        \\\\\/\/\n  \/\/          \\\/\n \/\/\n\/\/\n\/  Man, I'm bored.....",
+            "comment_text": "",
+            "hash": "d6ac5c8e9b1008f71dd88dd27ab7cca2",
+            "pattern_hash": "ff1a1f95590d3ada",
+            "license": "",
+            "genre": "",
+            "is_featured": false,
+            "folder": "B",
+            "create_date": "2001-12-06 00:00:00+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 69570,
+        "fields": {
+            "downloads": 1438,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 73308,
+        "fields": {
+            "legacy_id": "73308",
+            "filename": "positive_force.s3m",
+            "filename_unzipped": "positive_force.s3m",
+            "title": "Positive Force",
+            "title_from_file": "+ Positive Force -> -pn",
+            "format": "s3m",
+            "file_size": 192308,
+            "channels": 15,
+            "instrument_text": "bell piano\nbassharm.raw\nGood ride bell\nTambourine.2\nZap Snare\nZap Kick\nBrassChord.Major\nBrassChord.Sus4\nBrassChord.Minor\nsquare lead\nAnother Cymbal\n\n-----------------------\n\"Positive Force\"\nwriten and sequenced by\npinion - (pHluid)\n-----------------------\n\n Remember: F=ma!\n\n Isn't that the golden rule\n of physics?  Or is it\n don't sit under apple\n trees?..  <ahem>\n\n(c) AciD productions\nAll Rights Reserved",
+            "comment_text": "",
+            "hash": "800ac9ae84361d48f07fbab364c982b7",
+            "pattern_hash": "8d55ec031ad38ad4",
+            "license": "",
+            "genre": "",
+            "is_featured": false,
+            "folder": "P",
+            "create_date": "2004-09-13 00:00:00+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 73308,
+        "fields": {
+            "downloads": 761,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 140867,
+        "fields": {
+            "legacy_id": "140867",
+            "filename": "sisiphus_dream.xm",
+            "filename_unzipped": "sisiphus_dream.xm",
+            "title": "Sisiphus' Dream",
+            "title_from_file": "sisiphus' dream",
+            "format": "xm",
+            "file_size": 539270,
+            "channels": 20,
+            "instrument_text": "Siner\nVoice Mantra\nChurch Organ\nAtmospheric Sound\nTom Drum\nBass Drum\nSnare Drum\nTambourine\nCymbal\nBreakbeat\n\nBass\nGuitar Riff\nPalm Mute\nFlange Reverse Cymbal\nFlangenoise\nDistorted Bass 1\nDistorted Bass 2\nDistorted Bass 3\n\nSlapbass\n\n\n\nThis is the only unripped\nsample. Ain't I pathetic?\n\n:)\n\nHit shift and F9 for more\ninfo.",
+            "comment_text": "Indefinite Radiant\nby Arcturus\n\na Shattered Fixtures Release\n\nTime:  3:42\n\nWell, another song by me, and this one I pumped out in a relatively short\namount of time.  I finished about two weeks after I started, when normally\nI spend a month or more without finishing a song!  How odd.  I've been\ntracking with a fury recently.  I guess it may be because I don't know if\nI'll be able to track much in college, so I'd like to get as much done\nhere as possible.  Anywho, enjoy the song.\n\n-Arcturus\n\nContact Info\n\nMy homepage:  http:\/\/members.tripod.com\/~arcmeister\nMy e-mail:  arcmeister@pemail.net\nThe Shattered Fixtures homepage:  http:\/\/www.aspects.net\/~sf\/index2.html",
+            "hash": "ebb99f21e445a40e6a99799abdd4b794",
+            "pattern_hash": "c313e9643fddde3b",
+            "license": "",
+            "genre": "",
+            "is_featured": false,
+            "folder": "S",
+            "create_date": "1998-02-14 00:00:00+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 140867,
+        "fields": {
+            "downloads": 1279,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 170384,
+        "fields": {
+            "legacy_id": "170384",
+            "filename": "siren_-_incubuss.it",
+            "filename_unzipped": "siren_-_incubuss.it",
+            "title": "Incubuss",
+            "title_from_file": "Incubuss",
+            "format": "it",
+            "file_size": 887615,
+            "channels": 35,
+            "instrument_text": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\"the expansion widens\nand floating becomes\na sensation, riding on\nthe red manes of fury's\nsteed, the deep forest\nhues of emerald temples,\nand the fading volumes\nof reality, captured\nin bubbles so frail\nthey might split with\nthe blink of an eye...\"\n\na wandering bewilderment\ncalled a dream can carry\nthe mind beyond every\npossible imagination.\n\n     =-=-Incubus=-=-=-=\n\n Alexander Brandon, 1997\n\n another journey from\n Juni Digital Music\n\n www.junimusic.com\n\n email:\n   alex@annapolis.net\n   rudgep@rpi.edu\n\n   samples from myself,\n   necros, sirrus,\n   basehead, WAVE, and\n   others",
+            "comment_text": "",
+            "hash": "a72026f4210fec5ee9df7a7a9b772d28",
+            "pattern_hash": "9aa012483ec950bc",
+            "license": "",
+            "genre": "",
+            "is_featured": true,
+            "featured_date": "2011-02-21 13:34:24+00:00",
+            "folder": "S",
+            "create_date": "2011-02-21 13:34:24+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 170384,
+        "fields": {
+            "downloads": 3461,
+            "total_comments": 1,
+            "average_comment_score": 9.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 188623,
+        "fields": {
+            "legacy_id": "188623",
+            "filename": "saga_musix_-_epilogue.it",
+            "filename_unzipped": "saga_musix_-_epilogue.it",
+            "title": "Epilogue",
+            "title_from_file": "Epilogue",
+            "format": "it",
+            "file_size": 10869078,
+            "channels": 25,
+            "instrument_text": "PR-C-059-Warmth\nPR-G-086-Stream-Bell\nPR-F-004-Big-Bubbles\nReverb Clap\nWS - Mounth Perc 4\nWS - Mounth Perc 6\nWS - Mounth Perc 7\nWS - Mounth Perc 9\nWS - Mounth Perc 10\nWS - Mounth Perc 11\nKick\nClosed Hat\nOpen Hat\nProphet Bell\nNoise Down\nReverse Snare\nEffect Proof Chase\nBelltree\nBell Tree\nA03 SC-Ripples\nCrash\nBrass 1\nProphet Bell\nKick 2\nChinese Cymbal\nBrass 1\nWarmth 036\nWarmth 048\nWarmth 060\nWarmth 072\nStream-Bell 063\nStream-Bell 068\nStream-Bell 073\nStream-Bell 078\nBig-Bubbles 036\nBig-Bubbles 048\nReverb Clap\nWS - Mounth Perc 4\nWS - Mounth Perc 6\nWS - Mounth Perc 7\nWS - Mounth Perc 9\nWS - Mounth Perc 10\nWS - Mounth Perc 11\nWS - Kick 1\nWS - Pd. hh\nWS - Ohh\nProphet Bell 060\nProphet Bell 066\nProphet Bell 072\nProphet Bell 078\nProphet Bell 084\nJB_Noize_01\nSnaredrum-10\nEffect Proof Chase\nXR-20_703\nBell Tree\nRipples 066\nRipples 072\nRipples 078\nRipples 084\nXR-20_343 + XR-20_345\nBrass 1 066\nBrass 1 072\nBrass 1 078\nAS-TKRB 025 - Edit 1\nchinese cymbal",
+            "comment_text": "  ____________________________________________________________________\n |                                                                    |\n |  Saga Musix presents: Epilogue (4:06)                              |\n |____________________________________________________________________|\n\n\nA sweet dreamy synthpop ballad for these difficult times.\nThis tune started out pretty much exactly two years ago when  listening  to\nTrancerboy's MOONBOOT.XM, an entry from Evoke 2005. The  first  two  chords\nwere quite inspiring but I had a different progression in mind, so  I  took\nthe first two chords and then continued with my own  ideas.   And  here  we\nare, two years later. Revision 2020 was cancelled  due  to  COVID-19,   but\nwhen it was announced that there would be an online  replacement,   it  was\nclear that I had to contribute. Originally I  wanted  to  do  another  coop\nwith Bacter, but this didn't work out time-wise. Still,  he  came  up  with\nthe title for this track, so I guess it's still kind of a coop? :D\n\nIt  was  absolutely  amazing  to  witness  this  year's    tracked    music\ncompetition at Revision. For the first time in 10  years,   there  actually\nhad to be a pre-selection because  otherwise  there  would  have  been  too\nmany tracks. And what a great compo it was!  This  tune  eventually  ranked\n6th, among many worthy competitors.  But  still  let's  hope  that  we  can\ncelebrate Revision 2021 in real life!\n\n -Saga Musix, 13th of April 2020\n\n___________________________________________________________________________\n\nGreeting fly out to all Revision 2020  participants  and  organizers,   and\nall the great people in Sofa World making this  almost  feel  like  a  real\ndemoparty! Extra greets to:\nAlkama, bacter, d0dge, dfox,   dojoe,   Dune,   Eat-Drink-Fuck,   fgenesis,\nGargaj, Gaspode, glxblt, h0ffman, havoc,   Ixion,   jco,   JosSs,   Kabuto,\nkaomau, kb, Kuemmel, leia, LJ, MedO, mo3, Netpoet, Nightmare,  noby,   pro,\nRaven, RbR, rc55, RoccoW,  T$,   TropicalTrevor,   Uctumi,   v3nom,   Velo,\nvirgill, wayfinder, Wurstgetrank, xq and everyone I forgot.\n\n___________________________________________________________________________\n\nThis work is (c) 2020 by Saga Musix and bacter  and  is  licensed  under  a\nCreative Commons Attribution-Noncommercial-Share Alike 3.0 License.\n\nTrack information:\n- Made between 9th of March 2018 and 10th of April 2020\n- Released into the tracked music competition at Revision 2020 (6th place)\n- This is the high-quality (16-bit, original sample rate) version.\n\nPlease use OpenMPT 1.28+ to play this track.\n\n___________________________________________________________________________\n\nYou can contact me via e-mail at info@sagamusix.de.\nIf you want to chat with me...\n- Jabber: sagamusix@s3m.it (preferred)\n- ICQ: 324324485\n- EsperNet: #modarchive, #modplug, #mod_shrine, #modulez\n  (Nick = Saga_Musix or Saga)\n- IRCNet: #deadline, #demozoo, #evoke, #revision, #nordlicht\n  (Nick = Saga_Musix)\n\nFeel free to visit my websites as well:\n- https:\/\/sagamusix.de\/ - Here you can download all my music, free\n  samples and other stuff. (German and English)\n- https:\/\/sagagames.de\/ - Website featuring my (mostly German-only) free\n  games and applications and other stuff.\n- https:\/\/openmpt.org\/ - Home of Open ModPlug Tracker :)\n\n___________________________________________________________________________\n\nSample credits:\n\nThe source of the samples are indicated in the filename of the samples.\n- XV-5080: From my Roland XV-5080\n- kb6: From the kb6 drum samples collection\n- Dexed: From the Dexed VSTi\n- JayB: From JayB's sample collection\n- D-50: From my Roland D-50\n- TG77: From my Yamaha TG77\n- ArcanaSound: From Arcana Sound's Trance Kicks ReBorn\n\nTake care!",
+            "hash": "8ce5b1c3988441145bc8ccfbe73844de",
+            "pattern_hash": "c796b20ad725190a",
+            "license": "by-nc-sa",
+            "genre": "pop-synth",
+            "is_featured": true,
+            "featured_date": "2020-04-14 19:41:26+00:00",
+            "folder": "S",
+            "create_date": "2020-04-14 19:41:26+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 188623,
+        "fields": {
+            "downloads": 2397,
             "total_comments": 1,
             "average_comment_score": 10.0,
             "total_reviews": 0,
@@ -962,30 +1310,107 @@
     },
     {
         "model": "songs.song",
-        "pk": 33,
+        "pk": 190946,
         "fields": {
-            "legacy_id": "188623",
-            "filename": "saga_musix_-_epilogue.it",
-            "title": "Epilogue",
-            "clean_title": "",
+            "legacy_id": "190946",
+            "filename": "basehead_and_hunz_-_digital_ritual.it",
+            "filename_unzipped": "basehead_and_hunz_-_digital_ritual.it",
+            "title": "Digital Ritual",
+            "title_from_file": "digital ritual",
             "format": "it",
-            "file_size": 10869078,
-            "channels": 25,
-            "instrument_text": "PR-C-059-Warmth\nPR-G-086-Stream-Bell\nPR-F-004-Big-Bubbles\nReverb Clap\nWS - Mounth Perc 4\nWS - Mounth Perc 6\nWS - Mounth Perc 7\nWS - Mounth Perc 9\nWS - Mounth Perc 10\nWS - Mounth Perc 11\nKick\nClosed Hat\nOpen Hat\nProphet Bell\nNoise Down\nReverse Snare\nEffect Proof Chase\nBelltree\nBell Tree\nA03 SC-Ripples\nCrash\nBrass 1\nProphet Bell\nKick 2\nChinese Cymbal\nBrass 1\nWarmth 036\nWarmth 048\nWarmth 060\nWarmth 072\nStream-Bell 063\nStream-Bell 068\nStream-Bell 073\nStream-Bell 078\nBig-Bubbles 036\nBig-Bubbles 048\nReverb Clap\nWS - Mounth Perc 4\nWS - Mounth Perc 6\nWS - Mounth Perc 7\nWS - Mounth Perc 9\nWS - Mounth Perc 10\nWS - Mounth Perc 11\nWS - Kick 1\nWS - Pd. hh\nWS - Ohh\nProphet Bell 060\nProphet Bell 066\nProphet Bell 072\nProphet Bell 078\nProphet Bell 084\nJB_Noize_01\nSnaredrum-10\nEffect Proof Chase\nXR-20_703\nBell Tree\nRipples 066\nRipples 072\nRipples 078\nRipples 084\nXR-20_343 + XR-20_345\nBrass 1 066\nBrass 1 072\nBrass 1 078\nAS-TKRB 025 - Edit 1\nchinese cymbal",
-            "comment_text": "  ____________________________________________________________________\n |                                                                    |\n |  Saga Musix presents: Epilogue (4:06)                              |\n |____________________________________________________________________|\n\n\nA sweet dreamy synthpop ballad for these difficult times.\nThis tune started out pretty much exactly two years ago when  listening  to\nTrancerboy's MOONBOOT.XM, an entry from Evoke 2005. The  first  two  chords\nwere quite inspiring but I had a different progression in mind, so  I  took\nthe first two chords and then continued with my own  ideas.   And  here  we\nare, two years later. Revision 2020 was cancelled  due  to  COVID-19,   but\nwhen it was announced that there would be an online  replacement,   it  was\nclear that I had to contribute. Originally I  wanted  to  do  another  coop\nwith Bacter, but this didn't work out time-wise. Still,  he  came  up  with\nthe title for this track, so I guess it's still kind of a coop? :D\n\nIt  was  absolutely  amazing  to  witness  this  year's    tracked    music\ncompetition at Revision. For the first time in 10  years,   there  actually\nhad to be a pre-selection because  otherwise  there  would  have  been  too\nmany tracks. And what a great compo it was!  This  tune  eventually  ranked\n6th, among many worthy competitors.  But  still  let's  hope  that  we  can\ncelebrate Revision 2021 in real life!\n\n -Saga Musix, 13th of April 2020\n\n___________________________________________________________________________\n\nGreeting fly out to all Revision 2020  participants  and  organizers,   and\nall the great people in Sofa World making this  almost  feel  like  a  real\ndemoparty! Extra greets to:\nAlkama, bacter, d0dge, dfox,   dojoe,   Dune,   Eat-Drink-Fuck,   fgenesis,\nGargaj, Gaspode, glxblt, h0ffman, havoc,   Ixion,   jco,   JosSs,   Kabuto,\nkaomau, kb, Kuemmel, leia, LJ, MedO, mo3, Netpoet, Nightmare,  noby,   pro,\nRaven, RbR, rc55, RoccoW,  T$,   TropicalTrevor,   Uctumi,   v3nom,   Velo,\nvirgill, wayfinder, Wurstgetrank, xq and everyone I forgot.\n\n___________________________________________________________________________\n\nThis work is (c) 2020 by Saga Musix and bacter  and  is  licensed  under  a\nCreative Commons Attribution-Noncommercial-Share Alike 3.0 License.\n\nTrack information:\n- Made between 9th of March 2018 and 10th of April 2020\n- Released into the tracked music competition at Revision 2020 (6th place)\n- This is the high-quality (16-bit, original sample rate) version.\n\nPlease use OpenMPT 1.28+ to play this track.\n\n___________________________________________________________________________\n\nYou can contact me via e-mail at info@sagamusix.de.\nIf you want to chat with me...\n- Jabber: sagamusix@s3m.it (preferred)\n- ICQ: 324324485\n- EsperNet: #modarchive, #modplug, #mod_shrine, #modulez\n  (Nick = Saga_Musix or Saga)\n- IRCNet: #deadline, #demozoo, #evoke, #revision, #nordlicht\n  (Nick = Saga_Musix)\n\nFeel free to visit my websites as well:\n- https:\/\/sagamusix.de\/ - Here you can download all my music, free\n  samples and other stuff. (German and English)\n- https:\/\/sagagames.de\/ - Website featuring my (mostly German-only) free\n  games and applications and other stuff.\n- https:\/\/openmpt.org\/ - Home of Open ModPlug Tracker :)\n\n___________________________________________________________________________\n\nSample credits:\n\nThe source of the samples are indicated in the filename of the samples.\n- XV-5080: From my Roland XV-5080\n- kb6: From the kb6 drum samples collection\n- Dexed: From the Dexed VSTi\n- JayB: From JayB's sample collection\n- D-50: From my Roland D-50\n- TG77: From my Yamaha TG77\n- ArcanaSound: From Arcana Sound's Trance Kicks ReBorn\n\nTake care!",
-            "hash": "8ce5b1c3988441145bc8ccfbe73844de",
-            "pattern_hash": "c796b20ad725190a",
-            "create_date": "2020-04-14 19:41:26+00:00",
-            "update_date": "2022-01-22 18:10:36+00:00"
+            "file_size": 871637,
+            "channels": 64,
+            "instrument_text": "\n\"Digital Ritual\"\n\n  by\n\nBasehead + Hunz\n(Dan Grandpre +\nHans Van Vliet)\n\n\nA Music Contest 5\nveteran entry.\n5th place!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n     \u2219 PutInst 4.0 \u2219",
+            "comment_text": "",
+            "hash": "def80ccbec8107eaf198746e729b8854",
+            "pattern_hash": "274ab957d27da3b0",
+            "license": "",
+            "genre": "",
+            "is_featured": true,
+            "featured_date": "2020-12-29 22:36:34+00:00",
+            "folder": "B",
+            "create_date": "2020-12-29 22:36:34+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
         }
     },
     {
         "model": "songs.SongStats",
-        "pk": 33,
+        "pk": 190946,
         "fields": {
-            "downloads": 1055,
+            "downloads": 950,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 191103,
+        "fields": {
+            "legacy_id": "191103",
+            "filename": "k_sgroov.it",
+            "filename_unzipped": "k_sgroov.it",
+            "title": "Spacegroove",
+            "title_from_file": "\"Spacegroove\"-lev&mickrip",
+            "format": "it",
+            "file_size": 828323,
+            "channels": 28,
+            "instrument_text": "      \"Spacegroove\"\n\n       Written by\n Leviathan & Mick Rippon\n\n     a kosmic release\n\n           --\n\nemail mick at\n  rip@hunterlink.net.au\n\nemail lev at\n  ac@interaccess.com",
+            "comment_text": "*tap* *tap*   Hello, is the microphone working, Hello? Hello?",
+            "hash": "5ba76817eb51eb7a1ae6c6c0ef7667ef",
+            "pattern_hash": "0efc49d0e50f3c36",
+            "license": "",
+            "genre": "funk",
+            "is_featured": true,
+            "featured_date": "2021-01-23 00:51:06+00:00",
+            "folder": "K",
+            "create_date": "2021-01-23 00:51:06+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 191103,
+        "fields": {
+            "downloads": 1041,
             "total_comments": 1,
             "average_comment_score": 10.0,
+            "total_reviews": 0,
+            "average_review_score": 0.0
+        }
+    },
+    {
+        "model": "songs.song",
+        "pk": 191120,
+        "fields": {
+            "legacy_id": "191120",
+            "filename": "arc-indefinite.it",
+            "filename_unzipped": "arc-indefinite.it",
+            "title": "Indefinite Radiant",
+            "title_from_file": "Indefinite Radiant",
+            "format": "it",
+            "file_size": 433947,
+            "channels": 17,
+            "instrument_text": "Siner\nVoice Mantra\nChurch Organ\nAtmospheric Sound\nTom Drum\nBass Drum\nSnare Drum\nTambourine\nCymbal\nBreakbeat\n\nBass\nGuitar Riff\nPalm Mute\nFlange Reverse Cymbal\nFlangenoise\nDistorted Bass 1\nDistorted Bass 2\nDistorted Bass 3\n\nSlapbass\n\n\n\nThis is the only unripped\nsample. Ain't I pathetic?\n\n:)\n\nHit shift and F9 for more\ninfo.",
+            "comment_text": "Indefinite Radiant\nby Arcturus\n\na Shattered Fixtures Release\n\nTime:  3:42\n\nWell, another song by me, and this one I pumped out in a relatively short\namount of time.  I finished about two weeks after I started, when normally\nI spend a month or more without finishing a song!  How odd.  I've been\ntracking with a fury recently.  I guess it may be because I don't know if\nI'll be able to track much in college, so I'd like to get as much done\nhere as possible.  Anywho, enjoy the song.\n\n-Arcturus\n\nContact Info\n\nMy homepage:  http:\/\/members.tripod.com\/~arcmeister\nMy e-mail:  arcmeister@pemail.net\nThe Shattered Fixtures homepage:  http:\/\/www.aspects.net\/~sf\/index2.html",
+            "hash": "ebb99f21e445a40e6a99799abdd4b794",
+            "pattern_hash": "c313e9643fddde3b",
+            "license": "",
+            "genre": "electronic-dance",
+            "is_featured": false,
+            "folder": "A",
+            "create_date": "2021-01-23 00:59:32+00:00",
+            "update_date": "2025-01-01 01:00:00+00:00"
+        }
+    },
+    {
+        "model": "songs.SongStats",
+        "pk": 191120,
+        "fields": {
+            "downloads": 738,
+            "total_comments": 0,
+            "average_comment_score": 0.0,
             "total_reviews": 0,
             "average_review_score": 0.0
         }
