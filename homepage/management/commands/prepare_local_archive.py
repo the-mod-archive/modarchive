@@ -41,20 +41,14 @@ class Command(BaseCommand):
         if format_name not in valid_formats:
             print(f"Invalid format '{song.format}' for song '{song.title}'. Skipping.")
             return
-        format_dir = main_dir / format_name
-        if not format_dir.exists():
-            print(f"Creating format directory: {format_dir}")
-            format_dir.mkdir()
-        
-        # Validate that song.folder is a single uppercase letter or '0_9'
-        if not re.match(r"^[A-Z]$|^[0-1]_9$", str(song.folder)):
-            logger.error(f"Invalid folder name '{song.folder}' for song ID {song.id}. Skipping.")
-            return
 
-        song_folder = format_dir / song.folder
-        if not song_folder.exists():
-            print(f"Creating song folder: {song_folder}")
-            song_folder.mkdir()
+        format_dir = self.get_format_dir(main_dir, format_name)
+        if not format_dir:
+            return
+        
+        song_dir = self.get_song_dir(format_dir, song)
+        if not song_dir:
+            return
         
         archive_location = Path(song.get_archive_path())
         if archive_location.exists():
@@ -73,3 +67,48 @@ class Command(BaseCommand):
             print(f"✅ Saved {archive_location}")
         except Exception as e:
             print(f"Failed to download song {song.legacy_id}: {e}")
+    
+    def get_format_dir(self, main_dir: Path, format_name: str) -> Path:
+        format_dir = main_dir / format_name
+
+        # Ensure format_dir is within main_dir after resolving
+        try:
+            format_dir_resolved = format_dir.resolve()
+            main_dir_resolved = main_dir.resolve()
+        except Exception as e:
+            logger.error(f"Failed to resolve paths: {e}")
+            return
+        if not str(format_dir_resolved).startswith(str(main_dir_resolved)):
+            logger.error(f"Resolved format directory '{format_dir_resolved}' is outside of main archive dir '{main_dir_resolved}'. Skipping.")
+            return
+
+        # Now that we've ensured it's within main_dir, create it if needed
+        if not format_dir.exists():
+            print(f"Creating format directory: {format_dir}")
+            format_dir.mkdir()
+
+        return format_dir
+
+    def get_song_dir(self, format_dir: Path, song: Song) -> Path:
+        # Validate that song.folder is a single uppercase letter or '0_9'
+        if not re.match(r"^[A-Z]$|^[0-1]_9$", str(song.folder)):
+            logger.error(f"Invalid folder name '{song.folder}' for song ID {song.id}. Skipping.")
+            return
+
+        song_dir = format_dir / song.folder
+        # Normalize and ensure song_folder is within format_dir
+        try:
+            song_dir_resolved = song_dir.resolve()
+        except Exception as e:
+            logger.error(f"Failed to resolve path for song dir '{song_dir}': {e}")
+            return
+        if not str(song_dir_resolved).startswith(str(format_dir.resolve())):
+            logger.error(f"Attempted path traversal or invalid dir '{song.folder}' for song ID {song.id}. Skipping.")
+            return
+        
+        # Now that we've validated song_dir, create it if needed
+        if not song_dir.exists():
+            print(f"Creating song folder: {song_dir}")
+            song_dir.mkdir()
+
+        return song_dir
