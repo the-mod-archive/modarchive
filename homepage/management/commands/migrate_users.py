@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.core.management import CommandError
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.contrib.auth.models import Group
 from homepage import legacy_models
 from homepage.models import Profile
@@ -32,8 +32,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         with DisableSignals():
-            users = legacy_models.Users.objects.using('legacy').all().order_by('userid')
-            total = len(users)
+            # Use iterator() to avoid loading all records into memory
+            users_queryset = legacy_models.Users.objects.using('legacy').all().order_by('userid')
+            total = users_queryset.count()
 
             try:
                 standard_group = Group.objects.get(name='Standard')
@@ -44,28 +45,257 @@ class Command(BaseCommand):
                 raise CommandError(f"Missing required group: {e}") from e
 
             print(f"Starting migrations of {total} users. This process will create all user, profile, and artist objects.")
+
+            batch_size = 1000
+            users_to_create = []
+            profiles_to_create = []
+            artists_to_create = []
+            
+            # For tracking group memberships after bulk creation
+            admin_user_indices = []
+            screener_user_indices = []
+            artist_user_indices = []
+            
             counter = 0
 
-            for user in users:
+            # Process in batches for better performance
+            for legacy_user in users_queryset.iterator(chunk_size=batch_size):
                 counter += 1
-                if counter % 1000 == 0:
+
+                user_data, profile_data, artist_data = self.prepare_user_data(legacy_user)
+                
+                if user_data:  # Only process if user creation data is valid
+                    current_user_index = len(users_to_create)
+                    users_to_create.append(user_data)
+                    
+                    # Track group memberships by index
+                    if legacy_user.cred_admin == "1":
+                        admin_user_indices.append(current_user_index)
+                    if legacy_user.cred_filterer == "1":
+                        screener_user_indices.append(current_user_index)
+                    
+                    if profile_data:
+                        profiles_to_create.append(profile_data)
+                        
+                        if artist_data:
+                            artists_to_create.append(artist_data)
+                            artist_user_indices.append(current_user_index)
+
+                # Bulk create when batch is full or at the end
+                if len(users_to_create) >= batch_size or counter == total:
+                    if users_to_create:  # Only process if we have users to create
+                        self.bulk_create_batch(
+                            users_to_create, profiles_to_create, artists_to_create,
+                            admin_user_indices, screener_user_indices, artist_user_indices,
+                            admin_group, screener_group, artist_group, standard_group
+                        )
+
                     print(f"Generated {counter} out of {total} from the legacy users table.")
-                new_user = self.generate_user(user, admin_group, screener_group)
+                    
+                    # Clear batches
+                    users_to_create = []
+                    profiles_to_create = []
+                    artists_to_create = []
+                    admin_user_indices = []
+                    screener_user_indices = []
+                    artist_user_indices = []
 
-                if not new_user:
-                    continue
+    def prepare_user_data(self, legacy_user):
+        """Prepare User, Profile, and Artist data objects for bulk creation"""
+        username = legacy_user.username
+        password = self.get_password_with_hashing_algorithm(legacy_user.profile_password)
+        email = legacy_user.profile_email
+        is_staff = True if legacy_user.cred_admin == "1" else False
+        date_joined = legacy_user.date
 
+        # Create User object (no ID assignment - let Django auto-assign)
+        user_data = User(
+            username=username,
+            password=password,
+            email=email,
+            date_joined=date_joined,
+            is_staff=is_staff
+        )
+
+        # Create Profile object with explicit ID to preserve legacy user ID
+        profile_data = Profile(
+            id=legacy_user.userid,  # Preserve legacy ID for Profile
+            display_name=legacy_user.profile_fullname,
+            blurb=legacy_user.profile_blurb,
+            create_date=legacy_user.date,
+            update_date=legacy_user.lastlogin,
+            legacy_id=legacy_user.userid
+            # user will be set after bulk user creation
+        )
+
+        # Create Artist object if user is an artist, with explicit ID
+        artist_data = None
+        if legacy_user.cred_artist == "1":
+            artist_data = Artist(
+                id=legacy_user.userid,  # Preserve legacy ID for Artist
+                legacy_id=legacy_user.userid,
+                name=legacy_user.profile_fullname,
+                create_date=legacy_user.date,
+                update_date=legacy_user.lastlogin
+                # user and profile will be set after bulk creation
+            )
+
+        return user_data, profile_data, artist_data
+
+    def bulk_create_batch(self, users_to_create, profiles_to_create, artists_to_create,
+                         admin_user_indices, screener_user_indices, artist_user_indices,
+                         admin_group, screener_group, artist_group, standard_group):
+        """Bulk create users, profiles, and artists with proper relationships and group assignments"""
+        
+        with transaction.atomic():
+            try:
+                # Bulk create users first
+                created_users = User.objects.bulk_create(users_to_create, ignore_conflicts=True)
+                
+                # Filter out any users that weren't created due to conflicts
+                successful_users = [user for user in created_users if user.pk is not None]
+                
+                if len(successful_users) != len(users_to_create):
+                    print(f"Warning: {len(users_to_create) - len(successful_users)} users were skipped due to conflicts")
+                
+                # Update profiles with the created user instances
+                for i, profile in enumerate(profiles_to_create[:len(successful_users)]):
+                    profile.user = successful_users[i]
+                
+                # Bulk create profiles
+                created_profiles = Profile.objects.bulk_create(profiles_to_create[:len(successful_users)], ignore_conflicts=True)
+                
+                # Update artists with the created user and profile instances
+                successful_profiles = [profile for profile in created_profiles if profile.pk is not None]
+                artist_count = 0
+                for i, artist in enumerate(artists_to_create):
+                    if artist_count < len(successful_users) and artist_count < len(successful_profiles):
+                        # Find the corresponding user index for this artist
+                        user_index = artist_user_indices[i] if i < len(artist_user_indices) else i
+                        if user_index < len(successful_users) and user_index < len(successful_profiles):
+                            artist.user = successful_users[user_index]
+                            artist.profile = successful_profiles[user_index]
+                            artist_count += 1
+                
+                # Bulk create artists
+                if artists_to_create:
+                    Artist.objects.bulk_create(artists_to_create[:artist_count], ignore_conflicts=True)
+                
+                # Handle group assignments efficiently
+                self.assign_groups_bulk(successful_users, admin_user_indices, screener_user_indices, 
+                                      artist_user_indices, admin_group, screener_group, 
+                                      artist_group, standard_group)
+                
+            except Exception as e:
+                print(f"Error during bulk creation: {str(e)}")
+                # Fall back to individual creation for this batch
+                self.fallback_individual_creation(users_to_create, profiles_to_create, artists_to_create,
+                                                admin_user_indices, screener_user_indices, artist_user_indices,
+                                                admin_group, screener_group, artist_group, standard_group)
+
+    def assign_groups_bulk(self, created_users, admin_user_indices, screener_user_indices,
+                          artist_user_indices, admin_group, screener_group, artist_group, standard_group):
+        """Efficiently assign group memberships to created users"""
+        
+        # Add all users to standard group
+        standard_group.user_set.add(*created_users)
+        
+        # Add specific users to admin group
+        if admin_user_indices:
+            admin_users = [created_users[i] for i in admin_user_indices if i < len(created_users)]
+            if admin_users:
+                admin_group.user_set.add(*admin_users)
+        
+        # Add specific users to screener group
+        if screener_user_indices:
+            screener_users = [created_users[i] for i in screener_user_indices if i < len(created_users)]
+            if screener_users:
+                screener_group.user_set.add(*screener_users)
+        
+        # Add specific users to artist group
+        if artist_user_indices:
+            artist_users = [created_users[i] for i in artist_user_indices if i < len(created_users)]
+            if artist_users:
+                artist_group.user_set.add(*artist_users)
+
+    def fallback_individual_creation(self, users_to_create, profiles_to_create, artists_to_create,
+                                   admin_user_indices, screener_user_indices, artist_user_indices,
+                                   admin_group, screener_group, artist_group, standard_group):
+        """Fallback to individual creation if bulk creation fails"""
+        print("Falling back to individual creation for this batch...")
+        
+        for i, user_data in enumerate(users_to_create):
+            try:
+                # Create user individually
+                new_user = User.objects.create(
+                    username=user_data.username,
+                    password=user_data.password,
+                    email=user_data.email,
+                    date_joined=user_data.date_joined,
+                    is_staff=user_data.is_staff
+                )
+                
+                # Add to standard group
                 new_user.groups.add(standard_group)
-
-                new_profile = self.generate_profile(user, new_user)
-
-                if not new_profile or not user.cred_artist == "1":
-                    continue
-
-                self.generate_artist(user, new_user, new_profile)
-                new_user.groups.add(artist_group)
+                
+                # Add to special groups if needed
+                if i in admin_user_indices:
+                    new_user.groups.add(admin_group)
+                if i in screener_user_indices:
+                    new_user.groups.add(screener_group)
+                
+                # Create profile if we have one
+                if i < len(profiles_to_create):
+                    profile_data = profiles_to_create[i]
+                    try:
+                        new_profile = Profile.objects.create(
+                            id=profile_data.id,
+                            user=new_user,
+                            display_name=profile_data.display_name,
+                            blurb=profile_data.blurb,
+                            create_date=profile_data.create_date,
+                            update_date=profile_data.update_date,
+                            legacy_id=profile_data.legacy_id
+                        )
+                        
+                        # Create artist if this user should be an artist
+                        if i in artist_user_indices and i < len(artists_to_create):
+                            artist_data = artists_to_create[i]
+                            try:
+                                Artist.objects.create(
+                                    id=artist_data.id,
+                                    user=new_user,
+                                    profile=new_profile,
+                                    legacy_id=artist_data.legacy_id,
+                                    name=artist_data.name,
+                                    create_date=artist_data.create_date,
+                                    update_date=artist_data.update_date
+                                )
+                                new_user.groups.add(artist_group)
+                            except IntegrityError:
+                                # Try with modified name
+                                try:
+                                    Artist.objects.create(
+                                        id=artist_data.id,
+                                        user=new_user,
+                                        profile=new_profile,
+                                        legacy_id=artist_data.legacy_id,
+                                        name=artist_data.name + "_1",
+                                        create_date=artist_data.create_date,
+                                        update_date=artist_data.update_date
+                                    )
+                                    new_user.groups.add(artist_group)
+                                except IntegrityError as e:
+                                    print(f"Could not create artist for user {new_user.username}: {str(e)}")
+                    
+                    except IntegrityError as e:
+                        print(f"Could not create profile for user {new_user.username}: {str(e)}")
+                
+            except IntegrityError as e:
+                print(f"Could not create user {user_data.username}: {str(e)}")
 
     def generate_user(self, legacy_user, admin_group: Group, screener_group: Group):
+        # Legacy method - kept for compatibility but not used in optimized version
         username = legacy_user.username
         password = self.get_password_with_hashing_algorithm(legacy_user.profile_password)
         email = legacy_user.profile_email
@@ -84,6 +314,7 @@ class Command(BaseCommand):
             return None
 
     def generate_profile(self, legacy_user, new_user):
+        # Legacy method - kept for compatibility but not used in optimized version
         try:
             return Profile.objects.create(
                 user = new_user,
@@ -98,6 +329,7 @@ class Command(BaseCommand):
             return None
 
     def generate_artist(self, legacy_user, new_user, profile):
+        # Legacy method - kept for compatibility but not used in optimized version
         try:
             return Artist.objects.create(
                 user = new_user,
@@ -121,6 +353,7 @@ class Command(BaseCommand):
             )
 
     def get_password_with_hashing_algorithm(self, password):
+        """Convert legacy password format to Django-compatible format"""
         if password.startswith("$2y"):
             return "bcrypt$" + password
 
