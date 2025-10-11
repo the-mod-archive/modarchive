@@ -68,18 +68,22 @@ class Command(BaseCommand):
                     current_user_index = len(users_to_create)
                     users_to_create.append(user_data)
                     
+                    # Always create a profile for each user
+                    if profile_data:
+                        profiles_to_create.append(profile_data)
+                    else:
+                        print(f"Warning: No profile data for user {legacy_user.username}")
+                    
                     # Track group memberships by index
                     if legacy_user.cred_admin == "1":
                         admin_user_indices.append(current_user_index)
                     if legacy_user.cred_filterer == "1":
                         screener_user_indices.append(current_user_index)
                     
-                    if profile_data:
-                        profiles_to_create.append(profile_data)
-                        
-                        if artist_data:
-                            artists_to_create.append(artist_data)
-                            artist_user_indices.append(current_user_index)
+                    # Only create artist if user is marked as artist
+                    if artist_data:
+                        artists_to_create.append(artist_data)
+                        artist_user_indices.append(current_user_index)
 
                 # Bulk create when batch is full or at the end
                 if len(users_to_create) >= batch_size or counter == total:
@@ -117,7 +121,7 @@ class Command(BaseCommand):
             is_staff=is_staff
         )
 
-        # Create Profile object with explicit ID to preserve legacy user ID
+        # Create Profile object with explicit ID to preserve legacy user ID  
         profile_data = Profile(
             id=legacy_user.userid,  # Preserve legacy ID for Profile
             display_name=legacy_user.profile_fullname,
@@ -149,6 +153,8 @@ class Command(BaseCommand):
         
         with transaction.atomic():
             try:
+                print(f"Bulk creating batch: {len(users_to_create)} users, {len(profiles_to_create)} profiles, {len(artists_to_create)} artists")
+                
                 # Bulk create users first
                 created_users = User.objects.bulk_create(users_to_create, ignore_conflicts=True)
                 
@@ -158,28 +164,46 @@ class Command(BaseCommand):
                 if len(successful_users) != len(users_to_create):
                     print(f"Warning: {len(users_to_create) - len(successful_users)} users were skipped due to conflicts")
                 
+                print(f"Successfully created {len(successful_users)} users")
+                
                 # Update profiles with the created user instances
-                for i, profile in enumerate(profiles_to_create[:len(successful_users)]):
-                    profile.user = successful_users[i]
+                # Each profile corresponds to a user at the same index
+                for i, profile in enumerate(profiles_to_create):
+                    if i < len(successful_users):
+                        profile.user = successful_users[i]
+                    else:
+                        print(f"Warning: Profile {i} has no corresponding user")
+                        break
                 
                 # Bulk create profiles
-                created_profiles = Profile.objects.bulk_create(profiles_to_create[:len(successful_users)], ignore_conflicts=True)
+                if profiles_to_create:
+                    created_profiles = Profile.objects.bulk_create(profiles_to_create, ignore_conflicts=True)
+                    successful_profiles = [profile for profile in created_profiles if profile.pk is not None]
+                    print(f"Successfully created {len(successful_profiles)} profiles")
+                else:
+                    successful_profiles = []
                 
                 # Update artists with the created user and profile instances
-                successful_profiles = [profile for profile in created_profiles if profile.pk is not None]
-                artist_count = 0
+                # Artists correspond to specific users based on artist_user_indices
                 for i, artist in enumerate(artists_to_create):
-                    if artist_count < len(successful_users) and artist_count < len(successful_profiles):
-                        # Find the corresponding user index for this artist
-                        user_index = artist_user_indices[i] if i < len(artist_user_indices) else i
+                    if i < len(artist_user_indices):
+                        user_index = artist_user_indices[i]
                         if user_index < len(successful_users) and user_index < len(successful_profiles):
                             artist.user = successful_users[user_index]
                             artist.profile = successful_profiles[user_index]
-                            artist_count += 1
+                        else:
+                            print(f"Warning: Artist {i} references invalid user/profile index {user_index}")
+                            # Remove this artist from the list
+                            artists_to_create[i] = None
+                
+                # Filter out None artists
+                valid_artists = [artist for artist in artists_to_create if artist is not None]
                 
                 # Bulk create artists
-                if artists_to_create:
-                    Artist.objects.bulk_create(artists_to_create[:artist_count], ignore_conflicts=True)
+                if valid_artists:
+                    created_artists = Artist.objects.bulk_create(valid_artists, ignore_conflicts=True)
+                    successful_artists = [artist for artist in created_artists if artist.pk is not None]
+                    print(f"Successfully created {len(successful_artists)} artists")
                 
                 # Handle group assignments efficiently
                 self.assign_groups_bulk(successful_users, admin_user_indices, screener_user_indices, 
@@ -188,6 +212,8 @@ class Command(BaseCommand):
                 
             except Exception as e:
                 print(f"Error during bulk creation: {str(e)}")
+                import traceback
+                traceback.print_exc()
                 # Fall back to individual creation for this batch
                 self.fallback_individual_creation(users_to_create, profiles_to_create, artists_to_create,
                                                 admin_user_indices, screener_user_indices, artist_user_indices,
