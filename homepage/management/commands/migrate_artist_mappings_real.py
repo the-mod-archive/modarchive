@@ -46,7 +46,7 @@ class Command(BaseCommand):
                 
                 # Look up artist using pre-built dictionary
                 # Handle missing artist ID gracefully (no referential integrity in legacy DB)
-                artist = artist_id_lookup.get(mapping.artist) if mapping.artist else None
+                artist = artist_id_lookup.get(int(mapping.artist)) if mapping.artist else None
                 if not artist:
                     skipped_no_artist += 1
                     if skipped_no_artist <= 10:  # Only show first 10 warnings
