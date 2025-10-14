@@ -155,16 +155,30 @@ class Command(BaseCommand):
             try:
                 print(f"Bulk creating batch: {len(users_to_create)} users, {len(profiles_to_create)} profiles, {len(artists_to_create)} artists")
                 
-                # Bulk create users first
-                created_users = User.objects.bulk_create(users_to_create, ignore_conflicts=True)
-                
-                # Filter out any users that weren't created due to conflicts
-                successful_users = [user for user in created_users if user.pk is not None]
-                
-                if len(successful_users) != len(users_to_create):
-                    print(f"Warning: {len(users_to_create) - len(successful_users)} users were skipped due to conflicts")
-                
-                print(f"Successfully created {len(successful_users)} users")
+                # Bulk create users first - remove ignore_conflicts to get PKs back
+                try:
+                    created_users = User.objects.bulk_create(users_to_create)
+                    successful_users = created_users  # All should have PKs now
+                    print(f"Successfully created {len(successful_users)} users")
+                    print(f"First user PK: {successful_users[0].pk if successful_users else 'None'}")  # Debug output
+                except Exception as bulk_error:
+                    print(f"Bulk user creation failed: {bulk_error}")
+                    # Fall back to individual creation
+                    successful_users = []
+                    for user_data in users_to_create:
+                        try:
+                            created_user = User.objects.create(
+                                username=user_data.username,
+                                password=user_data.password,
+                                email=user_data.email,
+                                date_joined=user_data.date_joined,
+                                is_staff=user_data.is_staff
+                            )
+                            successful_users.append(created_user)
+                        except Exception as e:
+                            print(f"Failed to create user {user_data.username}: {e}")
+                    
+                    print(f"Created {len(successful_users)} users individually")
                 
                 # Update profiles with the created user instances
                 # Each profile corresponds to a user at the same index
@@ -177,9 +191,30 @@ class Command(BaseCommand):
                 
                 # Bulk create profiles
                 if profiles_to_create:
-                    created_profiles = Profile.objects.bulk_create(profiles_to_create, ignore_conflicts=True)
-                    successful_profiles = [profile for profile in created_profiles if profile.pk is not None]
-                    print(f"Successfully created {len(successful_profiles)} profiles")
+                    try:
+                        created_profiles = Profile.objects.bulk_create(profiles_to_create)
+                        successful_profiles = created_profiles  # All should have PKs now
+                        print(f"Successfully created {len(successful_profiles)} profiles")
+                    except Exception as profile_error:
+                        print(f"Bulk profile creation failed: {profile_error}")
+                        # Fall back to individual creation
+                        successful_profiles = []
+                        for i, profile_data in enumerate(profiles_to_create):
+                            if i < len(successful_users):
+                                try:
+                                    created_profile = Profile.objects.create(
+                                        id=profile_data.id,
+                                        user=profile_data.user,
+                                        display_name=profile_data.display_name,
+                                        blurb=profile_data.blurb,
+                                        create_date=profile_data.create_date,
+                                        update_date=profile_data.update_date,
+                                        legacy_id=profile_data.legacy_id
+                                    )
+                                    successful_profiles.append(created_profile)
+                                except Exception as e:
+                                    print(f"Failed to create profile for user {profile_data.user.username}: {e}")
+                        print(f"Created {len(successful_profiles)} profiles individually")
                 else:
                     successful_profiles = []
                 
@@ -201,9 +236,43 @@ class Command(BaseCommand):
                 
                 # Bulk create artists
                 if valid_artists:
-                    created_artists = Artist.objects.bulk_create(valid_artists, ignore_conflicts=True)
-                    successful_artists = [artist for artist in created_artists if artist.pk is not None]
-                    print(f"Successfully created {len(successful_artists)} artists")
+                    try:
+                        created_artists = Artist.objects.bulk_create(valid_artists)
+                        successful_artists = created_artists  # All should have PKs now
+                        print(f"Successfully created {len(successful_artists)} artists")
+                    except Exception as artist_error:
+                        print(f"Bulk artist creation failed: {artist_error}")
+                        # Fall back to individual creation
+                        successful_artists = []
+                        for artist_data in valid_artists:
+                            try:
+                                created_artist = Artist.objects.create(
+                                    id=artist_data.id,
+                                    user=artist_data.user,
+                                    profile=artist_data.profile,
+                                    legacy_id=artist_data.legacy_id,
+                                    name=artist_data.name,
+                                    create_date=artist_data.create_date,
+                                    update_date=artist_data.update_date
+                                )
+                                successful_artists.append(created_artist)
+                            except Exception as e:
+                                print(f"Failed to create artist {artist_data.name}: {e}")
+                                # Try with modified name
+                                try:
+                                    created_artist = Artist.objects.create(
+                                        id=artist_data.id,
+                                        user=artist_data.user,
+                                        profile=artist_data.profile,
+                                        legacy_id=artist_data.legacy_id,
+                                        name=artist_data.name + "_1",
+                                        create_date=artist_data.create_date,
+                                        update_date=artist_data.update_date
+                                    )
+                                    successful_artists.append(created_artist)
+                                except Exception as e2:
+                                    print(f"Failed to create artist {artist_data.name}_1: {e2}")
+                        print(f"Created {len(successful_artists)} artists individually")
                 
                 # Handle group assignments efficiently
                 self.assign_groups_bulk(successful_users, admin_user_indices, screener_user_indices, 
