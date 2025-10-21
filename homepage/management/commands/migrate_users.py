@@ -20,6 +20,8 @@ User = get_user_model()
 # 6. --migrate_files_new
 # 7. --migrate_nominations
 # 8. --migrate_files_uploader
+# 9. --migrate_redirects
+# 10. --migrate_rejected_files
 #
 # --update_artist_search_indexes --all
 # --update_song_search_indexes --all

@@ -14,10 +14,11 @@ class Command(BaseCommand):
 
         for redirect in redirects:
             try:
-                song = Song.objects.get(legacy_id=redirect.redirect_to)
+                song = Song.objects.get(id=redirect.redirect_to)
                 if song:
                     SongRedirect.objects.create(
                         song=song,
+                        old_song_id=redirect.redirect_from,
                         legacy_old_song_id=redirect.redirect_from
                     )
             except Song.DoesNotExist:

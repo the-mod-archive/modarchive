@@ -4,7 +4,7 @@ from django.utils import timezone
 
 from homepage import legacy_models
 from homepage.models import Profile
-from songs.models import RejectedSong
+from uploads.models import RejectedSong
 
 class Command(BaseCommand):
     help = "Migrate the legacy tma_files_rejected table"
