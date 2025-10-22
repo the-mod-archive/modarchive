@@ -34,12 +34,12 @@ class LegacyUrlRedirectionView(RedirectView):
             legacy_module_id = self.request.GET.get('query')
 
             try:
-                song = Song.objects.get(legacy_id = legacy_module_id)
+                song = Song.objects.get(id = legacy_module_id)
                 if song:
                     kwargs['pk'] = song.id
             except Song.DoesNotExist:
                 try:
-                    song_redirect = SongRedirect.objects.get(legacy_old_song_id = legacy_module_id)
+                    song_redirect = SongRedirect.objects.get(old_song_id = legacy_module_id)
                     if song_redirect:
                         kwargs['pk'] = song_redirect.song_id
                 except SongRedirect.DoesNotExist:

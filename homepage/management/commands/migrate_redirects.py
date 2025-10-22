@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.core.exceptions import ValidationError
 
 from homepage import legacy_models
 from songs.models import Song, SongRedirect
@@ -14,11 +15,13 @@ class Command(BaseCommand):
 
         for redirect in redirects:
             try:
-                song = Song.objects.get(legacy_id=redirect.redirect_to)
+                song = Song.objects.get(id=redirect.redirect_to)
                 if song:
                     SongRedirect.objects.create(
                         song=song,
-                        legacy_old_song_id=redirect.redirect_from
+                        old_song_id=redirect.redirect_from
                     )
             except Song.DoesNotExist:
                 print(f"Could not find song with legacy_id {redirect.redirect_to} for redirect {redirect.redirect_from}")
+            except ValidationError:
+                print(f"Validation error, redirect_from value is {redirect.redirect_from}")
