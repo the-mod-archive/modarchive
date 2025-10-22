@@ -306,7 +306,7 @@ class LegacyRedirectionViewTests(TestCase):
         self.assertRedirects(response, reverse('register'))
 
     def test_old_module_url_redirects(self):
-        song = song_factories.SongFactory(legacy_id=48552)
+        song = song_factories.SongFactory(id=48552)
         response = self.client.get('/index.php/?request=view_by_moduleid&query=48552')
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
 
@@ -315,8 +315,8 @@ class LegacyRedirectionViewTests(TestCase):
         self.assertRedirects(response, reverse('home'))
 
     def test_old_module_url_redirects_to_song_if_song_redirect_exists(self):
-        song = song_factories.SongFactory()
-        song_factories.SongRedirectFactory(song=song, legacy_old_song_id=48553)
+        song = song_factories.SongFactory(id=48553)
+        song_factories.SongRedirectFactory(song=song, old_song_id=48553)
         response = self.client.get('/index.php/?request=view_by_moduleid&query=48553')
         self.assertRedirects(response, reverse('view_song', kwargs = {'pk': song.id}))
 
