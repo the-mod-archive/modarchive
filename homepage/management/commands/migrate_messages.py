@@ -2,14 +2,10 @@ from django.core.management import BaseCommand
 from homepage import legacy_models
 from homepage.models import Message, Profile
 
-
 class Command(BaseCommand):
     help = 'Migrate the legacy messages table'
 
     def handle(self, *args, **options):
-        # TODO: remove this
-        Message.objects.all().delete()
-
         messages_set = legacy_models.TmaProfileComments.objects.using('legacy').all().order_by('id')
 
         total = len(messages_set)
