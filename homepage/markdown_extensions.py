@@ -1,6 +1,6 @@
 import markdown
 from markdown.inlinepatterns import InlineProcessor
-import xml.etree.ElementTree as etree
+import xml.etree.ElementTree as eTree
 
 from django.urls import reverse
 from songs.models import Song, SongRedirect
@@ -8,7 +8,7 @@ from songs.models import Song, SongRedirect
 class ModpageInlineProcessor(InlineProcessor):
     def handleMatch(self, m, data):
         song_id = m.group(1)
-        el = etree.Element("a")
+        el = eTree.Element("a")
 
         try:
             # Fetch the song record

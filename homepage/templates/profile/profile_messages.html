@@ -1,7 +1,7 @@
 {% extends 'base_page/base.html' %}
+{% load crispy_forms_filters %}
 {% load markdown_extras %}
 {% load filters %}
-{% load crispy_forms_tags %}
 
 {% block title %}
     {{ block.super }}: {{profile.display_name}} messages
@@ -92,8 +92,7 @@
         Nothing here
     {% endfor %}
 
-    {% comment %} Post a message (non-reply) {% endcomment %}
-    {% if profile.enable_shoutwall %}
+    {% if profile.enable_shoutwall and perms.homepage.add_message %}
         <hr>
 
         <div class="mx-4 my-3">

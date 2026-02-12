@@ -10,17 +10,17 @@ register = template.Library()
 # Profiles defining allowed output
 MARKDOWN_PROFILES = {
     "default": {
-        "tags": ["strong", "em", "u", "s", "a", "p", "del"],
+        "tags": ["strong", "em", "u", "s", "a", "p", "del", "br"],
         "attributes": {"a": ["href", "title", "rel"]},
         "allow_external_links": False,
     },
     "artist_comments": {
-        "tags": ["strong", "em", "u", "s", "a", "p", "del"],
+        "tags": ["strong", "em", "u", "s", "a", "p", "del", "br"],
         "attributes": {"a": ["href", "title", "rel"]},
         "allow_external_links": True,
     },
     "profile_blurbs": {
-        "tags": ["strong", "em", "u", "s", "a", "p", "del", "hr", "h3"],
+        "tags": ["strong", "em", "u", "s", "a", "p", "del", "hr", "h3", "br", "ul", "li", "ol"],
         "attributes": {"a": ["href", "title", "rel"]},
         "allow_external_links": True,
     }
@@ -50,7 +50,7 @@ def _render_markdown(value, tags, attributes, allow_external_links):
             "nl2br",  # Preserve newlines,
             "pymdownx.tilde" # Strikethrough
         ],
-        output_format="html5",
+        output_format="xhtml",
     )
 
     # Step 2: Clean HTML output (only allow your tags)
