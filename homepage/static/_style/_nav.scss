@@ -1,0 +1,138 @@
+nav{
+
+  &.main{
+    background-color: black;
+    padding: 8px 10px;
+    border-bottom: 1px solid $border-dim-color;
+  }
+
+  .subnav{
+    flex-wrap: nowrap;
+    &.main{
+      width: 100%;
+      container-type: inline-size;
+      container-name: navmain;
+    }
+  }
+
+  .container{
+    display: flex;
+    justify-content: space-between;
+  }
+
+  a{
+    display: inline-block;
+    margin: 2px;
+    border: 1px solid #11422b;
+    padding: 4px 10px;
+    text-decoration: none;
+    color: $nav-link-color;
+    border-radius: 4px;
+    font-size: 14px;
+    text-wrap: nowrap;
+    background-color: black;
+
+    &:hover{
+      border: 1px solid $border-hover-color;
+      color: $nav-link-hover-color;
+      cursor: pointer;
+    }
+  }
+
+  form{
+    flex: 1 1 100%;
+    width: 100%;
+
+    input{
+      background-color: black;
+      border: 1px solid #444;
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      color: white;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      max-width: 200px;
+      min-width: 100px;
+
+      &:focus{
+        outline: none;
+      }
+    }
+  }
+}
+
+.subnav{
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+
+  &.right{
+    justify-content: flex-end;
+    gap: 8px;
+
+    a{
+      text-decoration: none;
+      color: silver;
+      padding: 2px 6px;
+      font-size: 14px;
+      border: 1px solid #737373;
+      border-radius: 2px;
+    }
+  }
+
+  &.elevated{
+    margin-top: -30px;
+  }
+
+  .buttongroup{
+    font-size: 14px;
+    padding: 2px 6px;
+
+    label{
+      color: gray;
+    }
+
+    a{
+      margin: 0;
+      border: 1px solid transparent;
+      position: relative;
+      background-color: transparent;
+
+      &:before{
+        content: '';
+        position: absolute;
+        left: -3px;
+        top: 2px;
+        bottom: 2px;
+        width: 1px;
+        background-color: gray;
+      }
+
+      &:first-of-type{
+        &:before{
+          display: none;
+        }
+      }
+
+      &:hover{
+        color: $link-hover-color;
+        cursor: pointer;
+        border-bottom: 1px solid $border-hover-color;
+      }
+    }
+  }
+}
+
+@container navmain (max-width: 400px) {
+  a.secondary{
+    display: none;
+  }
+}
+
+@media (max-width: 800px) {
+  nav.main .container{
+    padding: 0;
+  }
+}

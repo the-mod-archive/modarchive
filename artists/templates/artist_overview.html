@@ -8,33 +8,29 @@
 {% block content %}
 
 {% if user.is_staff and perms.artists.change_artist %}
-    <div class="alert alert-warning" role="alert">
-        <h4 class="alert-heading">Admin Actions</h4>
-        <a href="{% url 'admin:artists_artist_change' artist.id %}">Change this artist</a>
+    <div class="adminpanel">
+        <h4>Admin Actions</h4>
+        <menu>
+            <li>
+                <a href="{% url 'admin:artists_artist_change' artist.id %}">Change this artist</a>
+            </li>
+        </menu>
     </div>
 {% endif %}
 
-<div class="alert alert-warning">
-    This artist is not a modarchive user and they do not actively maintain this page. If there concerns about this page, please contact modarchive staff.
-</div>
+<h1>{{ artist.name }}</h1>
 
-<div class='fs-2 title'>{{ artist.name }}</div>
-
-<hr>
 
 {% include 'common_elements/paginator.html' with page_obj=page_obj page_range=page_range %}
 
-<ul>
-    {% for song in songs %}
-    <li>
-        <a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a>
-    </li>
-    {% empty %}<li>No songs yet.</li>{% endfor %}
-</ul>        
+{% include 'song_table.html' with songs=songs hide_artist=True %}
 
-<p>
-    <br/>
-    <a href="{% url 'artists' %}">Back to artists index</a>
-</p>
+
+<div class="infobox">
+    <i class="icon info bottom"></i>
+    This artist is not a modarchive user and they do not actively maintain this page. If there concerns about this page, please contact modarchive staff.
+</div>
+
+<a class="button" href="{% url 'artists' %}">Back to artists index</a>
 
 {% endblock %}

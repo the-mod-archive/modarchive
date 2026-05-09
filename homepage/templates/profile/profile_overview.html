@@ -8,46 +8,27 @@
 {% endblock %}
 
 {% block content %}
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".reply-link").forEach(link => {
-            link.addEventListener("click", function (e) {
-                e.preventDefault();
-                const id = this.dataset.messageId;
-                document
-                    .getElementById(`reply-form-${id}`)
-                    .classList.toggle("d-none");
-            });
-        });
-    });
-    </script>
 
     {% if user.profile and user.profile.id == profile.id %}
-        <a href="{% url 'update_profile' %}">Update your profile</a>
-        <br/><br/>
+        <a href="{% url 'update_profile' %}" class="button btn-primary sidebutton right">Update your profile</a>
     {% endif %}
-
-    <div class="fs-2">
+    <h1>
         Profile: {{ profile.display_name }}
-    </div>
+    </h1>
 
     {% include "profile/profile_header_and_navigation.html" with profile=profile artist=artist user=user active_tab='overview' %}
 
-    <hr>
-
-    <div class="tab-content mx-3 mt-2">
+    <div class="tab-panel blue messages">
         {% if profile.blurb %}
             {{ profile.blurb|render_markdown:"profile_blurbs" }}
         {% endif %}
-    </div>
 
-    {% if profile.enable_shoutwall and most_recent_messages %}
-        <hr>
+        {% if profile.enable_shoutwall and most_recent_messages %}
 
-        <div class="tab-content">
+
             {% for message in most_recent_messages %}
-                <div class="bg-success bg-opacity-25 border border-dark rounded p-1 mx-4 my-2">
-                    <div><strong><a href="{% url 'view_profile' message.sender.pk %}">{{ message.sender.display_name }}</a></strong> wrote on {{message.create_date|date:"F j, o"}}:</div>
+                <div class="message">
+                    <div class="caption"><a href="{% url 'view_profile' message.sender.pk %}">{{ message.sender.display_name }}</a> wrote on {{message.create_date|date:"F j, o"}}:</div>
                     <p>{{ message.text|render_markdown }}</p>
                     {% if message.reply_recipient and message.reply_to %}
                         <div class="fs-6">
@@ -59,21 +40,20 @@
                     {% endif %}
 
                     {% if user.is_authenticated and perms.homepage.add_message %}
-                    <a href="#" class="reply-link" data-message-id="{{ message.id }}">
-                        Reply
-                    </a>
-
-                    <div id="reply-form-{{ message.id }}" class="reply-form d-none mt-2">
+                    <div class="reply-form">
+                        <button class="small toggle-parent reply" data-target=".reply-form">Reply</button>
                         <form method="post" action="{% url 'create_message' profile.id %}">
+                            <h3>Post your reply</h3>
                             {% csrf_token %}
                             {{ message_form|crispy }}
 
                             <input type="hidden" name="reply_to" value="{{ message.id }}">
                             <input type="hidden" name="profile_id" value="{{ profile.id }}">
 
-                            <button type="submit" class="btn btn-sm btn-primary mt-1">
-                                Post reply
-                            </button>
+                            <div class="buttons">
+                                <button type="submit" class="button btn-primary">Post reply</button>
+                                <button type="button" class="toggle-parent" data-target=".reply-form">Cancel</button>
+                            </div>
                         </form>
                     </div>
                     {% endif %}
@@ -81,27 +61,27 @@
             {% empty %}
                 <p>No messages yet</p>
             {% endfor %}
-        </div>
-    {% endif %}
+        {% endif %}
 
-    {% comment %} Post a message (non-reply) {% endcomment %}
-    {% if profile.enable_shoutwall and user.is_authenticated and perms.homepage.add_message %}
-        <hr>
+        {% comment %} Post a message (non-reply) {% endcomment %}
+        {% if profile.enable_shoutwall and user.is_authenticated and perms.homepage.add_message %}
+            <div class="messagereply-form">
+                <h3>Post a message to the shoutwall</h3>
 
-        <div class="mx-4 my-3">
-            <h5>Post a message</h5>
+                <form method="post" action="{% url 'create_message' profile.id %}">
+                    {% csrf_token %}
+                    {{ message_form|crispy }}
 
-            <form method="post" action="{% url 'create_message' profile.id %}">
-                {% csrf_token %}
-                {{ message_form|crispy }}
+                    <!-- empty reply_to = top-level message -->
+                    <input type="hidden" name="profile_id" value="{{ profile.id }}">
 
-                <!-- empty reply_to = top-level message -->
-                <input type="hidden" name="profile_id" value="{{ profile.id }}">
-
-                <button type="submit" class="btn btn-success mt-2">
-                    Post message
-                </button>
-            </form>
-        </div>
-    {% endif %}
+                    <div class="buttons">
+                        <button type="submit" class="btn-primary">
+                            Post message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

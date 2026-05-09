@@ -6,21 +6,32 @@
 
 {% block content %}
 
-<h2>Artists</h2>
+<h1>Artists</h1>
 
 {% if user.is_staff and perms.songs.change_song %}
-    <div class="alert alert-warning" role="alert">
-        <h4 class="alert-heading">Admin Actions</h4>
-        <a href="{% url 'admin:artists_artist_add' %}">Add an artist</a>
+    <div class="adminpanel">
+        <h4>Admin Actions</h4>
+        <menu>
+            <li>
+                <a href="{% url 'admin:artists_artist_add' %}">Add an artist</a>
+            </li>
+        </menu>
     </div>
 {% endif %}
 
-{% for artist in object_list %}
-    <div>
-        <a href="{% url 'view_artist' artist.id %}">{{ artist.name }}</a>
-    </div>
-{% empty %}
-    <div>No artists yet.</div>
-{% endfor %}
+<div class="artists">
+
+    {% for artist in object_list %}
+        <div class="artist">
+            <a href="{% url 'view_artist' artist.id %}">
+                <img src="{% include 'partials/artist_image_url.html' with artist=artist %}" alt="{{ artist.name }}">
+                {{ artist.name }}
+            </a>
+        </div>
+    {% empty %}
+        <div>No artists yet.</div>
+    {% endfor %}
+
+</div>
 
 {% endblock %}

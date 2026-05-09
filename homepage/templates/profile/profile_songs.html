@@ -5,23 +5,15 @@
 {% endblock %}
 
 {% block content %}
-    <div class="fs-2">
+    <h1>
         Profile: {{ profile.display_name }}
-    </div>
+    </h1>
 
     {% include "profile/profile_header_and_navigation.html" with profile=profile artist=profile.artist user=user active_tab='songs' %}
-    
-    <hr>
 
-    <div class="tab-content">
+    <div class="tab-panel green">
         {% include 'common_elements/paginator.html' with page_obj=page_obj page_range=page_range %}
 
-        <ul>
-            {% for song in songs %}
-            <li>
-                <a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a>
-            </li>
-            {% empty %}<li>No songs yet.</li>{% endfor %}
-        </ul>        
+        {% include 'song_table.html' with songs=songs %}
     </div>
 {% endblock %}

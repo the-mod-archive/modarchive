@@ -4,8 +4,20 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add("loaded");
     let playerElement = document.getElementById("player");
 
+    const closeActiveDropdownMenus = () => {
+        let menus = document.querySelectorAll(".dropdown.active");
+        menus.forEach(menu => {
+            menu.classList.remove("active");
+        });
+    };
+
     document.addEventListener("click", (e) => {
         console.log("Document click:", e.target);
+
+        // detect out-of-menu clicks.
+        let inMenu = e.target.closest(".dropdown");
+        if (!inMenu) closeActiveDropdownMenus();
+
         if (e.target.classList.contains("scriptEnabled")) {
             e.preventDefault();
             e.stopPropagation();
@@ -27,6 +39,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
         }else{
+            if (e.target.classList.contains("toggle-parent")) {
+                let parent = e.target.parentNode;
+                let selector = e.target.getAttribute("data-target");
+                if (selector){parent = e.target.closest(selector)}
+                if (parent){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    parent.classList.toggle("active");
+                    return;
+                }
+            }
+
+
             let isLink = e.target.tagName.toLowerCase() === "a" || e.target.closest("a");
             if (isLink){
                 let target = e.target.tagName.toLowerCase() === "a" ? e.target : e.target.closest("a");
@@ -35,11 +60,38 @@ document.addEventListener("DOMContentLoaded", () => {
                     e.preventDefault();
                     e.stopPropagation();
                     let href = target.getAttribute("href");
+                    closeActiveDropdownMenus();
                     loadPage(href);
                 }
             }
         }
     })
+
+    document.addEventListener("mousedown", (e) => {
+        let caption = e.target.closest("#player .draghandle");
+        if (caption && Player.beginResize && Player.beginResize(e.clientY)) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+
+        let resizeBarVertical = e.target.closest("#player .resizebarvertical");
+        if (resizeBarVertical && Player.beginVisualizerResize && Player.beginVisualizerResize(e.clientX)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (Player.resizeTo) Player.resizeTo(e.clientX, e.clientY);
+    });
+
+    const stopPlayerResize = () => {
+        if (Player.endResize) Player.endResize();
+    };
+
+    document.addEventListener("mouseup", stopPlayerResize);
+    window.addEventListener("blur", stopPlayerResize);
 
     // react to history changes
     window.addEventListener("popstate", (e) => {
@@ -49,6 +101,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (playerElement && playerElement.classList.contains("standalone")) {
         Player.playSong();
+    }
+
+    if (playerElement && playerElement.classList.contains("active") && Player.syncLayout) {
+        Player.syncLayout();
+    }
+
+    // temporary display warning when on TEST set
+    if (window.location.hostname.includes("isgoingto.be")) {
+        let alert = document.createElement("div");
+        alert.classList.add("fixed-alert");
+        alert.textContent = "DEV version of TMA - limited data - preview only";
+        document.body.appendChild(alert);
     }
 })
 
@@ -68,6 +132,7 @@ function replaceMainContent(html){
     let targetContent = document.querySelector("main");
     if (mainContent && targetContent){
         targetContent.innerHTML = mainContent.innerHTML;
+        if (Player.syncLayout) Player.syncLayout();
     }
 }
 
