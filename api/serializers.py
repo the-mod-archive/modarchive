@@ -87,3 +87,16 @@ class SongSearchResultSerializer(serializers.ModelSerializer):
             'genre',
             'artists'
         ]
+
+class GenreSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    text = serializers.CharField()
+
+class ArtistSearchResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Artist
+        fields = [
+            'id',
+            'name',
+            'create_date'
+        ]
