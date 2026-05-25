@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'django_bootstrap_icons',
     "crispy_forms",
     "crispy_bootstrap5",
-    "rest_framework"
+    "rest_framework",
+    "django_q"
 ]
 
 MIDDLEWARE = [
@@ -166,3 +167,13 @@ MAXIMUM_UPLOAD_FILENAME_LENGTH = 59
 UNSUPPORTED_FORMATS = []
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+Q_CLUSTER = {
+    'name': 'modarchive',
+    'workers': 1,
+    'timeout': 60,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',
+}
