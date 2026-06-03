@@ -67,7 +67,11 @@ class ArtistSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
-            'songs'
+            'total_songs',
+            'total_comments',
+            'total_downloads',
+            'average_song_rating',
+            'songs',
         ]
 
 class SongSearchResultSerializer(serializers.ModelSerializer):
