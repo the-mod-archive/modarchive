@@ -1,6 +1,8 @@
 import os
 from rest_framework import viewsets, generics, filters, pagination
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.db.models import F, Q
@@ -25,6 +27,9 @@ class StandardResultsSetPagination(pagination.PageNumberPagination):
     max_page_size = 100
 
 class SongSearchAPIView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     search_fields = ['title']
     filter_backends = (filters.SearchFilter,)
     serializer_class = SongSearchResultSerializer
@@ -151,6 +156,8 @@ class SongDownloadView(View):
             return response
 
 class GenreListAPIView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = GenreSerializer
 
     def list(self, request, *args, **kwargs):
@@ -159,6 +166,8 @@ class GenreListAPIView(generics.ListAPIView):
         return Response(serializer.data)
 
 class ArtistSearchAPIView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = ArtistSearchResultSerializer
     pagination_class = StandardResultsSetPagination
 
