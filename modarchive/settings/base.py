@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     "rest_framework",
     "rest_framework.authtoken",
-    "django_q"
+    "django_q",
+    "drf_spectacular"
 ]
 
 MIDDLEWARE = [
@@ -177,4 +178,16 @@ Q_CLUSTER = {
     'queue_limit': 50,
     'bulk': 10,
     'orm': 'default',
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'ModArchive API',
+    'DESCRIPTION': 'The Mod Archive JSON API',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SORT_OPERATION_PARAMETERS': False,
 }
