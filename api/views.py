@@ -1,4 +1,7 @@
 import os
+
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from rest_framework import viewsets, generics, filters, pagination
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ValidationError
@@ -11,28 +14,97 @@ from django.http import HttpResponse, Http404
 
 from songs.models import Song
 from artists.models import Artist
-from .serializers import SongSerializer, ArtistSerializer, SongSearchResultSerializer, GenreSerializer, ArtistSearchResultSerializer
-
-class SongViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Song.objects.all()
-    serializer_class = SongSerializer
-
-class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Artist.objects.all()
-    serializer_class = ArtistSerializer
+from api.serializers.artist_serializers import ArtistSerializer
+from api.serializers.song_serializers import SongDetailSerializer, SongListSerializer
+from api.serializers.other_serializers import GenreSerializer
 
 class StandardResultsSetPagination(pagination.PageNumberPagination):
-    page_size = 50
+    page_size = 25
     page_size_query_param = 'page_size'
     max_page_size = 100
 
-class SongSearchAPIView(generics.ListAPIView):
+class SongViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Song.objects.all()
+    pagination_class = StandardResultsSetPagination
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    search_fields = ['title']
-    filter_backends = (filters.SearchFilter,)
-    serializer_class = SongSearchResultSerializer
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return SongListSerializer
+
+        return SongDetailSerializer
+
+@extend_schema_view(
+    list=extend_schema(
+        description='List artists with optional filtering and ordering',
+        parameters=[
+            OpenApiParameter(
+                "ordering",
+                OpenApiTypes.STR,
+                description="Ordering field (ascending, add a '-' in front to sort descending)",
+                required=False,
+                location='query',
+                enum=['name', 'id', 'total_songs', 'total_comments', 'total_downloads', 'average_song_rating'],
+                default='name',
+            ),
+            OpenApiParameter(
+                "starts_with",
+                OpenApiTypes.STR,
+                description="Filter artists by first character of name (single character)",
+                required=False,
+                location='query',
+            )
+        ]
+    ),
+    retrieve=extend_schema(
+        description='Retrieve a specific artist'
+    )
+)
+class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ArtistSerializer
+    queryset = Artist.objects.all()
+    pagination_class = StandardResultsSetPagination
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['name', 'id', 'total_songs', 'total_comments', 'total_downloads', 'average_song_rating']
+    ordering = ['name']
+
+    def get_queryset(self):
+        queryset = Artist.objects.all()
+
+        if self.action == 'list':
+            starts_with = self.request.query_params.get('starts_with')
+            if starts_with:
+                if len(starts_with) != 1:
+                    return Artist.objects.none()
+                queryset = queryset.filter(name__istartswith=starts_with)
+
+        return queryset
+
+@extend_schema_view(
+    get=extend_schema(
+        description='Search for songs with optional filtering. At least one of the following search parameters is required: title, filename, instrument_text, comment_text.',
+        parameters=[
+            OpenApiParameter("title", OpenApiTypes.STR, description="Search in song title", required=False, location='query'),
+            OpenApiParameter("filename", OpenApiTypes.STR, description="Search in filename", required=False, location='query'),
+            OpenApiParameter("instrument_text", OpenApiTypes.STR, description="Search in instrument text", required=False, location='query'),
+            OpenApiParameter("comment_text", OpenApiTypes.STR, description="Search in comment text", required=False, location='query'),
+            OpenApiParameter("min_file_size", OpenApiTypes.INT, description="Minimum file size in bytes", required=False, location='query'),
+            OpenApiParameter("max_file_size", OpenApiTypes.INT, description="Maximum file size in bytes", required=False, location='query'),
+            OpenApiParameter("min_channels", OpenApiTypes.INT, description="Minimum number of channels", required=False, location='query'),
+            OpenApiParameter("max_channels", OpenApiTypes.INT, description="Maximum number of channels", required=False, location='query'),
+            OpenApiParameter("file_format", OpenApiTypes.STR, description="Filter by file format", required=False, location='query', enum=Song.Formats),
+            OpenApiParameter("genre", OpenApiTypes.STR, description="Filter by genre", required=False, location='query', enum=Song.Genres),
+            OpenApiParameter("license", OpenApiTypes.STR, description="Filter by license", required=False, location='query', enum=Song.Licenses),
+        ],
+    ),
+)
+class SongSearchAPIView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = SongListSerializer
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
@@ -165,10 +237,19 @@ class GenreListAPIView(generics.ListAPIView):
         serializer = self.get_serializer(genres, many=True)
         return Response(serializer.data)
 
+@extend_schema_view(
+    get=extend_schema(
+        description="Search for artists by name, ordered by search relevance",
+        responses={200: ArtistSerializer},
+        parameters=[
+            OpenApiParameter("name", OpenApiTypes.STR, description="Search by artist name", required=True, location='query'),
+        ],
+    )
+)
 class ArtistSearchAPIView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = ArtistSearchResultSerializer
+    serializer_class = ArtistSerializer
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
@@ -181,6 +262,6 @@ class ArtistSearchAPIView(generics.ListAPIView):
             rank=SearchRank('search_document', SearchQuery(name))
         ).filter(
             search_document=SearchQuery(name)
-        ).order_by('-rank')
+        ).order_by('-rank', 'name')
 
         return queryset
