@@ -72,6 +72,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/Artist'
           description: ''
+  /api/v1/artists/{id}/songs:
+    get:
+      operationId: artists_songs_list
+      description: Retrieve a list of songs by artist
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - artists
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSongListList'
+          description: ''
   /api/v1/artists/search:
     get:
       operationId: artists_search_list
@@ -109,6 +142,7 @@ paths:
   /api/v1/genres:
     get:
       operationId: genres_list
+      description: Get a list of available genres
       tags:
       - genres
       security:
@@ -125,6 +159,8 @@ paths:
   /api/v1/songs/:
     get:
       operationId: songs_list
+      description: 'Retrieve a list of songs. At least one filter must be provided:
+        starts_with, license, genre or file_format'
       parameters:
       - name: page
         required: false
@@ -138,6 +174,151 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
+      - in: query
+        name: starts_with
+        schema:
+          type: string
+        description: Filter songs by first character of filename (single character)
+      - in: query
+        name: license
+        schema:
+          type: string
+          enum:
+          - by
+          - by-nc
+          - by-nc-nd
+          - by-nc-sa
+          - by-nd
+          - by-sa
+          - cc0
+          - publicdomain
+        description: Filter by license
+      - in: query
+        name: genre
+        schema:
+          type: string
+          enum:
+          - alternative
+          - ballad
+          - big-band
+          - bluegrass
+          - blues
+          - chillout
+          - chiptune
+          - christmas
+          - classical
+          - comedy
+          - country
+          - demostyle
+          - disco
+          - easy-listening
+          - electronic-ambient
+          - electronic-breakbeat
+          - electronic-dance
+          - electronic-drum-and-bass
+          - electronic-gabber
+          - electronic-general
+          - electronic-hardcore
+          - electronic-house
+          - electronic-idm
+          - electronic-industrial
+          - electronic-jungle
+          - electronic-minimal
+          - electronic-other
+          - electronic-progressive
+          - electronic-rave
+          - electronic-techno
+          - experimental
+          - fantasy
+          - folk
+          - funk
+          - fusion
+          - gothic
+          - grunge
+          - halloween
+          - hip-hop
+          - jazz-acid
+          - jazz-general
+          - jazz-modern
+          - medieval
+          - metal-extreme
+          - metal-general
+          - new-age
+          - one-hour-compo
+          - orchestral
+          - other
+          - piano
+          - pop-general
+          - pop-soft
+          - pop-synth
+          - punk
+          - r-n-b
+          - reggae
+          - religious
+          - rock-general
+          - rock-hard
+          - rock-soft
+          - ska
+          - soul
+          - soundtrack
+          - spiritual
+          - swing
+          - trance-acid
+          - trance-dream
+          - trance-general
+          - trance-goa
+          - trance-hard
+          - trance-progressive
+          - trance-tribal
+          - video-game
+          - vocal-montage
+          - world
+          - world-latin
+        description: Filter by genre
+      - in: query
+        name: file_format
+        schema:
+          type: string
+          enum:
+          - '669'
+          - AHX
+          - AMF
+          - AMS
+          - C67
+          - DBM
+          - DIGI
+          - DMF
+          - DSM
+          - DSYM
+          - DTM
+          - FAR
+          - FMT
+          - GDM
+          - HVL
+          - IMF
+          - IT
+          - J2B
+          - MDL
+          - MED
+          - MO3
+          - MOD
+          - MPTM
+          - MT2
+          - MTM
+          - OKT
+          - PLM
+          - PSM
+          - PTM
+          - S3M
+          - SFX
+          - STM
+          - STP
+          - STX
+          - SymMOD
+          - ULT
+          - UMX
+          - XM
+        description: Filter by format
       tags:
       - songs
       security:
@@ -152,6 +333,7 @@ paths:
   /api/v1/songs/{id}/:
     get:
       operationId: songs_retrieve
+      description: Retrieve a specific song
       parameters:
       - in: path
         name: id
@@ -170,11 +352,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/SongDetail'
           description: ''
+  /api/v1/songs/{id}/download:
+    get:
+      operationId: songs_download_retrieve
+      description: Download a song as a zip file
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - songs
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                application/zip:
+                  type: string
+                  format: binary
+          description: Zipped song file
+        '404':
+          description: No response body
   /api/v1/songs/search:
     get:
       operationId: songs_search_list
-      description: 'Search for songs with optional filtering and ordering. At least
-        one of the following parameters is required: title, filename, instrument_text,
+      description: 'Search for songs with optional filtering. At least one of the
+        following search parameters is required: title, filename, instrument_text,
         comment_text.'
       parameters:
       - name: page

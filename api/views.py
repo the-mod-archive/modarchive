@@ -1,15 +1,16 @@
 import os
 
+from django.shortcuts import get_object_or_404
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiResponse
 from rest_framework import viewsets, generics, filters, pagination
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.db.models import F, Q
-from django.views import View
 from django.http import HttpResponse, Http404
 
 from songs.models import Song
@@ -23,6 +24,20 @@ class StandardResultsSetPagination(pagination.PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
+@extend_schema_view(
+    list=extend_schema(
+        description='Retrieve a list of songs. At least one filter must be provided: starts_with, license, genre or file_format',
+        parameters=[
+            OpenApiParameter("starts_with", OpenApiTypes.STR, description="Filter songs by first character of filename (single character)", required=False, location='query',),
+            OpenApiParameter("license", OpenApiTypes.STR, description="Filter by license", enum=Song.Licenses, required=False, location='query',),
+            OpenApiParameter("genre", OpenApiTypes.STR, description="Filter by genre", enum=Song.Genres, required=False, location='query',),
+            OpenApiParameter("file_format", OpenApiTypes.STR, description="Filter by format", enum=Song.Formats.values, required=False, location='query',),
+        ]
+    ),
+    retrieve=extend_schema(
+        description='Retrieve a specific song'
+    )
+)
 class SongViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Song.objects.all()
     pagination_class = StandardResultsSetPagination
@@ -34,6 +49,48 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
             return SongListSerializer
 
         return SongDetailSerializer
+
+    def get_queryset(self):
+        qs = Song.objects.all()
+
+        if self.action == 'list':
+            starts_with = self.request.query_params.get('starts_with')
+            license_val = self.request.query_params.get('license')
+            genre = self.request.query_params.get('genre')
+            file_format = self.request.query_params.get('file_format')
+
+            # Require at least one of these four
+            if not any([starts_with, license_val, genre, file_format]):
+                raise ValidationError("At least one of 'starts_with', 'license', 'genre' or 'file_format' is required.")
+
+            # starts_with must be single char
+            if starts_with:
+                if len(starts_with) != 1:
+                    raise ValidationError("The 'starts_with' parameter must be a single character.")
+                qs = qs.filter(filename__istartswith=starts_with)
+
+            # license filter (validate against allowed choices)
+            if license_val:
+                allowed = [c for c in Song.Licenses.values]
+                if license_val not in allowed:
+                    raise ValidationError("Invalid license value.")
+                qs = qs.filter(license=license_val)
+
+            # genre filter (validate against allowed choices)
+            if genre:
+                allowed_genres = [c for c in Song.Genres.values]
+                if genre not in allowed_genres:
+                    raise ValidationError("Invalid genre value.")
+                qs = qs.filter(genre=genre)
+
+            # file_format filter (validate against allowed choices)
+            if file_format:
+                allowed_formats = [c for c in Song.Formats.values]
+                if file_format not in allowed_formats:
+                    raise ValidationError("Invalid file_format value.")
+                qs = qs.filter(format=file_format)
+
+        return qs
 
 @extend_schema_view(
     list=extend_schema(
@@ -207,10 +264,23 @@ class SongSearchAPIView(generics.ListAPIView):
 
         return queryset
 
-class SongDownloadView(View):
+@extend_schema(
+    responses={
+        200: OpenApiResponse(
+            description="Zipped song file",
+            response={'application/zip': {'type': 'string', 'format': 'binary'}}
+        ),
+        404: None
+    },
+    description="Download a song as a zip file"
+)
+class SongDownloadView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
     def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
-        song = Song.objects.get(pk=pk)
+        # id = kwargs.get('id')
+        song = Song.objects.get(pk=kwargs.get('pk'))
         
         local_file_path = song.get_archive_path()
 
@@ -227,6 +297,11 @@ class SongDownloadView(View):
             response['Content-Disposition'] = f'attachment; filename="{song.filename}.zip"'
             return response
 
+@extend_schema_view(
+    get=extend_schema(
+        description='Get a list of available genres'
+    )
+)
 class GenreListAPIView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -265,3 +340,30 @@ class ArtistSearchAPIView(generics.ListAPIView):
         ).order_by('-rank', 'name')
 
         return queryset
+
+
+@extend_schema(
+    responses={200: SongListSerializer},
+    description="Retrieve a list of songs by artist",
+    parameters=[]
+)
+class ArtistSongsListAPIView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = SongListSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        artist_id = self.kwargs.get('pk')
+        artist = get_object_or_404(Artist, pk=artist_id)
+
+        # Try common reverse relation names on Artist to fetch songs
+
+        if hasattr(artist, 'songs'):
+            manager = getattr(artist, 'songs')
+            try:
+                return manager.all()
+            except TypeError:
+                # If it's a queryset/manager-like already
+                return manager
+        return Song.objects.none()
