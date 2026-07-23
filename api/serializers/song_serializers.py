@@ -38,6 +38,8 @@ class SongDetailSerializer(serializers.ModelSerializer):
             'comment_text',
             'license',
             'genre',
+            'is_featured',
+            'featured_date',
             'stats',
             'artists'
         ]
@@ -57,5 +59,6 @@ class SongListSerializer(serializers.ModelSerializer):
             'format',
             'license',
             'genre',
+            'is_featured',
             'artists'
         ]
