@@ -319,6 +319,11 @@ paths:
           - UMX
           - XM
         description: Filter by format
+      - in: query
+        name: is_featured
+        schema:
+          type: boolean
+        description: Filter by featured status
       tags:
       - songs
       security:
@@ -993,6 +998,13 @@ components:
           - $ref: '#/components/schemas/GenreEnum'
           - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
+        is_featured:
+          type: boolean
+          nullable: true
+        featured_date:
+          type: string
+          format: date-time
+          nullable: true
         stats:
           allOf:
           - $ref: '#/components/schemas/SongStats'
@@ -1048,6 +1060,9 @@ components:
           - $ref: '#/components/schemas/GenreEnum'
           - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
+        is_featured:
+          type: boolean
+          nullable: true
         artists:
           type: array
           items:
