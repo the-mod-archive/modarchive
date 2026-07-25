@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from songs.factories import SongFactory, SongStatsFactory, SongRedirectFactory
+from songs.factories import SongFactory, SongRedirectFactory
 from artists.factories import ArtistFactory
 from interactions.factories import CommentFactory, FavoriteFactory, ArtistCommentFactory
 from homepage.tests import factories
@@ -15,7 +15,6 @@ class ViewSongTests(TestCase):
 
     def test_context_contains_song_and_comments(self):
         song = SongFactory(filename=self.FILE_2_FILENAME, title=self.FILE_2_TITLE)
-        SongStatsFactory(song=song)
         response = self.client.get(reverse('view_song', kwargs = {'pk': song.id}))
         CommentFactory(song=song, rating=10, text=self.COMMENT_TEXT_1)
         CommentFactory(song=song, rating=5, text=self.COMMENT_TEXT_2)

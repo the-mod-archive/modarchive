@@ -998,17 +998,26 @@ components:
           - $ref: '#/components/schemas/GenreEnum'
           - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
+        downloads_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        comments_count:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        favorites_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        average_rating:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
+          nullable: true
         is_featured:
           type: boolean
           nullable: true
-        featured_date:
-          type: string
-          format: date-time
-          nullable: true
-        stats:
-          allOf:
-          - $ref: '#/components/schemas/SongStats'
-          readOnly: true
         artists:
           type: array
           items:
@@ -1021,7 +1030,6 @@ components:
       - filename
       - format
       - id
-      - stats
       - title
     SongList:
       type: object
@@ -1060,6 +1068,23 @@ components:
           - $ref: '#/components/schemas/GenreEnum'
           - $ref: '#/components/schemas/BlankEnum'
           - $ref: '#/components/schemas/NullEnum'
+        downloads_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        comments_count:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        favorites_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        average_rating:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
+          nullable: true
         is_featured:
           type: boolean
           nullable: true
@@ -1076,26 +1101,6 @@ components:
       - format
       - id
       - title
-    SongStats:
-      type: object
-      properties:
-        downloads:
-          type: integer
-          maximum: 2147483647
-          minimum: 0
-        total_comments:
-          type: integer
-          maximum: 32767
-          minimum: 0
-        average_comment_score:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
-          nullable: true
-        total_favorites:
-          type: integer
-          maximum: 2147483647
-          minimum: 0
   securitySchemes:
     tokenAuth:
       type: apiKey

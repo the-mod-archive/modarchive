@@ -1,7 +1,6 @@
 import logging
 from django.db.models import Sum, Avg
 from artists.models import Artist
-from songs.models import SongStats
 
 logger = logging.getLogger(__name__)
 
@@ -26,19 +25,16 @@ def update_artist_stats():
         # Calculate total songs
         total_songs = songs.count()
 
-        # Get stats for all songs and calculate aggregates
-        song_stats = SongStats.objects.filter(song__in=songs)
-
         # Calculate total downloads
-        total_downloads_result = song_stats.aggregate(total=Sum('downloads'))
+        total_downloads_result = songs.aggregate(total=Sum('downloads_count'))
         total_downloads = total_downloads_result['total'] or 0
 
         # Calculate total comments
-        total_comments_result = song_stats.aggregate(total=Sum('total_comments'))
+        total_comments_result = songs.aggregate(total=Sum('comments_count'))
         total_comments = total_comments_result['total'] or 0
 
         # Calculate average rating
-        average_rating_result = song_stats.aggregate(avg=Avg('average_comment_score'))
+        average_rating_result = songs.aggregate(avg=Avg('average_rating'))
         average_rating = average_rating_result['avg'] or 0
 
         # Update the artist

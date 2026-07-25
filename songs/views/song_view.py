@@ -26,8 +26,6 @@ class SongView(DetailView):
             context['is_favorite'] = self.request.user.profile.favorite_set.filter(song_id=context['song'].id).count() > 0
             context['artist_can_comment'] = context['is_own_song'] and not context['song'].has_artist_commented(self.request.user.profile.id)
 
-        context['stats'] = context['song'].get_stats()
-
         # Filter legacy reviews to only show non-pending ones
         context['legacy_reviews'] = context['song'].legacyreview_set.filter(pending=False)
 

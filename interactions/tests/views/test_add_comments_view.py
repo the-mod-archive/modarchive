@@ -5,7 +5,7 @@ from django.contrib.auth.models import Permission
 from artists.factories import ArtistFactory
 from homepage.tests.factories import UserFactory
 from interactions.factories import CommentFactory
-from songs.factories import SongFactory, SongStatsFactory
+from songs.factories import SongFactory
 from songs.models import Song
 
 class AddCommentTests(TestCase):
@@ -71,7 +71,6 @@ class AddCommentTests(TestCase):
         # Arrange
         user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
-        SongStatsFactory(song=song)
         self.client.force_login(user)
 
         # Act
@@ -82,14 +81,13 @@ class AddCommentTests(TestCase):
         # Assert
         song.refresh_from_db()
         self.assertEqual(1, len(song.comment_set.all()))
-        self.assertEqual(1, song.songstats.total_comments)
-        self.assertEqual(10.0, song.songstats.average_comment_score)
+        self.assertEqual(1, song.comments_count)
+        self.assertEqual(10.0, song.average_rating)
 
     def test_post_add_comment_calculates_stats_correctly_with_existing_comments(self):
         # Arrange
         user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
         song = SongFactory()
-        SongStatsFactory(song=song)
         CommentFactory(song=song, rating=5, text='some review')
         self.client.force_login(user)
 
@@ -101,8 +99,8 @@ class AddCommentTests(TestCase):
         # Assert
         song.refresh_from_db()
         self.assertEqual(2, len(song.comment_set.all()))
-        self.assertEqual(2, song.songstats.total_comments)
-        self.assertEqual(7.5, song.songstats.average_comment_score)
+        self.assertEqual(2, song.comments_count)
+        self.assertEqual(7.5, song.average_rating)
 
     def test_post_add_comment_calculates_stats_correctly_when_stats_object_not_created_yet(self):
         # Arrange
@@ -118,8 +116,8 @@ class AddCommentTests(TestCase):
         # Assert
         song.refresh_from_db()
         self.assertEqual(1, len(song.comment_set.all()))
-        self.assertEqual(1, song.songstats.total_comments)
-        self.assertEqual(10.0, song.songstats.average_comment_score)
+        self.assertEqual(1, song.comments_count)
+        self.assertEqual(10.0, song.average_rating)
 
     def test_get_user_redirected_for_own_song(self):
         # Arrange

@@ -6,11 +6,11 @@
     {% if song.genre %}
         <li>{{ song.get_genre_display }}</li>
     {% endif %}
-    <li>{{ stats.downloads }} downloads</li>
-    <li>{{ stats.total_favorites }} favorites</li>
-    <li>{{ stats.total_comments }} comments</li>
-    {% if stats.average_comment_score > 0.0 %}
-        <li>{{ stats.average_comment_score }} average rating</li>
+    <li>{{ song.downloads_count }} downloads</li>
+    <li>{{ song.favorites_count }} favorites</li>
+    <li>{{ song.comments_count }} comments</li>
+    {% if song.average_rating > 0.0 %}
+        <li>{{ song.average_rating }} average rating</li>
     {% endif %}
 </ul>
 {% if song.is_featured %}

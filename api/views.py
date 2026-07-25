@@ -32,6 +32,7 @@ class StandardResultsSetPagination(pagination.PageNumberPagination):
             OpenApiParameter("license", OpenApiTypes.STR, description="Filter by license", enum=Song.Licenses, required=False, location='query',),
             OpenApiParameter("genre", OpenApiTypes.STR, description="Filter by genre", enum=Song.Genres, required=False, location='query',),
             OpenApiParameter("file_format", OpenApiTypes.STR, description="Filter by format", enum=Song.Formats.values, required=False, location='query',),
+            OpenApiParameter("is_featured", OpenApiTypes.BOOL, description="Filter by featured status", required=False, location='query',)
         ]
     ),
     retrieve=extend_schema(
@@ -58,10 +59,11 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
             license_val = self.request.query_params.get('license')
             genre = self.request.query_params.get('genre')
             file_format = self.request.query_params.get('file_format')
+            is_featured = self.request.query_params.get('is_featured')
 
             # Require at least one of these four
-            if not any([starts_with, license_val, genre, file_format]):
-                raise ValidationError("At least one of 'starts_with', 'license', 'genre' or 'file_format' is required.")
+            if not any([starts_with, license_val, genre, file_format, is_featured]):
+                raise ValidationError("At least one of 'starts_with', 'license', 'genre', 'file_format' or 'is_featured' is required.")
 
             # starts_with must be single char
             if starts_with:
@@ -89,6 +91,9 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
                 if file_format not in allowed_formats:
                     raise ValidationError("Invalid file_format value.")
                 qs = qs.filter(format=file_format)
+
+            if is_featured and is_featured.lower() == 'true':
+                qs = qs.filter(is_featured=True)
 
         return qs
 
@@ -287,9 +292,8 @@ class SongDownloadView(APIView):
         if not os.path.exists(local_file_path):
             raise Http404("File not found")
 
-        stats = song.get_stats()
-        stats.downloads = F('downloads') + 1
-        stats.save()
+        song.downloads_count = F('downloads_count') + 1
+        song.save()
 
         # Serve the file as a response
         with open(local_file_path, 'rb') as file:

@@ -16,8 +16,7 @@ class DownloadSongView(View):
         # Obviously this will not remain in place for the final version of the site, but for now it this is how we download
         download_path = f"https://api.modarchive.org/downloads.php?moduleid={song.legacy_id}#{song.filename}"
 
-        stats = song.get_stats()
-        stats.downloads = F('downloads') + 1
-        stats.save()
+        song.downloads_count = F('downloads_count') + 1
+        song.save()
 
         return redirect(download_path)

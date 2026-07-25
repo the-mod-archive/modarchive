@@ -16,11 +16,10 @@ def update_song_stats(song):
     if not Song.objects.filter(pk=song.pk).exists():
         return
 
-    stats = song.get_stats()
     total_comments = song.comment_set.all().count()
-    stats.total_comments = total_comments
-    stats.average_comment_score = get_average_rating(song, total_comments)
-    stats.save()
+    song.comments_count = total_comments
+    song.average_rating = get_average_rating(song, total_comments)
+    song.save()
 
 def get_average_rating(song, total_comments):
     if total_comments == 0:

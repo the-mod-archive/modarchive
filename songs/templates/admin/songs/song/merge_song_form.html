@@ -44,23 +44,23 @@
             </tr>
             <tr>
               <td>Total Downloads</td>
-              <td>{{ song_to_merge_from.get_stats.downloads }}</td>
-              <td>{{ song_to_merge_into.get_stats.downloads }}</td>
+              <td>{{ song_to_merge_from.downloads_count }}</td>
+              <td>{{ song_to_merge_into.downloads_count }}</td>
             </tr>
             <tr>
               <td>Total Comments</td>
-              <td>{{ song_to_merge_from.get_stats.total_comments }}</td>
-              <td>{{ song_to_merge_into.get_stats.total_comments }}</td>
+              <td>{{ song_to_merge_from.comments_count }}</td>
+              <td>{{ song_to_merge_into.comments_count }}</td>
             </tr>
             <tr>
-              <td>Average Comment Score</td>
-              <td>{{ song_to_merge_from.get_stats.average_comment_score }}</td>
-              <td>{{ song_to_merge_into.get_stats.average_comment_score }}</td>
+              <td>Average Rating</td>
+              <td>{{ song_to_merge_from.average_rating }}</td>
+              <td>{{ song_to_merge_into.average_rating }}</td>
             </tr>
             <tr>
               <td>Total Favorites</td>
-              <td>{{ song_to_merge_from.get_stats.total_favorites }}</td>
-              <td>{{ song_to_merge_into.get_stats.total_favorites }}</td>
+              <td>{{ song_to_merge_from.favorites_count }}</td>
+              <td>{{ song_to_merge_into.favorites_count }}</td>
             </tr>
           </tbody>
         </table>

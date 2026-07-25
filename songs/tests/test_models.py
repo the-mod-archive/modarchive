@@ -6,7 +6,7 @@ from artists import factories as artist_factories
 from homepage.tests import factories
 from interactions.factories import CommentFactory, ArtistCommentFactory
 from songs.models import Song, SongRedirect
-from songs.factories import SongFactory, SongStatsFactory
+from songs.factories import SongFactory
 
 class SongModelTests(TestCase):
     LOWERCASE_TITLE = "song title"
@@ -66,31 +66,6 @@ class SongModelTests(TestCase):
         self.assertEqual("5000 bytes", song.display_file_size())
         self.assertEqual("259.87 KB", song_2.display_file_size())
         self.assertEqual("2.72 MB", song_3.display_file_size())
-
-    def test_retrieves_stats_correctly(self):
-        # Arrange
-        song = SongFactory()
-        SongStatsFactory(song=song, downloads=123, total_comments=5, average_comment_score=8.0)
-
-        # Act
-        stats = song.get_stats()
-
-        # Assert
-        self.assertEqual(123, stats.downloads)
-        self.assertEqual(5, stats.total_comments)
-        self.assertEqual(8.0, stats.average_comment_score)
-
-    def test_creates_stats_if_not_already_existing(self):
-        # Arrange
-        song = SongFactory()
-
-        # Act
-        stats = song.get_stats()
-
-        # Assert
-        self.assertEqual(0, stats.downloads)
-        self.assertEqual(0, stats.total_comments)
-        self.assertEqual(0.0, stats.average_comment_score)
 
     def test_archive_path_is_correct(self):
         # Arrange

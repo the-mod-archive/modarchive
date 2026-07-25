@@ -11,33 +11,31 @@ from .disable_signals import DisableSignals
 def bulk_create_batch(favorites_to_create):
     """Bulk create favorites and update song favorite counts"""
 
-    with transaction.atomic():
-        try:
+    try:
+        with transaction.atomic():
             # Bulk create favorites
             try:
                 created_favorites = Favorite.objects.bulk_create(favorites_to_create)
                 print(f"  Created {len(created_favorites)} favorites")
             except Exception as favorite_error:
                 print(f"Bulk favorite creation failed: {favorite_error}")
-                # Fall back to individual creation
-                successful_favorites = 0
-                for favorite in favorites_to_create:
-                    try:
-                        Favorite.objects.create(
-                            profile_id=favorite.profile_id,
-                            song_id=favorite.song_id
-                        )
-                        successful_favorites += 1
-                    except IntegrityError as e:
-                        print(f"Failed to create favorite for profile {favorite.profile_id} and song {favorite.song_id}: {e}")
-                    except Exception as e:
-                        print(f"Unexpected error creating favorite: {e}")
-                print(f"  Created {successful_favorites} favorites individually")
-
-        except Exception as e:
-            print(f"Error during bulk creation: {str(e)}")
-            import traceback
-            traceback.print_exc()
+                raise  # Re-raise to rollback the transaction
+    except Exception:
+        # Fallback to individual creation OUTSIDE the atomic block
+        successful_favorites = 0
+        for favorite in favorites_to_create:
+            try:
+                with transaction.atomic():
+                    Favorite.objects.create(
+                        profile_id=favorite.profile_id,
+                        song_id=favorite.song_id
+                    )
+                successful_favorites += 1
+            except IntegrityError as e:
+                print(f"Failed to create favorite for profile {favorite.profile_id} and song {favorite.song_id}: {e}")
+            except Exception as e:
+                print(f"Unexpected error creating favorite: {e}")
+        print(f"  Created {successful_favorites} favorites individually")
 
 
 def build_valid_song_ids():

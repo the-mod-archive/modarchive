@@ -101,6 +101,6 @@ class BrowseSongsByRatingView(PageNavigationListView):
 
     def get_queryset(self):
         if self.kwargs['query'] == 9:
-            return Song.objects.filter(songstats__average_comment_score__gte=9).order_by('-songstats__average_comment_score', 'filename')
+            return Song.objects.filter(average_rating__gte=9).order_by('-average_rating', 'filename')
         else:
-            return Song.objects.filter(songstats__average_comment_score__lt=self.kwargs['query']+1, songstats__average_comment_score__gte=self.kwargs['query']).order_by('-songstats__average_comment_score', 'filename')
+            return Song.objects.filter(average_rating__lt=self.kwargs['query']+1, average_rating__gte=self.kwargs['query']).order_by('-average_rating', 'filename')

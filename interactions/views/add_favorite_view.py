@@ -17,10 +17,9 @@ class AddFavoriteView(PermissionRequiredMixin, View):
         return Favorite.objects.filter(profile=profile, song_id=song_id).count() > 0
 
     def get(self, request, *args, **kwargs):
-        if (not self.is_own_song(self.request.user.profile, kwargs['pk']) and not self.is_already_favorite(self.request.user.profile, kwargs['pk'])):
+        if not self.is_own_song(self.request.user.profile, kwargs['pk']) and not self.is_already_favorite(self.request.user.profile, kwargs['pk']):
             Favorite(profile_id=self.request.user.profile.id, song_id=kwargs['pk']).save()
             song = get_object_or_404(Song, pk=kwargs['pk'])
-            song_stats = song.get_stats()
-            song_stats.total_favorites = F('total_favorites') + 1
-            song_stats.save()
+            song.favorites_count = F('favorites_count') + 1
+            song.save()
         return redirect('view_song', kwargs['pk'])

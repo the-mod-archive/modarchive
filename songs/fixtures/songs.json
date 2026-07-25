@@ -19,19 +19,11 @@
             "genre": "",
             "is_featured": false,
             "folder": "K",
+            "downloads_count": 4497,
+            "comments_count": 0,
+            "average_rating": 0.0,
             "create_date": "1998-06-27 19:00:00+00:00",
             "update_date": "1998-06-27 19:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 801,
-        "fields": {
-            "downloads": 4497,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -55,19 +47,11 @@
             "is_featured": true,
             "featured_date": "2016-06-14 14:59:53+00:00",
             "folder": "A",
+            "downloads_count": 34601,
+            "comments_count": 3,
+            "average_rating": 9.3,
             "create_date": "1997-01-01 03:37:50+00:00",
             "update_date": "1997-01-01 03:37:50+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 32385,
-        "fields": {
-            "downloads": 34601,
-            "total_comments": 3,
-            "average_comment_score": 9.3,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -90,19 +74,11 @@
             "genre": "piano",
             "is_featured": false,
             "folder": "A",
+            "downloads_count": 5993,
+            "comments_count": 0,
+            "average_rating": 0.0,
             "create_date": "2002-06-01 15:35:16+00:00",
             "update_date": "2002-06-01 15:35:16+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 32496,
-        "fields": {
-            "downloads": 5993,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -125,19 +101,11 @@
             "genre": "pop-synth",
             "is_featured": false,
             "folder": "A",
+            "downloads_count": 2532,
+            "comments_count": 0,
+            "average_rating": 0.0,
             "create_date": "2002-06-09 22:13:54+00:00",
             "update_date": "2002-06-09 22:13:54+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 33907,
-        "fields": {
-            "downloads": 2532,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -161,19 +129,11 @@
             "is_featured": true,
             "featured_date": "2010-12-09 22:47:12+00:00",
             "folder": "A",
+            "downloads_count": 35464,
+            "comments_count": 10,
+            "average_rating": 9.6,
             "create_date": "1997-01-01 03:39:36+00:00",
             "update_date": "1997-01-01 03:39:36+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 34073,
-        "fields": {
-            "downloads": 35464,
-            "total_comments": 10,
-            "average_comment_score": 9.6,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -197,19 +157,11 @@
             "is_featured": true,
             "featured_date": "2009-02-13 14:50:24+00:00",
             "folder": "C",
+            "downloads_count": 83781,
+            "comments_count": 20,
+            "average_rating": 9.2,
             "create_date": "1997-01-01 03:47:20+00:00",
             "update_date": "1997-01-01 03:47:20+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 34654,
-        "fields": {
-            "downloads": 83781,
-            "total_comments": 20,
-            "average_comment_score": 9.2,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -232,19 +184,11 @@
             "genre": "electronic-dance",
             "is_featured": false,
             "folder": "C",
+            "downloads_count": 2613,
+            "comments_count": 1,
+            "average_rating": 8.0,
             "create_date": "2001-09-26 16:08:48+00:00",
             "update_date": "2001-09-26 16:08:48+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 39954,
-        "fields": {
-            "downloads": 2613,
-            "total_comments": 1,
-            "average_comment_score": 8.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -268,19 +212,11 @@
             "is_featured": true,
             "featured_date": "2009-03-05 21:46:03+00:00",
             "folder": "D",
+            "downloads_count": 7312,
+            "comments_count": 1,
+            "average_rating": 10.0,
             "create_date": "2002-11-15 03:20:24+00:00",
             "update_date": "2002-11-15 03:20:24+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 41770,
-        "fields": {
-            "downloads": 7312,
-            "total_comments": 1,
-            "average_comment_score": 10.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -303,20 +239,12 @@
             "genre": "electronic-ambient",
             "is_featured": true,
             "featured_date": "2009-12-11 00:00:00+00:00",
-            "folder": "F",            
+            "folder": "F",
+            "downloads_count": 5278,
+            "comments_count": 1,
+            "average_rating": 9.0,
             "create_date": "2000-12-11 14:54:36+00:00",
             "update_date": "2000-12-11 14:54:36+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 42654,
-        "fields": {
-            "downloads": 5278,
-            "total_comments": 1,
-            "average_comment_score": 9.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -340,19 +268,11 @@
             "is_featured": true,
             "featured_date": "2019-05-06 21:46:03+00:00",
             "folder": "G",
+            "downloads_count": 10106,
+            "comments_count": 2,
+            "average_rating": 9.5,
             "create_date": "1997-01-01 04:11:23+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 43791,
-        "fields": {
-            "downloads": 10106,
-            "total_comments": 2,
-            "average_comment_score": 9.5,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -375,20 +295,12 @@
             "genre": "electronic-ambient",
             "is_featured": true,
             "featured_date": "2016-12-13 23:58:16+00:00",
-            "folder": "I",            
+            "folder": "I",
+            "downloads_count": 21451,
+            "comments_count": 9,
+            "average_rating": 8.9,
             "create_date": "2000-07-28 12:56:55+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 44366,
-        "fields": {
-            "downloads": 21451,
-            "total_comments": 9,
-            "average_comment_score": 8.9,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -411,19 +323,11 @@
             "genre": "electronic-techno",
             "is_featured": false,
             "folder": "J",
+            "downloads_count": 6225,
+            "comments_count": 2,
+            "average_rating": 9.5,
             "create_date": "2000-07-28 11:29:50+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 44424,
-        "fields": {
-            "downloads": 6225,
-            "total_comments": 2,
-            "average_comment_score": 9.5,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -445,19 +349,11 @@
             "genre": "",
             "is_featured": false,
             "folder": "I",
+            "downloads_count": 15279,
+            "comments_count": 1,
+            "average_rating": 8.0,
             "create_date": "2000-07-28 12:56:56+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 45655,
-        "fields": {
-            "downloads": 15279,
-            "total_comments": 1,
-            "average_comment_score": 8.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -481,19 +377,11 @@
             "is_featured": true,
             "featured_date":"2012-10-19 16:10:41+00:00",
             "folder": "J",
+            "downloads_count": 31087,
+            "comments_count": 9,
+            "average_rating": 9.8,
             "create_date": "2000-07-28 11:30:27+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 46469,
-        "fields": {
-            "downloads": 31087,
-            "total_comments": 9,
-            "average_comment_score": 9.8,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -515,20 +403,12 @@
             "license": "",
             "genre": "trance-acid",
             "is_featured": false,
-            "folder": "J",            
+            "folder": "J",
+            "downloads_count": 7123,
+            "comments_count": 3,
+            "average_rating": 9.0,
             "create_date": "2000-07-28 11:30:27+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 46472,
-        "fields": {
-            "downloads": 7123,
-            "total_comments": 3,
-            "average_comment_score": 9.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -551,20 +431,12 @@
             "genre": "electronic-house",
             "is_featured": true,
             "featured_date": "2008-02-27 10:28:36+00:00",
-            "folder": "J",            
+            "folder": "J",
+            "downloads_count": 13191,
+            "comments_count": 5,
+            "average_rating": 10.0,
             "create_date": "2000-07-28 11:30:26+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 46502,
-        "fields": {
-            "downloads": 13191,
-            "total_comments": 5,
-            "average_comment_score": 10.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -587,19 +459,11 @@
             "genre": "pop-rock-soft",
             "is_featured": false,
             "folder": "K",
+            "downloads_count": 13544,
+            "comments_count": 2,
+            "average_rating": 8.5,
             "create_date": "1997-01-01 04:21:01+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 47034,
-        "fields": {
-            "downloads": 13544,
-            "total_comments": 2,
-            "average_comment_score": 8.5,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -621,20 +485,12 @@
             "license": "",
             "genre": "rock-general",
             "is_featured": false,
-            "folder": "K",            
+            "folder": "K",
+            "downloads_count": 8163,
+            "comments_count": 2,
+            "average_rating": 8.5,
             "create_date": "1997-01-01 04:21:41+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 47092,
-        "fields": {
-            "downloads": 8163,
-            "total_comments": 2,
-            "average_comment_score": 8.5,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -657,19 +513,11 @@
             "genre": "rock-general",
             "is_featured": false,
             "folder": "K",
+            "downloads_count": 6792,
+            "comments_count": 1,
+            "average_rating": 8.0,
             "create_date": "1997-01-01 04:22:10+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 47267,
-        "fields": {
-            "downloads": 6792,
-            "total_comments": 1,
-            "average_comment_score": 8.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -691,20 +539,12 @@
             "license": "",
             "genre": "pop-synth",
             "is_featured": false,
-            "folder": "K",            
+            "folder": "K",
+            "downloads_count": 3071,
+            "comments_count": 1,
+            "average_rating": 9.0,
             "create_date": "2001-06-14 22:23:44+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 47555,
-        "fields": {
-            "downloads": 3071,
-            "total_comments": 1,
-            "average_comment_score": 9.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -727,19 +567,11 @@
             "genre": "electronic-techno",
             "is_featured": false,
             "folder": "M",
+            "downloads_count": 9527,
+            "comments_count": 2,
+            "average_rating": 8.5,
             "create_date": "1998-12-09 03:20:24+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 48552,
-        "fields": {
-            "downloads": 9527,
-            "total_comments": 2,
-            "average_comment_score": 8.5,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -762,19 +594,11 @@
             "genre": "pop-synth",
             "is_featured": false,
             "folder": "N",
+            "downloads_count": 12603,
+            "comments_count": 6,
+            "average_rating": 8.7,
             "create_date": "1997-01-01 04:29:44+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 48952,
-        "fields": {
-            "downloads": 12603,
-            "total_comments": 6,
-            "average_comment_score": 8.7,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -797,19 +621,11 @@
             "genre": "pop-synth",
             "is_featured": false,
             "folder": "N",
+            "downloads_count": 2514,
+            "comments_count": 1,
+            "average_rating": 7.0,
             "create_date": "2001-08-20 16:28:18+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 49040,
-        "fields": {
-            "downloads": 2514,
-            "total_comments": 1,
-            "average_comment_score": 7.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -832,19 +648,11 @@
             "genre": "",
             "is_featured": false,
             "folder": "N",
+            "downloads_count": 1574,
+            "comments_count": 0,
+            "average_rating": 0.0,
             "create_date": "2001-08-20 16:04:30+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 49136,
-        "fields": {
-            "downloads": 1574,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -867,19 +675,11 @@
             "genre": "easy-listening",
             "is_featured": false,
             "folder": "L",
+            "downloads_count": 3285,
+            "comments_count": 1,
+            "average_rating": 9.0,
             "create_date": "1998-12-09 03:11:02+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 49619,
-        "fields": {
-            "downloads": 3285,
-            "total_comments": 1,
-            "average_comment_score": 9.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -902,19 +702,11 @@
             "genre": "electronic-dance",
             "is_featured": false,
             "folder": "S",
+            "downloads_count": 4433,
+            "comments_count": 1,
+            "average_rating": 9.0,
             "create_date": "1997-01-01 04:39:41+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 54332,
-        "fields": {
-            "downloads": 4433,
-            "total_comments": 1,
-            "average_comment_score": 9.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -937,19 +729,11 @@
             "genre": "",
             "is_featured": false,
             "folder": "S",
+            "downloads_count": 1817,
+            "comments_count": 0,
+            "average_rating": 0.0,
             "create_date": "2002-11-12 17:38:55+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 57604,
-        "fields": {
-            "downloads": 1817,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -973,19 +757,11 @@
             "is_featured": true,
             "featured_date": "2014-05-01 13:55:55+00:00",
             "folder": "S",
+            "downloads_count": 174507,
+            "comments_count": 54,
+            "average_rating": 9.5,
             "create_date": "1997-01-01 04:41:47+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 57925,
-        "fields": {
-            "downloads": 174507,
-            "total_comments": 54,
-            "average_comment_score": 9.5,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1009,19 +785,11 @@
             "is_featured": true,
             "featured_date": "2008-02-27 12:18:49+00:00",
             "folder": "S",
+            "downloads_count": 56223,
+            "comments_count": 14,
+            "average_rating": 9.6,
             "create_date": "1997-01-01 04:42:05+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 59344,
-        "fields": {
-            "downloads": 56223,
-            "total_comments": 14,
-            "average_comment_score": 9.6,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1045,19 +813,11 @@
             "is_featured": true,
             "featured_date": "2015-10-24 16:31:32+00:00",
             "folder": "W",
+            "downloads_count": 28841,
+            "comments_count": 8,
+            "average_rating": 9.0,
             "create_date": "1997-01-01 04:48:47+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 59854,
-        "fields": {
-            "downloads": 28841,
-            "total_comments": 8,
-            "average_comment_score": 9.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1081,19 +841,11 @@
             "is_featured": true,
             "featured_date": "2009-09-07 21:55:22+00:00",
             "folder": "1_9",
+            "downloads_count": 324611,
+            "comments_count": 59,
+            "average_rating": 9.6,
             "create_date": "2000-12-24 02:06:42+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 60395,
-        "fields": {
-            "downloads": 324611,
-            "total_comments": 59,
-            "average_comment_score": 9.6,
-            "total_reviews": 1,
-            "average_review_score": 8.0
         }
     },
     {
@@ -1116,19 +868,11 @@
             "genre": "fantasy",
             "is_featured": false,
             "folder": "Z",
+            "downloads_count": 12921,
+            "comments_count": 5,
+            "average_rating": 8.8,
             "create_date": "1997-01-01 04:51:15+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 63700,
-        "fields": {
-            "downloads": 12921,
-            "total_comments": 5,
-            "average_comment_score": 8.8,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1151,19 +895,11 @@
             "genre": "",
             "is_featured": false,
             "folder": "B",
+            "downloads_count": 1438,
+            "comments_count": 0,
+            "average_rating": 0.0,
             "create_date": "2001-12-06 00:00:00+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 69570,
-        "fields": {
-            "downloads": 1438,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1186,19 +922,11 @@
             "genre": "",
             "is_featured": false,
             "folder": "P",
+            "downloads_count": 761,
+            "comments_count": 0,
+            "average_rating": 0.0,
             "create_date": "2004-09-13 00:00:00+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 73308,
-        "fields": {
-            "downloads": 761,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1221,19 +949,11 @@
             "genre": "",
             "is_featured": false,
             "folder": "S",
+            "downloads_count": 1279,
+            "comments_count": 0,
+            "average_rating": 0.0,
             "create_date": "1998-02-14 00:00:00+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 140867,
-        "fields": {
-            "downloads": 1279,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1257,19 +977,11 @@
             "is_featured": true,
             "featured_date": "2011-02-21 13:34:24+00:00",
             "folder": "S",
+            "downloads_count": 3461,
+            "comments_count": 1,
+            "average_rating": 9.0,
             "create_date": "2011-02-21 13:34:24+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 170384,
-        "fields": {
-            "downloads": 3461,
-            "total_comments": 1,
-            "average_comment_score": 9.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1293,19 +1005,11 @@
             "is_featured": true,
             "featured_date": "2020-04-14 19:41:26+00:00",
             "folder": "S",
+            "downloads_count": 2397,
+            "comments_count": 1,
+            "average_rating": 10.0,
             "create_date": "2020-04-14 19:41:26+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 188623,
-        "fields": {
-            "downloads": 2397,
-            "total_comments": 1,
-            "average_comment_score": 10.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1329,19 +1033,11 @@
             "is_featured": true,
             "featured_date": "2020-12-29 22:36:34+00:00",
             "folder": "B",
+            "downloads_count": 950,
+            "comments_count": 0,
+            "average_rating": 0.0,
             "create_date": "2020-12-29 22:36:34+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 190946,
-        "fields": {
-            "downloads": 950,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1365,19 +1061,11 @@
             "is_featured": true,
             "featured_date": "2021-01-23 00:51:06+00:00",
             "folder": "K",
+            "downloads_count": 1041,
+            "comments_count": 1,
+            "average_rating": 10.0,
             "create_date": "2021-01-23 00:51:06+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 191103,
-        "fields": {
-            "downloads": 1041,
-            "total_comments": 1,
-            "average_comment_score": 10.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     },
     {
@@ -1400,19 +1088,11 @@
             "genre": "electronic-dance",
             "is_featured": false,
             "folder": "A",
+            "downloads_count": 738,
+            "comments_count": 0,
+            "average_rating": 0.0,
             "create_date": "2021-01-23 00:59:32+00:00",
             "update_date": "2025-01-01 01:00:00+00:00"
-        }
-    },
-    {
-        "model": "songs.SongStats",
-        "pk": 191120,
-        "fields": {
-            "downloads": 738,
-            "total_comments": 0,
-            "average_comment_score": 0.0,
-            "total_reviews": 0,
-            "average_review_score": 0.0
         }
     }
   ]

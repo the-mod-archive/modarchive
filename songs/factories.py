@@ -16,12 +16,6 @@ class SongFactory(factory.django.DjangoModelFactory):
     instrument_text = "instrument text"
     comment_text = "comment text"
 
-class SongStatsFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.SongStats
-
-    song = factory.SubFactory(SongFactory)
-
 class SongRedirectFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.SongRedirect
