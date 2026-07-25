@@ -14,5 +14,7 @@ class ArtistFactory(factory.django.DjangoModelFactory):
         if extracted:
             for song in extracted:
                 self.songs.add(song)
+            # Refresh from DB to sync any signal-updated fields before factory re-saves
+            self.refresh_from_db()
 
     name = factory.Sequence(lambda n: 'Artist %d' % n)

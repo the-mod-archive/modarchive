@@ -7,7 +7,7 @@ from django.conf import settings
 from artists.factories import ArtistFactory
 from homepage.tests.factories import UserFactory
 from interactions.factories import FavoriteFactory, CommentFactory
-from songs.factories import SongFactory, SongStatsFactory
+from songs.factories import SongFactory
 from songs import models
 from uploads import models as upload_models
 
@@ -79,7 +79,7 @@ class MergeSongTests(TestCase):
 
     def create_song_to_be_merged(self, featured_date=None, featured_by=None):
         is_featured = featured_date is not None and featured_by is not None
-        song = SongFactory(folder="T", filename="test.mod", hash="123", is_featured=is_featured, featured_date=featured_date, featured_by=featured_by)
+        song = SongFactory(folder="T", filename="test.mod", hash="123", is_featured=is_featured, featured_date=featured_date, featured_by=featured_by, downloads_count=30)
 
         # Create a dummy file to represent the uploaded file
         format_directory = f'{settings.MAIN_ARCHIVE_DIR}/{song.format.upper()}'
@@ -97,9 +97,7 @@ class MergeSongTests(TestCase):
     def test_performs_basic_merge(self):
         # Arrange
         song_to_be_merged = self.create_song_to_be_merged()
-        SongStatsFactory(song=song_to_be_merged, downloads=30)
-        song_to_merge_into = SongFactory()
-        SongStatsFactory(song=song_to_merge_into, downloads=20)
+        song_to_merge_into = SongFactory(downloads_count=20)
 
         # Act
         response = self.client.post(
@@ -111,7 +109,7 @@ class MergeSongTests(TestCase):
         # Assert
         self.assertRedirects(response, reverse(self.change_song_page, args=(song_to_merge_into.id,)))
         song_to_merge_into.refresh_from_db()
-        self.assertEqual(song_to_merge_into.get_stats().downloads, 50)
+        self.assertEqual(song_to_merge_into.downloads_count, 50)
         self.assertTrue(models.SongRedirect.objects.filter(old_song_id=song_to_be_merged.id, song_id=song_to_merge_into.id).exists())
         self.assertFalse(models.Song.objects.filter(pk=song_to_be_merged.id).exists())
         self.assertFalse(os.path.exists(song_to_be_merged.get_archive_path()))
@@ -266,8 +264,8 @@ class MergeSongTests(TestCase):
         self.assertRedirects(response, reverse(self.change_song_page, args=(song_to_merge_into.id,)))
         self.assertEqual(song_to_merge_into.comment_set.count(), 2)
         song_to_merge_into.refresh_from_db()
-        self.assertEqual(song_to_merge_into.songstats.average_comment_score, 4.0)
-        self.assertEqual(song_to_merge_into.songstats.total_comments, 2)
+        self.assertEqual(song_to_merge_into.average_rating, 4.0)
+        self.assertEqual(song_to_merge_into.comments_count, 2)
         self.assertTrue(song_to_merge_into.comment_set.filter(text=comment.text, rating=comment.rating).exists())
 
     def test_does_not_merge_comments_for_own_song(self):

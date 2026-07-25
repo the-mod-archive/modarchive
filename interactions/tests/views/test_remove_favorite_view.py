@@ -3,15 +3,13 @@ from django.urls import reverse
 from django.contrib.auth.models import Permission
 from interactions.models import Favorite
 from interactions.factories import FavoriteFactory
-from songs.factories import SongFactory, SongStatsFactory
-from songs.models import SongStats
+from songs.factories import SongFactory
 from homepage.tests.factories import UserFactory
 
 class RemoveFavoriteTests(TestCase):
     def test_removes_favorite(self):
         # Arrange
-        song = SongFactory()
-        SongStatsFactory(song=song, total_favorites=5)
+        song = SongFactory(favorites_count=5)
         user = UserFactory(permissions=[Permission.objects.get(codename='delete_favorite')])
         self.client.force_login(user)
         FavoriteFactory(profile=user.profile, song=song)
@@ -25,7 +23,8 @@ class RemoveFavoriteTests(TestCase):
             0,
             Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count()
         )
-        self.assertEqual(4, SongStats.objects.filter(song=song)[0].total_favorites)
+        song.refresh_from_db()
+        self.assertEqual(4, song.favorites_count)
 
     def test_does_not_remove_favorite_when_not_already_added_as_favorite(self):
         # Arrange
@@ -60,8 +59,7 @@ class RemoveFavoriteTests(TestCase):
 
     def test_cannot_remove_favorite_without_permission(self):
         # Arrange
-        song = SongFactory()
-        SongStatsFactory(song=song, total_favorites=5)
+        song = SongFactory(favorites_count=5)
         user = UserFactory()
         self.client.force_login(user)
         FavoriteFactory(profile=user.profile, song=song)

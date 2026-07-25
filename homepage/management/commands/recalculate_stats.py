@@ -1,20 +1,16 @@
 from django.core.management.base import BaseCommand
 from django.db.models import Count, Avg
 
-from songs.models import Song, SongStats
+from songs.models import Song
 
 
 BATCH_SIZE = 1000
 
 def _bulk_save(batch):
-    SongStats.objects.bulk_update(
-        batch,
-        ['total_favorites', 'total_comments', 'average_comment_score'],
-        batch_size=BATCH_SIZE
-    )
+    Song.objects.bulk_update(batch, ['comments_count', 'favorites_count', 'average_rating'])
 
 class Command(BaseCommand):
-    help = 'Recalculate the total number of favorites for each song and update SongStats.'
+    help = 'Recalculate the average rating and counts of favorites and comments for each song and update the song records.'
 
     def add_arguments(self, parser):
         parser.add_argument('--song_id', type=int, help='Limit the calculation to a single song ID.')
@@ -32,7 +28,7 @@ class Command(BaseCommand):
             total_favorites=Count('favorite', distinct=True),
             total_comments=Count('comment', distinct=True),
             average_comment_score=Avg('comment__rating'),
-        ).select_related('songstats')
+        )
 
         total = songs.count()
         print(f"Starting to recalculate stats for {total} songs.")
@@ -41,13 +37,13 @@ class Command(BaseCommand):
         counter = 0
 
         for song in songs.iterator(chunk_size=BATCH_SIZE):
-            song_stats = song.songstats
+            # Update the song model fields
+            song.comments_count = song.total_comments
+            song.favorites_count = song.total_favorites
+            song.average_rating = song.average_comment_score
 
-            song_stats.total_favorites = song.total_favorites
-            song_stats.total_comments = song.total_comments
-            song_stats.average_comment_score = song.average_comment_score
+            batch.append(song)
 
-            batch.append(song_stats)
             counter += 1
 
             if len(batch) >= BATCH_SIZE:

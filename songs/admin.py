@@ -72,10 +72,9 @@ class SongAdmin(admin.ModelAdmin):
             song_to_merge_into.save()
 
     def update_downloads(self, song_to_merge_from, song_to_merge_into):
-        downloads = song_to_merge_from.get_stats().downloads
-        stats = song_to_merge_into.get_stats()
-        stats.downloads=F('downloads') + downloads
-        stats.save()
+        downloads = song_to_merge_from.downloads_count
+        song_to_merge_into.downloads_count = F('downloads_count') + downloads
+        song_to_merge_into.save()
 
     def finalize_merge(self, song_to_merge_from: models.Song, song_to_merge_into):
         # Move the file to the removed files folder

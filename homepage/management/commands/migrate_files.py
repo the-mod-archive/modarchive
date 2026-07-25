@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction, connection
 
 from homepage import legacy_models
-from songs.models import Song, SongStats
+from songs.models import Song
 from .disable_signals import DisableSignals
 
 class Command(BaseCommand):
@@ -154,35 +154,25 @@ class Command(BaseCommand):
 
             batch_size = 1000
             songs_to_create = []
-            stats_to_create = []
             counter = 0
 
             # Process in batches for better performance
             for file in files_queryset.iterator(chunk_size=batch_size):
                 counter += 1
 
-                song_data, stats_data = self.prepare_song_data(file)
+                song_data = self.prepare_song_data(file)
                 songs_to_create.append(song_data)
-                stats_to_create.append(stats_data)
 
                 # Bulk create when batch is full or at the end
                 if len(songs_to_create) >= batch_size or counter == total:
                     with transaction.atomic():
                         # Bulk create songs
                         created_songs = Song.objects.bulk_create(songs_to_create)
-                        
-                        # Update stats objects with the created song instances
-                        for i, stats in enumerate(stats_to_create):
-                            stats.song = created_songs[i]
-                        
-                        # Bulk create stats
-                        SongStats.objects.bulk_create(stats_to_create)
 
                     print(f"Generated {counter} out of {total} from the legacy files table.")
                     
                     # Clear batches
                     songs_to_create = []
-                    stats_to_create = []
 
         with connection.cursor() as cursor:
             cursor.execute("SELECT setval(pg_get_serial_sequence('songs_song', 'id'), (SELECT MAX(id) FROM songs_song))")
@@ -214,19 +204,13 @@ class Command(BaseCommand):
             create_date = create_date,
             update_date = legacy_file.timestamp,
             genre = self.get_genre(legacy_file.genre_id),
-            folder = legacy_file.download
+            folder = legacy_file.download,
+            downloads_count = legacy_file.hits,
+            comments_count = legacy_file.comment_total,
+            average_rating = legacy_file.comment_score,
         )
 
-        # Generate song stats data (song will be set after bulk create)
-        stats = SongStats(
-            downloads = legacy_file.hits,
-            total_comments = legacy_file.comment_total,
-            average_comment_score = legacy_file.comment_score,
-            total_reviews = legacy_file.review_total,
-            average_review_score = legacy_file.review_score,
-        )
-
-        return song, stats
+        return song
 
     def get_genre(self, genre_id):
         return self._genre_mapping.get(genre_id, None)

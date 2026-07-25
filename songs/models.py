@@ -150,12 +150,17 @@ class Song(models.Model):
     hash=models.CharField(max_length=33)
     pattern_hash=models.CharField(max_length=16, null=True, blank=True)
     license=models.CharField(max_length=16, choices=Licenses.choices, null=True, blank=True)
-    search_document=SearchVectorField(null=True, blank=True)
     genre=models.CharField(choices=Genres.choices, null=True, blank=True, db_index=True, max_length=32)
     is_featured=models.BooleanField(null=True, blank=True, db_index=True)
     featured_date=models.DateTimeField(null=True, blank=True)
     featured_by=models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, related_name='featured_by')
     folder=models.CharField(max_length=4)
+    # Stats
+    downloads_count=models.PositiveIntegerField(default=0)
+    comments_count = models.PositiveSmallIntegerField(default=0)
+    average_rating = models.DecimalField(default=0.0, decimal_places=1, max_digits=3, blank=True, null=True)
+    favorites_count = models.PositiveIntegerField(default=0)
+    # Search Vectors
     title_vector=SearchVectorField(null=True, blank=True)
     instrument_text_vector=SearchVectorField(null=True, blank=True)
     comment_text_vector=SearchVectorField(null=True, blank=True)
@@ -187,12 +192,6 @@ class Song(models.Model):
             return f'{"{:.2f}".format(self.file_size / 1000)} KB'
 
         return f'{self.file_size} bytes'
-
-    def get_stats(self):
-        if hasattr(self, 'songstats'):
-            return self.songstats
-
-        return SongStats.objects.create(song=self)
 
     def get_archive_path(self):
         folder = '1_9' if self.folder == '0_9' else self.folder

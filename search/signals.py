@@ -51,6 +51,8 @@ def index_artist(sender, **kwargs):
 
     # Only index on create or if name actually changed
     if kwargs['created'] or getattr(artist, '_name_changed', False):
+        vector = reduce(operator.add, [SearchVector('name')])
+
         artist.__class__.objects.filter(pk=artist.pk).update(
-            search_document=reduce(operator.add, [SearchVector('name')])
+            search_document=vector
         )

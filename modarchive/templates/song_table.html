@@ -22,7 +22,7 @@
         {% if not hide_artist %}
             <td>{% include 'song_artists.html' with song=song %}</td>
         {% endif %}
-        <td class="rating">{{ song.songstats.average_comment_score|default_if_none:"" }}</td>
+        <td class="rating">{{ song.average_rating|default_if_none:"" }}</td>
     </tr>
     {% empty %}
     <div>No songs yet.</div>

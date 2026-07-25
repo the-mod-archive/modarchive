@@ -193,36 +193,37 @@ class AdvancedSearchView(View):
 
 def search(request):
     query = request.GET.get('q')
-    type = request.GET.get('type')
+    search_type = request.GET.get('type')
     
-    def should_get_results_for_type(type_requested_in_query, type):
-        if (type_requested_in_query is None or type == type_requested_in_query):
+    def should_get_results_for_type(type_requested_in_query, object_type):
+        if type_requested_in_query is None or object_type == type_requested_in_query:
             return True
         return False
 
     if query:
-        rank_annotation = SearchRank(F('search_document'), query)
+        artist_rank_annotation = SearchRank(F('search_document'), query)
+        song_rank_annotation = SearchRank(F('title_vector'), query)
         
         query_set = Song.objects.annotate(
             type=Value('empty', output_field=CharField()),
-            rank=rank_annotation
+            rank=artist_rank_annotation
         ).values('pk', 'type', 'rank').none()
 
-        if (should_get_results_for_type(type, 'song')):
+        if should_get_results_for_type(search_type, 'song'):
             query_set = query_set.union(
                 Song.objects.annotate(
                     type=Value('song', output_field=CharField()),
-                    rank=rank_annotation
+                    rank=song_rank_annotation
                 ).filter(
-                    search_document=query
+                    title_vector=query
                 ).values('pk', 'type', 'rank')
             )
 
-        if (should_get_results_for_type(type, 'artist')):
+        if should_get_results_for_type(search_type, 'artist'):
             query_set = query_set.union(
                 Artist.objects.annotate(
                     type=Value('artist', output_field=CharField()),
-                    rank=rank_annotation
+                    rank=artist_rank_annotation
                 ).filter(
                     search_document=query
                 ).values('pk', 'type', 'rank')
@@ -252,3 +253,4 @@ def search(request):
         return render(request, 'search_results.html', {
             'search_results': final_results
         })
+    return None

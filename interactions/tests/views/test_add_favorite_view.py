@@ -6,14 +6,12 @@ from artists.tests import factories as artist_factories
 from interactions.models import Favorite
 from interactions.factories import FavoriteFactory
 from songs import factories as song_factories
-from songs.models import SongStats
 from homepage.tests.factories import UserFactory
 
 class AddFavoriteTests(TestCase):
     def test_adds_favorite(self):
-        song = song_factories.SongFactory()
+        song = song_factories.SongFactory(favorites_count=5)
         user = UserFactory(permissions=[Permission.objects.get(codename='add_favorite')])
-        song_factories.SongStatsFactory(song=song, total_favorites=5)
         self.client.force_login(user)
 
         # Act
@@ -25,7 +23,8 @@ class AddFavoriteTests(TestCase):
             1,
             Favorite.objects.filter(song_id=song.id, profile_id=user.profile.id).count()
         )
-        self.assertEqual(6, SongStats.objects.filter(song=song)[0].total_favorites)
+        song.refresh_from_db()
+        self.assertEqual(6, song.favorites_count)
 
     def test_does_not_add_favorite_when_already_added_as_favorite(self):
         # Arrange

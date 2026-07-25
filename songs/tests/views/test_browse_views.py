@@ -170,40 +170,30 @@ class BrowseSongsByRatingTest(TestCase):
 
     def test_browse_by_rating_view_includes_correct_songs(self):
         temp_songs = [
-            song_factories.SongFactory(title="1"),
-            song_factories.SongFactory(title="2"),
-            song_factories.SongFactory(title="3"),
-            song_factories.SongFactory(title="4"),
-            song_factories.SongFactory(title="5"),
-            song_factories.SongFactory(title="6"),
-            song_factories.SongFactory(title="7"),
-            song_factories.SongFactory(title="8")
+            song_factories.SongFactory(title="1", average_rating=9.0),
+            song_factories.SongFactory(title="2", average_rating=9.1),
+            song_factories.SongFactory(title="3", average_rating=9.2),
+            song_factories.SongFactory(title="4", average_rating=9.3),
+            song_factories.SongFactory(title="5", average_rating=10.0),
+            song_factories.SongFactory(title="6", average_rating=8.0),
+            song_factories.SongFactory(title="7", average_rating=8.0),
+            song_factories.SongFactory(title="8", average_rating=8.1)
         ]
-
-        song_factories.SongStatsFactory(song=temp_songs[0], average_comment_score=9.0)
-        song_factories.SongStatsFactory(song=temp_songs[1], average_comment_score=9.1)
-        song_factories.SongStatsFactory(song=temp_songs[2], average_comment_score=9.2)
-        song_factories.SongStatsFactory(song=temp_songs[3], average_comment_score=9.3)
-        song_factories.SongStatsFactory(song=temp_songs[4], average_comment_score=10.0)
-        song_factories.SongStatsFactory(song=temp_songs[5], average_comment_score=8.0)
-        song_factories.SongStatsFactory(song=temp_songs[6], average_comment_score=8.0)
-        song_factories.SongStatsFactory(song=temp_songs[7], average_comment_score=8.1)
 
         # Search for 9+
         response = self.client.get(reverse('browse_by_rating', kwargs={'query': 9}))
         self.assertEqual(response.status_code, 200)
-        filtered_songs = list(filter(lambda song:song.songstats.average_comment_score >= 9.0, temp_songs))
+        filtered_songs = list(filter(lambda song:song.average_rating >= 9.0, temp_songs))
         self.assertCountEqual(list(response.context_data['songs']), filtered_songs)
 
         # Search for 8's
         response = self.client.get(reverse('browse_by_rating', kwargs={'query': 8}))
-        filtered_songs = list(filter(lambda song:song.songstats.average_comment_score < 9.0, temp_songs))
+        filtered_songs = list(filter(lambda song:song.average_rating < 9.0, temp_songs))
         self.assertCountEqual(list(response.context_data['songs']), filtered_songs)
 
     def test_browse_by_rating_view_paginates_correctly(self):
         for _ in range(50):
-            song = song_factories.SongFactory()
-            song_factories.SongStatsFactory(average_comment_score=10.0, song=song)
+             song_factories.SongFactory(average_rating=10.0)
 
         # Page 1
         response = self.client.get(reverse('browse_by_rating', kwargs={'query': 9}) + PAGE_1)

@@ -65,7 +65,7 @@ class CommentView(PermissionRequiredMixin, ContextMixin, View):
                 comment_form.save()
                 # If song_form is not None, that means we have a genre to update on the song
                 if song_form:
-                    song_form.save()
+                    Song.objects.filter(pk=song.pk).update(genre=song_form.cleaned_data['genre'])
             return redirect('view_song', kwargs['pk'])
 
         return render(request, 'add_comment.html', {'song': song, 'song_form': song_form, 'comment_form': comment_form})
