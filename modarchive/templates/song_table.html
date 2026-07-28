@@ -7,6 +7,8 @@
         <th>Author</th>
         {% endif %}
         <th class="rating">Rating</th>
+        <th class="rating">Favorites</th>
+        <th class="rating">Downloads</th>
     </tr>
     </thead>
     <tbody>
@@ -15,7 +17,7 @@
         <td>
             <div class="file">
                 <a class="button inline round player scriptEnabled" href="{% url 'player' %}?song_id={{song.id}}">Play</a>
-                <a href="{% url 'view_song' song.id %}"><i class="format {{song.get_format_display}}">{{song.get_format_display}}</i> <span class="filename">{{song.filename}}</span></a>
+                <a href="{% url 'view_song' song.id %}"><i class="format {{song.format}}">{{song.format}}</i> <span class="filename">{{song.filename}}</span></a>
             </div>
         </td>
         <td><a href="{% url 'view_song' song.id %}">{{ song.get_title }}</a></td>
@@ -23,6 +25,8 @@
             <td>{% include 'song_artists.html' with song=song %}</td>
         {% endif %}
         <td class="rating">{{ song.average_rating|default_if_none:"" }}</td>
+        <td class="rating">{{ song.favorites_count|default_if_none:"" }}</td>
+        <td class="rating">{{ song.downloads_count|default_if_none:"" }}</td>
     </tr>
     {% empty %}
     <div>No songs yet.</div>

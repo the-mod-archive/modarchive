@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from django.db.models import Count, Avg
+from django.db.models import Count, Avg, Sum
 
 from songs.models import Song
 
@@ -7,7 +7,7 @@ from songs.models import Song
 BATCH_SIZE = 1000
 
 def _bulk_save(batch):
-    Song.objects.bulk_update(batch, ['comments_count', 'favorites_count', 'average_rating'])
+    Song.objects.bulk_update(batch, ['comments_count', 'favorites_count', 'average_rating', 'cumulative_rating'])
 
 class Command(BaseCommand):
     help = 'Recalculate the average rating and counts of favorites and comments for each song and update the song records.'
@@ -28,6 +28,7 @@ class Command(BaseCommand):
             total_favorites=Count('favorite', distinct=True),
             total_comments=Count('comment', distinct=True),
             average_comment_score=Avg('comment__rating'),
+            cumulative_comment_score=Sum('comment__rating', distinct=True),
         )
 
         total = songs.count()
@@ -41,6 +42,7 @@ class Command(BaseCommand):
             song.comments_count = song.total_comments
             song.favorites_count = song.total_favorites
             song.average_rating = song.average_comment_score
+            song.cumulative_rating = song.cumulative_comment_score
 
             batch.append(song)
 

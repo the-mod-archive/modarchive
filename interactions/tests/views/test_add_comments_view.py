@@ -83,6 +83,7 @@ class AddCommentTests(TestCase):
         self.assertEqual(1, len(song.comment_set.all()))
         self.assertEqual(1, song.comments_count)
         self.assertEqual(10.0, song.average_rating)
+        self.assertEqual(10, song.cumulative_rating)
 
     def test_post_add_comment_calculates_stats_correctly_with_existing_comments(self):
         # Arrange
@@ -101,23 +102,7 @@ class AddCommentTests(TestCase):
         self.assertEqual(2, len(song.comment_set.all()))
         self.assertEqual(2, song.comments_count)
         self.assertEqual(7.5, song.average_rating)
-
-    def test_post_add_comment_calculates_stats_correctly_when_stats_object_not_created_yet(self):
-        # Arrange
-        user = UserFactory(permissions=[Permission.objects.get(codename='add_comment')])
-        song = SongFactory()
-        self.client.force_login(user)
-
-        # Act
-        self.client.post(
-            reverse('add_comment', kwargs={'pk': song.id}), {'rating': 10, 'text': self.REVIEW_TEXT}
-        )
-
-        # Assert
-        song.refresh_from_db()
-        self.assertEqual(1, len(song.comment_set.all()))
-        self.assertEqual(1, song.comments_count)
-        self.assertEqual(10.0, song.average_rating)
+        self.assertEqual(15, song.cumulative_rating)
 
     def test_get_user_redirected_for_own_song(self):
         # Arrange

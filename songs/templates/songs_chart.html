@@ -1,0 +1,18 @@
+{% extends 'base_page/base.html' %}
+{% load filters %}
+
+{% block title %}
+    {{ block.super }}: {{ chart }}
+{% endblock %}
+
+{% block content %}
+    <h1>
+        {{ chart }}
+    </h1>
+
+    <div class="tab-panel green">
+        {% include 'common_elements/paginator.html' with page_obj=page_obj page_range=page_range %}
+
+        {% include 'song_table.html' with songs=songs %}
+    </div>
+{% endblock %}
