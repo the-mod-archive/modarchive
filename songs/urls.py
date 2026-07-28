@@ -12,6 +12,7 @@ from songs.views.browse_songs_views import (
     BrowseSongsByGenreView,
     BrowseSongsByRatingView
 )
+from songs.views import chart_views
 
 urlpatterns = [
     path('', SongListView.as_view(), name='songs'),
@@ -24,4 +25,8 @@ urlpatterns = [
     path('browse/filename/<str:query>/', BrowseSongsByFilenameView.as_view(), name='browse_by_filename'),
     path('browse/genre/<str:query>/', BrowseSongsByGenreView.as_view(), name='browse_by_genre'),
     path('browse/rating/<int:query>/', BrowseSongsByRatingView.as_view(), name='browse_by_rating'),
+    path('featured', chart_views.FeaturedSongsView.as_view(), name='featured_songs'),
+    path('most-downloaded', chart_views.TopDownloadsView.as_view(), name='top_downloads'),
+    path('top-rated', chart_views.TopRatingsView.as_view(), name='top_rated'),
+    path('most-favorited', chart_views.TopFavoritesView.as_view(), name='top_favorites')
 ]

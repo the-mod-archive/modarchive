@@ -14,8 +14,12 @@ paths:
         schema:
           type: string
           enum:
+          - -average_song_rating
+          - -name
+          - -total_comments
+          - -total_downloads
+          - -total_songs
           - average_song_rating
-          - id
           - name
           - total_comments
           - total_downloads
@@ -159,9 +163,22 @@ paths:
   /api/v1/songs/:
     get:
       operationId: songs_list
-      description: 'Retrieve a list of songs. At least one filter must be provided:
-        starts_with, license, genre or file_format'
+      description: Retrieve a list of songs with optional ordering and filtering.
       parameters:
+      - in: query
+        name: ordering
+        schema:
+          type: string
+          enum:
+          - -average_rating
+          - -downloads_count
+          - -filename
+          - -title
+          - average_rating
+          - downloads_count
+          - filename
+          - title
+        description: Ordering field (ascending, add a '-' in front to sort descending)
       - name: page
         required: false
         in: query
@@ -324,6 +341,26 @@ paths:
         schema:
           type: boolean
         description: Filter by featured status
+      - in: query
+        name: min_file_size
+        schema:
+          type: integer
+        description: Minimum file size in bytes
+      - in: query
+        name: max_file_size
+        schema:
+          type: integer
+        description: Maximum file size in bytes
+      - in: query
+        name: min_channels
+        schema:
+          type: integer
+        description: Minimum number of channels
+      - in: query
+        name: max_channels
+        schema:
+          type: integer
+        description: Maximum number of channels
       tags:
       - songs
       security:
@@ -617,8 +654,9 @@ components:
           minimum: 0
           nullable: true
         average_song_rating:
-          type: number
-          format: double
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,2}(?:\.\d{0,1})?$
           nullable: true
       required:
       - id

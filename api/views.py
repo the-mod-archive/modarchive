@@ -24,15 +24,45 @@ class StandardResultsSetPagination(pagination.PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
+def parse_positive_int(value):
+    if value is None:
+        return None
+    try:
+        val = int(value)
+        if val <= 0:
+            return -1  # invalid
+        return val
+    except ValueError:
+        return -1
+
 @extend_schema_view(
     list=extend_schema(
-        description='Retrieve a list of songs. At least one filter must be provided: starts_with, license, genre or file_format',
+        description='Retrieve a list of songs with optional ordering and filtering.',
         parameters=[
             OpenApiParameter("starts_with", OpenApiTypes.STR, description="Filter songs by first character of filename (single character)", required=False, location='query',),
             OpenApiParameter("license", OpenApiTypes.STR, description="Filter by license", enum=Song.Licenses, required=False, location='query',),
             OpenApiParameter("genre", OpenApiTypes.STR, description="Filter by genre", enum=Song.Genres, required=False, location='query',),
             OpenApiParameter("file_format", OpenApiTypes.STR, description="Filter by format", enum=Song.Formats.values, required=False, location='query',),
-            OpenApiParameter("is_featured", OpenApiTypes.BOOL, description="Filter by featured status", required=False, location='query',)
+            OpenApiParameter("is_featured", OpenApiTypes.BOOL, description="Filter by featured status", required=False, location='query',),
+            OpenApiParameter("min_file_size", OpenApiTypes.INT, description="Minimum file size in bytes", required=False, location='query'),
+            OpenApiParameter("max_file_size", OpenApiTypes.INT, description="Maximum file size in bytes", required=False, location='query'),
+            OpenApiParameter("min_channels", OpenApiTypes.INT, description="Minimum number of channels", required=False, location='query'),
+            OpenApiParameter("max_channels", OpenApiTypes.INT, description="Maximum number of channels", required=False, location='query'),
+            OpenApiParameter('ordering', OpenApiTypes.STR,
+                description="Ordering field (ascending, add a '-' in front to sort descending)",
+                required=False,
+                location='query',
+                enum=[
+                    'filename',
+                    '-filename',
+                    'title',
+                    '-title',
+                    'downloads_count',
+                    '-downloads_count',
+                    'average_rating',
+                    '-average_rating'
+                ]
+            )
         ]
     ),
     retrieve=extend_schema(
@@ -44,6 +74,9 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = StandardResultsSetPagination
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    filter_backends = [filters.OrderingFilter]
+    ordering = ['filename']
+    ordering_fields = ['filename', 'title', 'downloads_count', 'average_rating']
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -52,7 +85,16 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
         return SongDetailSerializer
 
     def get_queryset(self):
-        qs = Song.objects.all()
+        qs = super().get_queryset()
+
+        # Exclude null values in ordering
+        ordering_param = self.request.query_params.get('ordering')
+
+        if ordering_param:
+            # Remove leading '-' for descending order check
+            field_name = ordering_param.lstrip('-')
+            # Filter out NULL values for that field
+            qs = qs.exclude(**{f"{field_name}__isnull": True})
 
         if self.action == 'list':
             starts_with = self.request.query_params.get('starts_with')
@@ -61,9 +103,23 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
             file_format = self.request.query_params.get('file_format')
             is_featured = self.request.query_params.get('is_featured')
 
-            # Require at least one of these four
-            if not any([starts_with, license_val, genre, file_format, is_featured]):
-                raise ValidationError("At least one of 'starts_with', 'license', 'genre', 'file_format' or 'is_featured' is required.")
+            # Parse min/max parameters
+            min_file_size = self.request.query_params.get('min_file_size')
+            max_file_size = self.request.query_params.get('max_file_size')
+            min_channels = self.request.query_params.get('min_channels')
+            max_channels = self.request.query_params.get('max_channels')
+
+            min_file_size = parse_positive_int(min_file_size)
+            max_file_size = parse_positive_int(max_file_size)
+            min_channels = parse_positive_int(min_channels)
+            max_channels = parse_positive_int(max_channels)
+
+            if min_file_size == -1 or max_file_size == -1 or min_channels == -1 or max_channels == -1:
+                return Song.objects.none()
+
+            if (min_file_size and max_file_size and min_file_size > max_file_size) or \
+                    (min_channels and max_channels and min_channels > max_channels):
+                return Song.objects.none()
 
             # starts_with must be single char
             if starts_with:
@@ -93,7 +149,22 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
                 qs = qs.filter(format=file_format)
 
             if is_featured and is_featured.lower() == 'true':
-                qs = qs.filter(is_featured=True)
+                qs = qs.filter(Q(is_featured=True))
+            elif is_featured and is_featured.lower() == 'false':
+                qs = qs.filter(Q(is_featured=False) | Q(is_featured=None))
+
+            # Apply additional filters
+            if min_file_size:
+                qs = qs.filter(file_size__gte=min_file_size)
+
+            if max_file_size:
+                qs = qs.filter(file_size__lte=max_file_size)
+
+            if min_channels:
+                qs = qs.filter(channels__gte=min_channels)
+
+            if max_channels:
+                qs = qs.filter(channels__lte=max_channels)
 
         return qs
 
@@ -107,7 +178,18 @@ class SongViewSet(viewsets.ReadOnlyModelViewSet):
                 description="Ordering field (ascending, add a '-' in front to sort descending)",
                 required=False,
                 location='query',
-                enum=['name', 'id', 'total_songs', 'total_comments', 'total_downloads', 'average_song_rating'],
+                enum=[
+                    'name',
+                    '-name',
+                    'total_songs',
+                    '-total_songs',
+                    'total_comments',
+                    '-total_comments',
+                    'total_downloads',
+                    '-total_downloads',
+                    'average_song_rating',
+                    '-average_song_rating',
+                ],
                 default='name',
             ),
             OpenApiParameter(
@@ -130,11 +212,11 @@ class ArtistViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['name', 'id', 'total_songs', 'total_comments', 'total_downloads', 'average_song_rating']
+    ordering_fields = ['name', 'total_songs', 'total_comments', 'total_downloads', 'average_song_rating']
     ordering = ['name']
 
     def get_queryset(self):
-        queryset = Artist.objects.all()
+        queryset = super().get_queryset()
 
         if self.action == 'list':
             starts_with = self.request.query_params.get('starts_with')
@@ -184,17 +266,6 @@ class SongSearchAPIView(generics.ListAPIView):
         min_channels = self.request.query_params.get('min_channels')
         max_channels = self.request.query_params.get('max_channels')
 
-        def parse_positive_int(value):
-            if value is None:
-                return None
-            try:
-                val = int(value)
-                if val <= 0:
-                    return -1  # invalid
-                return val
-            except ValueError:
-                return -1
-
         min_file_size = parse_positive_int(min_file_size)
         max_file_size = parse_positive_int(max_file_size)
         min_channels = parse_positive_int(min_channels)
@@ -243,7 +314,7 @@ class SongSearchAPIView(generics.ListAPIView):
         if q_objects:
             queryset = queryset.filter(q_objects)
             if relevance_expr:
-                queryset = queryset.annotate(relevance=relevance_expr).order_by('-relevance')
+                queryset = queryset.annotate(relevance=relevance_expr).order_by('-relevance', 'filename')
 
         # Apply additional filters
         if file_format:

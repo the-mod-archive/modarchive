@@ -159,6 +159,7 @@ class Song(models.Model):
     downloads_count=models.PositiveIntegerField(default=0)
     comments_count = models.PositiveSmallIntegerField(default=0)
     average_rating = models.DecimalField(default=0.0, decimal_places=1, max_digits=3, blank=True, null=True)
+    cumulative_rating=models.PositiveIntegerField(default=0, blank=True, null=True)
     favorites_count = models.PositiveIntegerField(default=0)
     # Search Vectors
     title_vector=SearchVectorField(null=True, blank=True)
@@ -204,19 +205,6 @@ class Song(models.Model):
 
     def __str__(self) -> str:
         return f"{self.get_title()} [id: {self.pk}]"
-
-class SongStats(models.Model):
-    song = models.OneToOneField(
-        Song,
-        on_delete=models.CASCADE,
-        primary_key=True
-    )
-    downloads=models.PositiveIntegerField(default=0)
-    total_comments=models.PositiveSmallIntegerField(default=0)
-    average_comment_score=models.DecimalField(default=0.0, decimal_places=1, max_digits=3, blank=True, null=True)
-    total_reviews=models.PositiveSmallIntegerField(default=0)
-    average_review_score=models.DecimalField(default=0.0, decimal_places=1, max_digits=3, blank=True, null=True)
-    total_favorites=models.PositiveIntegerField(default=0)
 
 class SongRedirect(models.Model):
     class Meta:

@@ -11,9 +11,10 @@ def update_artist_stats():
     """
     Update stats for all artists:
     - total_songs: Count of all songs by the artist
-    - total_downloads: Sum of downloads from all song stats
-    - total_comments: Sum of comments from all song stats
-    - average_song_rating: Average of review scores from all song stats
+    - total_downloads: Sum of downloads from all songs by the artist
+    - total_comments: Sum of comments on all songs by the artist
+    - average_song_rating: Average of ratings from all songs by the artist
+    - cumulative_song_ratings: Cumulative ratings from all songs by the artist
     """
     artists = Artist.objects.all()
     updated_count = 0
@@ -37,10 +38,15 @@ def update_artist_stats():
         average_rating_result = songs.aggregate(avg=Avg('average_rating'))
         average_rating = average_rating_result['avg'] or 0
 
+        # Calculate cumulative song ratings
+        total_ratings_result = songs.aggregate(total=Sum('cumulative_rating'))
+        cumulative_song_ratings = total_ratings_result['total'] or 0
+
         # Update the artist
         artist.total_songs = total_songs
         artist.total_downloads = total_downloads
         artist.total_comments = total_comments
+        artist.cumulative_song_ratings = cumulative_song_ratings
         artist.average_song_rating = average_rating
         artist.save()
 
