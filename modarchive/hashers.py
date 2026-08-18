@@ -4,6 +4,11 @@ from typing import Any
 from django.contrib.auth.hashers import BasePasswordHasher
 from django.utils.crypto import constant_time_compare
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 class LegacyModArchivePasswordHasher(BasePasswordHasher):
     algorithm = 'hmac'
 
@@ -20,10 +25,22 @@ class LegacyModArchivePasswordHasher(BasePasswordHasher):
         return hmac.HMAC(salt.encode('utf-8'), password.encode('utf-8'), 'md5').hexdigest() + salt
 
     def verify(self, password: str, encoded: str) -> bool:
+        logger.info(
+            "Legacy password hasher verify() called. "
+            "Encoded prefix: %r",
+            encoded[:40],
+        )
         decoded = self.decode(encoded)
         encoded_2 = self.encode(password, decoded['salt'])
 
-        return constant_time_compare(decoded['hash'], encoded_2)
+        result = constant_time_compare(decoded['hash'], encoded_2)
+
+        logger.info(
+            "Legacy password verification result: %s",
+            result,
+        )
+
+        return result
 
     def safe_summary(self, encoded: str) -> dict:
         decoded = self.decode(encoded)

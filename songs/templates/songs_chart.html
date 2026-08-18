@@ -13,6 +13,6 @@
     <div class="tab-panel green">
         {% include 'common_elements/paginator.html' with page_obj=page_obj page_range=page_range %}
 
-        {% include 'song_table.html' with songs=songs %}
+        {% include 'song_table.html' with songs=songs show_cumulative_rating=True %}
     </div>
 {% endblock %}
