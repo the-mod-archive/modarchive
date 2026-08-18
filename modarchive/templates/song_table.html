@@ -6,7 +6,12 @@
         {% if not hide_artist %}
         <th>Author</th>
         {% endif %}
-        <th class="rating">Rating</th>
+
+        {% if show_cumulative_rating %}
+            <th class="rating">Total Rating</th>
+        {% else %}
+            <th class="rating">Rating</th>
+        {% endif %}
         <th class="rating">Favorites</th>
         <th class="rating">Downloads</th>
     </tr>
@@ -24,7 +29,11 @@
         {% if not hide_artist %}
             <td>{% include 'song_artists.html' with song=song %}</td>
         {% endif %}
-        <td class="rating">{{ song.average_rating|default_if_none:"" }}</td>
+        {% if show_cumulative_rating %}
+            <td class="rating">{{ song.cumulative_rating|default_if_none:"" }}</td>
+        {% else %}
+            <td class="rating">{{ song.average_rating|default_if_none:"" }}</td>
+        {% endif %}
         <td class="rating">{{ song.favorites_count|default_if_none:"" }}</td>
         <td class="rating">{{ song.downloads_count|default_if_none:"" }}</td>
     </tr>

@@ -19,7 +19,7 @@ def update_song_stats(song):
     total_comments = song.comment_set.all().count()
     song.comments_count = total_comments
     song.average_rating = get_average_rating(song, total_comments)
-    song.cumulative_rating = get_cumulative_rating(song, total_comments)
+    song.cumulative_rating = song.comments_count * (song.average_rating or 0)
     song.save()
 
 def get_average_rating(song, total_comments):
